@@ -8,6 +8,7 @@ import validateProfileRequest from '../middlewares/validateProfileUpdate';
 import getAllEmployeeDetailsByAdminController from '../controllers/admin/getAllEmployeeDetailsByAdminController';
 import employeePasswordResetByAdminController from '../controllers/admin/employeePasswordResetByAdminController';
 import validateJWT from '../middlewares/validateJWT';
+import getAllBloodGroupsByAdminController from '../controllers/admin/getAllBloodGroupsByAdminController'
 
 const adminRouter: Router = express.Router();
 
@@ -17,5 +18,6 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', getEmployeeDetailsByAdminContr
 adminRouter.put('/updateEmployeeDetailsByAdmin', validateProfileRequest(userSchema), updateEmployeeDetailsByAdminController.updateProfile);
 adminRouter.get('/getAllEmployeeDetailsByAdmin', validateJWT, getAllEmployeeDetailsByAdminController.getAllEmployeeDetails);
 adminRouter.post('/employeePasswordResetByAdmin', employeePasswordResetByAdminController.employeePasswordResetByAdmin);
+adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT, getAllBloodGroupsByAdminController.getAllBloodGroupsDetails);
 
 export default adminRouter;
