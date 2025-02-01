@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import { ITalentPoolCandidates } from '../interfaces/talentpoolcandidates';
 import UserModel from '../model/userModel';
+import { DateTime } from 'aws-sdk/clients/devicefarm';
 
 const TalentPoolCandidatesSchema = new mongoose.Schema({
     id: { type: mongoose.Schema.Types.ObjectId },
@@ -14,6 +15,9 @@ const TalentPoolCandidatesSchema = new mongoose.Schema({
     relaventYearsOfExperience: { type: mongoose.Schema.Types.Decimal128 },
     comments: [{
         userId: { type: mongoose.Schema.Types.ObjectId, ref: UserModel },
+        callStartsAt: { type: mongoose.Schema.Types.Date },
+        callEndsAt: { type: mongoose.Schema.Types.Date },
+        timeSpendForCall: { type: mongoose.Schema.Types.Decimal128 },
         comment: { type: mongoose.Schema.Types.String },
         updateAt: { type: mongoose.Schema.Types.Date }
     }],
