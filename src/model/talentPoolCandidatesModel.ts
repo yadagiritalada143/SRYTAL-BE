@@ -2,7 +2,6 @@ import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import { ITalentPoolCandidates } from '../interfaces/talentpoolcandidates';
 import UserModel from '../model/userModel';
-import { DateTime } from 'aws-sdk/clients/devicefarm';
 
 const TalentPoolCandidatesSchema = new mongoose.Schema({
     id: { type: mongoose.Schema.Types.ObjectId },
