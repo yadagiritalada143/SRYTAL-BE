@@ -5,10 +5,10 @@ import UserModel from '../model/userModel';
 
 const TalentPoolCandidatesSchema = new mongoose.Schema({
     id: { type: mongoose.Schema.Types.ObjectId },
-    candidateName: { type: mongoose.Schema.Types.String, required: true, unique: true },
+    candidateName: { type: mongoose.Schema.Types.String, required: true },
     contact: {
-        email: { type: mongoose.Schema.Types.String },
-        phone: { type: mongoose.Schema.Types.String }
+        email: { type: mongoose.Schema.Types.String, required: true, unique: true },
+        phone: { type: mongoose.Schema.Types.String, required: true, unique: true }
     },
     totalYearsOfExperience: { type: mongoose.Schema.Types.Decimal128 },
     relaventYearsOfExperience: { type: mongoose.Schema.Types.Decimal128 },

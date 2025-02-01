@@ -8,10 +8,10 @@ const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-val
 const userModel_1 = __importDefault(require("../model/userModel"));
 const TalentPoolCandidatesSchema = new mongoose_1.default.Schema({
     id: { type: mongoose_1.default.Schema.Types.ObjectId },
-    candidateName: { type: mongoose_1.default.Schema.Types.String, required: true, unique: true },
+    candidateName: { type: mongoose_1.default.Schema.Types.String, required: true },
     contact: {
-        email: { type: mongoose_1.default.Schema.Types.String },
-        phone: { type: mongoose_1.default.Schema.Types.String }
+        email: { type: mongoose_1.default.Schema.Types.String, required: true, unique: true },
+        phone: { type: mongoose_1.default.Schema.Types.String, required: true, unique: true }
     },
     totalYearsOfExperience: { type: mongoose_1.default.Schema.Types.Decimal128 },
     relaventYearsOfExperience: { type: mongoose_1.default.Schema.Types.Decimal128 },
