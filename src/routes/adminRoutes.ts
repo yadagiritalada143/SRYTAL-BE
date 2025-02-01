@@ -7,8 +7,8 @@ import userSchema from '../middlewares/schemas/userSchema';
 import validateProfileRequest from '../middlewares/validateProfileUpdate';
 import getAllEmployeeDetailsByAdminController from '../controllers/admin/getAllEmployeeDetailsByAdminController';
 import employeePasswordResetByAdminController from '../controllers/admin/employeePasswordResetByAdminController';
+import getAllBloodGroupsByAdminController from '../controllers/admin/getAllBloodGroupsByAdminController';
 import validateJWT from '../middlewares/validateJWT';
-import getAllBloodGroupsByAdminController from '../controllers/admin/getAllBloodGroupsByAdminController'
 
 const adminRouter: Router = express.Router();
 

@@ -11,5 +11,5 @@ const BloodgroupSchema = new mongoose_1.default.Schema({
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
 });
-const Bloodgroup = mongoose_1.default.model('BloodgroupSchema', BloodgroupSchema);
-exports.default = Bloodgroup;
+const BloodgroupModel = mongoose_1.default.model('BloodgroupSchema', BloodgroupSchema);
+exports.default = BloodgroupModel;

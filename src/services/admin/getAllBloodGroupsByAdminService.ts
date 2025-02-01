@@ -1,30 +1,20 @@
-import UserModel from '../../model/userModel';
+import BloodgroupModel from '../../model/bloodGroupModel';
 
 interface FetchBloodGroupDetailsResponse {
     success: boolean;
-    usersList?: any;
+    bloodGroupList?: any;
 }
 
-const getAllBloodGroupsByAdmin = (organizationId: string, userId: string): Promise<FetchBloodGroupDetailsResponse> => {
-
-    console.log('User ID passed is:', userId);
-
+const getAllBloodgroupsByAdmin = (): Promise<FetchBloodGroupDetailsResponse> => {
     return new Promise((resolve, reject) => {
-        UserModel.find({
-            organization: organizationId,
-            _id: { $ne: userId } // Exclude the user with the provided userId
-        })
-            .populate('bloodGroup')
-            // .populate('employmentType')
-            // .populate('employeeRole')
-            // .populate('organization')
-            .then((users: any) => {
-                if (!users) {
+        BloodgroupModel.find({})
+            .then((bloodGroupsList: any) => {
+                if (!bloodGroupsList) {
                     reject({ success: false });
                 } else {
                     resolve({
                         success: true,
-                        usersList: users
+                        bloodGroupList: bloodGroupsList
                     });
                 }
             })
@@ -35,5 +25,5 @@ const getAllBloodGroupsByAdmin = (organizationId: string, userId: string): Promi
     });
 };
 
-export default { getAllBloodGroupsByAdmin }
+export default { getAllBloodgroupsByAdmin }
 

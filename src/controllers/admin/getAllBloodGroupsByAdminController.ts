@@ -3,9 +3,7 @@ import { COMMON_ERRORS } from '../../constants/commonErrorMessages';
 import allEmployeeBloodGroupServices from '../../services/admin/getAllBloodGroupsByAdminService'
 
 const getAllBloodGroupsDetails = (req: Request, res: Response) => {
-    const { organizationId, userId } = req.body;
-    allEmployeeBloodGroupServices
-        .getAllBloodGroupsByAdmin(organizationId, userId)
+    allEmployeeBloodGroupServices.getAllBloodgroupsByAdmin()
         .then(fetchAllBloodGroupsByAdminResponse => {
             res.status(200).json(fetchAllBloodGroupsByAdminResponse);
         })
