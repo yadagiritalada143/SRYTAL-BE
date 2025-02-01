@@ -15,6 +15,7 @@ interface IUser extends Document {
     bloodGroup?: mongoose.Schema.Types.ObjectId;
     employmentType?: mongoose.Schema.Types.ObjectId;
     employeeRole?: mongoose.Schema.Types.Array;
+    isDeleted?: boolean;
     organization?: mongoose.Schema.Types.ObjectId;
     lastLoggedOn?: Date;
 };

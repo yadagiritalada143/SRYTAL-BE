@@ -15,6 +15,7 @@ const register = (req: Request, res: Response) => {
     newRegistrationData.passwordResetRequired = true;
     newRegistrationData.organization = newRegistrationData.organizationId;
     newRegistrationData.applicationWalkThrough = 1;
+    newRegistrationData.isDeleted = false;
     adminSignUpService
         .isAccountPresent(newRegistrationData.email)
         .then((emailExists) => {
