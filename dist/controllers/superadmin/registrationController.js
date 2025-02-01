@@ -17,6 +17,7 @@ const register = (req, res) => {
     newRegistrationData.passwordResetRequired = true;
     newRegistrationData.organization = newRegistrationData.organizationId;
     newRegistrationData.applicationWalkThrough = 1;
+    newRegistrationData.isDeleted = false;
     registerAdminBySuperadminService_1.default
         .isAccountPresent(newRegistrationData.email)
         .then((emailExists) => {
