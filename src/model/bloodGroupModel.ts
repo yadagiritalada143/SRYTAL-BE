@@ -9,5 +9,5 @@ const BloodgroupSchema: Schema = new mongoose.Schema({
     toJSON: { virtuals: true }
 });
 
-const Bloodgroup = mongoose.model<IBloodgroup>('BloodgroupSchema', BloodgroupSchema);
-export default Bloodgroup;
+const BloodgroupModel = mongoose.model<IBloodgroup>('BloodgroupSchema', BloodgroupSchema);
+export default BloodgroupModel;
