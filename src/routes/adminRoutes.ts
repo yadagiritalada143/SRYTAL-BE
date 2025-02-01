@@ -8,6 +8,7 @@ import validateProfileRequest from '../middlewares/validateProfileUpdate';
 import getAllEmployeeDetailsByAdminController from '../controllers/admin/getAllEmployeeDetailsByAdminController';
 import employeePasswordResetByAdminController from '../controllers/admin/employeePasswordResetByAdminController';
 import getAllBloodGroupsByAdminController from '../controllers/admin/getAllBloodGroupsByAdminController';
+import addBloodGroupByAdminController from '../controllers/admin/addBloodGroupByAdminController';
 import validateJWT from '../middlewares/validateJWT';
 
 const adminRouter: Router = express.Router();
@@ -19,5 +20,6 @@ adminRouter.put('/updateEmployeeDetailsByAdmin', validateProfileRequest(userSche
 adminRouter.get('/getAllEmployeeDetailsByAdmin', validateJWT, getAllEmployeeDetailsByAdminController.getAllEmployeeDetails);
 adminRouter.post('/employeePasswordResetByAdmin', employeePasswordResetByAdminController.employeePasswordResetByAdmin);
 adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT, getAllBloodGroupsByAdminController.getAllBloodGroupsDetails);
+adminRouter.post('/addBloodGroupByAdmin', validateJWT, addBloodGroupByAdminController.addNewBloodgroupByAdmin);
 
 export default adminRouter;
