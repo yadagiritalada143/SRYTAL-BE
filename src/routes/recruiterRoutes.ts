@@ -2,7 +2,8 @@ import express, { Router } from 'express';
 import recruiterController from '../controllers/recruiter/manageRecruiterController';
 import addCommentByRecruiterController from '../controllers/recruiter/addCommentByRecruiterController';
 import updateCompanyByRecruiterController from '../controllers/recruiter/updateCompanyByRecruiterController';
-import addTalentPoolCandidatesByRecruiterController from '../controllers/recruiter/addTalentPoolCandidateController'
+import addTalentPoolCandidatesByRecruiterController from '../controllers/recruiter/addTalentPoolCandidateController';
+import getAllTalentPoolCandidatesByRecruiterController from '../controllers/recruiter/getAllTalentPoolCandidatesController';
 import commonController from '../controllers/common/commonController';
 import validateJWT from '../middlewares/validateJWT';
 
@@ -15,5 +16,6 @@ recruiterRouter.post('/addCompanyByRecruiter', recruiterController.addPoolCompan
 recruiterRouter.post('/addCommentByRecruiter', validateJWT, addCommentByRecruiterController.addCommentByRecruiter);
 recruiterRouter.post('/updateCompanyByRecruiter', updateCompanyByRecruiterController.updateCompanyByRecruiter);
 recruiterRouter.post('/addTalentPoolCandidateToTracker', validateJWT, addTalentPoolCandidatesByRecruiterController.addTalentPoolCandidateByRecruiter);
+recruiterRouter.get('/getAllTalentPoolCandidates', validateJWT, getAllTalentPoolCandidatesByRecruiterController.getAllTalentPoolCandidatesByRecruiter);
 
 export default recruiterRouter;
