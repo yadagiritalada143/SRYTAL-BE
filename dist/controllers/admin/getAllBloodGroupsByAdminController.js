@@ -12,7 +12,7 @@ const getAllBloodGroupsDetails = (req, res) => {
     })
         .catch(error => {
         console.error(`Error in fetching Blood Group details: ${error}`);
-        res.status(500).json({ success: false, message: commonErrorMessages_1.COMMON_ERRORS.USER_FETCHING_ERROR });
+        res.status(500).json({ success: false, message: commonErrorMessages_1.BLOOD_GROUP_ERROR_MESSAGES.BLOOD_GROUP_FETCH_ERROR_MESSAGES });
     });
 };
 exports.default = { getAllBloodGroupsDetails };

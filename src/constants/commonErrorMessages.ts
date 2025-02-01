@@ -2,7 +2,7 @@ export const COMMON_ERRORS = {
     USER_FETCHING_ERROR: 'An error occurred while fetching details, Please try again !',
     USER_UPDATING_ERROR: 'An error occurred while updating details, Please try again !',
     VISITORS_COUNT_UPDATING_ERROR: 'An error occured while updating visitiors count, Please try again !',
-    
+
 };
 
 export const LOGIN_ERROR_MESSAGE = {
@@ -21,6 +21,10 @@ export const APPLICATION_WALK_THROUGH_ERROR_MESSAGE = {
 
 export const ORGANIZATION_THEMES_ERROR_MESSAGES = {
     THEMES_FETCHING_ERROR: 'Error occured while getting the themes !!'
+}
+
+export const BLOOD_GROUP_ERROR_MESSAGES = {
+    BLOOD_GROUP_FETCH_ERROR_MESSAGES: 'Error occured while getting the Blood groups !!'
 }
 
 // This handles all common errors for all employees/recruiters/admin 

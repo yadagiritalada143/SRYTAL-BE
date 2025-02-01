@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { COMMON_ERRORS } from '../../constants/commonErrorMessages';
+import { BLOOD_GROUP_ERROR_MESSAGES } from '../../constants/commonErrorMessages';
 import allEmployeeBloodGroupServices from '../../services/admin/getAllBloodGroupsByAdminService'
 
 const getAllBloodGroupsDetails = (req: Request, res: Response) => {
@@ -9,7 +9,7 @@ const getAllBloodGroupsDetails = (req: Request, res: Response) => {
         })
         .catch(error => {
             console.error(`Error in fetching Blood Group details: ${error}`);
-            res.status(500).json({ success: false, message: COMMON_ERRORS.USER_FETCHING_ERROR });
+            res.status(500).json({ success: false, message: BLOOD_GROUP_ERROR_MESSAGES.BLOOD_GROUP_FETCH_ERROR_MESSAGES });
         });
 };
 
