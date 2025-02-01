@@ -23,10 +23,6 @@ export const ORGANIZATION_THEMES_ERROR_MESSAGES = {
     THEMES_FETCHING_ERROR: 'Error occured while getting the themes !!'
 }
 
-export const BLOOD_GROUP_ERROR_MESSAGES = {
-    BLOOD_GROUP_FETCH_ERROR_MESSAGES: 'Error occured while getting the Blood groups !!'
-}
-
 // This handles all common errors for all employees/recruiters/admin 
 export const EMPLOYEE_ERRORS = {
     EMPLOYEE_DETAILS_FETCHING_ERROR: 'An error occurred while fetching Employee details, Please try again !',

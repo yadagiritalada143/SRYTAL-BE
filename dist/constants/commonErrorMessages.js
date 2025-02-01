@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EMPLOYEE_ERRORS = exports.BLOOD_GROUP_ERROR_MESSAGES = exports.ORGANIZATION_THEMES_ERROR_MESSAGES = exports.APPLICATION_WALK_THROUGH_ERROR_MESSAGE = exports.EMAIL_ERROR_MESSAGE = exports.LOGIN_ERROR_MESSAGE = exports.COMMON_ERRORS = void 0;
+exports.EMPLOYEE_ERRORS = exports.ORGANIZATION_THEMES_ERROR_MESSAGES = exports.APPLICATION_WALK_THROUGH_ERROR_MESSAGE = exports.EMAIL_ERROR_MESSAGE = exports.LOGIN_ERROR_MESSAGE = exports.COMMON_ERRORS = void 0;
 exports.COMMON_ERRORS = {
     USER_FETCHING_ERROR: 'An error occurred while fetching details, Please try again !',
     USER_UPDATING_ERROR: 'An error occurred while updating details, Please try again !',
@@ -19,9 +19,6 @@ exports.APPLICATION_WALK_THROUGH_ERROR_MESSAGE = {
 };
 exports.ORGANIZATION_THEMES_ERROR_MESSAGES = {
     THEMES_FETCHING_ERROR: 'Error occured while getting the themes !!'
-};
-exports.BLOOD_GROUP_ERROR_MESSAGES = {
-    BLOOD_GROUP_FETCH_ERROR_MESSAGES: 'Error occured while getting the Blood groups !!'
 };
 // This handles all common errors for all employees/recruiters/admin 
 exports.EMPLOYEE_ERRORS = {

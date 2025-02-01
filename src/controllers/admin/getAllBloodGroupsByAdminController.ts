@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { BLOOD_GROUP_ERROR_MESSAGES } from '../../constants/commonErrorMessages';
+import { BLOOD_GROUP_ERROR_MESSAGES } from '../../constants/admin/bloodgroupMessages';
 import allEmployeeBloodGroupServices from '../../services/admin/getAllBloodGroupsByAdminService'
 
 const getAllBloodGroupsDetails = (req: Request, res: Response) => {
