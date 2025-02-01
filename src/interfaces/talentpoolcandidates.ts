@@ -7,8 +7,8 @@ export interface ITalentPoolCandidates extends Document {
         email: string;
         phone: string;
     };
-    totalYearsOfExperience: number;
-    relaventYearsOfExperience: number;
+    totalYearsOfExperience?: number;
+    relaventYearsOfExperience?: number;
     comments?: {
         sort(arg0: (a: any, b: any) => number): unknown;
         comment?: string;
