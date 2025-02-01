@@ -12,6 +12,8 @@ export interface ITalentPoolCandidates extends Document {
     comments?: {
         sort(arg0: (a: any, b: any) => number): unknown;
         comment?: string;
+        callStartsAt?: Date;
+        callEndsAt?: Date;
         userId?: mongoose.Schema.Types.ObjectId;
         updateAt?: Date;
     },
