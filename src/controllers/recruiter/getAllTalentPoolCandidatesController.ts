@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { SUPERADMIN_ERROR } from '../../constants/superadmin/superadminErrorMessage';
+import { RECRUITER_ERROR_MESSAGES } from '../../constants/recruiterErrorMessages';
 import getAllTalentPoolCandidatesServices from '../../services/recruiter/getAllTalentPoolCandidatesByRecruiterService';
 
 const getAllTalentPoolCandidatesByRecruiter = (req: Request, res: Response) => {
@@ -10,7 +10,7 @@ const getAllTalentPoolCandidatesByRecruiter = (req: Request, res: Response) => {
         })
         .catch(error => {
             console.error(`Error in fetching all talent pool candidates details:${error} `);
-            res.status(500).json({ success: false, message: SUPERADMIN_ERROR.FETCHING_ALL_EMPLOYEE_DETAILS_ERROR });
+            res.status(500).json({ success: false, message: RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_CANDIDATE_DETAILS });
         });
 };
 
