@@ -4,6 +4,7 @@ import addCommentByRecruiterController from '../controllers/recruiter/addComment
 import updateCompanyByRecruiterController from '../controllers/recruiter/updateCompanyByRecruiterController';
 import addTalentPoolCandidatesByRecruiterController from '../controllers/recruiter/addTalentPoolCandidateController';
 import getAllTalentPoolCandidatesByRecruiterController from '../controllers/recruiter/getAllTalentPoolCandidatesController';
+import getTalentPoolCandidateDetailsController from '../controllers/recruiter/getTalentPoolCandidateDetailsController';
 import commonController from '../controllers/common/commonController';
 import validateJWT from '../middlewares/validateJWT';
 
@@ -17,5 +18,6 @@ recruiterRouter.post('/addCommentByRecruiter', validateJWT, addCommentByRecruite
 recruiterRouter.post('/updateCompanyByRecruiter', updateCompanyByRecruiterController.updateCompanyByRecruiter);
 recruiterRouter.post('/addTalentPoolCandidateToTracker', validateJWT, addTalentPoolCandidatesByRecruiterController.addTalentPoolCandidateByRecruiter);
 recruiterRouter.get('/getAllTalentPoolCandidates', validateJWT, getAllTalentPoolCandidatesByRecruiterController.getAllTalentPoolCandidatesByRecruiter);
+recruiterRouter.get('/getTalentPoolCandidateById/:id', validateJWT, getTalentPoolCandidateDetailsController.getTalentPoolCandidateDetailsByRecruiter);
 
 export default recruiterRouter;

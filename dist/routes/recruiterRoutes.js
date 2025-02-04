@@ -9,6 +9,7 @@ const addCommentByRecruiterController_1 = __importDefault(require("../controller
 const updateCompanyByRecruiterController_1 = __importDefault(require("../controllers/recruiter/updateCompanyByRecruiterController"));
 const addTalentPoolCandidateController_1 = __importDefault(require("../controllers/recruiter/addTalentPoolCandidateController"));
 const getAllTalentPoolCandidatesController_1 = __importDefault(require("../controllers/recruiter/getAllTalentPoolCandidatesController"));
+const getTalentPoolCandidateDetailsController_1 = __importDefault(require("../controllers/recruiter/getTalentPoolCandidateDetailsController"));
 const commonController_1 = __importDefault(require("../controllers/common/commonController"));
 const validateJWT_1 = __importDefault(require("../middlewares/validateJWT"));
 const recruiterRouter = express_1.default.Router();
@@ -20,4 +21,5 @@ recruiterRouter.post('/addCommentByRecruiter', validateJWT_1.default, addComment
 recruiterRouter.post('/updateCompanyByRecruiter', updateCompanyByRecruiterController_1.default.updateCompanyByRecruiter);
 recruiterRouter.post('/addTalentPoolCandidateToTracker', validateJWT_1.default, addTalentPoolCandidateController_1.default.addTalentPoolCandidateByRecruiter);
 recruiterRouter.get('/getAllTalentPoolCandidates', validateJWT_1.default, getAllTalentPoolCandidatesController_1.default.getAllTalentPoolCandidatesByRecruiter);
+recruiterRouter.get('/getTalentPoolCandidateById/:id', validateJWT_1.default, getTalentPoolCandidateDetailsController_1.default.getTalentPoolCandidateDetailsByRecruiter);
 exports.default = recruiterRouter;

@@ -1,23 +1,23 @@
 import TalentPoolCandidatesModel from '../../model/talentPoolCandidatesModel';
 
-interface FetchTalentPoolCandidatesListResponse {
+interface FetchTalentPoolCandidateDetailsResponse {
     success: boolean;
-    talentPoolCandidatesList?: any;
+    talentPoolCandidateDetails?: any;
 }
 
-const getAllTalentPoolCandidatesService = (): Promise<FetchTalentPoolCandidatesListResponse> => {
+const getTalentPoolCandidateDetails = (talentPoolCandidateId: string): Promise<FetchTalentPoolCandidateDetailsResponse> => {
     return new Promise((resolve, reject) => {
         TalentPoolCandidatesModel
-            .find({})
+            .findById({ _id: talentPoolCandidateId })
             .populate('comments.userId', 'firstName lastName')
-            .then((talentPoolCandidates: any) => {
-                if (!talentPoolCandidates) {
+            .then((talentPoolCandidateDetails: any) => {
+                if (!talentPoolCandidateDetails) {
                     reject({ success: false });
 
                 } else {
                     resolve({
                         success: true,
-                        talentPoolCandidatesList: talentPoolCandidates
+                        talentPoolCandidateDetails: talentPoolCandidateDetails
                     });
                 }
             })
@@ -29,4 +29,4 @@ const getAllTalentPoolCandidatesService = (): Promise<FetchTalentPoolCandidatesL
 
 };
 
-export default { getAllTalentPoolCandidatesService }
+export default { getTalentPoolCandidateDetails }

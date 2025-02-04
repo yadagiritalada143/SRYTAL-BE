@@ -12,6 +12,7 @@ const TalentPoolCandidatesSchema = new mongoose.Schema({
     },
     totalYearsOfExperience: { type: mongoose.Schema.Types.Decimal128 },
     relaventYearsOfExperience: { type: mongoose.Schema.Types.Decimal128 },
+    evaluatedSkills: { type: mongoose.Schema.Types.String },
     comments: [{
         userId: { type: mongoose.Schema.Types.ObjectId, ref: UserModel },
         callStartsAt: { type: mongoose.Schema.Types.Date },

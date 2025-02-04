@@ -17,7 +17,7 @@ const addTalentPoolCandidateByRecruiter = (req, res) => {
         });
     }
     addTalentPoolCandidateByRecruiterService_1.default
-        .addTalentPoolCandidatesByRecruiter(req.body)
+        .addTalentPoolCandidatesByRecruiter(candidateDetails)
         .then((responseAfterCandidateAdded) => {
         res.status(200).json({ responseAfterCandidateAdded });
     })

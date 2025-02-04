@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const userModel_1 = __importDefault(require("../../model/userModel"));
 const getAllEmployeeDetailsByAdmin = (organizationId, userId) => {
-    console.log('User ID passed is:', userId);
     return new Promise((resolve, reject) => {
         userModel_1.default.find({
             organization: organizationId,
