@@ -16,6 +16,7 @@ const getAllBloodGroupsByAdminController_1 = __importDefault(require("../control
 const addBloodGroupByAdminController_1 = __importDefault(require("../controllers/admin/addBloodGroupByAdminController"));
 const deleteEmployeeDetailsByAdminController_1 = __importDefault(require("../controllers/admin/deleteEmployeeDetailsByAdminController"));
 const validateJWT_1 = __importDefault(require("../middlewares/validateJWT"));
+const deleteBloodGroupByAdminController_1 = __importDefault(require("../controllers/admin/deleteBloodGroupByAdminController"));
 const adminRouter = express_1.default.Router();
 adminRouter.post('/login', commonController_1.default.login);
 adminRouter.post('/registerEmployeeByAdmin', validateJWT_1.default, registrationController_1.default.register);
@@ -26,4 +27,5 @@ adminRouter.post('/employeePasswordResetByAdmin', employeePasswordResetByAdminCo
 adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT_1.default, getAllBloodGroupsByAdminController_1.default.getAllBloodGroupsDetails);
 adminRouter.post('/addBloodGroupByAdmin', validateJWT_1.default, addBloodGroupByAdminController_1.default.addNewBloodgroupByAdmin);
 adminRouter.post('/deleteEmployeeByAdmin', validateJWT_1.default, deleteEmployeeDetailsByAdminController_1.default.deleteProfile);
+adminRouter.delete('/deleteBloodGroupByAdmin/:_id', deleteBloodGroupByAdminController_1.default.deleteBloodGroup);
 exports.default = adminRouter;
