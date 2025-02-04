@@ -7,8 +7,6 @@ interface FetchEmployeeDetailsResponse {
 
 const getAllEmployeeDetailsByAdmin = (organizationId: string, userId: string): Promise<FetchEmployeeDetailsResponse> => {
 
-    console.log('User ID passed is:', userId);
-
     return new Promise((resolve, reject) => {
         UserModel.find({
             organization: organizationId,

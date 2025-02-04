@@ -9,6 +9,7 @@ export interface ITalentPoolCandidates extends Document {
     };
     totalYearsOfExperience?: number;
     relaventYearsOfExperience?: number;
+    evaluatedSkills?: string;
     comments?: {
         sort(arg0: (a: any, b: any) => number): unknown;
         comment?: string;

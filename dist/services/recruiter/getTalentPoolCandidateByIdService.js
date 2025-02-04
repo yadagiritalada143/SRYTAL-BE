@@ -4,19 +4,19 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const talentPoolCandidatesModel_1 = __importDefault(require("../../model/talentPoolCandidatesModel"));
-const getAllTalentPoolCandidatesService = () => {
+const getTalentPoolCandidateDetails = (talentPoolCandidateId) => {
     return new Promise((resolve, reject) => {
         talentPoolCandidatesModel_1.default
-            .find({})
+            .findById({ _id: talentPoolCandidateId })
             .populate('comments.userId', 'firstName lastName')
-            .then((talentPoolCandidates) => {
-            if (!talentPoolCandidates) {
+            .then((talentPoolCandidateDetails) => {
+            if (!talentPoolCandidateDetails) {
                 reject({ success: false });
             }
             else {
                 resolve({
                     success: true,
-                    talentPoolCandidatesList: talentPoolCandidates
+                    talentPoolCandidateDetails: talentPoolCandidateDetails
                 });
             }
         })
@@ -26,4 +26,4 @@ const getAllTalentPoolCandidatesService = () => {
         });
     });
 };
-exports.default = { getAllTalentPoolCandidatesService };
+exports.default = { getTalentPoolCandidateDetails };
