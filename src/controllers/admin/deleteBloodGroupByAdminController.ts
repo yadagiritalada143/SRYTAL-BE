@@ -4,10 +4,9 @@ import DeleteBloodGroupService from '../../services/admin/deleteBloodGroupByAdmi
 import { DELETE_ERROR_MESSAGES } from '../../constants/admin/manageUserMessages';
 
 const deleteBloodGroup = (req: Request, res: Response) => {
-    const { _id, confirmDelete } = req.body;
-    if (confirmDelete) {
-        DeleteBloodGroupService
-            .DeleteBloodGroupByAdmin(_id)
+    const id = req.params.id;
+    DeleteBloodGroupService
+            .DeleteBloodGroupByAdmin(id)
             .then((deleteBloodGroupResponse: any) => {
                 res.status(200).json(deleteBloodGroupResponse);
             })
@@ -15,7 +14,6 @@ const deleteBloodGroup = (req: Request, res: Response) => {
                 console.error(`Error in  deleting blood group: ${error}`);
                 res.status(500).json({ success: false, message: DELETE_ERROR_MESSAGES.DELETE_BLOOD_GROUP_DELETE_ERROR_MESSAGE });
             });
-    }
      
 }
 
