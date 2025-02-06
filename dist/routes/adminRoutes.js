@@ -27,5 +27,5 @@ adminRouter.post('/employeePasswordResetByAdmin', employeePasswordResetByAdminCo
 adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT_1.default, getAllBloodGroupsByAdminController_1.default.getAllBloodGroupsDetails);
 adminRouter.post('/addBloodGroupByAdmin', validateJWT_1.default, addBloodGroupByAdminController_1.default.addNewBloodgroupByAdmin);
 adminRouter.post('/deleteEmployeeByAdmin', validateJWT_1.default, deleteEmployeeDetailsByAdminController_1.default.deleteProfile);
-adminRouter.delete('/deleteBloodGroupByAdmin/:_id', deleteBloodGroupByAdminController_1.default.deleteBloodGroup);
+adminRouter.delete('/deleteBloodGroupByAdmin/:id', validateJWT_1.default, deleteBloodGroupByAdminController_1.default.deleteBloodGroup);
 exports.default = adminRouter;
