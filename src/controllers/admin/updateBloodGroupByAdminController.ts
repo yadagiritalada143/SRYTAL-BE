@@ -5,8 +5,9 @@ import { COMMON_ERRORS } from '../../constants/commonErrorMessages';
 
 const updateBloodGroup = (req: Request, res: Response) => {
     const id = req.params.id;
+    const   bloodGroup  = req.body;
     updateBloodGroupService
-            .updateBloodGroupByAdmin(id)
+            .updateBloodGroupByAdmin(id,bloodGroup)
             .then((updateBloodGroupResponse: any) => {
                 res.status(200).json(updateBloodGroupResponse);
             })

@@ -6,9 +6,9 @@ interface updateBloodGroupResponse {
     responseAfterupdate?: any;
 }
 
-const updateBloodGroupByAdmin = async (id: any):Promise<updateBloodGroupResponse>=> {
+const updateBloodGroupByAdmin = async (id: any, bloodGroup:any):Promise<updateBloodGroupResponse>=> {
     try {
-        const result = await BloodgroupModel.updateOne({ _id: id });
+        const result = await BloodgroupModel.updateOne({ _id: id },{type:bloodGroup});
         if(result) {
             return {success: true, responseAfterupdate: result};
         } else {
