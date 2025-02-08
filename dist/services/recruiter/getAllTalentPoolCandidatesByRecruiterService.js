@@ -9,6 +9,7 @@ const getAllTalentPoolCandidatesService = () => {
         talentPoolCandidatesModel_1.default
             .find({})
             .populate('comments.userId', 'firstName lastName')
+            .populate('createdBy', 'firstName lastName')
             .then((talentPoolCandidates) => {
             if (!talentPoolCandidates) {
                 reject({ success: false });
