@@ -6,9 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const updateBloodGroupByAdminService_1 = __importDefault(require("../../services/admin/updateBloodGroupByAdminService"));
 const commonErrorMessages_1 = require("../../constants/commonErrorMessages");
 const updateBloodGroup = (req, res) => {
-    const id = req.params.id;
+    const { id, type } = req.body;
     updateBloodGroupByAdminService_1.default
-        .updateBloodGroupByAdmin(id)
+        .updateBloodGroupByAdmin(id, type)
         .then((updateBloodGroupResponse) => {
         res.status(200).json(updateBloodGroupResponse);
     })

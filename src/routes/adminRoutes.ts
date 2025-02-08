@@ -12,7 +12,7 @@ import addBloodGroupByAdminController from '../controllers/admin/addBloodGroupBy
 import deleteEmployeeDetailsByAdminController from '../controllers/admin/deleteEmployeeDetailsByAdminController';
 import validateJWT from '../middlewares/validateJWT';
 import deleteBloodGroupByAdminController from '../controllers/admin/deleteBloodGroupByAdminController';
-import updateBloodGroupByAdminController from 'controllers/admin/updateBloodGroupByAdminController';
+import updateBloodGroupByAdminController from '../controllers/admin/updateBloodGroupByAdminController';
 
 const adminRouter: Router = express.Router();
 

@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const bloodGroupModel_1 = __importDefault(require("../../model/bloodGroupModel"));
-const updateBloodGroupByAdmin = async (id) => {
+const updateBloodGroupByAdmin = async (id, type) => {
     try {
-        const result = await bloodGroupModel_1.default.updateOne({ _id: id });
+        const result = await bloodGroupModel_1.default.updateOne({ _id: id }, { type });
         if (result) {
             return { success: true, responseAfterupdate: result };
         }
