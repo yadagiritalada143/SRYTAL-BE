@@ -12,6 +12,7 @@ import addBloodGroupByAdminController from '../controllers/admin/addBloodGroupBy
 import deleteEmployeeDetailsByAdminController from '../controllers/admin/deleteEmployeeDetailsByAdminController';
 import validateJWT from '../middlewares/validateJWT';
 import deleteBloodGroupByAdminController from '../controllers/admin/deleteBloodGroupByAdminController';
+import updateBloodGroupByAdminController from 'controllers/admin/updateBloodGroupByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -25,7 +26,7 @@ adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT, getAllBloodGroupsByAdm
 adminRouter.post('/addBloodGroupByAdmin', validateJWT, addBloodGroupByAdminController.addNewBloodgroupByAdmin);
 adminRouter.post('/deleteEmployeeByAdmin', validateJWT, deleteEmployeeDetailsByAdminController.deleteProfile);
 adminRouter.delete('/deleteBloodGroupByAdmin/:id', validateJWT, deleteBloodGroupByAdminController.deleteBloodGroup);
-
+adminRouter.put('/updateBloodGroupByAdmin', updateBloodGroupByAdminController.updateBloodGroup);
 
 
 
