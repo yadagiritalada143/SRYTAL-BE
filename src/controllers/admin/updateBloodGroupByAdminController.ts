@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import updateBloodGroupService from '../../services/admin/updateBloodGroupByAdminService';
-import { COMMON_ERRORS } from '../../constants/commonErrorMessages';
+import { RECRUITER_ERROR_MESSAGES } from '../../constants/recruiterErrorMessages';
 
 const updateBloodGroup = (req: Request, res: Response) => {
     const { id, type } = req.body;
@@ -11,7 +11,7 @@ const updateBloodGroup = (req: Request, res: Response) => {
         })
         .catch((error: any) => {
             console.error(`Error in  updating blood group: ${error}`);
-            res.status(500).json({ success: false, message: COMMON_ERRORS.USER_UPDATING_ERROR });
+            res.status(500).json({ success: false, message: RECRUITER_ERROR_MESSAGES.ERROR_UPDATING_BLOOD_GROUP_DETAILS });
         });
 
 }
