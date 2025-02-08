@@ -13,8 +13,8 @@ const TalentPoolCandidatesSchema = new mongoose_1.default.Schema({
         email: { type: mongoose_1.default.Schema.Types.String, required: true, unique: true },
         phone: { type: mongoose_1.default.Schema.Types.String, required: true, unique: true }
     },
-    totalYearsOfExperience: { type: mongoose_1.default.Schema.Types.Decimal128 },
-    relaventYearsOfExperience: { type: mongoose_1.default.Schema.Types.Decimal128 },
+    totalYearsOfExperience: { type: mongoose_1.default.Schema.Types.Number },
+    relaventYearsOfExperience: { type: mongoose_1.default.Schema.Types.Number },
     evaluatedSkills: { type: mongoose_1.default.Schema.Types.String },
     comments: [{
             userId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: userModel_1.default },
