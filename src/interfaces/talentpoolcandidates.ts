@@ -18,6 +18,7 @@ export interface ITalentPoolCandidates extends Document {
         userId?: mongoose.Schema.Types.ObjectId;
         updateAt?: Date;
     },
+    createdBy: mongoose.Schema.Types.ObjectId;
     createdAt: Date;
     lastUpdatedAt: Date;
 }

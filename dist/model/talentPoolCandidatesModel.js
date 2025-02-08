@@ -23,6 +23,7 @@ const TalentPoolCandidatesSchema = new mongoose_1.default.Schema({
             comment: { type: mongoose_1.default.Schema.Types.String },
             updateAt: { type: mongoose_1.default.Schema.Types.Date }
         }],
+    createdBy: { type: mongoose_1.default.Schema.Types.ObjectId, ref: userModel_1.default },
     createdAt: { type: mongoose_1.default.Schema.Types.Date },
     lastUpdatedAt: { type: mongoose_1.default.Schema.Types.Date }
 }, {
