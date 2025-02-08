@@ -10,6 +10,7 @@ const getAllTalentPoolCandidatesService = (): Promise<FetchTalentPoolCandidatesL
         TalentPoolCandidatesModel
             .find({})
             .populate('comments.userId', 'firstName lastName')
+            .populate('createdBy', 'firstName lastName')
             .then((talentPoolCandidates: any) => {
                 if (!talentPoolCandidates) {
                     reject({ success: false });
