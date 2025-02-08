@@ -6,6 +6,7 @@ const addTalentPoolCandidateByRecruiter = (req: Request, res: Response) => {
     let candidateDetails = req.body;
     candidateDetails.createdAt = new Date();
     candidateDetails.lastUpdatedAt = new Date();
+    candidateDetails.createdBy = candidateDetails.userId;
     if (candidateDetails?.comments?.length) {
         candidateDetails.comments.map((comment: any) => {
             comment.userId = candidateDetails.userId;

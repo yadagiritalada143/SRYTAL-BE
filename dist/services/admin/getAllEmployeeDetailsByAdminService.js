@@ -8,7 +8,8 @@ const getAllEmployeeDetailsByAdmin = (organizationId, userId) => {
     return new Promise((resolve, reject) => {
         userModel_1.default.find({
             organization: organizationId,
-            _id: { $ne: userId } // Exclude the user with the provided userId
+            _id: { $ne: userId }, // Exclude the user with the provided userId
+            isDeleted: false
         })
             .populate('bloodGroup')
             .populate('employmentType')
