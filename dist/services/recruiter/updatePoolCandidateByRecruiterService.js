@@ -1,0 +1,18 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const talentPoolCandidatesModel_1 = __importDefault(require("../../model/talentPoolCandidatesModel"));
+const updatePoolCandidateDetails = async (detailsToUpdate) => {
+    try {
+        detailsToUpdate.lastUpdatedAt = new Date();
+        const result = await talentPoolCandidatesModel_1.default.updateOne({ _id: detailsToUpdate.id }, detailsToUpdate);
+        return { success: result.acknowledged };
+    }
+    catch (error) {
+        console.log('Error occured while updating the pool candidate details:', error);
+        return { success: false };
+    }
+};
+exports.default = { updatePoolCandidateDetails };

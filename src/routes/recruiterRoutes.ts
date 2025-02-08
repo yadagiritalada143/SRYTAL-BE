@@ -6,6 +6,7 @@ import addTalentPoolCandidatesByRecruiterController from '../controllers/recruit
 import getAllTalentPoolCandidatesByRecruiterController from '../controllers/recruiter/getAllTalentPoolCandidatesController';
 import getTalentPoolCandidateDetailsController from '../controllers/recruiter/getTalentPoolCandidateDetailsController';
 import addCommentToPoolCandidateController from '../controllers/recruiter/addCommentToPoolCandidateByRecruiterController';
+import updatePoolCandidateController from '../controllers/recruiter/updatePoolCandidateByRecruiterController';
 import commonController from '../controllers/common/commonController';
 import validateJWT from '../middlewares/validateJWT';
 
@@ -20,6 +21,7 @@ recruiterRouter.post('/updateCompanyByRecruiter', updateCompanyByRecruiterContro
 recruiterRouter.post('/addTalentPoolCandidateToTracker', validateJWT, addTalentPoolCandidatesByRecruiterController.addTalentPoolCandidateByRecruiter);
 recruiterRouter.get('/getAllTalentPoolCandidates', validateJWT, getAllTalentPoolCandidatesByRecruiterController.getAllTalentPoolCandidatesByRecruiter);
 recruiterRouter.get('/getTalentPoolCandidateById/:id', validateJWT, getTalentPoolCandidateDetailsController.getTalentPoolCandidateDetailsByRecruiter);
-recruiterRouter.post('/addCommentToTalentPoolCandiadte', validateJWT, addCommentToPoolCandidateController.addCommentToPoolCandidateByRecruiter);
+recruiterRouter.post('/addCommentToTalentPoolCandidate', validateJWT, addCommentToPoolCandidateController.addCommentToPoolCandidateByRecruiter);
+recruiterRouter.post('/updatePoolCandidateByRecruiter', validateJWT, updatePoolCandidateController.updatePoolCandidateByRecruiter);
 
 export default recruiterRouter;
