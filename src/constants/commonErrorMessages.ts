@@ -29,3 +29,7 @@ export const EMPLOYEE_ERRORS = {
     EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR: 'Error occured while updating the Profile Image, Please try again !',
     EMPLOYEE_PROFILE_IMAGE_GETTING_ERROR: 'Error occured while fetching the Profile Image, Please try again !'
 };
+
+
+
+ 
