@@ -8,9 +8,9 @@ const userModel_1 = __importDefault(require("../../model/userModel"));
 const getEmployeeDetails = (id) => {
     return new Promise((resolve, reject) => {
         userModel_1.default.findOne({ _id: id })
-            .populate('bloodGroup')
-            .populate('employeeRole')
-            .populate('organization')
+            .populate("bloodGroup")
+            .populate("employeeRole")
+            .populate("organization")
             .then((employee) => {
             if (!employee) {
                 reject({ success: false });
@@ -28,13 +28,17 @@ const getEmployeeDetails = (id) => {
                         bankDetailsInfo: employee.bankDetailsInfo,
                         employeeRole: employee.employeeRole,
                         organization: employee.organization,
-                        profileImage: path_1.default.resolve(__dirname, '../../assets', 'profileImages', employee.profileImage)
-                    }
+                        userRole: employee.userRole,
+                        passwordResetRequired: employee.passwordResetRequired,
+                        profileImage: employee.profileImage
+                            ? path_1.default.resolve(__dirname, "../../assets", "profileImages", employee.profileImage)
+                            : "",
+                    },
                 });
             }
         })
             .catch((error) => {
-            console.error('Error in getting employee details:', error);
+            console.error("Error in getting employee details:", error);
             reject({ success: false });
         });
     });
