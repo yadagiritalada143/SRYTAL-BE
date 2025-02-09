@@ -13,11 +13,19 @@ const getTalentPoolCandidateDetails = (talentPoolCandidateId: string): Promise<F
             .then((talentPoolCandidateDetails: any) => {
                 if (!talentPoolCandidateDetails) {
                     reject({ success: false });
-
                 } else {
+                    if (Array.isArray(talentPoolCandidateDetails.comments)) {
+                        talentPoolCandidateDetails.comments = talentPoolCandidateDetails.comments
+                            .map((comment: any) => ({
+                                ...comment,
+                                updateAt: new Date(comment.updateAt).getTime() || 0,
+                            }))
+                            .sort((a: any, b: any) => b.updateAt - a.updateAt);
+                    }
+
                     resolve({
                         success: true,
-                        talentPoolCandidateDetails: talentPoolCandidateDetails
+                        talentPoolCandidateDetails,
                     });
                 }
             })
@@ -26,7 +34,6 @@ const getTalentPoolCandidateDetails = (talentPoolCandidateId: string): Promise<F
                 reject({ success: false });
             });
     });
-
 };
 
 export default { getTalentPoolCandidateDetails }

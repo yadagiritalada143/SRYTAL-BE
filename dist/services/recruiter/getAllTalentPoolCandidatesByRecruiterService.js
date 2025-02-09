@@ -11,15 +11,27 @@ const getAllTalentPoolCandidatesService = () => {
             .populate('comments.userId', 'firstName lastName')
             .populate('createdBy', 'firstName lastName')
             .then((talentPoolCandidates) => {
-            if (!talentPoolCandidates) {
-                reject({ success: false });
+            if (!talentPoolCandidates || talentPoolCandidates.length === 0) {
+                return reject({ success: false });
             }
-            else {
-                resolve({
-                    success: true,
-                    talentPoolCandidatesList: talentPoolCandidates
-                });
-            }
+            talentPoolCandidates = talentPoolCandidates.map((candidate) => {
+                if (Array.isArray(candidate.comments)) {
+                    candidate.comments = candidate.comments
+                        .map((comment) => (Object.assign(Object.assign({}, comment), { updateAt: new Date(comment.updateAt).getTime() || 0 })))
+                        .sort((a, b) => b.updateAt - a.updateAt); // Sort comments by latest first
+                }
+                return candidate;
+            });
+            talentPoolCandidates.sort((a, b) => {
+                var _a, _b, _c, _d;
+                const latestCommentA = ((_b = (_a = a.comments) === null || _a === void 0 ? void 0 : _a[0]) === null || _b === void 0 ? void 0 : _b.updateAt) || 0;
+                const latestCommentB = ((_d = (_c = b.comments) === null || _c === void 0 ? void 0 : _c[0]) === null || _d === void 0 ? void 0 : _d.updateAt) || 0;
+                return latestCommentB - latestCommentA;
+            });
+            resolve({
+                success: true,
+                talentPoolCandidatesList: talentPoolCandidates,
+            });
         })
             .catch((error) => {
             console.error('Error in fetching talent pool candidates details:', error);
