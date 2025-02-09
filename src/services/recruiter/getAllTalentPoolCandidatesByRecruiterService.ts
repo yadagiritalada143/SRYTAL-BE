@@ -23,7 +23,7 @@ const getAllTalentPoolCandidatesService = (): Promise<FetchTalentPoolCandidatesL
                                 ...comment,
                                 updateAt: new Date(comment.updateAt).getTime() || 0, // Ensure updateAt is a valid timestamp
                             }))
-                            .sort((a: any, b: any) => b.updateAt - a.updateAt); // Sort comments by latest first
+                            .sort((a: any, b: any) => b.updateAt - a.updateAt);
                     }
                     return candidate;
                 });

@@ -18,7 +18,7 @@ const getAllTalentPoolCandidatesService = () => {
                 if (Array.isArray(candidate.comments)) {
                     candidate.comments = candidate.comments
                         .map((comment) => (Object.assign(Object.assign({}, comment), { updateAt: new Date(comment.updateAt).getTime() || 0 })))
-                        .sort((a, b) => b.updateAt - a.updateAt); // Sort comments by latest first
+                        .sort((a, b) => b.updateAt - a.updateAt);
                 }
                 return candidate;
             });
