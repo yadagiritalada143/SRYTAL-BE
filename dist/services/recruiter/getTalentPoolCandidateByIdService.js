@@ -14,9 +14,14 @@ const getTalentPoolCandidateDetails = (talentPoolCandidateId) => {
                 reject({ success: false });
             }
             else {
+                if (Array.isArray(talentPoolCandidateDetails.comments)) {
+                    talentPoolCandidateDetails.comments = talentPoolCandidateDetails.comments
+                        .map((comment) => (Object.assign(Object.assign({}, comment), { updateAt: new Date(comment.updateAt).getTime() || 0 })))
+                        .sort((a, b) => b.updateAt - a.updateAt);
+                }
                 resolve({
                     success: true,
-                    talentPoolCandidateDetails: talentPoolCandidateDetails
+                    talentPoolCandidateDetails,
                 });
             }
         })
