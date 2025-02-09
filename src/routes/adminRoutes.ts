@@ -15,6 +15,7 @@ import deleteBloodGroupByAdminController from '../controllers/admin/deleteBloodG
 import updateBloodGroupByAdminController from '../controllers/admin/updateBloodGroupByAdminController';
 import addEmploymentTypeByAdminController from '../controllers/admin/addEmploymentTypeByAdminController';
 import getAllEmploymentTypesByAdminController from '../controllers/admin/getAllEmploymentTypesByAdminController';
+import updateEmploymentTypeByAdminController from '../controllers/admin/updateEmploymentTypeByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -31,6 +32,6 @@ adminRouter.delete('/deleteBloodGroupByAdmin/:id', validateJWT, deleteBloodGroup
 adminRouter.put('/updateBloodGroupByAdmin', updateBloodGroupByAdminController.updateBloodGroup);
 adminRouter.post('/addEmploymentTypeByAdmin', validateJWT, addEmploymentTypeByAdminController.addEmploymentTypeByAdmin);
 adminRouter.get('/getallEmploymentTypesByAdmin', validateJWT, getAllEmploymentTypesByAdminController.getAllEmploymentTypesByAdmin);
-
+adminRouter.put('/updateEmploymentTypeByAdmin',updateEmploymentTypeByAdminController.updateEmploymentType)
 
 export default adminRouter;
