@@ -3,19 +3,19 @@ import Employmenttype from '../../model/employmentTypeModel';
 
 interface FetchEmploymentTypeResponse {
     success: boolean;
-    employmenttypeList?: any;
+    employmentTypesList?: any;
 }
 
-const getAllEmploymentByAdmin = (): Promise<FetchEmploymentTypeResponse> => {
+const getAllEmploymentTypesByAdmin = (): Promise<FetchEmploymentTypeResponse> => {
     return new Promise((resolve, reject) => {
         Employmenttype.find({})
-            .then((employmenttypeList: any) => {
-                if (!employmenttypeList) {
+            .then((employmentTypesList: any) => {
+                if (!employmentTypesList) {
                     reject({ success: false });
                 } else {
                     resolve({
                         success: true,
-                        employmenttypeList: employmenttypeList
+                        employmentTypesList: employmentTypesList
                     });
                 }
             })
@@ -26,5 +26,4 @@ const getAllEmploymentByAdmin = (): Promise<FetchEmploymentTypeResponse> => {
     });
 };
 
-export default { getAllEmploymentByAdmin }
-
+export default { getAllEmploymentTypesByAdmin }

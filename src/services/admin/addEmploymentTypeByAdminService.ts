@@ -2,8 +2,8 @@ import Employmenttype from '../../model/employmentTypeModel';
 
 const addEmploymentTypeByAdmin = async (employmentType: string) => {
     try {
-        const employmenttypetosave: any = new Employmenttype({ type: employmentType });
-        const result = await employmenttypetosave.save();
+        const employmentTypeToSave: any = new Employmenttype({ employmentType });
+        const result = await employmentTypeToSave.save();
         return result;
     } catch (error: any) {
         console.error('Error in adding employment type:', error);
@@ -12,4 +12,3 @@ const addEmploymentTypeByAdmin = async (employmentType: string) => {
 };
 
 export default { addEmploymentTypeByAdmin }
-
