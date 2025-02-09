@@ -1,6 +1,5 @@
 import Employmenttype from '../../model/employmentTypeModel';
 
-
 interface FetchEmploymentTypeResponse {
     success: boolean;
     employmentTypesList?: any;
