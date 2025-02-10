@@ -32,6 +32,6 @@ adminRouter.delete('/deleteBloodGroupByAdmin/:id', validateJWT, deleteBloodGroup
 adminRouter.put('/updateBloodGroupByAdmin', updateBloodGroupByAdminController.updateBloodGroup);
 adminRouter.post('/addEmploymentTypeByAdmin', validateJWT, addEmploymentTypeByAdminController.addEmploymentTypeByAdmin);
 adminRouter.get('/getallEmploymentTypesByAdmin', validateJWT, getAllEmploymentTypesByAdminController.getAllEmploymentTypesByAdmin);
-adminRouter.put('/updateEmploymentTypeByAdmin',updateEmploymentTypeByAdminController.updateEmploymentType)
+adminRouter.put('/updateEmploymentTypeByAdmin', validateJWT, updateEmploymentTypeByAdminController.updateEmploymentType)
 
 export default adminRouter;
