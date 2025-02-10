@@ -29,7 +29,6 @@ const getEmployeeDetails = (id) => {
                         organization: employee.organization,
                         userRole: employee.userRole,
                         passwordResetRequired: employee.passwordResetRequired,
-                        // profileImage: path.resolve(__dirname, '../../assets', 'profileImages', employee.profileImage)
                     }
                 });
             }

@@ -1,4 +1,3 @@
-import path from 'path';
 import UserModel from '../../model/userModel';
 
 interface getEmployeeDetailsResponse {
@@ -30,7 +29,6 @@ const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => 
               organization: employee.organization,
               userRole: employee.userRole,
               passwordResetRequired: employee.passwordResetRequired,
-              // profileImage: path.resolve(__dirname, '../../assets', 'profileImages', employee.profileImage)
             }
           });
         }
