@@ -3,14 +3,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = __importDefault(require("path"));
 const userModel_1 = __importDefault(require("../../model/userModel"));
 const getEmployeeDetails = (id) => {
     return new Promise((resolve, reject) => {
         userModel_1.default.findOne({ _id: id })
-            .populate("bloodGroup")
-            .populate("employeeRole")
-            .populate("organization")
+            .populate('bloodGroup')
+            .populate('employeeRole')
+            .populate('organization')
             .then((employee) => {
             if (!employee) {
                 reject({ success: false });
@@ -30,15 +29,12 @@ const getEmployeeDetails = (id) => {
                         organization: employee.organization,
                         userRole: employee.userRole,
                         passwordResetRequired: employee.passwordResetRequired,
-                        profileImage: employee.profileImage
-                            ? path_1.default.resolve(__dirname, "../../assets", "profileImages", employee.profileImage)
-                            : "",
-                    },
+                    }
                 });
             }
         })
             .catch((error) => {
-            console.error("Error in getting employee details:", error);
+            console.error('Error in getting employee details:', error);
             reject({ success: false });
         });
     });

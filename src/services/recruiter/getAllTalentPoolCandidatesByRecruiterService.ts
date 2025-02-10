@@ -12,8 +12,15 @@ const getAllTalentPoolCandidatesService = (): Promise<FetchTalentPoolCandidatesL
             .populate('comments.userId', 'firstName lastName')
             .populate('createdBy', 'firstName lastName')
             .then((talentPoolCandidates: any) => {
-                if (!talentPoolCandidates || talentPoolCandidates.length === 0) {
+                if (!talentPoolCandidates) {
                     return reject({ success: false });
+                }
+
+                if (talentPoolCandidates.length === 0) {
+                    return resolve({
+                        success: true,
+                        talentPoolCandidatesList: [],
+                    });
                 }
 
                 talentPoolCandidates = talentPoolCandidates.map((candidate: any) => {
