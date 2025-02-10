@@ -11,8 +11,14 @@ const getAllTalentPoolCandidatesService = () => {
             .populate('comments.userId', 'firstName lastName')
             .populate('createdBy', 'firstName lastName')
             .then((talentPoolCandidates) => {
-            if (!talentPoolCandidates || talentPoolCandidates.length === 0) {
+            if (!talentPoolCandidates) {
                 return reject({ success: false });
+            }
+            if (talentPoolCandidates.length === 0) {
+                return resolve({
+                    success: true,
+                    talentPoolCandidatesList: [],
+                });
             }
             talentPoolCandidates = talentPoolCandidates.map((candidate) => {
                 if (Array.isArray(candidate.comments)) {
