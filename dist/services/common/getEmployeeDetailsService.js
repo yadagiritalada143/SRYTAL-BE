@@ -28,6 +28,8 @@ const getEmployeeDetails = (id) => {
                         bankDetailsInfo: employee.bankDetailsInfo,
                         employeeRole: employee.employeeRole,
                         organization: employee.organization,
+                        userRole: employee.userRole,
+                        passwordResetRequired: employee.passwordResetRequired,
                         profileImage: path_1.default.resolve(__dirname, '../../assets', 'profileImages', employee.profileImage)
                     }
                 });

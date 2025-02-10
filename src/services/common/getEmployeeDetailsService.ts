@@ -28,6 +28,8 @@ const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => 
               bankDetailsInfo: employee.bankDetailsInfo,
               employeeRole: employee.employeeRole,
               organization: employee.organization,
+              userRole: employee.userRole,
+              passwordResetRequired: employee.passwordResetRequired,
               profileImage: path.resolve(__dirname, '../../assets', 'profileImages', employee.profileImage)
             }
           });
