@@ -1,19 +1,17 @@
-import path from "path";
-import UserModel from "../../model/userModel";
+import path from 'path';
+import UserModel from '../../model/userModel';
 
 interface getEmployeeDetailsResponse {
   success: boolean;
   employeeDetails?: any;
 }
 
-const getEmployeeDetails = (
-  id: string
-): Promise<getEmployeeDetailsResponse> => {
+const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => {
   return new Promise((resolve, reject) => {
     UserModel.findOne({ _id: id })
-      .populate("bloodGroup")
-      .populate("employeeRole")
-      .populate("organization")
+      .populate('bloodGroup')
+      .populate('employeeRole')
+      .populate('organization')
       .then((employee: any) => {
         if (!employee) {
           reject({ success: false });
@@ -30,25 +28,16 @@ const getEmployeeDetails = (
               bankDetailsInfo: employee.bankDetailsInfo,
               employeeRole: employee.employeeRole,
               organization: employee.organization,
-              userRole: employee.userRole,
-              passwordResetRequired: employee.passwordResetRequired,
-              profileImage: employee.profileImage
-                ? path.resolve(
-                    __dirname,
-                    "../../assets",
-                    "profileImages",
-                    employee.profileImage
-                  )
-                : "",
-            },
+              profileImage: path.resolve(__dirname, '../../assets', 'profileImages', employee.profileImage)
+            }
           });
         }
       })
       .catch((error: any) => {
-        console.error("Error in getting employee details:", error);
+        console.error('Error in getting employee details:', error);
         reject({ success: false });
       });
   });
-};
+}
 
-export default { getEmployeeDetails };
+export default { getEmployeeDetails }
