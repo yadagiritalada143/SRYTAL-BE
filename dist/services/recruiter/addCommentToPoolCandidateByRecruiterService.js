@@ -16,12 +16,12 @@ const addCommentToPoolCandidateByRecruiter = async ({ id, comment, callStartsAt,
                 updateAt: new Date()
             }
         }
-    }, { new: true });
-    if (result && result.id) {
-        result = await talentPoolCandidatesModel_1.default
-            .findOne({ _id: id })
-            .populate('comments.userId', 'firstName lastName');
-    }
+    }, {
+        new: true, populate: {
+            path: 'comments.userId',
+            select: 'firstName lastName'
+        }
+    });
     return result;
 };
 exports.default = { addCommentToPoolCandidateByRecruiter };
