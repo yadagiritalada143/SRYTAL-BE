@@ -16,4 +16,3 @@ const updateEmployeeRole = (req: Request, res: Response) => {
 }
 
 export default { updateEmployeeRole }
-
