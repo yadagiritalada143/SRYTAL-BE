@@ -16,4 +16,7 @@ export const EMPLOYEE_ROLE_SUCCESS_MESSAGES = {
 
 export const EMPLOYEE_ROLE_ERRORS_MESSAGES = {
     EMPLOYEE_ROLE_ADD_ERROR_MESSAGE: 'Error occured while adding employee role !!',
+    EMPLOYEE_ROLE_FETCH_ERROR_MESSAGES:'error occured shile getting the employee roles',
+    EMPLOYEE_ROLE_UPDATING_ERROR_MESSAGE:'error occured while updating employee role !',
+    EMPLOYEE_ROLE_DELETE_ERROR_MESSAGE:'error occured while deleting employee role !'
 };

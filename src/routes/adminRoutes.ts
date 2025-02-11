@@ -18,6 +18,10 @@ import getAllEmploymentTypesByAdminController from '../controllers/admin/getAllE
 import updateEmploymentTypeByAdminController from '../controllers/admin/updateEmploymentTypeByAdminController';
 import deleteEmploymentTypeByAdminController from '../controllers/admin/deleteEmploymentTypeByAdminController';
 import addEmployeeRoleByAdminController from '../controllers/admin/addEmployeeRoleByAdminController';
+import getAllEmployeeRoleByAdminController from '../controllers/admin/getAllEmployeeRoleByAdminController';
+import updateEmployeeRoleByAdminController from '../controllers/admin/updateEmployeeRoleByAdminController';
+import deleteEmployeeRoleByAdminController from '../controllers/admin/deleteEmployeeRoleByAdminController';
+
 
 const adminRouter: Router = express.Router();
 
@@ -34,8 +38,11 @@ adminRouter.delete('/deleteBloodGroupByAdmin/:id', validateJWT, deleteBloodGroup
 adminRouter.put('/updateBloodGroupByAdmin', updateBloodGroupByAdminController.updateBloodGroup);
 adminRouter.post('/addEmploymentTypeByAdmin', validateJWT, addEmploymentTypeByAdminController.addEmploymentTypeByAdmin);
 adminRouter.get('/getallEmploymentTypesByAdmin', validateJWT, getAllEmploymentTypesByAdminController.getAllEmploymentTypesByAdmin);
-adminRouter.put('/updateEmploymentTypeByAdmin', validateJWT, updateEmploymentTypeByAdminController.updateEmploymentType)
-adminRouter.delete('/deleteEmploymentTypeByAdmin/:id', validateJWT, deleteEmploymentTypeByAdminController.deleteEmploymentType)
-adminRouter.post('/addEmployeeRoleByAdmin', validateJWT, addEmployeeRoleByAdminController.addEmployeeRoleByAdmin)
+adminRouter.put('/updateEmploymentTypeByAdmin', validateJWT, updateEmploymentTypeByAdminController.updateEmploymentType);
+adminRouter.delete('/deleteEmploymentTypeByAdmin/:id', validateJWT, deleteEmploymentTypeByAdminController.deleteEmploymentType);
+adminRouter.post('/addEmployeeRoleByAdmin', validateJWT, addEmployeeRoleByAdminController.addEmployeeRoleByAdmin);
+adminRouter.get('/getAllEmployeeRoleByAdmin', validateJWT, getAllEmployeeRoleByAdminController.getAllEmployeeRolesByAdmin);
+adminRouter.put('/updateEmployeeRoleByAdmin', validateJWT, updateEmployeeRoleByAdminController.updateEmployeeRole);
+adminRouter.delete('/deleteEmployeeRoleByAdmin/:id', validateJWT, deleteEmployeeRoleByAdminController.deleteEmployeeRole)
 
 export default adminRouter;
