@@ -9,7 +9,7 @@ const deleteEmployeeRoleByAdmin = async (id: any): Promise<deleteEmployeeRoleRes
     try {
         const result = await Employmentrole.findByIdAndDelete({ _id: id });
         if (!result) {
-            return { success: false };
+            return { success: false, responseAfterDelete: result };
         }
 
         return { success: true, responseAfterDelete: result };

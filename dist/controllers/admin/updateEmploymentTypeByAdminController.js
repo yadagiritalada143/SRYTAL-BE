@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const updateEmploymentTypeByAdminService_1 = __importDefault(require("../../services/admin/updateEmploymentTypeByAdminService"));
-const employmenttypeMessages_1 = require("../../constants/admin/employmenttypeMessages");
+const employementTypesMessages_1 = require("../../constants/admin/employementTypesMessages");
 const updateEmploymentType = (req, res) => {
     const { id, employmentType } = req.body;
     updateEmploymentTypeByAdminService_1.default
@@ -14,7 +14,7 @@ const updateEmploymentType = (req, res) => {
     })
         .catch((error) => {
         console.error(`Error in updating employment type: ${error}`);
-        res.status(500).json({ success: false, message: employmenttypeMessages_1.EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_UPDATING_ERROR_MESSAGE });
+        res.status(500).json({ success: false, message: employementTypesMessages_1.EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_UPDATING_ERROR_MESSAGE });
     });
 };
 exports.default = { updateEmploymentType };

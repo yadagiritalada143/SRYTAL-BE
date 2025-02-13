@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import updateEmployeeRoleService from '../../services/admin/updateEmployeeRoleByAdminService';
-import { EMPLOYEE_ROLE_ERRORS_MESSAGES } from '../../constants/admin/employmenttypeMessages';
+import { EMPLOYEE_ROLE_ERRORS_MESSAGES } from '../../constants/admin/employeeRolesMessages';
 
 const updateEmployeeRole = (req: Request, res: Response) => {
     const { id, designation } = req.body;

@@ -1,7 +1,7 @@
 
 import { Request, Response } from 'express';
 import deleteEmploymentTypeService from '../../services/admin/deleteEmploymentTypeByAdminService';
-import { EMPLOYMENT_TYPE_ERRORS_MESSAGES } from '../../constants/admin/employmenttypeMessages';
+import { EMPLOYMENT_TYPE_ERRORS_MESSAGES } from '../../constants/admin/employementTypesMessages';
 
 const deleteEmploymentType = (req: Request, res: Response) => {
     const { id } = req.params;

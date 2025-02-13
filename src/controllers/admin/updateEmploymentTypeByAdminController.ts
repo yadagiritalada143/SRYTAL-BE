@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import updateEmploymentTypeService from '../../services/admin/updateEmploymentTypeByAdminService';
-import { EMPLOYMENT_TYPE_ERRORS_MESSAGES } from '../../constants/admin/employmenttypeMessages';
+import { EMPLOYMENT_TYPE_ERRORS_MESSAGES } from '../../constants/admin/employementTypesMessages';
 
 const updateEmploymentType = (req: Request, res: Response) => {
     const { id, employmentType } = req.body;

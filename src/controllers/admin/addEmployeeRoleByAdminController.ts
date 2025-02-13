@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import addEmployeeRoleByAdminService from "../../services/admin/addEmployeeRoleByAdminService";
-import { EMPLOYEE_ROLE_SUCCESS_MESSAGES, EMPLOYEE_ROLE_ERRORS_MESSAGES } from "../../constants/admin/employmenttypeMessages";
+import { EMPLOYEE_ROLE_SUCCESS_MESSAGES, EMPLOYEE_ROLE_ERRORS_MESSAGES } from "../../constants/admin/employeeRolesMessages";
 
 const addEmployeeRoleByAdmin = (req: Request, res: Response) => {
     const { designation } = req.body;

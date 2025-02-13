@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { EMPLOYEE_ROLE_ERRORS_MESSAGES } from '../../constants/admin/employmenttypeMessages';
-import allEmployeeRolesServices from '../../services/admin/getAllEmployeeRoleByAdminService';
+import { EMPLOYEE_ROLE_ERRORS_MESSAGES } from '../../constants/admin/employeeRolesMessages';
+import getAllEmployeeRolesServices from '../../services/admin/getAllEmployeeRoleByAdminService';
 
 const getAllEmployeeRolesByAdmin = (req: Request, res: Response) => {
-    allEmployeeRolesServices.getAllEmployeeRolesByAdmin()
-        .then(fetchAllEmployeeRolesResponse => {
+    getAllEmployeeRolesServices.getAllEmployeeRolesByAdmin()
+        .then((fetchAllEmployeeRolesResponse: any) => {
             res.status(200).json(fetchAllEmployeeRolesResponse);
         })
         .catch(error => {

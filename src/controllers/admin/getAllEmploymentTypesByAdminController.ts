@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { EMPLOYMENT_TYPE_ERRORS_MESSAGES } from '../../constants/admin/employmenttypeMessages';
+import { EMPLOYMENT_TYPE_ERRORS_MESSAGES } from '../../constants/admin/employementTypesMessages';
 import allEmploymentTypeServices from '../../services/admin/getAllEmploymentTypeByAdminService';
 
 const getAllEmploymentTypesByAdmin = (req: Request, res: Response) => {
