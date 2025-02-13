@@ -19,7 +19,7 @@ const getAllEmploymentTypesByAdmin = (): Promise<FetchEmploymentTypeResponse> =>
                 }
             })
             .catch((error: any) => {
-                console.error('Error in fetching Employmenttype:', error);
+                console.error(`Error in fetching Employmenttype:${error}`);
                 reject({ success: false });
             });
     });

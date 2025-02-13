@@ -22,6 +22,10 @@ const addEmploymentTypeByAdminController_1 = __importDefault(require("../control
 const getAllEmploymentTypesByAdminController_1 = __importDefault(require("../controllers/admin/getAllEmploymentTypesByAdminController"));
 const updateEmploymentTypeByAdminController_1 = __importDefault(require("../controllers/admin/updateEmploymentTypeByAdminController"));
 const deleteEmploymentTypeByAdminController_1 = __importDefault(require("../controllers/admin/deleteEmploymentTypeByAdminController"));
+const addEmployeeRoleByAdminController_1 = __importDefault(require("../controllers/admin/addEmployeeRoleByAdminController"));
+const getAllEmployeeRoleByAdminController_1 = __importDefault(require("../controllers/admin/getAllEmployeeRoleByAdminController"));
+const updateEmployeeRoleByAdminController_1 = __importDefault(require("../controllers/admin/updateEmployeeRoleByAdminController"));
+const deleteEmployeeRoleByAdminController_1 = __importDefault(require("../controllers/admin/deleteEmployeeRoleByAdminController"));
 const adminRouter = express_1.default.Router();
 adminRouter.post('/login', commonController_1.default.login);
 adminRouter.post('/registerEmployeeByAdmin', validateJWT_1.default, registrationController_1.default.register);
@@ -38,4 +42,8 @@ adminRouter.post('/addEmploymentTypeByAdmin', validateJWT_1.default, addEmployme
 adminRouter.get('/getallEmploymentTypesByAdmin', validateJWT_1.default, getAllEmploymentTypesByAdminController_1.default.getAllEmploymentTypesByAdmin);
 adminRouter.put('/updateEmploymentTypeByAdmin', validateJWT_1.default, updateEmploymentTypeByAdminController_1.default.updateEmploymentType);
 adminRouter.delete('/deleteEmploymentTypeByAdmin/:id', validateJWT_1.default, deleteEmploymentTypeByAdminController_1.default.deleteEmploymentType);
+adminRouter.post('/addEmployeeRoleByAdmin', validateJWT_1.default, addEmployeeRoleByAdminController_1.default.addEmployeeRoleByAdmin);
+adminRouter.get('/getAllEmployeeRoleByAdmin', validateJWT_1.default, getAllEmployeeRoleByAdminController_1.default.getAllEmployeeRolesByAdmin);
+adminRouter.put('/updateEmployeeRoleByAdmin', validateJWT_1.default, updateEmployeeRoleByAdminController_1.default.updateEmployeeRole);
+adminRouter.delete('/deleteEmployeeRoleByAdmin/:id', validateJWT_1.default, deleteEmployeeRoleByAdminController_1.default.deleteEmployeeRole);
 exports.default = adminRouter;

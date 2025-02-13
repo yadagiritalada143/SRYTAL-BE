@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import IEmployeerole from '../interfaces/employeerole'
 
 const EmployeeroleSchema: Schema = new mongoose.Schema({
     designation: { type: mongoose.Schema.Types.String, required: true },
@@ -8,5 +9,5 @@ const EmployeeroleSchema: Schema = new mongoose.Schema({
     toJSON: { virtuals: true }
 });
 
-const Employeerole = mongoose.model('EmployeeroleSchema', EmployeeroleSchema);
+const Employeerole = mongoose.model<IEmployeerole>('EmployeeroleSchema', EmployeeroleSchema);
 export default Employeerole;
