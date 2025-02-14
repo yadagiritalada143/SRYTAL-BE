@@ -15,12 +15,15 @@ const forgotPassword = async (email: string) => {
                     resolve({ success: false, message: 'User not Exists !' });
                 } else {
                     const randomPassword = randomPasswordGenerate();
-                    hashPasswordUtility.hashPassword(randomPassword).then((hashedPassword) => {
+                    hashPasswordUtility.hashPassword(randomPassword).then(async (hashedPassword) => {
                         utilService.sendOTPEmail(user.firstName, user.lastName, user.email, randomPassword);
 
-                        Usermodel.findOneAndUpdate({ email }, { password: hashedPassword, passwordResetRequired: 'true' });
+                        const result = await Usermodel.findOneAndUpdate({ email }, { password: hashedPassword, passwordResetRequired: 'true' });
+                        if (!result) {
+                            reject({ success: false, message: 'Error in sending OTP to user !' });
+                        }
+                        resolve({ success: true, message: 'Email Sent successfully to you. Please check your Inbox and come back to Login page and then login with your temporary password !' });
                     })
-                    resolve({ success: true, message: 'Email Sent successfully to you. Please check your Inbox and come back to Login page and then login with your temporary password !' });
                 }
             })
             .catch((error: any) => {
