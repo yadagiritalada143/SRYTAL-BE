@@ -18,7 +18,7 @@ const forgotPassword = async (email: string) => {
                     hashPasswordUtility.hashPassword(randomPassword).then((hashedPassword) => {
                         utilService.sendOTPEmail(user.firstName, user.lastName, user.email, randomPassword);
 
-                        Usermodel.updateOne({ email }, { password: hashedPassword, passwordResetRequired: 'true' });
+                        Usermodel.findOneAndUpdate({ email }, { password: hashedPassword, passwordResetRequired: 'true' });
                     })
                     resolve({ success: true, message: 'Email Sent successfully to you. Please check your Inbox and come back to Login page and then login with your temporary password !' });
                 }
