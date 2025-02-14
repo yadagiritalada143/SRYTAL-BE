@@ -31,13 +31,13 @@ const sendOTPEmail = async (firstName, lastName, userName, tempPassword) => {
       <!-- Body Section -->
       <div style="background-color:rgb(220, 235, 248); padding: 20px; color:#4f4a4c "><br><br>
         <p style="margin: 0 0 15px; font-size: 14px; color: #333;">
-          Below is the tremporary password to login to the system. Please note that you must
-          change your password after successfully logging in with your username and
+          Please use the below temporary password to login to the system. Note that you must
+          change your password, after successfully logging in with your username and
           temporary password.
         </p>
 
         <p style="margin: 0 0 15px; font-size: 14px; color: #333;">
-          <b>Temporary password:</b> ${tempPassword}
+          <b>Your Temporary password is:</b> ${tempPassword}
         </p>
 
         <p style="margin: 0 0 15px; font-size: 14px; color: #d9534f; font-weight: bold;">

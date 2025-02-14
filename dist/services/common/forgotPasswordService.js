@@ -20,10 +20,10 @@ const forgotPassword = async (email) => {
             else {
                 const randomPassword = randomPasswordGenerate();
                 hashPassword_1.default.hashPassword(randomPassword).then((hashedPassword) => {
-                    sendForgetPasswordOTPEmail_1.default.sendOTPEmail(user.firstName, user.lastName, user.email, hashedPassword);
+                    sendForgetPasswordOTPEmail_1.default.sendOTPEmail(user.firstName, user.lastName, user.email, randomPassword);
                     userModel_2.default.updateOne({ email }, { password: hashedPassword, passwordResetRequired: 'true' });
                 });
-                resolve({ success: true, message: 'Email Sent successfully to you. Please chck yor inbox and come back to login page and then login with your temporary password !' });
+                resolve({ success: true, message: 'Email Sent successfully to you. Please check your Inbox and come back to Login page and then login with your temporary password !' });
             }
         })
             .catch((error) => {

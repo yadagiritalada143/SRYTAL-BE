@@ -16,11 +16,11 @@ const forgotPassword = async (email: string) => {
                 } else {
                     const randomPassword = randomPasswordGenerate();
                     hashPasswordUtility.hashPassword(randomPassword).then((hashedPassword) => {
-                        utilService.sendOTPEmail(user.firstName, user.lastName, user.email, hashedPassword);
-                    
-                        Usermodel.updateOne({email}, {password: hashedPassword, passwordResetRequired: 'true'});    
+                        utilService.sendOTPEmail(user.firstName, user.lastName, user.email, randomPassword);
+
+                        Usermodel.updateOne({ email }, { password: hashedPassword, passwordResetRequired: 'true' });
                     })
-                    resolve({ success: true, message: 'Email Sent successfully to you. Please chck yor inbox and come back to login page and then login with your temporary password !'});
+                    resolve({ success: true, message: 'Email Sent successfully to you. Please check your Inbox and come back to Login page and then login with your temporary password !' });
                 }
             })
             .catch((error: any) => {
