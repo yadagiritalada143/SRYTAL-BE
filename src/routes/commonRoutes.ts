@@ -9,6 +9,7 @@ import uploadProfileImageController from '../controllers/common/uploadProfileIma
 import getProfileImageController from '../controllers/common/getProfileImageController';
 import validateJWT from '../middlewares/validateJWT';
 import multer from 'multer';
+import forgotPasswordController from '../controllers/common/forgotPasswordController';
 const upload = multer({ storage: multer.memoryStorage() });
 
 const commonRouter: Router = express.Router();
@@ -25,5 +26,6 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
 commonRouter.get('/getEmployeeDetails', validateJWT, getEmployeeDetailsController.getEmployeeDetails);
 commonRouter.post('/uploadProfileImage', upload.single('profileImage'), validateJWT, uploadProfileImageController.uploadProfileImage);
 commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getProfileImage);
+commonRouter.post('/forgotPassword', forgotPasswordController.forgotPassword)
 
 export default commonRouter;
