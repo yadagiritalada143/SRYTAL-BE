@@ -1,23 +1,25 @@
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const emailConfiguration: any = {
-  service: process.env.EMAIL_CONFIG_SERVICE,
-  host: process.env.EMAIL_CONFIG_HOST,
-  port: Number(process.env.EMAIL_CONFIG_PORT),
-  secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
-  auth: {
-    user: process.env.EMAIL_CONFIG_AUTH_USER,
-    pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-  }
-}
-
-const sendOTPEmail = async (firstName: string, lastName: string, userName: string, tempPassword: string) => {
-  try {
-    const transporter = nodemailer.createTransport(emailConfiguration);
-    const mailBody = `     
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const emailConfiguration = {
+    service: process.env.EMAIL_CONFIG_SERVICE,
+    host: process.env.EMAIL_CONFIG_HOST,
+    port: Number(process.env.EMAIL_CONFIG_PORT),
+    secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
+    auth: {
+        user: process.env.EMAIL_CONFIG_AUTH_USER,
+        pass: process.env.EMAIL_CONFIG_AUTH_PASS,
+    }
+};
+const sendOTPEmail = async (firstName, lastName, userName, tempPassword) => {
+    try {
+        const transporter = nodemailer_1.default.createTransport(emailConfiguration);
+        const mailBody = `     
 <html>
   <body style="font-family: serif; background-color: #f4f4f9; padding: 20px;">
     <div style="max-width: 750px; height:auto; margin: 0 auto; border: 1px solid #f7f1f4 ; border-radius: 5px;">
@@ -55,27 +57,24 @@ const sendOTPEmail = async (firstName: string, lastName: string, userName: strin
     </div>
   </body>
 </html> `;
-
-    const mailOptions = {
-      from: process.env.EMAIL_FROM,
-      to: userName,
-      subject: 'Temporary Password to Login !',
-      html: mailBody,
-    };
-
-    const result = await transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
+        const mailOptions = {
+            from: process.env.EMAIL_FROM,
+            to: userName,
+            subject: 'Temporary Password to Login !',
+            html: mailBody,
+        };
+        const result = await transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                return error;
+            }
+            console.log('Info after sent:', info.response);
+            return info.response;
+        });
+        return result;
+    }
+    catch (error) {
+        console.log('Error in sending Email at services: ', error);
         return error;
-      }
-
-      console.log('Info after sent:', info.response)
-      return info.response;
-    });
-    return result;
-  } catch (error) {
-    console.log('Error in sending Email at services: ', error);
-    return error;
-  }
-}
-
-export default { sendOTPEmail }
+    }
+};
+exports.default = { sendOTPEmail };
