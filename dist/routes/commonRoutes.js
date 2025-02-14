@@ -14,6 +14,7 @@ const uploadProfileImageController_1 = __importDefault(require("../controllers/c
 const getProfileImageController_1 = __importDefault(require("../controllers/common/getProfileImageController"));
 const validateJWT_1 = __importDefault(require("../middlewares/validateJWT"));
 const multer_1 = __importDefault(require("multer"));
+const forgotPasswordController_1 = __importDefault(require("../controllers/common/forgotPasswordController"));
 const upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
 const commonRouter = express_1.default.Router();
 commonRouter.get('/', (req, res) => {
@@ -27,4 +28,5 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
 commonRouter.get('/getEmployeeDetails', validateJWT_1.default, getEmployeeDetailsController_1.default.getEmployeeDetails);
 commonRouter.post('/uploadProfileImage', upload.single('profileImage'), validateJWT_1.default, uploadProfileImageController_1.default.uploadProfileImage);
 commonRouter.get('/getProfileImage', validateJWT_1.default, getProfileImageController_1.default.getProfileImage);
+commonRouter.post('/forgotPassword', forgotPasswordController_1.default.forgotPassword);
 exports.default = commonRouter;
