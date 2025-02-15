@@ -10,6 +10,7 @@ const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => 
     UserModel.findOne({ _id: id })
       .populate('bloodGroup')
       .populate('employeeRole')
+      .populate('employmentType')
       .populate('organization')
       .then((employee: any) => {
         if (!employee) {
@@ -26,6 +27,7 @@ const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => 
               bloodGroup: employee.bloodGroup,
               bankDetailsInfo: employee.bankDetailsInfo,
               employeeRole: employee.employeeRole,
+              employmentType: employee.employmentType,
               organization: employee.organization,
               userRole: employee.userRole,
               passwordResetRequired: employee.passwordResetRequired,

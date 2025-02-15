@@ -9,6 +9,7 @@ const getEmployeeDetails = (id) => {
         userModel_1.default.findOne({ _id: id })
             .populate('bloodGroup')
             .populate('employeeRole')
+            .populate('employmentType')
             .populate('organization')
             .then((employee) => {
             if (!employee) {
@@ -26,6 +27,7 @@ const getEmployeeDetails = (id) => {
                         bloodGroup: employee.bloodGroup,
                         bankDetailsInfo: employee.bankDetailsInfo,
                         employeeRole: employee.employeeRole,
+                        employmentType: employee.employmentType,
                         organization: employee.organization,
                         userRole: employee.userRole,
                         passwordResetRequired: employee.passwordResetRequired,
