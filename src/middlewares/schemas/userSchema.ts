@@ -1,7 +1,7 @@
 import Joi from 'joi';
 
 const userSchema = Joi.object({
-    employeeId:Joi.string().min(3).max(30).optional(),
+    employeeId: Joi.string().min(3).max(30).optional(),
     firstName: Joi.string().min(3).max(30).optional(),
     lastName: Joi.string().min(3).max(30).optional(),
     email: Joi.string().email().required(),

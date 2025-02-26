@@ -1,6 +1,5 @@
 import mongoose, { Document } from "mongoose";
 import BankDetailsInfo from '../types/bankDetailsInfo';
-import { string } from "joi";
 
 interface IUser extends Document {
     id: number;
