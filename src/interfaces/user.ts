@@ -19,8 +19,8 @@ interface IUser extends Document {
     isDeleted?: boolean;
     organization?: mongoose.Schema.Types.ObjectId;
     lastLoggedOn?: Date;
-    employeeId ?:string;
-    dateOfBirth?:Date;
+    employeeId?: string;
+    dateOfBirth?: Date;
 
 };
 
