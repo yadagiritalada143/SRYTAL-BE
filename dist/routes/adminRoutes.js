@@ -29,15 +29,15 @@ const deleteEmployeeRoleByAdminController_1 = __importDefault(require("../contro
 const adminRouter = express_1.default.Router();
 adminRouter.post('/login', commonController_1.default.login);
 adminRouter.post('/registerEmployeeByAdmin', validateJWT_1.default, registrationController_1.default.register);
-adminRouter.get('/getEmployeeDetailsByAdmin/:id', getEmployeeDetailsByAdminController_1.default.getUserDetails);
-adminRouter.put('/updateEmployeeDetailsByAdmin', (0, validateProfileUpdate_1.default)(userSchema_1.default), updateEmployeeDetailsByAdminController_1.default.updateProfile);
+adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT_1.default, getEmployeeDetailsByAdminController_1.default.getUserDetails);
+adminRouter.put('/updateEmployeeDetailsByAdmin', (0, validateProfileUpdate_1.default)(userSchema_1.default), validateJWT_1.default, updateEmployeeDetailsByAdminController_1.default.updateProfile);
 adminRouter.get('/getAllEmployeeDetailsByAdmin', validateJWT_1.default, getAllEmployeeDetailsByAdminController_1.default.getAllEmployeeDetails);
 adminRouter.post('/employeePasswordResetByAdmin', employeePasswordResetByAdminController_1.default.employeePasswordResetByAdmin);
 adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT_1.default, getAllBloodGroupsByAdminController_1.default.getAllBloodGroupsDetails);
 adminRouter.post('/addBloodGroupByAdmin', validateJWT_1.default, addBloodGroupByAdminController_1.default.addNewBloodgroupByAdmin);
 adminRouter.post('/deleteEmployeeByAdmin', validateJWT_1.default, deleteEmployeeDetailsByAdminController_1.default.deleteProfile);
 adminRouter.delete('/deleteBloodGroupByAdmin/:id', validateJWT_1.default, deleteBloodGroupByAdminController_1.default.deleteBloodGroup);
-adminRouter.put('/updateBloodGroupByAdmin', updateBloodGroupByAdminController_1.default.updateBloodGroup);
+adminRouter.put('/updateBloodGroupByAdmin', validateJWT_1.default, updateBloodGroupByAdminController_1.default.updateBloodGroup);
 adminRouter.post('/addEmploymentTypeByAdmin', validateJWT_1.default, addEmploymentTypeByAdminController_1.default.addEmploymentTypeByAdmin);
 adminRouter.get('/getallEmploymentTypesByAdmin', validateJWT_1.default, getAllEmploymentTypesByAdminController_1.default.getAllEmploymentTypesByAdmin);
 adminRouter.put('/updateEmploymentTypeByAdmin', validateJWT_1.default, updateEmploymentTypeByAdminController_1.default.updateEmploymentType);

@@ -7,6 +7,7 @@ import Organization from '../model/organization'
 import IUser from '../interfaces/user';
 
 const UserSchema = new mongoose.Schema({
+    employeeId: { type: mongoose.Schema.Types.String },
     firstName: { type: mongoose.Schema.Types.String },
     lastName: { type: mongoose.Schema.Types.String },
     email: { type: mongoose.Schema.Types.String, required: true, unique: true },
@@ -27,7 +28,8 @@ const UserSchema = new mongoose.Schema({
     applicationWalkThrough: { type: mongoose.Schema.Types.Number },
     isDeleted: { type: mongoose.Schema.Types.Boolean },
     created_on: { type: mongoose.Schema.Types.Date },
-    lastLoggedOn: { type: mongoose.Schema.Types.Date }
+    lastLoggedOn: { type: mongoose.Schema.Types.Date },
+    dateOfBirth: { type: mongoose.Schema.Types.Date },
 }, {
     collection: 'users',
     toObject: { virtuals: true },

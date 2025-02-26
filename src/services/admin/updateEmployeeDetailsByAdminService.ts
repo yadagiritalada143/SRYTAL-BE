@@ -17,7 +17,9 @@ const updateEmployeeProfileByAdmin = async (userDetailsToUpdate: IUser): Promise
                 bankDetailsInfo: userDetailsToUpdate.bankDetailsInfo,
                 employmentType: userDetailsToUpdate.employmentType,
                 employeeRole: userDetailsToUpdate.employeeRole,
-                organization: userDetailsToUpdate.organization
+                organization: userDetailsToUpdate.organization,
+                employeeId: userDetailsToUpdate.employeeId,
+                dateOfBirth: userDetailsToUpdate.dateOfBirth
             })
             .then((responseAfterUpdateProfile: any) => {
                 resolve({

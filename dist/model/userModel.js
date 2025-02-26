@@ -10,6 +10,7 @@ const employmentTypeModel_1 = __importDefault(require("../model/employmentTypeMo
 const employeeRole_1 = __importDefault(require("../model/employeeRole"));
 const organization_1 = __importDefault(require("../model/organization"));
 const UserSchema = new mongoose_1.default.Schema({
+    employeeId: { type: mongoose_1.default.Schema.Types.String },
     firstName: { type: mongoose_1.default.Schema.Types.String },
     lastName: { type: mongoose_1.default.Schema.Types.String },
     email: { type: mongoose_1.default.Schema.Types.String, required: true, unique: true },
@@ -30,7 +31,8 @@ const UserSchema = new mongoose_1.default.Schema({
     applicationWalkThrough: { type: mongoose_1.default.Schema.Types.Number },
     isDeleted: { type: mongoose_1.default.Schema.Types.Boolean },
     created_on: { type: mongoose_1.default.Schema.Types.Date },
-    lastLoggedOn: { type: mongoose_1.default.Schema.Types.Date }
+    lastLoggedOn: { type: mongoose_1.default.Schema.Types.Date },
+    dateOfBirth: { type: mongoose_1.default.Schema.Types.Date },
 }, {
     collection: 'users',
     toObject: { virtuals: true },
