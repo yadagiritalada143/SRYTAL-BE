@@ -28,7 +28,9 @@ const getEmployeeDetailsByAdmin = (id: string): Promise<FetchUserResponse> => {
                             bankDetailsInfo: user.bankDetailsInfo,
                             employmentType: user.employmentType,
                             employeeRole: user.employeeRole,
-                            organization: user.organization
+                            organization: user.organization,
+                            employeeId: user.employeeId,
+                            dateOfBirth: user.dateOfBirth
                         }
                     });
                 }

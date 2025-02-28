@@ -31,6 +31,8 @@ const getEmployeeDetails = (id) => {
                         organization: employee.organization,
                         userRole: employee.userRole,
                         passwordResetRequired: employee.passwordResetRequired,
+                        employeeId: employee.employeeId,
+                        dateOfBirth: employee.dateOfBirth
                     }
                 });
             }
