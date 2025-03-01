@@ -20,5 +20,7 @@ const userSchema = joi_1.default.object({
     employeeRole: joi_1.default.array().optional(),
     organization: joi_1.default.string().optional(),
     dateOfBirth: joi_1.default.date().optional(),
+    presentAddress: joi_1.default.string().optional(),
+    permanentAddress: joi_1.default.string().optional()
 });
 exports.default = userSchema;

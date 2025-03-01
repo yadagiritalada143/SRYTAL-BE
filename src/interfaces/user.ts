@@ -20,7 +20,8 @@ interface IUser extends Document {
     lastLoggedOn?: Date;
     employeeId?: string;
     dateOfBirth?: Date;
-
+    presentAddress?: string;
+    permanentAddress?: string;
 };
 
 export default IUser;

@@ -19,7 +19,9 @@ const updateEmployeeProfileByAdmin = async (userDetailsToUpdate: IUser): Promise
                 employeeRole: userDetailsToUpdate.employeeRole,
                 organization: userDetailsToUpdate.organization,
                 employeeId: userDetailsToUpdate.employeeId,
-                dateOfBirth: userDetailsToUpdate.dateOfBirth
+                dateOfBirth: userDetailsToUpdate.dateOfBirth,
+                presentAddress: userDetailsToUpdate.presentAddress,
+                permanentAddress: userDetailsToUpdate.permanentAddress
             })
             .then((responseAfterUpdateProfile: any) => {
                 resolve({
