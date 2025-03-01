@@ -32,7 +32,9 @@ const getEmployeeDetails = (id) => {
                         userRole: employee.userRole,
                         passwordResetRequired: employee.passwordResetRequired,
                         employeeId: employee.employeeId,
-                        dateOfBirth: employee.dateOfBirth
+                        dateOfBirth: employee.dateOfBirth,
+                        presentAddress: employee.presentAddress,
+                        permanentAddress: employee.permanentAddress
                     }
                 });
             }
