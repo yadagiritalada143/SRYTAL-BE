@@ -1,13 +1,13 @@
-import UserModel from '../../model/userModel';
+import TalentPoolCandidatesModel from '../../model/talentPoolCandidatesModel';
 
 interface deletePoolCandidateResponse {
     success: boolean;
 }
 
-const hardDeletePoolCandidateByAdmin = async (userIdToDelete: any): Promise<deletePoolCandidateResponse> => {
+const hardDeletePoolCandidateByAdmin = async (poolCandidateIdToDelete: any): Promise<deletePoolCandidateResponse> => {
     return new Promise(async (resolve, reject) => {
-        const result = await UserModel.deleteOne(
-            { _id: userIdToDelete })
+        await TalentPoolCandidatesModel.deleteOne(
+            { _id: poolCandidateIdToDelete })
             .then((responseAfterPoolCandidateHardDelete: any) => {
                 resolve({ success: true });
             })
@@ -18,10 +18,10 @@ const hardDeletePoolCandidateByAdmin = async (userIdToDelete: any): Promise<dele
     });
 }
 
-const softDeletePoolCandidateByAdmin = async (userIdToDelete: string): Promise<deletePoolCandidateResponse> => {
+const softDeletePoolCandidateByAdmin = async (poolCandidateIdToDelete: string): Promise<deletePoolCandidateResponse> => {
     return new Promise(async (resolve, reject) => {
-        const result = await UserModel.updateOne(
-            { _id: userIdToDelete },
+        await TalentPoolCandidatesModel.updateOne(
+            { _id: poolCandidateIdToDelete },
             { isDeleted: true })
             .then((responseAfterPoolCandidateSoftDelete: any) => {
                 resolve({ success: true });

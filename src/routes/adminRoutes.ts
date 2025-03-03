@@ -45,6 +45,6 @@ adminRouter.post('/addEmployeeRoleByAdmin', validateJWT, addEmployeeRoleByAdminC
 adminRouter.get('/getAllEmployeeRoleByAdmin', validateJWT, getAllEmployeeRoleByAdminController.getAllEmployeeRolesByAdmin);
 adminRouter.put('/updateEmployeeRoleByAdmin', validateJWT, updateEmployeeRoleByAdminController.updateEmployeeRole);
 adminRouter.delete('/deleteEmployeeRoleByAdmin/:id', validateJWT, deleteEmployeeRoleByAdminController.deleteEmployeeRole);
-adminRouter.delete('/deletePoolCandidatesByAdmin/:id',validateJWT, deletePoolCandidateByadminController.deletePoolCandidateByAdmin)
+adminRouter.delete('/deletePoolCandidatesByAdmin/:id', validateJWT, deletePoolCandidateByadminController.deletePoolCandidateByAdmin);
 
 export default adminRouter;

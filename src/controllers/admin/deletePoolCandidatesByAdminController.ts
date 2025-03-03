@@ -3,8 +3,8 @@ import candidateAdminService from '../../services/admin/deletePoolCandidatesByAd
 import { DELETE_ERROR_MESSAGES } from '../../constants/admin/manageUserMessages';
 
 const deletePoolCandidateByAdmin = (req: Request, res: Response) => {
-    const { id, confirmDelete } = req.body;
-
+    const { confirmDelete } = req.body;
+    const { id } = req.params;
     if (confirmDelete) {
         candidateAdminService
             .hardDeletePoolCandidateByAdmin(id)
