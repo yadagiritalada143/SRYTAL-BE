@@ -1,9 +1,9 @@
-import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-import csrf from "csrf-token";
-import UserModel from "../../model/userModel";
-import VisitorsCountModel from "../../model/visitorsCountModel";
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
+import csrf from 'csrf-token';
+import UserModel from '../../model/userModel';
+import VisitorsCountModel from '../../model/visitorsCountModel';
 
 dotenv.config();
 
@@ -40,7 +40,7 @@ const updateVisitorCount = async () => {
 const createCSRFToken = (): Promise<string> => {
   return new Promise((resolve, reject) => {
     try {
-      const token = csrf.createSync("auth-module project");
+      const token = csrf.createSync('auth-module project');
       resolve(token);
     } catch (error) {
       reject(error);
@@ -71,7 +71,7 @@ const authenticateAccount = ({
                     organizationId: user.organization,
                   },
                   SECRET_KEY,
-                  { expiresIn: "20m" }
+                  { expiresIn: '20m' }
                 );
                 const refreshToken = jwt.sign(
                   {
@@ -80,7 +80,7 @@ const authenticateAccount = ({
                     organizationId: user.organization,
                   },
                   SECRET_KEY,
-                  { expiresIn: "2d" }
+                  { expiresIn: '2d' }
                 );
                 user.lastLoggedOn = new Date();
                 user.refreshToken = refreshToken;
@@ -101,7 +101,7 @@ const authenticateAccount = ({
         }
       })
       .catch((error: any) => {
-        console.error("Error in authentication:", error);
+        console.error('Error in authentication:', error);
         reject({ success: false });
       });
   });
@@ -118,26 +118,26 @@ const refreshToken = async (token: string): Promise<string> => {
         organizationId: user.organizationId,
       },
       SECRET_KEY,
-      { expiresIn: "20m" }
+      { expiresIn: '20m' }
     );
 
     const userDetails = await UserModel.findOne({ _id: user.userId });
 
     if (!userDetails || !userDetails.refreshToken) {
-      throw new Error("Invalid user token");
+      throw new Error('Invalid user token');
     }
 
     return newToken;
   } catch (error) {
-    console.log("Error in refresh token", error);
-    throw new Error("Invalid user token");
+    console.log('Error in refresh token', error);
+    throw new Error('Invalid user token');
   }
 };
 
 const logout = async (userId: string) => {
   await UserModel.findOneAndUpdate(
     { _id: userId },
-    { $set: { refreshToken: "" } }
+    { $set: { refreshToken: '' } }
   );
 };
 

@@ -1,10 +1,10 @@
-import { Request, Response } from "express";
-import commonService from "../../services/common/manageCommonService";
+import { Request, Response } from 'express';
+import commonService from '../../services/common/manageCommonService';
 import {
   COMMON_ERRORS,
   LOGIN_ERROR_MESSAGE,
-} from "../../constants/commonErrorMessages";
-import commonServices from "../../services/common/manageCommonService";
+} from '../../constants/commonErrorMessages';
+import commonServices from '../../services/common/manageCommonService';
 
 const login = (req: Request, res: Response): any => {
   const { email, password } = req.body;
@@ -13,8 +13,8 @@ const login = (req: Request, res: Response): any => {
     .then((authResponse: any) => {
       if (authResponse.success) {
         return commonServices.createCSRFToken().then((token: any) => {
-          res.set("X-CSRF-Token", token);
-          res.cookie("jwt", authResponse.token);
+          res.set('X-CSRF-Token', token);
+          res.cookie('jwt', authResponse.token);
           res.json({
             success: true,
             id: authResponse.id,
@@ -59,21 +59,21 @@ const updateVisitorCount = (req: Request, res: Response) => {
 };
 
 const refreshToken = (req: Request, res: Response) => {
-  const refreshToken: any = req.headers["refresh_token"];
+  const refreshToken: any = req.headers['refresh_token'];
 
   if (!refreshToken)
     return res
       .status(401)
-      .json({ message: "No refresh token. Please log in again." });
+      .json({ message: 'No refresh token. Please log in again.' });
   commonService
     .refreshToken(refreshToken)
     .then((token) => res.status(200).json({ token }))
     .catch((error) => {
-      if (error === "Invalid user token")
-        console.log("Failed to refresh the token", error);
+      if (error === 'Invalid user token')
+        console.log('Failed to refresh the token', error);
       res.status(403).json({
         success: false,
-        message: "Invalid user token",
+        message: 'Invalid user token',
       });
     });
 };
@@ -81,7 +81,7 @@ const refreshToken = (req: Request, res: Response) => {
 const logout = (req: Request, res: Response) => {
   const userId = req.body.userId;
   commonService.logout(userId).then(() => {
-    res.status(200).json({ success: true, message: "Successfully logged out" });
+    res.status(200).json({ success: true, message: 'Successfully logged out' });
   });
 };
 

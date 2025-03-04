@@ -1,5 +1,5 @@
-import mongoose, { Document } from "mongoose";
-import BankDetailsInfo from "../types/bankDetailsInfo";
+import mongoose, { Document } from 'mongoose';
+import BankDetailsInfo from '../types/bankDetailsInfo';
 
 interface IUser extends Document {
   id: number;

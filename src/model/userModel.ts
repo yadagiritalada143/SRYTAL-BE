@@ -1,10 +1,10 @@
-import mongoose from "mongoose";
-import uniqueValidator from "mongoose-unique-validator";
-import Bloodgroup from "../model/bloodGroupModel";
-import Employmenttype from "../model/employmentTypeModel";
-import Employeerole from "../model/employeeRole";
-import Organization from "../model/organization";
-import IUser from "../interfaces/user";
+import mongoose from 'mongoose';
+import uniqueValidator from 'mongoose-unique-validator';
+import Bloodgroup from '../model/bloodGroupModel';
+import Employmenttype from '../model/employmentTypeModel';
+import Employeerole from '../model/employeeRole';
+import Organization from '../model/organization';
+import IUser from '../interfaces/user';
 
 const UserSchema = new mongoose.Schema(
   {
@@ -46,9 +46,9 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.plugin(uniqueValidator);
 
-UserSchema.virtual("id").get(function () {
+UserSchema.virtual('id').get(function () {
   return String(this._id);
 });
 
-const UserModel = mongoose.model<IUser>("UserSchema", UserSchema);
+const UserModel = mongoose.model<IUser>('UserSchema', UserSchema);
 export default UserModel;
