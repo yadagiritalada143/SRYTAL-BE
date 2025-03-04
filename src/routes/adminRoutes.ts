@@ -1,26 +1,28 @@
-import express, { Router } from "express";
-import registerEmployeeByAdminController from "../controllers/admin/registrationController";
-import getEmployeeDetailsByAdminController from "../controllers/admin/getEmployeeDetailsByAdminController";
-import updateEmployeeDetailsByAdminController from "../controllers/admin/updateEmployeeDetailsByAdminController";
-import commonController from "../controllers/common/commonController";
-import userSchema from "../middlewares/schemas/userSchema";
-import validateProfileRequest from "../middlewares/validateProfileUpdate";
-import getAllEmployeeDetailsByAdminController from "../controllers/admin/getAllEmployeeDetailsByAdminController";
-import employeePasswordResetByAdminController from "../controllers/admin/employeePasswordResetByAdminController";
-import getAllBloodGroupsByAdminController from "../controllers/admin/getAllBloodGroupsByAdminController";
-import addBloodGroupByAdminController from "../controllers/admin/addBloodGroupByAdminController";
-import deleteEmployeeDetailsByAdminController from "../controllers/admin/deleteEmployeeDetailsByAdminController";
-import validateJWT from "../middlewares/validateJWT";
-import deleteBloodGroupByAdminController from "../controllers/admin/deleteBloodGroupByAdminController";
-import updateBloodGroupByAdminController from "../controllers/admin/updateBloodGroupByAdminController";
-import addEmploymentTypeByAdminController from "../controllers/admin/addEmploymentTypeByAdminController";
-import getAllEmploymentTypesByAdminController from "../controllers/admin/getAllEmploymentTypesByAdminController";
-import updateEmploymentTypeByAdminController from "../controllers/admin/updateEmploymentTypeByAdminController";
-import deleteEmploymentTypeByAdminController from "../controllers/admin/deleteEmploymentTypeByAdminController";
-import addEmployeeRoleByAdminController from "../controllers/admin/addEmployeeRoleByAdminController";
-import getAllEmployeeRoleByAdminController from "../controllers/admin/getAllEmployeeRoleByAdminController";
-import updateEmployeeRoleByAdminController from "../controllers/admin/updateEmployeeRoleByAdminController";
-import deleteEmployeeRoleByAdminController from "../controllers/admin/deleteEmployeeRoleByAdminController";
+import express, { Router } from 'express';
+import registerEmployeeByAdminController from '../controllers/admin/registrationController';
+import getEmployeeDetailsByAdminController from '../controllers/admin/getEmployeeDetailsByAdminController';
+import updateEmployeeDetailsByAdminController from '../controllers/admin/updateEmployeeDetailsByAdminController';
+import commonController from '../controllers/common/commonController';
+import userSchema from '../middlewares/schemas/userSchema';
+import validateProfileRequest from '../middlewares/validateProfileUpdate';
+import getAllEmployeeDetailsByAdminController from '../controllers/admin/getAllEmployeeDetailsByAdminController';
+import employeePasswordResetByAdminController from '../controllers/admin/employeePasswordResetByAdminController';
+import getAllBloodGroupsByAdminController from '../controllers/admin/getAllBloodGroupsByAdminController';
+import addBloodGroupByAdminController from '../controllers/admin/addBloodGroupByAdminController';
+import deleteEmployeeDetailsByAdminController from '../controllers/admin/deleteEmployeeDetailsByAdminController';
+import validateJWT from '../middlewares/validateJWT';
+import deleteBloodGroupByAdminController from '../controllers/admin/deleteBloodGroupByAdminController';
+import updateBloodGroupByAdminController from '../controllers/admin/updateBloodGroupByAdminController';
+import addEmploymentTypeByAdminController from '../controllers/admin/addEmploymentTypeByAdminController';
+import getAllEmploymentTypesByAdminController from '../controllers/admin/getAllEmploymentTypesByAdminController';
+import updateEmploymentTypeByAdminController from '../controllers/admin/updateEmploymentTypeByAdminController';
+import deleteEmploymentTypeByAdminController from '../controllers/admin/deleteEmploymentTypeByAdminController';
+import addEmployeeRoleByAdminController from '../controllers/admin/addEmployeeRoleByAdminController';
+import getAllEmployeeRoleByAdminController from '../controllers/admin/getAllEmployeeRoleByAdminController';
+import updateEmployeeRoleByAdminController from '../controllers/admin/updateEmployeeRoleByAdminController';
+import deleteEmployeeRoleByAdminController from '../controllers/admin/deleteEmployeeRoleByAdminController';
+import deletePoolCandidateByadminController from '../controllers/admin/deletePoolCandidatesByAdminController';
+
 
 const adminRouter: Router = express.Router();
 
@@ -116,6 +118,7 @@ adminRouter.delete(
   "/deleteEmployeeRoleByAdmin/:id",
   validateJWT,
   deleteEmployeeRoleByAdminController.deleteEmployeeRole
-);
+);;
+adminRouter.delete('/deletePoolCandidatesByAdmin/:id', validateJWT, deletePoolCandidateByadminController.deletePoolCandidateByAdmin);
 
 export default adminRouter;

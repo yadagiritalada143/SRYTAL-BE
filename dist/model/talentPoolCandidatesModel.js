@@ -16,6 +16,7 @@ const TalentPoolCandidatesSchema = new mongoose_1.default.Schema({
     totalYearsOfExperience: { type: mongoose_1.default.Schema.Types.Number },
     relaventYearsOfExperience: { type: mongoose_1.default.Schema.Types.Number },
     evaluatedSkills: { type: mongoose_1.default.Schema.Types.String },
+    isDeleted: { type: mongoose_1.default.Schema.Types.Boolean },
     comments: [{
             userId: { type: mongoose_1.default.Schema.Types.ObjectId, ref: userModel_1.default },
             callStartsAt: { type: mongoose_1.default.Schema.Types.Date },

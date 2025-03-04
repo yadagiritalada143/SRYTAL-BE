@@ -26,6 +26,7 @@ const addEmployeeRoleByAdminController_1 = __importDefault(require("../controlle
 const getAllEmployeeRoleByAdminController_1 = __importDefault(require("../controllers/admin/getAllEmployeeRoleByAdminController"));
 const updateEmployeeRoleByAdminController_1 = __importDefault(require("../controllers/admin/updateEmployeeRoleByAdminController"));
 const deleteEmployeeRoleByAdminController_1 = __importDefault(require("../controllers/admin/deleteEmployeeRoleByAdminController"));
+const deletePoolCandidatesByAdminController_1 = __importDefault(require("../controllers/admin/deletePoolCandidatesByAdminController"));
 const adminRouter = express_1.default.Router();
 adminRouter.post('/login', commonController_1.default.login);
 adminRouter.post('/registerEmployeeByAdmin', validateJWT_1.default, registrationController_1.default.register);
@@ -46,4 +47,5 @@ adminRouter.post('/addEmployeeRoleByAdmin', validateJWT_1.default, addEmployeeRo
 adminRouter.get('/getAllEmployeeRoleByAdmin', validateJWT_1.default, getAllEmployeeRoleByAdminController_1.default.getAllEmployeeRolesByAdmin);
 adminRouter.put('/updateEmployeeRoleByAdmin', validateJWT_1.default, updateEmployeeRoleByAdminController_1.default.updateEmployeeRole);
 adminRouter.delete('/deleteEmployeeRoleByAdmin/:id', validateJWT_1.default, deleteEmployeeRoleByAdminController_1.default.deleteEmployeeRole);
+adminRouter.delete('/deletePoolCandidatesByAdmin/:id', validateJWT_1.default, deletePoolCandidatesByAdminController_1.default.deletePoolCandidateByAdmin);
 exports.default = adminRouter;
