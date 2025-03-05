@@ -5,3 +5,7 @@ export const DELETE_ERROR_MESSAGES = {
     DELETE_POOL_CANDIDATE_SOFT_DELETE_ERROR_MESSAGE:'Error occured while (soft) deleting pool candidate !!',
     DELETE_POOL_CANDIDATE_HARD_DELETE_ERROR_MESSAGE: 'Error occured while (hard) deleting pool candidate !!'
 };
+export const DELETE_POOL_COMPANY_ERROR_MESSAGE = {
+    DELETE_POOL_COMPANY_SOFT_DELETE_ERROR_MESSAGE: 'Error occured while (soft) deleting pool company !!',
+    DELETE_POOL_COMPANY_HARD_DELETE_ERROR_MESSAGE: 'Error occured while (hard) deleting pool company !!'
+}
