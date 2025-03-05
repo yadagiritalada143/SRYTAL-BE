@@ -3,10 +3,11 @@ import uniqueValidator from 'mongoose-unique-validator';
 import Bloodgroup from '../model/bloodGroupModel';
 import Employmenttype from '../model/employmentTypeModel';
 import Employeerole from '../model/employeeRole';
-import Organization from '../model/organization'
+import Organization from '../model/organization';
 import IUser from '../interfaces/user';
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new mongoose.Schema(
+  {
     employeeId: { type: mongoose.Schema.Types.String },
     firstName: { type: mongoose.Schema.Types.String },
     lastName: { type: mongoose.Schema.Types.String },
@@ -17,12 +18,15 @@ const UserSchema = new mongoose.Schema({
     passwordResetRequired: { type: mongoose.Schema.Types.String },
     bloodGroup: { type: mongoose.Schema.Types.ObjectId, ref: Bloodgroup },
     bankDetailsInfo: {
-        accountHolderName: { type: mongoose.Schema.Types.String },
-        accountNumber: { type: mongoose.Schema.Types.String },
-        ifscCode: { type: mongoose.Schema.Types.String }
+      accountHolderName: { type: mongoose.Schema.Types.String },
+      accountNumber: { type: mongoose.Schema.Types.String },
+      ifscCode: { type: mongoose.Schema.Types.String },
     },
     profileImage: { type: mongoose.Schema.Types.String },
-    employmentType: { type: mongoose.Schema.Types.ObjectId, ref: Employmenttype },
+    employmentType: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: Employmenttype,
+    },
     employeeRole: [{ type: mongoose.Schema.Types.ObjectId, ref: Employeerole }],
     organization: { type: mongoose.Schema.Types.ObjectId, ref: Organization },
     applicationWalkThrough: { type: mongoose.Schema.Types.Number },
@@ -31,17 +35,19 @@ const UserSchema = new mongoose.Schema({
     lastLoggedOn: { type: mongoose.Schema.Types.Date },
     dateOfBirth: { type: mongoose.Schema.Types.Date },
     presentAddress: { type: mongoose.Schema.Types.String },
-    permanentAddress: { type: mongoose.Schema.Types.String }
-}, {
+    permanentAddress: { type: mongoose.Schema.Types.String },
+    refreshToken: { type: mongoose.Schema.Types.String },
+  },
+  {
     collection: 'users',
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
-});
+  });
 
 UserSchema.plugin(uniqueValidator);
 
 UserSchema.virtual('id').get(function () {
-    return String(this._id);
+  return String(this._id);
 });
 
 const UserModel = mongoose.model<IUser>('UserSchema', UserSchema);

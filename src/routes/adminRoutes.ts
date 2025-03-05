@@ -28,6 +28,8 @@ import deletePoolCompanyByAdminController from '../controllers/admin/deletePoolC
 const adminRouter: Router = express.Router();
 
 adminRouter.post('/login', commonController.login);
+adminRouter.get('/refreshToken', commonController.refreshToken);
+adminRouter.get('/logout', validateJWT, commonController.logout);
 adminRouter.post('/registerEmployeeByAdmin', validateJWT, registerEmployeeByAdminController.register);
 adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetailsByAdminController.getUserDetails);
 adminRouter.put('/updateEmployeeDetailsByAdmin', validateProfileRequest(userSchema), validateJWT, updateEmployeeDetailsByAdminController.updateProfile);
