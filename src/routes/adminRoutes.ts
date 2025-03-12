@@ -24,7 +24,7 @@ import deleteEmployeeRoleByAdminController from '../controllers/admin/deleteEmpl
 import deletePoolCandidateByadminController from '../controllers/admin/deletePoolCandidatesByAdminController';
 import deletePoolCompanyByAdminController from '../controllers/admin/deletePoolCompanyByAdminController';
 import addPackageByAdminController from '../controllers/admin/addPackageByAdminController';
-
+import getAllPackagesByAdminController from '../controllers/admin/getAllPackagesByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -51,6 +51,7 @@ adminRouter.put('/updateEmployeeRoleByAdmin', validateJWT, updateEmployeeRoleByA
 adminRouter.delete('/deleteEmployeeRoleByAdmin/:id', validateJWT, deleteEmployeeRoleByAdminController.deleteEmployeeRole);
 adminRouter.delete('/deletePoolCandidatesByAdmin/:id', validateJWT, deletePoolCandidateByadminController.deletePoolCandidateByAdmin);
 adminRouter.delete('/deletePoolCompanyByAdmin/:id', validateJWT, deletePoolCompanyByAdminController.deletePoolCompanyByAdmin);
-adminRouter.post('/addPackageByAdmin', validateJWT, addPackageByAdminController.addPackageByAdminController)
+adminRouter.post('/addPackageByAdmin', validateJWT, addPackageByAdminController.addPackageByAdminController);
+adminRouter.get('/getAllPackagesByAdmin', validateJWT, getAllPackagesByAdminController.getAllPacakgesDetails);
 
 export default adminRouter;
