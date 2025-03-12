@@ -1,7 +1,7 @@
 
 import { Request, Response } from 'express';
 import deletePackageService from '../../services/admin/deletePackageByAdminService';
-import { DELETE_ERROR_MESSAGES } from '../../constants/admin/manageUserMessages';
+import { PACKAGE_ERROR_MESSAGES } from '../../constants/admin/packageMessages';
 
 const deletePackage = (req: Request, res: Response) => {
     const id = req.params.id;
@@ -12,7 +12,7 @@ const deletePackage = (req: Request, res: Response) => {
         })
         .catch((error: any) => {
             console.error(`Error in deleting package: ${error}`);
-            res.status(500).json({ success: false, message: DELETE_ERROR_MESSAGES.DELETE_BLOOD_GROUP_DELETE_ERROR_MESSAGE });
+            res.status(500).json({ success: false, message: PACKAGE_ERROR_MESSAGES.PACKAGE_DELETE_ERROR_MESSAGE });
         });
 }
 
