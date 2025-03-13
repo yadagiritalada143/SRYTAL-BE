@@ -5,19 +5,18 @@ interface deleteBloodGroupResponse {
     responseAfterDelete?: any;
 }
 
-const DeleteBloodGroupByAdmin = async (id: any):Promise<deleteBloodGroupResponse>=> {
+const deleteBloodGroupByAdmin = async (id: any): Promise<deleteBloodGroupResponse> => {
     try {
         const result = await BloodgroupModel.findByIdAndDelete({ _id: id });
-        if(result) {
-            return {success: true, responseAfterDelete: result};
+        if (result) {
+            return { success: true, responseAfterDelete: result };
         } else {
-            return {success: false};
+            return { success: false };
         }
-    } catch(error: any) {
+    } catch (error: any) {
         console.error('Error in  deleting blood group: ', error);
-        return {success: false, responseAfterDelete: error}
+        return { success: false, responseAfterDelete: error }
     }
 }
 
-export default { DeleteBloodGroupByAdmin };
-
+export default { deleteBloodGroupByAdmin };

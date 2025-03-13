@@ -3,7 +3,7 @@ import updatePackageService from '../../services/admin/updatePackageByAdminServi
 import { PACKAGE_ERROR_MESSAGES } from '../../constants/admin/packageMessages';
 
 const updatePackageByAdminController = (req: Request, res: Response) => {
-    const { id, detailsToUpdate} = req.body;
+    const { id, detailsToUpdate } = req.body;
     updatePackageService
         .updatePackageByAdmin(id, detailsToUpdate)
         .then((updatePackageResponse: any) => {
