@@ -2,6 +2,7 @@ export const PACKAGE_ERROR_MESSAGES = {
     PACKAGE_FETCH_ERROR_MESSAGE: 'Error occured while getting the Packages !!',
     PACKAGE_ADD_ERROR_MESSAGE: 'Error occured while adding the Packages !!',
     PACKAGE_UNEXPECTED_ERROR_MESSAGE: 'Something went wrong while adding the Package !!',
+    PACKAGE_UPDATING_ERROR_MESSAGE: 'Error occured while updating the Packages !!'
 };
 
 export const PACKAGE_SUCCESS_MESSAGES = {
