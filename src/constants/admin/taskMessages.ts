@@ -3,6 +3,4 @@ export const TASK_ERROR_MESSAGES = {
    
 };
 
-export const PACKAGE_SUCCESS_MESSAGES = {
-    PACKAGE_ADD_SUCCESS_MESSAGE: 'Packages added Successfully !',
-}
+
