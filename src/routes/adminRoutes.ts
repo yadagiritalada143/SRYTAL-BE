@@ -58,6 +58,6 @@ adminRouter.post('/addPackageByAdmin', validateJWT, addPackageByAdminController.
 adminRouter.get('/getAllPackagesByAdmin', validateJWT, getAllPackagesByAdminController.getAllPacakgesDetails);
 adminRouter.delete('/deletePackageByAdmin/:id', validateJWT, deletePackageByAdminController.deletePackage);
 adminRouter.put('/updatePackageByAdmin', validateJWT, updatePackageByAdminController.updatePackageByAdminController);
-adminRouter.post('/addTaskToPackageByAdmin',addTaskToPackageByAdminController.addTasktoPackageByAdminController)
+adminRouter.post('/addTaskToPackageByAdmin', validateJWT, addTaskToPackageByAdminController.addTasktoPackageByAdminController)
 
 export default adminRouter;

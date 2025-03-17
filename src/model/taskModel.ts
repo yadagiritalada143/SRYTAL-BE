@@ -6,7 +6,7 @@ const TaskSchema = new mongoose.Schema({
     taskTitle: { type: mongoose.Schema.Types.String, required: true, unique: true },
 
 }, {
-    collection: 'Tasks',
+    collection: 'tasks',
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
 });
