@@ -3,7 +3,7 @@ import uniqueValidator from 'mongoose-unique-validator';
 import { ITask } from '../interfaces/task';
 
 const TaskSchema = new mongoose.Schema({
-    taskTitle: { type: mongoose.Schema.Types.String, required: true, unique: true },
+    task: { type: mongoose.Schema.Types.String, required: true, unique: true },
 
 }, {
     collection: 'tasks',
@@ -14,4 +14,5 @@ const TaskSchema = new mongoose.Schema({
 TaskSchema.plugin(uniqueValidator);
 
 const TaskModel = mongoose.model<ITask>('TaskModel', TaskSchema);
+
 export default TaskModel;
