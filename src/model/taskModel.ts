@@ -3,8 +3,7 @@ import uniqueValidator from 'mongoose-unique-validator';
 import { ITask } from '../interfaces/task';
 
 const TaskSchema = new mongoose.Schema({
-    task: { type: mongoose.Schema.Types.String, required: true, unique: true },
-
+    title: { type: mongoose.Schema.Types.String, required: true, unique: true },
 }, {
     collection: 'tasks',
     toObject: { virtuals: true },
