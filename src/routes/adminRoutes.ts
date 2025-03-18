@@ -28,6 +28,7 @@ import getAllPackagesByAdminController from '../controllers/admin/getAllPackages
 import deletePackageByAdminController from '../controllers/admin/deletePackageByAdminController';
 import updatePackageByAdminController from '../controllers/admin/updatePackageByAdminController';
 import addTaskToPackageByAdminController from '../controllers/admin/addTaskToPackageByAdminController';
+import updateTaskByAdminController from '../controllers/admin/updateTaskByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -58,6 +59,7 @@ adminRouter.post('/addPackageByAdmin', validateJWT, addPackageByAdminController.
 adminRouter.get('/getAllPackagesByAdmin', validateJWT, getAllPackagesByAdminController.getAllPacakgesDetails);
 adminRouter.delete('/deletePackageByAdmin/:id', validateJWT, deletePackageByAdminController.deletePackage);
 adminRouter.put('/updatePackageByAdmin', validateJWT, updatePackageByAdminController.updatePackageByAdminController);
-adminRouter.post('/addTaskToPackageByAdmin', validateJWT, addTaskToPackageByAdminController.addTasktoPackageByAdminController)
+adminRouter.post('/addTaskToPackageByAdmin', validateJWT, addTaskToPackageByAdminController.addTasktoPackageByAdminController);
+adminRouter.put('/updateTaskByAdmin', validateJWT, updateTaskByAdminController.updateTaskByAdminController);
 
 export default adminRouter;
