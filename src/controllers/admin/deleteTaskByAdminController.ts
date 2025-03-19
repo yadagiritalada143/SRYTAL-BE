@@ -10,7 +10,7 @@ const deleteTaskByAdmin = (req: Request, res: Response) => {
             res.status(200).json(deleteTaskResponse);
         })
         .catch((error: any) => {
-            console.error(`Error in deleting employee role: ${error}`);
+            console.error(`Error in deleting task: ${error}`);
             res.status(500).json({ success: false, message: TASK_ERROR_MESSAGES.TASK_DELETE_ERROR_MESSAGE });
         });
 }
