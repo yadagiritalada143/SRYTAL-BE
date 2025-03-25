@@ -10,6 +10,7 @@ const PackagesSchema = new mongoose.Schema({
     startDate: { type: mongoose.Schema.Types.Date },
     endDate: { type: mongoose.Schema.Types.Date },
     tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: TaskModel }],
+    approver: { type: mongoose.Schema.Types.ObjectId }
 }, {
     collection: 'packages',
     toObject: { virtuals: true },
