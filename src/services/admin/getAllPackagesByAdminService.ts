@@ -9,6 +9,7 @@ const getAllPackagesByAdmin = (): Promise<FetchPackagesDetailsResponse> => {
     return new Promise((resolve, reject) => {
         PackagesModel.find({})
             .populate('tasks')
+            .populate('approvers', 'firstName lastName')
             .then((pacakgesList: any) => {
                 if (!pacakgesList) {
                     reject({ success: false });
