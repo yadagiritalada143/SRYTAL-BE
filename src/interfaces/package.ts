@@ -6,5 +6,5 @@ export interface IPackage extends Document {
     startDate?: Date;
     endDate?: Date;
     tasks?: mongoose.Schema.Types.Array;
-    approver:mongoose.Schema.Types.Array;
+    approvers?: mongoose.Schema.Types.Array;
 }
