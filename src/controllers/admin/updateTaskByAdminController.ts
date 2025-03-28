@@ -3,9 +3,10 @@ import updateTaskService from '../../services/admin/updateTaskByAdminService';
 import { TASK_ERROR_MESSAGES } from '../../constants/admin/taskMessages';
 
 const updateTaskByAdminController = (req: Request, res: Response) => {
-    const { id, title } = req.body;
+    const taskDetails = req.body;
+    taskDetails.lastUpdatedBy = new Date();
     updateTaskService
-        .updateTaskByAdmin(id, title)
+        .updateTaskByAdmin(taskDetails)
         .then((updateTaskResponse: any) => {
             res.status(200).json(updateTaskResponse);
         })
