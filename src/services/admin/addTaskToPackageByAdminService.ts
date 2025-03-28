@@ -5,9 +5,11 @@ import PackagesModel from '../../model/packageModel';
 const addTaskToPackageByAdmin = async (data: any): Promise<any> => {
     const taskData = new TaskModel(data);
     const afterAdd = await taskData.save();
-    const tasksArray = [];
-    tasksArray.push(afterAdd.id);
-    const result = await PackagesModel.updateOne({ _id: data.packageId }, { tasks: tasksArray });
+    const result = await PackagesModel.findByIdAndUpdate({ _id: data.packageId }, {
+        $push: {
+            tasks: afterAdd.id
+        }
+    });
     if (result) {
         return { success: true, responseAfterUpdate: result };
     } else {
