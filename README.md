@@ -6,3 +6,5 @@ Clone the code
     - Open terminal and use the command "npm i"
     - Run the command to build "npm build"
     - Run the command to start "npm run start"
+
+Make sure you have placed .env file before running the application.
