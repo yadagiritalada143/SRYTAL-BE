@@ -5,9 +5,9 @@ interface updateTaskResponse {
     responseAfterUpdate?: any;
 }
 
-const updateTaskByAdmin = async (id: string, title: string): Promise<updateTaskResponse> => {
+const updateTaskByAdmin = async (taskDetails: any): Promise<updateTaskResponse> => {
     try {
-        const result = await TaskModel.updateOne({ _id: id }, { title });
+        const result = await TaskModel.updateOne({ _id: taskDetails.id }, { ...taskDetails });
         if (result) {
             return { success: true, responseAfterUpdate: result };
         } else {

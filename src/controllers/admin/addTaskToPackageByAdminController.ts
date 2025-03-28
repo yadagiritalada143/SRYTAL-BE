@@ -3,10 +3,14 @@ import addTaskPackageToByAdminService from '../../services/admin/addTaskToPackag
 import { TASK_ERROR_MESSAGES } from '../../constants/admin/taskMessages';
 
 const addTasktoPackageByAdminController = (req: Request, res: Response) => {
+    let taskDetails = req.body;
+    taskDetails.createdAt = new Date();
+    taskDetails.lastUpdatedAt = new Date();
+    taskDetails.createdBy = req.body.userId;
     addTaskPackageToByAdminService
-        .addTaskToPackageByAdmin(req.body)
+        .addTaskToPackageByAdmin(taskDetails)
         .then((responseAfteraddingTask: any) => {
-            res.status(200).json({ succes: true });
+            res.status(200).json(responseAfteraddingTask);
         })
         .catch((error: any) => {
             console.log(`Error while adding Tasks: ${error}`);
