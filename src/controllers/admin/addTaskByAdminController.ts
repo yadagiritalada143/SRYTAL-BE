@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import addTaskPackageToByAdminService from '../../services/admin/addTaskToPackageByAdminService';
+import addTaskByAdminService from '../../services/admin/addTaskByAdminService';
 import { TASK_ERROR_MESSAGES } from '../../constants/admin/taskMessages';
 
-const addTasktoPackageByAdminController = (req: Request, res: Response) => {
+const addTaskByAdminController = (req: Request, res: Response) => {
     let taskDetails = req.body;
     taskDetails.createdAt = new Date();
     taskDetails.lastUpdatedAt = new Date();
     taskDetails.createdBy = req.body.userId;
-    addTaskPackageToByAdminService
-        .addTaskToPackageByAdmin(taskDetails)
+    addTaskByAdminService
+        .addTaskByAdmin(taskDetails)
         .then((responseAfteraddingTask: any) => {
             res.status(200).json(responseAfteraddingTask);
         })
@@ -18,4 +18,4 @@ const addTasktoPackageByAdminController = (req: Request, res: Response) => {
         });
 };
 
-export default { addTasktoPackageByAdminController };
+export default { addTaskByAdminController };
