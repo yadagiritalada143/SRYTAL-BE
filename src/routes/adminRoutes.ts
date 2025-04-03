@@ -28,7 +28,7 @@ import getAllPackagesByAdminController from '../controllers/admin/getAllPackages
 import getPackageDetailsByAdminController from '../controllers/admin/getPackageDetailsByAdminController';
 import deletePackageByAdminController from '../controllers/admin/deletePackageByAdminController';
 import updatePackageByAdminController from '../controllers/admin/updatePackageByAdminController';
-import addTaskToPackageByAdminController from '../controllers/admin/addTaskToPackageByAdminController';
+import addTaskToPackageByAdminController from '../controllers/admin/addTaskByAdminController';
 import updateTaskByAdminController from '../controllers/admin/updateTaskByAdminController';
 import deleteTaskByAdminController from '../controllers/admin/deleteTaskByAdminController';
 
@@ -62,8 +62,8 @@ adminRouter.get('/getAllPackagesByAdmin', validateJWT, getAllPackagesByAdminCont
 adminRouter.get('/getPackageDetailsByAdmin/:id', validateJWT, getPackageDetailsByAdminController.getPackageDetailsByAdmin);
 adminRouter.delete('/deletePackageByAdmin/:id', validateJWT, deletePackageByAdminController.deletePackageByAdmin);
 adminRouter.put('/updatePackageByAdmin', validateJWT, updatePackageByAdminController.updatePackageByAdminController);
-adminRouter.post('/addTaskToPackageByAdmin', validateJWT, addTaskToPackageByAdminController.addTasktoPackageByAdminController);
+adminRouter.post('/addTaskByAdmin', validateJWT, addTaskToPackageByAdminController.addTaskByAdminController);
 adminRouter.put('/updateTaskByAdmin', validateJWT, updateTaskByAdminController.updateTaskByAdminController);
-adminRouter.delete('/deleteTaskByAdmin/:id', validateJWT, deleteTaskByAdminController.deleteTaskByAdmin)
+adminRouter.delete('/deleteTaskByAdmin/:id', validateJWT, deleteTaskByAdminController.deleteTaskByAdmin);
 
 export default adminRouter;

@@ -5,4 +5,5 @@ export interface ITask extends Document {
     createdBy: mongoose.Schema.Types.ObjectId;
     createdAt: Date;
     lastUpdatedAt: Date;
+    packageId: mongoose.Schema.Types.ObjectId;
 }
