@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
-import TaskModel from '../model/taskModel';
 import UserModel from '../model/userModel';
 import { IPackage } from '../interfaces/package';
 
