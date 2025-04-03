@@ -10,7 +10,6 @@ const PackagesSchema = new mongoose.Schema({
     description: { type: mongoose.Schema.Types.String },
     startDate: { type: mongoose.Schema.Types.Date },
     endDate: { type: mongoose.Schema.Types.Date },
-    tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: TaskModel }],
     approvers: [{ type: mongoose.Schema.Types.ObjectId, ref: UserModel }],
     isDeleted: { type: mongoose.Schema.Types.Boolean },
 },

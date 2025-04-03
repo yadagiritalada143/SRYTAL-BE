@@ -2,21 +2,35 @@ import TaskModel from '../../model/taskModel';
 
 interface deleteTaskResponse {
     success: boolean;
-    responseAfterDelete?: any;
 }
 
-const deleteTaskByAdmin = async (taskIdToDelete: string): Promise<deleteTaskResponse> => {
-    try {
-        const result = await TaskModel.deleteOne({ _id: taskIdToDelete });
-        if (!result) {
-            return { success: false, responseAfterDelete: result };
-        }
-
-        return { success: true, responseAfterDelete: result };
-    } catch (error: any) {
-        console.error(`Error in deleting task: ${error}`);
-        return { success: false, responseAfterDelete: error }
-    }
+const hardDeleteTaskByAdmin = async (taskIdToDelete: any): Promise<deleteTaskResponse> => {
+    return new Promise(async (resolve, reject) => {
+        await TaskModel.deleteOne(
+            { _id: taskIdToDelete })
+            .then((responseAfterHardDeletingTask: any) => {
+                resolve({ success: true });
+            })
+            .catch((error: any) => {
+                console.error(`Error in hard deleting task: ${error}`);
+                reject({ success: false });
+            });
+    });
 }
 
-export default { deleteTaskByAdmin }
+const softDeleteTaskByAdmin = async (taskIdToDelete: string): Promise<deleteTaskResponse> => {
+    return new Promise(async (resolve, reject) => {
+        await TaskModel.updateOne(
+            { _id: taskIdToDelete },
+            { isDeleted: true })
+            .then((responseAfterSoftDeletingTask: any) => {
+                resolve({ success: true });
+            })
+            .catch((error: any) => {
+                console.error(`Error in soft deleting task: ${error}`);
+                reject({ success: false });
+            });
+    });
+}
+
+export default { hardDeleteTaskByAdmin, softDeleteTaskByAdmin };
