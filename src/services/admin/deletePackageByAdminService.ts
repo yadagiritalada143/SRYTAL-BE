@@ -1,22 +1,36 @@
-import PackageModel from '../../model/packageModel';
+import PackagesModel from '../../model/packageModel';
 
 interface deletePackageResponse {
     success: boolean;
-    responseAfterDelete?: any;
 }
 
-const deletePackageByAdmin = async (id: any): Promise<deletePackageResponse> => {
-    try {
-        const result = await PackageModel.findByIdAndDelete({ _id: id });
-        if (result) {
-            return { success: true, responseAfterDelete: result };
-        } else {
-            return { success: false };
-        }
-    } catch (error: any) {
-        console.error('Error in  deleting package: ', error);
-        return { success: false, responseAfterDelete: error }
-    }
+const hardDeletePackageServiceByAdmin = async (packageIdToDelete: any): Promise<deletePackageResponse> => {
+    return new Promise(async (resolve, reject) => {
+        await PackagesModel.deleteOne(
+            { _id: packageIdToDelete })
+            .then((responseAfterHardDeletingPackage: any) => {
+                resolve({ success: true });
+            })
+            .catch((error: any) => {
+                console.error(`Error in hard deleting package: ${error}`);
+                reject({ success: false });
+            });
+    });
 }
 
-export default { deletePackageByAdmin };
+const softDeletePackageServiceByAdmin = async (packageIdToDelete: string): Promise<deletePackageResponse> => {
+    return new Promise(async (resolve, reject) => {
+        await PackagesModel.updateOne(
+            { _id: packageIdToDelete },
+            { isDeleted: true })
+            .then((responseAfterSoftDeletingPackage: any) => {
+                resolve({ success: true });
+            })
+            .catch((error: any) => {
+                console.error(`Error in soft deleting package: ${error}`);
+                reject({ success: false });
+            });
+    });
+}
+
+export default { hardDeletePackageServiceByAdmin, softDeletePackageServiceByAdmin };

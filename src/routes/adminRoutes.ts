@@ -60,7 +60,7 @@ adminRouter.delete('/deletePoolCompanyByAdmin/:id', validateJWT, deletePoolCompa
 adminRouter.post('/addPackageByAdmin', validateJWT, addPackageByAdminController.addPackageByAdminController);
 adminRouter.get('/getAllPackagesByAdmin', validateJWT, getAllPackagesByAdminController.getAllPacakgesDetails);
 adminRouter.get('/getPackageDetailsByAdmin/:id', validateJWT, getPackageDetailsByAdminController.getPackageDetailsByAdmin);
-adminRouter.delete('/deletePackageByAdmin/:id', validateJWT, deletePackageByAdminController.deletePackage);
+adminRouter.delete('/deletePackageByAdmin/:id', validateJWT, deletePackageByAdminController.deletePackageByAdmin);
 adminRouter.put('/updatePackageByAdmin', validateJWT, updatePackageByAdminController.updatePackageByAdminController);
 adminRouter.post('/addTaskToPackageByAdmin', validateJWT, addTaskToPackageByAdminController.addTasktoPackageByAdminController);
 adminRouter.put('/updateTaskByAdmin', validateJWT, updateTaskByAdminController.updateTaskByAdminController);

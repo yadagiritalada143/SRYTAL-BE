@@ -11,8 +11,10 @@ const PackagesSchema = new mongoose.Schema({
     startDate: { type: mongoose.Schema.Types.Date },
     endDate: { type: mongoose.Schema.Types.Date },
     tasks: [{ type: mongoose.Schema.Types.ObjectId, ref: TaskModel }],
-    approvers: [{ type: mongoose.Schema.Types.ObjectId, ref: UserModel }]
-}, {
+    approvers: [{ type: mongoose.Schema.Types.ObjectId, ref: UserModel }],
+    isDeleted: { type: mongoose.Schema.Types.Boolean },
+},
+ {
     collection: 'packages',
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
