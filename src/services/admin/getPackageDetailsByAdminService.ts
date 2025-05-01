@@ -16,7 +16,7 @@ const getPackageDetailsByAdmin = async (id: string): Promise<FetchPackagesDetail
             return { success: false };
         }
 
-        const taskDetails = await TaskModel.find({ packageId: id, isDeleted: false });
+        const taskDetails = await TaskModel.find({ packageId: id, isDeleted: false }).populate('createdBy', 'firstName lastName');
 
         const packageDetails = packageDoc.toObject() as any;
         packageDetails.tasks = taskDetails;
