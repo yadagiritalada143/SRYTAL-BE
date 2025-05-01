@@ -31,7 +31,8 @@ const PoolCompaniesSchema = new mongoose_1.default.Schema({
             updateAt: { type: mongoose_1.default.Schema.Types.Date }
         }],
     createdAt: { type: mongoose_1.default.Schema.Types.Date },
-    lastUpdatedAt: { type: mongoose_1.default.Schema.Types.Date }
+    lastUpdatedAt: { type: mongoose_1.default.Schema.Types.Date },
+    isDeleted: { type: mongoose_1.default.Schema.Types.Boolean },
 }, {
     collection: 'pool-companies',
     toObject: { virtuals: true },

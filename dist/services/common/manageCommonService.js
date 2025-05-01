@@ -14,7 +14,10 @@ const SECRET_KEY = process.env.SECRET_KEY;
 const updateVisitorCount = async () => {
     const getVisitorCount = await visitorsCountModel_1.default.find().then((visitorsCount) => visitorsCount);
     const currentVisitorCount = getVisitorCount[0].visitorCount;
-    await visitorsCountModel_1.default.updateOne({ visitorCount: currentVisitorCount + 1, lastUpdatedAt: Date.now() });
+    await visitorsCountModel_1.default.updateOne({
+        visitorCount: currentVisitorCount + 1,
+        lastUpdatedAt: Date.now(),
+    });
     return currentVisitorCount;
 };
 const createCSRFToken = () => {
@@ -28,7 +31,7 @@ const createCSRFToken = () => {
         }
     });
 };
-const authenticateAccount = ({ email, password }) => {
+const authenticateAccount = ({ email, password, }) => {
     return new Promise(async (resolve, reject) => {
         await userModel_1.default.findOne({ email })
             .then((user) => {
@@ -36,16 +39,36 @@ const authenticateAccount = ({ email, password }) => {
                 resolve({ success: false });
             }
             else {
-                bcrypt_1.default.compare(password, user.password).then(async (isPasswordValid) => {
+                bcrypt_1.default
+                    .compare(password, user.password)
+                    .then(async (isPasswordValid) => {
                     if (!isPasswordValid) {
                         resolve({ success: false });
                     }
                     else {
-                        const token = jsonwebtoken_1.default.sign({ email: user.email, userId: user.id, organizationId: user.organization }, SECRET_KEY, { expiresIn: '1h' });
+                        const token = jsonwebtoken_1.default.sign({
+                            email: user.email,
+                            userId: user.id,
+                            organizationId: user.organization,
+                        }, SECRET_KEY, { expiresIn: '20m' });
+                        const refreshToken = jsonwebtoken_1.default.sign({
+                            email: user.email,
+                            userId: user.id,
+                            organizationId: user.organization,
+                        }, SECRET_KEY, { expiresIn: '2d' });
                         user.lastLoggedOn = new Date();
+                        user.refreshToken = refreshToken;
                         await user.save();
                         resolve({
-                            success: true, userRole: user.userRole, id: user.id, passwordResetRequired: user.passwordResetRequired, applicationWalkThrough: user.applicationWalkThrough, token, firstName: user.firstName, lastName: user.lastName
+                            success: true,
+                            userRole: user.userRole,
+                            id: user.id,
+                            passwordResetRequired: user.passwordResetRequired,
+                            applicationWalkThrough: user.applicationWalkThrough,
+                            token,
+                            refreshToken,
+                            firstName: user.firstName,
+                            lastName: user.lastName,
                         });
                     }
                 });
@@ -57,4 +80,32 @@ const authenticateAccount = ({ email, password }) => {
         });
     });
 };
-exports.default = { updateVisitorCount, createCSRFToken, authenticateAccount };
+const refreshToken = async (token) => {
+    try {
+        const user = jsonwebtoken_1.default.verify(token, SECRET_KEY);
+        const newToken = jsonwebtoken_1.default.sign({
+            email: user.email,
+            userId: user.userId,
+            organizationId: user.organizationId,
+        }, SECRET_KEY, { expiresIn: '20m' });
+        const userDetails = await userModel_1.default.findOne({ _id: user.userId });
+        if (!userDetails || !userDetails.refreshToken) {
+            throw new Error('Invalid user token');
+        }
+        return newToken;
+    }
+    catch (error) {
+        console.log('Error in refresh token', error);
+        throw new Error('Invalid user token');
+    }
+};
+const logout = async (userId) => {
+    await userModel_1.default.findOneAndUpdate({ _id: userId }, { $set: { refreshToken: '' } });
+};
+exports.default = {
+    updateVisitorCount,
+    createCSRFToken,
+    authenticateAccount,
+    refreshToken,
+    logout,
+};

@@ -22,21 +22,25 @@ const login = (req, res) => {
                     passwordResetRequired: authResponse.passwordResetRequired,
                     applicationWalkThrough: authResponse.applicationWalkThrough,
                     token: authResponse.token,
+                    refreshToken: authResponse.refreshToken,
                     firstName: authResponse.firstName,
-                    lastName: authResponse.lastName
+                    lastName: authResponse.lastName,
                 });
             });
         }
         else {
             res.status(401).json({
                 success: false,
-                message: commonErrorMessages_1.LOGIN_ERROR_MESSAGE.INVALID_EMAIL_PASSWORD
+                message: commonErrorMessages_1.LOGIN_ERROR_MESSAGE.INVALID_EMAIL_PASSWORD,
             });
         }
     })
         .catch((error) => {
         console.error(error);
-        res.status(500).json({ success: false, message: commonErrorMessages_1.LOGIN_ERROR_MESSAGE.INTERNAL_SERVER_ERROR });
+        res.status(500).json({
+            success: false,
+            message: commonErrorMessages_1.LOGIN_ERROR_MESSAGE.INTERNAL_SERVER_ERROR,
+        });
     });
 };
 const updateVisitorCount = (req, res) => {
@@ -47,7 +51,34 @@ const updateVisitorCount = (req, res) => {
     })
         .catch((error) => {
         console.error(`Error in updating visitors count: ${error}`);
-        res.status(500).json({ success: false, message: commonErrorMessages_1.COMMON_ERRORS.VISITORS_COUNT_UPDATING_ERROR });
+        res.status(500).json({
+            success: false,
+            message: commonErrorMessages_1.COMMON_ERRORS.VISITORS_COUNT_UPDATING_ERROR,
+        });
     });
 };
-exports.default = { login, updateVisitorCount };
+const refreshToken = (req, res) => {
+    const refreshToken = req.headers['refresh_token'];
+    if (!refreshToken)
+        return res
+            .status(401)
+            .json({ message: 'No refresh token. Please log in again.' });
+    manageCommonService_1.default
+        .refreshToken(refreshToken)
+        .then((token) => res.status(200).json({ token }))
+        .catch((error) => {
+        if (error === 'Invalid user token')
+            console.log('Failed to refresh the token', error);
+        res.status(403).json({
+            success: false,
+            message: 'Invalid user token',
+        });
+    });
+};
+const logout = (req, res) => {
+    const userId = req.body.userId;
+    manageCommonService_1.default.logout(userId).then(() => {
+        res.status(200).json({ success: true, message: 'Successfully logged out' });
+    });
+};
+exports.default = { login, updateVisitorCount, refreshToken, logout };

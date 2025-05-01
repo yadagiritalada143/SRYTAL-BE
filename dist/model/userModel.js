@@ -22,10 +22,13 @@ const UserSchema = new mongoose_1.default.Schema({
     bankDetailsInfo: {
         accountHolderName: { type: mongoose_1.default.Schema.Types.String },
         accountNumber: { type: mongoose_1.default.Schema.Types.String },
-        ifscCode: { type: mongoose_1.default.Schema.Types.String }
+        ifscCode: { type: mongoose_1.default.Schema.Types.String },
     },
     profileImage: { type: mongoose_1.default.Schema.Types.String },
-    employmentType: { type: mongoose_1.default.Schema.Types.ObjectId, ref: employmentTypeModel_1.default },
+    employmentType: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: employmentTypeModel_1.default,
+    },
     employeeRole: [{ type: mongoose_1.default.Schema.Types.ObjectId, ref: employeeRole_1.default }],
     organization: { type: mongoose_1.default.Schema.Types.ObjectId, ref: organization_1.default },
     applicationWalkThrough: { type: mongoose_1.default.Schema.Types.Number },
@@ -34,7 +37,8 @@ const UserSchema = new mongoose_1.default.Schema({
     lastLoggedOn: { type: mongoose_1.default.Schema.Types.Date },
     dateOfBirth: { type: mongoose_1.default.Schema.Types.Date },
     presentAddress: { type: mongoose_1.default.Schema.Types.String },
-    permanentAddress: { type: mongoose_1.default.Schema.Types.String }
+    permanentAddress: { type: mongoose_1.default.Schema.Types.String },
+    refreshToken: { type: mongoose_1.default.Schema.Types.String },
 }, {
     collection: 'users',
     toObject: { virtuals: true },

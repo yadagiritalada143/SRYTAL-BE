@@ -30,7 +30,9 @@ const getEmployeeDetailsByAdmin = (id) => {
                         employeeRole: user.employeeRole,
                         organization: user.organization,
                         employeeId: user.employeeId,
-                        dateOfBirth: user.dateOfBirth
+                        dateOfBirth: user.dateOfBirth,
+                        presentAddress: user.presentAddress,
+                        permanentAddress: user.permanentAddress
                     }
                 });
             }

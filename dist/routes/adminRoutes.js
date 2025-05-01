@@ -27,8 +27,13 @@ const getAllEmployeeRoleByAdminController_1 = __importDefault(require("../contro
 const updateEmployeeRoleByAdminController_1 = __importDefault(require("../controllers/admin/updateEmployeeRoleByAdminController"));
 const deleteEmployeeRoleByAdminController_1 = __importDefault(require("../controllers/admin/deleteEmployeeRoleByAdminController"));
 const deletePoolCandidatesByAdminController_1 = __importDefault(require("../controllers/admin/deletePoolCandidatesByAdminController"));
+const deletePoolCompanyByAdminController_1 = __importDefault(require("../controllers/admin/deletePoolCompanyByAdminController"));
+const addPackageByAdminController_1 = __importDefault(require("../controllers/admin/addPackageByAdminController"));
+const getAllPackagesByAdminController_1 = __importDefault(require("../controllers/admin/getAllPackagesByAdminController"));
 const adminRouter = express_1.default.Router();
 adminRouter.post('/login', commonController_1.default.login);
+adminRouter.get('/refreshToken', commonController_1.default.refreshToken);
+adminRouter.get('/logout', validateJWT_1.default, commonController_1.default.logout);
 adminRouter.post('/registerEmployeeByAdmin', validateJWT_1.default, registrationController_1.default.register);
 adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT_1.default, getEmployeeDetailsByAdminController_1.default.getUserDetails);
 adminRouter.put('/updateEmployeeDetailsByAdmin', (0, validateProfileUpdate_1.default)(userSchema_1.default), validateJWT_1.default, updateEmployeeDetailsByAdminController_1.default.updateProfile);
@@ -48,4 +53,13 @@ adminRouter.get('/getAllEmployeeRoleByAdmin', validateJWT_1.default, getAllEmplo
 adminRouter.put('/updateEmployeeRoleByAdmin', validateJWT_1.default, updateEmployeeRoleByAdminController_1.default.updateEmployeeRole);
 adminRouter.delete('/deleteEmployeeRoleByAdmin/:id', validateJWT_1.default, deleteEmployeeRoleByAdminController_1.default.deleteEmployeeRole);
 adminRouter.delete('/deletePoolCandidatesByAdmin/:id', validateJWT_1.default, deletePoolCandidatesByAdminController_1.default.deletePoolCandidateByAdmin);
+adminRouter.delete('/deletePoolCompanyByAdmin/:id', validateJWT_1.default, deletePoolCompanyByAdminController_1.default.deletePoolCompanyByAdmin);
+adminRouter.post('/addPackageByAdmin', validateJWT_1.default, addPackageByAdminController_1.default.addPackageByAdminController);
+adminRouter.get('/getAllPackagesByAdmin', validateJWT_1.default, getAllPackagesByAdminController_1.default.getAllPacakgesDetails);
+// adminRouter.get('/getPackageDetailsByAdmin/:id', validateJWT, getPackageDetailsByAdminController.getPackageDetailsByAdmin);
+// adminRouter.delete('/deletePackageByAdmin/:id', validateJWT, deletePackageByAdminController.deletePackageByAdmin);
+// adminRouter.put('/updatePackageByAdmin', validateJWT, updatePackageByAdminController.updatePackageByAdminController);
+// adminRouter.post('/addTaskByAdmin', validateJWT, addTaskToPackageByAdminController.addTaskByAdminController);
+// adminRouter.put('/updateTaskByAdmin', validateJWT, updateTaskByAdminController.updateTaskByAdminController);
+// adminRouter.delete('/deleteTaskByAdmin/:id', validateJWT, deleteTaskByAdminController.deleteTaskByAdmin);
 exports.default = adminRouter;
