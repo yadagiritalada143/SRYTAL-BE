@@ -3,9 +3,10 @@ import addPackageByAdminService from "../../services/admin/addPackageByAdminServ
 import { PACKAGE_ERROR_MESSAGES } from "../../constants/admin/packageMessages";
 
 const addPackageByAdminController = (req: Request, res: Response) => {
-    console.log('REached to controller !!');
+    const addPackageDetails = req.body;
+    addPackageDetails.isDeleted = false;
     addPackageByAdminService
-        .addPackageByAdmin(req.body)
+        .addPackageByAdmin(addPackageDetails)
         .then((responseAfteraddingPackages: any) => {
             res.status(200).json({ succes: true });
         })
