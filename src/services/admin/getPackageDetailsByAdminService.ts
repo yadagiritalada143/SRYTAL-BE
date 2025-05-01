@@ -8,13 +8,6 @@ interface FetchPackagesDetailsResponse {
 const getPackageDetailsByAdmin = (id: string): Promise<FetchPackagesDetailsResponse> => {
     return new Promise((resolve, reject) => {
         PackagesModel.findById({ _id: id })
-            .populate({
-                path: 'tasks',
-                populate: {
-                    path: 'createdBy',
-                    select: 'firstName lastName',
-                },
-            })
             .populate('approvers', 'firstName lastName')
             .then((packageDetails: any) => {
                 if (!packageDetails) {
