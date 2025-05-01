@@ -7,6 +7,7 @@ const addTaskByAdminController = (req: Request, res: Response) => {
     taskDetails.createdAt = new Date();
     taskDetails.lastUpdatedAt = new Date();
     taskDetails.createdBy = req.body.userId;
+    taskDetails.isDeleted = false;
     addTaskByAdminService
         .addTaskByAdmin(taskDetails)
         .then((responseAfteraddingTask: any) => {
