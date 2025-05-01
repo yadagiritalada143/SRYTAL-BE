@@ -2,10 +2,10 @@ import { Request, Response } from 'express';
 import { PACKAGE_ERROR_MESSAGES } from '../../constants/admin/packageMessages';
 import allPacakgesServices from '../../services/admin/getAllPackagesByAdminService';
 
-const getAllPacakgesDetails = (req: Request, res: Response) => {
+const getAllPackagesDetails = (req: Request, res: Response) => {
     allPacakgesServices.getAllPackagesByAdmin()
-        .then(fetchAllPacakgesByAdminResponse => {
-            res.status(200).json(fetchAllPacakgesByAdminResponse);
+        .then(fetchAllPackagesByAdminResponse => {
+            res.status(200).json(fetchAllPackagesByAdminResponse);
         })
         .catch(error => {
             console.error(`Error in fetching Packages details: ${error}`);
@@ -13,4 +13,4 @@ const getAllPacakgesDetails = (req: Request, res: Response) => {
         });
 };
 
-export default { getAllPacakgesDetails }
+export default { getAllPackagesDetails }

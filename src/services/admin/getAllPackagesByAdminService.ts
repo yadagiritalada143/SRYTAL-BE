@@ -2,19 +2,19 @@ import PackagesModel from '../../model/packageModel';
 
 interface FetchPackagesDetailsResponse {
     success: boolean;
-    pacakgesList?: any;
+    packagesList?: any;
 }
 
 const getAllPackagesByAdmin = (): Promise<FetchPackagesDetailsResponse> => {
     return new Promise((resolve, reject) => {
         PackagesModel.find({ isDeleted: false })
-            .then((pacakgesList: any) => {
-                if (!pacakgesList) {
+            .then((packagesList: any) => {
+                if (!packagesList) {
                     reject({ success: false });
                 } else {
                     resolve({
                         success: true,
-                        pacakgesList: pacakgesList
+                        packagesList: packagesList
                     });
                 }
             })
