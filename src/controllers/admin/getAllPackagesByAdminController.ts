@@ -3,7 +3,7 @@ import { PACKAGE_ERROR_MESSAGES } from '../../constants/admin/packageMessages';
 import allPacakgesServices from '../../services/admin/getAllPackagesByAdminService';
 
 const getAllPackagesDetails = (req: Request, res: Response) => {
-    allPacakgesServices.getAllPackagesByAdmin()
+    allPacakgesServices.getAllPackagesWithTasksByAdmin()
         .then(fetchAllPackagesByAdminResponse => {
             res.status(200).json(fetchAllPackagesByAdminResponse);
         })
