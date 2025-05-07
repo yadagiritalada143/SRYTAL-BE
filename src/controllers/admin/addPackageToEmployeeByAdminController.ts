@@ -1,6 +1,6 @@
-import { Request, Response } from "express";
-import addPackageToEmployeeByAdminService from "../../services/admin/addPackageToEmployeeByAdminService";
-import { PACKAGE_TO_EMPLOYEE_ERROR_MESSAGE } from "../../constants/admin/packageToEmployeeMessage";
+import { Request, Response } from 'express';
+import addPackageToEmployeeByAdminService from '../../services/admin/addPackageToEmployeeByAdminService';
+import { PACKAGE_TO_EMPLOYEE_ERROR_MESSAGE } from '../../constants/admin/packageToEmployeeMessage';
 
 const addPackageToEmployeeByAdmin = (req: Request, res: Response) => {
     const addPackagetoEmployeeDetails = req.body;
