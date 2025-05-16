@@ -11,7 +11,6 @@ export interface IEmployeePackage extends Document {
      ]
      startDate?: Date;
      createdAt?: Date;
-     currentMonthLastDay?: String;
     
 }
 

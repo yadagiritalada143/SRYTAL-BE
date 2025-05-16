@@ -13,7 +13,7 @@ const EmployeePackagesSchema = new mongoose.Schema({
             taskId:{ type: mongoose.Schema.Types.ObjectId, ref:TaskModel },
             startDate: { type: mongoose.Schema.Types.Date },
             createdAt: { type: mongoose.Schema.Types.Date },
-            currentMonthLastDay: {type: mongoose.Schema.Types.String},
+            
         }]
     }]
     
