@@ -1,14 +1,13 @@
 import EmployeePackageModel from '../../model/employeePackageModel';
-import TaskModel from '../../model/taskModel';
 
 interface FetchEmployeePackagesDetailsResponse {
     success: boolean;
     employeePackageDetails?: any;
 }
 
-const getEmployeePackageDetailsByAdmin = async (id: string): Promise<FetchEmployeePackagesDetailsResponse> => {
+const getEmployeePackageDetailsByAdmin = async (employeeId: string): Promise<FetchEmployeePackagesDetailsResponse> => {
     try {
-        const employeePackageDetails = await EmployeePackageModel.find({ employeeId: id })
+        const employeePackageDetails = await EmployeePackageModel.find({ employeeId })
             .populate('packages.packageId')
             .populate('packages.tasks.taskId');
 

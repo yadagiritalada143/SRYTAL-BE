@@ -3,9 +3,8 @@ import { PACKAGE_ERROR_MESSAGES } from '../../constants/admin/packageMessages';
 import getEmployeePackageDetailsByAdminService from '../../services/admin/getEmployeePackagesByAdminService';
 
 const getEmployeePackageDetailsByAdmin = (req: Request, res: Response) => {
-    const { id } = req.params;
-    console.log('1. Employee Id is:', id)
-    getEmployeePackageDetailsByAdminService.getEmployeePackageDetailsByAdmin(id)
+    const { employeeId } = req.params;
+    getEmployeePackageDetailsByAdminService.getEmployeePackageDetailsByAdmin(employeeId)
         .then(employeePackageDetailsByAdminResponse => {
             res.status(200).json(employeePackageDetailsByAdminResponse);
         })
