@@ -1,20 +1,20 @@
 import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
-import {IEmployeePackage} from '../interfaces/employeepackages';
+import { IEmployeePackage } from '../interfaces/employeepackages';
 import UserModel from './userModel';
 import PackagesModel from './packageModel';
 import TaskModel from './taskModel';
 
 const EmployeePackagesSchema = new mongoose.Schema({
     employeeId: { type: mongoose.Schema.Types.ObjectId, ref: UserModel },
-    packages:[{ 
-        packageId:{ type: mongoose.Schema.Types.ObjectId, ref:PackagesModel},
-        tasks:[{
-            taskId:{ type: mongoose.Schema.Types.ObjectId, ref:TaskModel },
+    packages: [{
+        packageId: { type: mongoose.Schema.Types.ObjectId, ref: PackagesModel },
+        tasks: [{
+            taskId: { type: mongoose.Schema.Types.ObjectId, ref: TaskModel },
             startDate: { type: mongoose.Schema.Types.Date },
         }]
     }]
-    
+
 }, {
     collection: 'employee-packages',
     toObject: { virtuals: true },
