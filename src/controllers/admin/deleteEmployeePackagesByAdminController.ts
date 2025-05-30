@@ -3,10 +3,9 @@ import deleteEmployeePackageService from '../../services/admin/deleteEmployeePac
 import { EMPLOYEE_PACKAGE_ERROR_MESSAGES } from '../../constants/admin/employeePackageMessages';
 
 const deleteEmployeePackageByAdmin = (req: Request, res: Response) => {
-    // const id = req.params.id;
-    const {employeeId, packageId} = req.body;
+    const { employeeId, packageId } = req.body;
     deleteEmployeePackageService
-        .DeleteEmployeePackageServiceByAdmin(employeeId, packageId )
+        .deleteEmployeePackageServiceByAdmin(employeeId, packageId)
         .then((deleteEmployeePackageResponse: any) => {
             res.status(200).json(deleteEmployeePackageResponse);
         })

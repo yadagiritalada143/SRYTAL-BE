@@ -1,31 +1,55 @@
 import EmployeePackageModel from '../../model/employeePackageModel';
-import TaskModel from '../../model/taskModel';
+import { ObjectId } from 'mongoose';
 
-interface deleteEmployeePackagesResponse {
+interface IEmployeePackage {
+    employeeId: ObjectId;
+    packages: {
+        packageId: ObjectId;
+        tasks: {
+            taskId: ObjectId;
+            startDate: Date;
+        }[];
+    }[];
+}
+
+interface DeleteEmployeePackagesResponse {
     success: boolean;
     responseAfterDelete?: any;
 }
 
-const DeleteEmployeePackageServiceByAdmin = async (employeeId: string, packageId:string ): Promise<deleteEmployeePackagesResponse> => {
+const deleteEmployeePackageServiceByAdmin = async (
+    employeeId: string,
+    packageId: string
+): Promise<DeleteEmployeePackagesResponse> => {
     try {
-        const employeePackage = await EmployeePackageModel.findById(employeeId);
-
-        if (!employeePackage) {
-            return { success: false };
+        const employeePackageDoc = await EmployeePackageModel.findOne({ employeeId }) as IEmployeePackage
+        if (!employeePackageDoc) {
+            return { success: false, responseAfterDelete: 'Employee package not found !' };
         }
 
-        const deletedPackage = await EmployeePackageModel.findByIdAndDelete(packageId);
+        const packageToDelete = employeePackageDoc.packages.find(
+            (pkg) => pkg.packageId.toString() === packageId
+        );
+        if (!packageToDelete) {
+            return { success: false, responseAfterDelete: 'Package not found for employee !' };
+        }
 
-        await TaskModel.deleteMany({
-            employeeId: employeePackage.employeeId,
-            packageId: employeePackage.packageId
-        });
+        employeePackageDoc.packages = employeePackageDoc.packages.filter(
+            (pkg: any) => pkg.packageId.toString() !== packageId
+        );
 
-        return { success: true, responseAfterDelete: deletedPackage };
+        let updatedDoc;
+
+        if (employeePackageDoc.packages.length) {
+            updatedDoc = await (employeePackageDoc as any).save();
+        } else {
+            updatedDoc = await EmployeePackageModel.deleteOne({ _id: (employeePackageDoc as any)._id });
+        }
+        return { success: true, responseAfterDelete: updatedDoc };
     } catch (error: any) {
-        console.error(`Error in deleting Employee package and its task: ${error}`);
-        return { success: false, responseAfterDelete: error };
+        console.error(`Error in deleting employee package and its tasks: ${error}`);
+        return { success: false };
     }
-}
+};
 
-export default { DeleteEmployeePackageServiceByAdmin };
+export default { deleteEmployeePackageServiceByAdmin };
