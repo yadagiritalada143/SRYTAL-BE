@@ -1,28 +1,24 @@
 import EmployeePackageModel from '../../model/employeePackageModel';
 
 const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
-
     // const currentDay = new Date();
-    const currentDay = new Date('2024-02-02');
-    console.log(currentDay);
+    const currentDay = new Date('2023-04-13');
     const lastDayOfMonth = getLastDateOfMonth(currentDay);
-    console.log(lastDayOfMonth)
+
     let timesheet = [];
 
-    for (
-        let date = new Date(currentDay);
-        date <= lastDayOfMonth;
-        date.setDate(date.getDate() + 1)
-    ) {
-        const dateClone = new Date(date); 
-        const dayOfWeek = dateClone.getDay();
-        let isWeekend = false;
-        if(dayOfWeek === 0 || dayOfWeek === 6){
-            isWeekend = true;
-        }
+    const startDay = currentDay.getDate();
+    const endDay = lastDayOfMonth.getDate();
+    const year = currentDay.getFullYear();
+    const month = currentDay.getMonth();
+
+    for (let day = startDay; day <= endDay; day++) {
+        const currentDate = new Date(year, month, day + 1);
+        const dayOfWeek = currentDate.getDay();
+        let isWeekend = (dayOfWeek === 0 || dayOfWeek === 1);
 
         timesheet.push({
-            date: dateClone,
+            date: currentDate,
             isHoliday: false,
             isVacation: false,
             isWeekOff: isWeekend,
