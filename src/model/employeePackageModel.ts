@@ -12,6 +12,13 @@ const EmployeePackagesSchema = new mongoose.Schema({
         tasks: [{
             taskId: { type: mongoose.Schema.Types.ObjectId, ref: TaskModel },
             startDate: { type: mongoose.Schema.Types.Date },
+            timesheet: [{
+                date: {type: mongoose.Schema.Types.Date },
+                isHoliday: { type:mongoose.Schema.Types.Boolean},
+                isVacation: {type:mongoose.Schema.Types.Boolean},
+                isWeekOff: {type:mongoose.Schema.Types.Boolean},
+                hours: { type:mongoose.Schema.Types.Number}
+            }]
         }]
     }]
 
