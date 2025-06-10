@@ -1,7 +1,7 @@
 import cron from 'node-cron';
 import EmployeePackageModel from '../model/employeePackageModel';
 
- const updateNextMonthTimeSheet = async () => {
+const updateNextMonthTimeSheet = async () => {
   const currentDay = new Date();
   const nextMonth = new Date(currentDay.getFullYear(), currentDay.getMonth() + 1, 2);
   const nextMonthFirstDay = new Date(nextMonth);
@@ -29,14 +29,14 @@ import EmployeePackageModel from '../model/employeePackageModel';
   try {
     const employeePackages = await EmployeePackageModel.find();
     for (const empPack of employeePackages) {
-       for (const packages of empPack.packages) {
+      for (const packages of empPack.packages) {
         const plainPackages = JSON.parse(JSON.stringify(packages));
         const tasks = plainPackages.tasks;
-         for(const task of tasks) {
-              task.timesheet = timesheet;  
-         }
-       }
-       await empPack.save();
+        for (const task of tasks) {
+          task.timesheet = timesheet;
+        }
+      }
+      await empPack.save();
     }
 
     console.log(" Timesheet updated for next month:", nextMonthFirstDay.toISOString().split('T')[0]);
@@ -50,4 +50,4 @@ cron.schedule('*/2 * * * *', () => {
   updateNextMonthTimeSheet();
 });
 
-export default {updateNextMonthTimeSheet}
+export default { updateNextMonthTimeSheet }
