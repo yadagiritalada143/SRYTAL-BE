@@ -17,7 +17,9 @@ const EmployeePackagesSchema = new mongoose.Schema({
                 isHoliday: { type:mongoose.Schema.Types.Boolean},
                 isVacation: {type:mongoose.Schema.Types.Boolean},
                 isWeekOff: {type:mongoose.Schema.Types.Boolean},
-                hours: { type:mongoose.Schema.Types.Number}
+                hours: { type:mongoose.Schema.Types.Number},    
+                comments: { type:mongoose.Schema.Types.String},
+                leaveReason:  { type:mongoose.Schema.Types.String}
             }]
         }]
     }]

@@ -8,6 +8,8 @@ import commonRouter from './routes/commonRoutes';
 import adminRouter from './routes/adminRoutes';
 import superadminRouter from './routes/superadminRoutes';
 import recruiterRouter from './routes/recruiterRoutes';
+import schedularService  from './jobs/timesheetjob';
+
 
 dotenv.config();
 
@@ -34,7 +36,7 @@ app.use('/', commonRouter);
 app.use('/admin', adminRouter);
 app.use('/superadmin', superadminRouter);
 app.use('/recruiter', recruiterRouter);
-
+schedularService.updateNextMonthTimeSheet();
 app.listen(port, () => {
     console.log(`Server is running at  http://localhost:${port}`);
 });

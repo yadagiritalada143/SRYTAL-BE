@@ -20,6 +20,8 @@ const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
             isVacation: false,
             isWeekOff: isWeekend,
             hours: 0,
+            comments: '',
+            leaveReason: ''
         });
     }
 
