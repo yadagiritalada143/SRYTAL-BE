@@ -8,7 +8,7 @@ import commonRouter from './routes/commonRoutes';
 import adminRouter from './routes/adminRoutes';
 import superadminRouter from './routes/superadminRoutes';
 import recruiterRouter from './routes/recruiterRoutes';
-import schedularService from './jobs/timeSheetJob';
+import schedularService from './jobs/timesheetcronjob';
 
 
 dotenv.config();
