@@ -22,7 +22,7 @@ const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
             hours: 0,
             comments: '',
             leaveReason: '',
-            status: 'Not Submited'
+            status: 'NOT SUBMITED'
         });
     }
 
