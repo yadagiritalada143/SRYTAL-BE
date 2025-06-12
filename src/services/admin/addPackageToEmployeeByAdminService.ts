@@ -21,7 +21,8 @@ const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
             isWeekOff: isWeekend,
             hours: 0,
             comments: '',
-            leaveReason: ''
+            leaveReason: '',
+            status: 'Not Submited'
         });
     }
 
