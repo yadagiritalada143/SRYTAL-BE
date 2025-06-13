@@ -31,7 +31,7 @@ const updateNextMonthTimeSheet = async () => {
         hours: 0,
         comments: '',
         leaveReason: '',
-        status: 'NOT SUBMITED'
+        status: 'NOT SUBMITTED'
       };
     });
 
@@ -69,8 +69,6 @@ const updateNextMonthTimeSheet = async () => {
   }
 };
 
-// Set up the cron job to run 
-// TODO: Change this to month last 
 cron.schedule('0 0 25 * *', () => {
   console.log("Cron triggered! Running on the 25th of each month...");
   updateNextMonthTimeSheet();
