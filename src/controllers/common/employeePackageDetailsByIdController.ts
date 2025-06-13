@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { PACKAGE_ERROR_MESSAGES } from '../../constants/admin/packageMessages';
-import mployeePackageDetailsByIdService from '../../services/common/employeePackageDetailsByIdService';
+import employeePackageDetailsByIdService from '../../services/common/employeePackageDetailsByIdService';
 
 const employeePackageDetailsByIdController = (req: Request, res: Response) => {
     const { employeeId } = req.params;
-    mployeePackageDetailsByIdService.employeePackageDetailsById(employeeId)
+   employeePackageDetailsByIdService.employeePackageDetailsById(employeeId)
         .then(employeePackageDetailsByIdResponse => {
             res.status(200).json(employeePackageDetailsByIdResponse);
         })
