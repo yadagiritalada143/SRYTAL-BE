@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { PACKAGE_ERROR_MESSAGES } from '../../constants/admin/packageMessages';
-import getEmployeePackageDetailsByIdService from '../../services/common/getEmployeePackageDetailsByIdService';
+import mployeePackageDetailsByIdService from '../../services/common/employeePackageDetailsByIdService';
 
-const getEmployeePackageDetailsById = (req: Request, res: Response) => {
+const employeePackageDetailsByIdController = (req: Request, res: Response) => {
     const { employeeId } = req.params;
-    getEmployeePackageDetailsByIdService.getEmployeePackageDetailsById(employeeId)
+    mployeePackageDetailsByIdService.employeePackageDetailsById(employeeId)
         .then(employeePackageDetailsByIdResponse => {
             res.status(200).json(employeePackageDetailsByIdResponse);
         })
@@ -14,4 +14,4 @@ const getEmployeePackageDetailsById = (req: Request, res: Response) => {
         });
 };
 
-export default { getEmployeePackageDetailsById }
+export default { employeePackageDetailsByIdController }

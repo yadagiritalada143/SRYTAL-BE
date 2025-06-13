@@ -5,14 +5,13 @@ interface FetchEmployeePackagesDetailsResponse {
     employeePackageDetails?: any;
 }
 
-const getEmployeePackageDetailsById = async (employeeId: string): Promise<FetchEmployeePackagesDetailsResponse> => {
+const employeePackageDetailsById = async (employeeId: string): Promise<FetchEmployeePackagesDetailsResponse> => {
     try {
 
-        const employeePackageDetails = await EmployeePackageModel.find({ employeeId })
-            .populate('packages.packageId')
-            .populate('packages.tasks.taskId');
-                
-
+        const employeePackageDetails = await EmployeePackageModel.find({ employeeId })        
+             .populate('packages.packageId')
+             .populate('packages.tasks.taskId');
+            console.log('employeePackageDetails isss:', employeePackageDetails);
         if (!employeePackageDetails) {
             return { success: false };
         }
@@ -27,4 +26,4 @@ const getEmployeePackageDetailsById = async (employeeId: string): Promise<FetchE
     }
 };
 
-export default { getEmployeePackageDetailsById };
+export default { employeePackageDetailsById };

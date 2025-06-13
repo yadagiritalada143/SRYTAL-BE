@@ -10,7 +10,7 @@ import getProfileImageController from '../controllers/common/getProfileImageCont
 import validateJWT from '../middlewares/validateJWT';
 import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
-import getEmployeePackageDetailsByIdController from '../controllers/common/getEmployeePackageDetailsByIdController';
+import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
 const upload = multer({ storage: multer.memoryStorage() });
 
 const commonRouter: Router = express.Router();
@@ -28,6 +28,6 @@ commonRouter.get('/getEmployeeDetails', validateJWT, getEmployeeDetailsControlle
 commonRouter.post('/uploadProfileImage', upload.single('profileImage'), validateJWT, uploadProfileImageController.uploadProfileImage);
 commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getProfileImage);
 commonRouter.post('/forgotPassword', forgotPasswordController.forgotPassword);
-commonRouter.post('/getEmployeePackageDetailsById', validateJWT, getEmployeePackageDetailsByIdController.getEmployeePackageDetailsById)
+commonRouter.post('/employeePackageDetailsById', validateJWT, employeePackageDetailsByIdController.employeePackageDetailsByIdController)
 
 export default commonRouter;
