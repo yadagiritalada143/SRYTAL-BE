@@ -7,11 +7,10 @@ interface FetchEmployeePackagesDetailsResponse {
 
 const employeePackageDetailsById = async (employeeId: string): Promise<FetchEmployeePackagesDetailsResponse> => {
     try {
-
-        const employeePackageDetails = await EmployeePackageModel.find({ employeeId })        
-             .populate('packages.packageId')
-             .populate('packages.tasks.taskId');
-            console.log('employeePackageDetails isss:', employeePackageDetails);
+        const employeePackageDetails = await EmployeePackageModel.find({ employeeId })
+            .populate('packages.packageId')
+            .populate('packages.tasks.taskId');
+        console.log('employeePackageDetails is:', employeePackageDetails);
         if (!employeePackageDetails) {
             return { success: false };
         }
@@ -21,7 +20,7 @@ const employeePackageDetailsById = async (employeeId: string): Promise<FetchEmpl
             employeePackageDetails
         };
     } catch (error) {
-        console.error('Error in fetching Employee Package details:', error);
+        console.error('Error in fetching Employee Package details by ID:', error);
         return { success: false };
     }
 };

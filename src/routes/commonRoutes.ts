@@ -28,6 +28,6 @@ commonRouter.get('/getEmployeeDetails', validateJWT, getEmployeeDetailsControlle
 commonRouter.post('/uploadProfileImage', upload.single('profileImage'), validateJWT, uploadProfileImageController.uploadProfileImage);
 commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getProfileImage);
 commonRouter.post('/forgotPassword', forgotPasswordController.forgotPassword);
-commonRouter.post('/employeePackageDetailsById', validateJWT, employeePackageDetailsByIdController.employeePackageDetailsByIdController)
+commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT, employeePackageDetailsByIdController.employeePackageDetailsByIdController)
 
 export default commonRouter;
