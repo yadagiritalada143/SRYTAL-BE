@@ -11,6 +11,7 @@ const TaskSchema = new mongoose.Schema({
     lastUpdatedAt: { type: mongoose.Schema.Types.Date },
     isDeleted: { type: mongoose.Schema.Types.Boolean },
     packageId:{ type: mongoose.Schema.Types.ObjectId, ref: PackagesModel },
+    
 }, {
     collection: 'tasks',
     toObject: { virtuals: true },
