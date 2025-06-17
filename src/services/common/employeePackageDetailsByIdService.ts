@@ -10,7 +10,7 @@ const employeePackageDetailsById = async (employeeId: string): Promise<FetchEmpl
         const employeePackageDetails = await EmployeePackageModel.find({ employeeId })
             .populate('packages.packageId')
             .populate('packages.tasks.taskId');
-        console.log('employeePackageDetails is:', employeePackageDetails);
+
         if (!employeePackageDetails) {
             return { success: false };
         }
