@@ -11,7 +11,6 @@ const EmployeePackagesSchema = new mongoose.Schema({
         packageId: { type: mongoose.Schema.Types.ObjectId, ref: PackagesModel },
         tasks: [{
             taskId: { type: mongoose.Schema.Types.ObjectId, ref: TaskModel },
-            startDate: { type: mongoose.Schema.Types.Date },
             timesheet: [{
                 date: {type: mongoose.Schema.Types.Date },
                 isHoliday: { type:mongoose.Schema.Types.Boolean},
