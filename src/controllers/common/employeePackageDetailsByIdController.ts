@@ -3,8 +3,8 @@ import { PACKAGE_ERROR_MESSAGES } from '../../constants/admin/packageMessages';
 import employeePackageDetailsByIdService from '../../services/common/employeePackageDetailsByIdService';
 
 const employeePackageDetailsByIdController = (req: Request, res: Response) => {
-    const { employeeId } = req.body;
-    employeePackageDetailsByIdService.employeePackageDetailsById(employeeId)
+    const { userId } = req.body;
+    employeePackageDetailsByIdService.employeePackageDetailsById(userId)
         .then(employeePackageDetailsByIdResponse => {
             res.status(200).json(employeePackageDetailsByIdResponse);
         })
