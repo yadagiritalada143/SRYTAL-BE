@@ -5,16 +5,15 @@ interface updateEmployeeTimesheetResponse {
     responseAfterUpdateTimesheet?: any;
 }
 
-const updateEmployeeTimesheet = async ( updatePayload: any): Promise<updateEmployeeTimesheetResponse> => {
- try {
-        const result = await EmployeePackageModel.updateOne( { employeeId: updatePayload.employeeId}, { packages: updatePayload.packages});
+const updateEmployeeTimesheet = async (updateEmployeeTimesheetPayload: any): Promise<updateEmployeeTimesheetResponse> => {
+    try {
+        const result = await EmployeePackageModel.updateOne({ employeeId: updateEmployeeTimesheetPayload.employeeId }, { packages: updateEmployeeTimesheetPayload.packages });
         if (!result) {
             return { success: false };
         }
-        
         return { success: true, responseAfterUpdateTimesheet: result };
     } catch (error: any) {
-        console.error(`Error in updating employee timesheet: ${error}`);
+        console.error(`Error in submtting employee timesheet: ${error}`);
         return { success: false, responseAfterUpdateTimesheet: error }
     }
 

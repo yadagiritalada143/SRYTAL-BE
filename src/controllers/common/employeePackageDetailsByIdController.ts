@@ -8,7 +8,7 @@ const employeePackageDetailsByIdController = (req: Request, res: Response) => {
     if (!startDate || !endDate) {
         return res.status(400).json({
             success: false,
-            message: 'from and to dates are required in the request body.'
+            message: 'FROM date and TO date are required !!'
         });
     }
 
@@ -17,7 +17,7 @@ const employeePackageDetailsByIdController = (req: Request, res: Response) => {
             res.status(200).json(employeePackageDetailsByIdResponse);
         })
         .catch(error => {
-            console.error(`Error in fetching Employee Package details by ID: ${error}`);
+            console.error(`Error in fetching Employee Package details: ${error}`);
             res.status(500).json({ success: false, message: PACKAGE_ERROR_MESSAGES.PACKAGE_DETAILS_FETCH_ERROR_MESSAGE });
         });
 };

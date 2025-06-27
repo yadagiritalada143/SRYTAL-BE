@@ -4,11 +4,11 @@ import { UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES } from '../../constants/commo
 
 const updateEmployeeTimesheetController = (req: Request, res: Response) => {
     const { userId } = req.body;
-    let updatePayload: any = {};
-    updatePayload.packages = req.body.packages;
-    updatePayload.employeeId = userId;
+    let updateEmployeeTimeSheetPayload: any = {};
+    updateEmployeeTimeSheetPayload.packages = req.body.packages;
+    updateEmployeeTimeSheetPayload.employeeId = userId;
     updateEmployeeTimesheetService
-        .updateEmployeeTimesheet(updatePayload)
+        .updateEmployeeTimesheet(updateEmployeeTimeSheetPayload)
         .then((updateEmployeeTimesheetResponse: any) => {
             res.status(200).json(updateEmployeeTimesheetResponse);
         })
