@@ -11,7 +11,7 @@ const updateNextMonthTimeSheet = async () => {
         const nextMonthFirstDay = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 2);
         const daysInNextMonth = new Date(nextMonthFirstDay.getFullYear(), nextMonthFirstDay.getMonth() + 1, 0).getDate();
         const timesheet = Array.from({ length: daysInNextMonth }, (_, index) => {
-            const currentDate = new Date(nextMonthFirstDay.getFullYear(), nextMonthFirstDay.getMonth(), index + 2);
+            const currentDate = new Date(nextMonthFirstDay.getFullYear(), nextMonthFirstDay.getMonth(), index + 1);
             const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 1;
             return {
                 date: currentDate,
