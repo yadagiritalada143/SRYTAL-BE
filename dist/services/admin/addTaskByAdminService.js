@@ -6,6 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const taskModel_1 = __importDefault(require("../../model/taskModel"));
 const addTaskByAdmin = async (data) => {
     const taskData = new taskModel_1.default(data);
-    const afterAdd = await taskData.save();
+    return await taskData.save();
 };
 exports.default = { addTaskByAdmin };

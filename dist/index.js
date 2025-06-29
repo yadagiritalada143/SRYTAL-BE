@@ -13,6 +13,7 @@ const commonRoutes_1 = __importDefault(require("./routes/commonRoutes"));
 const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
 const superadminRoutes_1 = __importDefault(require("./routes/superadminRoutes"));
 const recruiterRoutes_1 = __importDefault(require("./routes/recruiterRoutes"));
+const timesheetcronjob_1 = __importDefault(require("./jobs/timesheetcronjob"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
@@ -32,6 +33,7 @@ app.use('/', commonRoutes_1.default);
 app.use('/admin', adminRoutes_1.default);
 app.use('/superadmin', superadminRoutes_1.default);
 app.use('/recruiter', recruiterRoutes_1.default);
+timesheetcronjob_1.default.updateNextMonthTimeSheet();
 app.listen(port, () => {
     console.log(`Server is running at  http://localhost:${port}`);
 });

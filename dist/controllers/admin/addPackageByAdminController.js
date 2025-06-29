@@ -6,9 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const addPackageByAdminService_1 = __importDefault(require("../../services/admin/addPackageByAdminService"));
 const packageMessages_1 = require("../../constants/admin/packageMessages");
 const addPackageByAdminController = (req, res) => {
-    console.log('REached to controller !!');
+    const addPackageDetails = req.body;
+    addPackageDetails.isDeleted = false;
     addPackageByAdminService_1.default
-        .addPackageByAdmin(req.body)
+        .addPackageByAdmin(addPackageDetails)
         .then((responseAfteraddingPackages) => {
         res.status(200).json({ succes: true });
     })

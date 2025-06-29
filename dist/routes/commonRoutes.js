@@ -15,6 +15,8 @@ const getProfileImageController_1 = __importDefault(require("../controllers/comm
 const validateJWT_1 = __importDefault(require("../middlewares/validateJWT"));
 const multer_1 = __importDefault(require("multer"));
 const forgotPasswordController_1 = __importDefault(require("../controllers/common/forgotPasswordController"));
+const employeePackageDetailsByIdController_1 = __importDefault(require("../controllers/common/employeePackageDetailsByIdController"));
+const updateEmployeeTimesheetController_1 = __importDefault(require("../controllers/common/updateEmployeeTimesheetController"));
 const upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
 const commonRouter = express_1.default.Router();
 commonRouter.get('/', (req, res) => {
@@ -29,4 +31,6 @@ commonRouter.get('/getEmployeeDetails', validateJWT_1.default, getEmployeeDetail
 commonRouter.post('/uploadProfileImage', upload.single('profileImage'), validateJWT_1.default, uploadProfileImageController_1.default.uploadProfileImage);
 commonRouter.get('/getProfileImage', validateJWT_1.default, getProfileImageController_1.default.getProfileImage);
 commonRouter.post('/forgotPassword', forgotPasswordController_1.default.forgotPassword);
+commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT_1.default, employeePackageDetailsByIdController_1.default.employeePackageDetailsByIdController);
+commonRouter.put('/updateEmployeeTimesheet', validateJWT_1.default, updateEmployeeTimesheetController_1.default.updateEmployeeTimesheetController);
 exports.default = commonRouter;
