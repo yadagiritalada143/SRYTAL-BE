@@ -13,7 +13,7 @@ const addPackagetoEmployeeByAdmin = async (data) => {
     const year = currentDay.getFullYear();
     const month = currentDay.getMonth();
     for (let day = startDay; day <= endDay; day++) {
-        const currentDate = new Date(year, month, day + 1);
+        const currentDate = new Date(year, month, day);
         const dayOfWeek = currentDate.getDay();
         let isWeekend = (dayOfWeek === 0 || dayOfWeek === 1);
         timesheet.push({
