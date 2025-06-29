@@ -12,7 +12,7 @@ const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
     for (let day = startDay; day <= endDay; day++) {
         const currentDate = new Date(year, month, day);
         const dayOfWeek = currentDate.getDay();
-        let isWeekend = (dayOfWeek === 0 || dayOfWeek === 1);
+        let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
 
         timesheet.push({
             date: currentDate,
