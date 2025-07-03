@@ -44,7 +44,7 @@ const updateEmployeeTimesheet = async (updateEmployeeTimesheetPayload: UpdateTim
 
                 payloadTask.timesheet.forEach((payloadTimesheet: TimesheetUpdate) => {
                     const timesheetIndex = employeePackage.packages[packageIndex].tasks[taskIndex].timesheet.findIndex(
-                        (dbTimesheet: ITimesheet) => new Date(dbTimesheet.date).toISOString() === new Date(payloadTimesheet.date).toISOString()
+                        (dbTimesheet: ITimesheet) => new Date(dbTimesheet.date).toDateString() === new Date(payloadTimesheet.date).toDateString()
                     );
 
                     if (timesheetIndex === -1) return;
