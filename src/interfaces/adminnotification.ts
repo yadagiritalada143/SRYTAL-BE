@@ -5,4 +5,3 @@ export interface IAdminNotification extends Document {
     status: string;
     
 }
-

@@ -1,4 +1,5 @@
 import EmployeePackageModel from "../../model/employeePackageModel";
+import AdminnotificationModel from '../../model/adminNotificationModel';
 import {
     IPackage,
     ITask,
@@ -60,6 +61,9 @@ const updateEmployeeTimesheet = async (updateEmployeeTimesheetPayload: UpdateTim
                 });
             });
         });
+        const adminNotificationPayload = {context: JSON.stringify(updateEmployeeTimesheetPayload), status:"WAITING FOR APPROVAL"};
+        const adminNotificationToSave: any = new AdminnotificationModel(adminNotificationPayload);
+        const test = await adminNotificationToSave.save();
 
         if (hasUpdates) {
             const result = await EmployeePackageModel.updateOne(
