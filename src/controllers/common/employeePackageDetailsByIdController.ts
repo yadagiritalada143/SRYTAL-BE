@@ -5,6 +5,13 @@ import employeePackageDetailsByIdService from '../../services/common/employeePac
 const employeePackageDetailsByIdController = (req: Request, res: Response) => {
     const { userId, startDate, endDate } = req.body;
 
+    let employeeIdToFetchTimeSheet = '';
+    if (req.body && req.body.employeeId) {
+        employeeIdToFetchTimeSheet = req.body.employeeId;
+    } else {
+        employeeIdToFetchTimeSheet = userId;
+    }
+
     if (!startDate || !endDate) {
         return res.status(400).json({
             success: false,
@@ -12,7 +19,7 @@ const employeePackageDetailsByIdController = (req: Request, res: Response) => {
         });
     }
 
-    employeePackageDetailsByIdService.employeePackageDetailsById(userId, startDate, endDate)
+    employeePackageDetailsByIdService.employeePackageDetailsById(employeeIdToFetchTimeSheet, startDate, endDate)
         .then(employeePackageDetailsByIdResponse => {
             res.status(200).json(employeePackageDetailsByIdResponse);
         })
