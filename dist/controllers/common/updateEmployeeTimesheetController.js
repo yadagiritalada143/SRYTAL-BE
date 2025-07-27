@@ -8,8 +8,15 @@ const employeeTimesheetErrorMessage_1 = require("../../constants/common/employee
 const updateEmployeeTimesheetController = (req, res) => {
     const { userId } = req.body;
     let updateEmployeeTimeSheetPayload = {};
+    let employeeIdToUpdateTimeSheet = '';
+    if (req.body && req.body.employeeId) {
+        employeeIdToUpdateTimeSheet = req.body.employeeId;
+    }
+    else {
+        employeeIdToUpdateTimeSheet = userId;
+    }
     updateEmployeeTimeSheetPayload.packages = req.body.packages;
-    updateEmployeeTimeSheetPayload.employeeId = userId;
+    updateEmployeeTimeSheetPayload.employeeId = employeeIdToUpdateTimeSheet;
     updateEmployeeTimesheetService_1.default
         .updateEmployeeTimesheet(updateEmployeeTimeSheetPayload)
         .then((updateEmployeeTimesheetResponse) => {

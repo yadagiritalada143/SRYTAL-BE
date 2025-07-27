@@ -27,7 +27,7 @@ const updateEmployeeTimesheet = async (updateEmployeeTimesheetPayload) => {
                 if (taskIndex === -1)
                     return;
                 payloadTask.timesheet.forEach((payloadTimesheet) => {
-                    const timesheetIndex = employeePackage.packages[packageIndex].tasks[taskIndex].timesheet.findIndex((dbTimesheet) => new Date(dbTimesheet.date).toISOString() === new Date(payloadTimesheet.date).toISOString());
+                    const timesheetIndex = employeePackage.packages[packageIndex].tasks[taskIndex].timesheet.findIndex((dbTimesheet) => areDatesEqual(dbTimesheet.date, payloadTimesheet.date));
                     if (timesheetIndex === -1)
                         return;
                     const basePath = `packages.${packageIndex}.tasks.${taskIndex}.timesheet.${timesheetIndex}`;
@@ -62,5 +62,13 @@ const updateEmployeeTimesheet = async (updateEmployeeTimesheetPayload) => {
             message: error.message
         };
     }
+};
+const areDatesEqual = (date1, date2) => {
+    const d1 = new Date(date1);
+    const d2 = new Date(date2);
+    const returnVal = (d1.getUTCFullYear() === d2.getUTCFullYear() &&
+        d1.getUTCMonth() === d2.getUTCMonth() &&
+        d1.getUTCDate() === d2.getUTCDate());
+    return returnVal;
 };
 exports.default = { updateEmployeeTimesheet };
