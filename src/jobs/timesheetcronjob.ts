@@ -22,7 +22,7 @@ const updateNextMonthTimeSheet = async () => {
         nextMonthFirstDay.getMonth(),
         index + 1
       );
-      const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 1;
+      const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6;
       return {
         date: currentDate,
         isHoliday: false,
