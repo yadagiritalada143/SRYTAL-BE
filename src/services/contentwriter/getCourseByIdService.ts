@@ -1,13 +1,13 @@
 import CourseModel from '../../model/coursesModel';
 
-interface FetchCourseBYIdResponse {
+interface FetchCourseByIdResponse {
     success: boolean;
     coursedata?: any;
 }
 
-const getCourseByIdService = async (_id: string): Promise<FetchCourseBYIdResponse> => {
+const getCourseByIdService = async (id: string): Promise<FetchCourseByIdResponse> => {
     try {
-        const course = await CourseModel.findById({ _id });
+        const course = await CourseModel.findById(id);
 
         if (!course) {
             return { success: false };
