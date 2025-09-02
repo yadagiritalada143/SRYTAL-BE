@@ -40,6 +40,7 @@ const addPackageToEmployeeByAdminController_1 = __importDefault(require("../cont
 const getEmployeePackagesByAdminController_1 = __importDefault(require("../controllers/admin/getEmployeePackagesByAdminController"));
 const deleteEmployeePackagesByAdminController_1 = __importDefault(require("../controllers/admin/deleteEmployeePackagesByAdminController"));
 const deleteEmployeeTaskByAdminController_1 = __importDefault(require("../controllers/admin/deleteEmployeeTaskByAdminController"));
+const addCourseByAdminController_1 = __importDefault(require("../controllers/admin/addCourseByAdminController"));
 const adminRouter = express_1.default.Router();
 adminRouter.post('/login', commonController_1.default.login);
 adminRouter.get('/refreshToken', commonController_1.default.refreshToken);
@@ -76,4 +77,5 @@ adminRouter.post('/addPackagetoEmployeeByAdmin', validateJWT_1.default, addPacka
 adminRouter.get('/getEmployeePackagesByAdmin/:employeeId', validateJWT_1.default, getEmployeePackagesByAdminController_1.default.getEmployeePackageDetailsByAdmin);
 adminRouter.delete('/deleteEmployeePackagesByAdmin', validateJWT_1.default, deleteEmployeePackagesByAdminController_1.default.deleteEmployeePackageByAdmin);
 adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT_1.default, deleteEmployeeTaskByAdminController_1.default.deleteEmployeeTaskByAdmin);
+adminRouter.post('/addNewCourse', validateJWT_1.default, addCourseByAdminController_1.default.addCourseByAdminController);
 exports.default = adminRouter;
