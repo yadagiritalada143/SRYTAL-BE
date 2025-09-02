@@ -9,6 +9,7 @@ import adminRouter from './routes/adminRoutes';
 import superadminRouter from './routes/superadminRoutes';
 import recruiterRouter from './routes/recruiterRoutes';
 import schedularService from './jobs/timesheetcronjob';
+import contentwriterRouter from './routes/contentwriterRoutes';
 
 
 dotenv.config();
@@ -36,6 +37,7 @@ app.use('/', commonRouter);
 app.use('/admin', adminRouter);
 app.use('/superadmin', superadminRouter);
 app.use('/recruiter', recruiterRouter);
+app.use('/contentwriter', contentwriterRouter)
 
 schedularService.updateNextMonthTimeSheet();
 
