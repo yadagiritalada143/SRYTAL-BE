@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import getAllCoursesService from '../../services/contentwriter/getAllCoursesService';
-import { COURSE_ERRORS_MESSAGES } from '../../constants/admin/courseMessages';
+import { COURSE_ERRORS_MESSAGES } from '../../constants/contentwriter/coursesMessages';
 
 const getAllCourses  = (req: Request, res: Response) => {
     getAllCoursesService.AllCoursesService()
@@ -9,7 +9,7 @@ const getAllCourses  = (req: Request, res: Response) => {
         })
         .catch(error => {
             console.error(`Error in fetching courses: ${error}`);
-            res.status(500).json({ success: false, message: COURSE_ERRORS_MESSAGES.COURSE_ADD_FETCH_ERROR_MESSAGES });
+            res.status(500).json({ success: false, message: COURSE_ERRORS_MESSAGES.COURSE_FETCH_ERROR_MESSAGES });
         });
 };
 
