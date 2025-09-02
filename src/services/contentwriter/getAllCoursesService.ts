@@ -1,4 +1,3 @@
-
 import CourseModel from '../../model/coursesModel';
 
 interface FetchAllCoursesResponse {
