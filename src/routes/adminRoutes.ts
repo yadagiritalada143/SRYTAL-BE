@@ -35,6 +35,8 @@ import addPackageToEmployeeByAdminController from '../controllers/admin/addPacka
 import getEmployeePackageByAdminController from '../controllers/admin/getEmployeePackagesByAdminController';
 import deleteEmployeePackagesByAdminController from '../controllers/admin/deleteEmployeePackagesByAdminController';
 import deleteEmployeeTaskByAdminController from '../controllers/admin/deleteEmployeeTaskByAdminController';
+import addCourseByAdminController from  '../controllers/admin/addCourseByAdminController';
+
 
 const adminRouter: Router = express.Router();
 
@@ -72,6 +74,7 @@ adminRouter.delete('/deleteTaskByAdmin/:id', validateJWT, deleteTaskByAdminContr
 adminRouter.post('/addPackagetoEmployeeByAdmin', validateJWT, addPackageToEmployeeByAdminController.addPackageToEmployeeByAdmin);
 adminRouter.get('/getEmployeePackagesByAdmin/:employeeId', validateJWT, getEmployeePackageByAdminController.getEmployeePackageDetailsByAdmin);
 adminRouter.delete('/deleteEmployeePackagesByAdmin', validateJWT, deleteEmployeePackagesByAdminController.deleteEmployeePackageByAdmin);
-adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTaskByAdminController.deleteEmployeeTaskByAdmin)
+adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTaskByAdminController.deleteEmployeeTaskByAdmin);
+adminRouter.post ('/addNewCourse', addCourseByAdminController.addCourseByAdminController);
 
 export default adminRouter;
