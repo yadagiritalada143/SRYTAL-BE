@@ -15,5 +15,4 @@ contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleControl
 contentwriterRouter.post('/addCourseTask', validateJWT, addTaskController.addNewCourseTaskController);
 contentwriterRouter.post('/addCourse', addCourseController.addNewCourseController)
 
-
 export default contentwriterRouter;
