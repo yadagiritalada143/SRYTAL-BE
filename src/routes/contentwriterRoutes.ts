@@ -13,6 +13,6 @@ contentwriterRouter.get('/getAllCourses', validateJWT, getAllCoursesController.g
 contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseByIdController.getCourseByIdController);
 contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleController.addNewCourseModuleController);
 contentwriterRouter.post('/addCourseTask', validateJWT, addTaskController.addNewCourseTaskController);
-contentwriterRouter.post('/addCourse', addCourseController.addNewCourseController)
+contentwriterRouter.post('/addCourse', validateJWT, addCourseController.addNewCourseController)
 
 export default contentwriterRouter;
