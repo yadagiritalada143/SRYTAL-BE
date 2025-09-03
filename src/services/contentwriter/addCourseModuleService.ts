@@ -6,7 +6,7 @@ const addNewCourseModuleService = async (courseId:string, moduleName: string, mo
         const result = await CoursesModuleToSave.save();
         return result;
     } catch (error: any) {
-        console.error('Error in adding CourseModule:', error);
+        console.error('Error in adding Module:', error);
         return { success: false };
     }
 };

@@ -8,6 +8,6 @@ const contentwriterRouter: Router = express.Router();
 
 contentwriterRouter.get('/getAllCourses', validateJWT, getAllCoursesController.getAllCourses);
 contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseByIdController.getCourseByIdController)
-contentwriterRouter.post('/addNewModule', addCourseModuleController.addNewCourseModuleController)
+contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleController.addNewCourseModuleController)
 
 export default contentwriterRouter;

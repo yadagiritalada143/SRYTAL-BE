@@ -1,5 +1,5 @@
 export const COURSESMODULE_ADD_SUCCESS_MESSAGES = {
-    COURSEMODULE_ADD_SUCCESS_MESSAGE: 'New coursemodule added Successfully !',
+    COURSEMODULE_ADD_SUCCESS_MESSAGE: 'New module added Successfully !',
 }
 
 export const COURSEMODULE_ADD_ERRORS_MESSAGES = {
