@@ -5,9 +5,9 @@ interface FetchAllCoursesResponse {
     courses?: any;
 }
 
-const AllCoursesService  = (): Promise<FetchAllCoursesResponse> => {
+const AllCoursesService = (): Promise<FetchAllCoursesResponse> => {
     return new Promise((resolve, reject) => {
-        CourseModel.find({})
+        CourseModel.find({}).populate('modules')
             .then((courses: any) => {
                 if (!courses) {
                     reject({ success: false });
@@ -19,7 +19,7 @@ const AllCoursesService  = (): Promise<FetchAllCoursesResponse> => {
                 }
             })
             .catch((error: any) => {
-                console.error(`Error in fetching Courses: ${error}` );
+                console.error(`Error in fetching Courses: ${error}`);
                 reject({ success: false });
             });
     });
