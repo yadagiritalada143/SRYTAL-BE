@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import addNewCourseService from '../../services/contentwriter/addCourseService';
-import { COURSE_ADD_SUCCESS_MESSAGES, COURSE_ERRORS_MESSAGES  } from '../../constants/contentwriter/courseMessages';
+import { COURSE_ADD_SUCCESS_MESSAGES, COURSE_ERRORS_MESSAGES } from '../../constants/contentwriter/courseMessages';
 
 const addNewCourseController = (req: Request, res: Response) => {
-    const {  courseName, courseDescription } = req.body;
+    const { courseName, courseDescription } = req.body;
     addNewCourseService
-        .addCourseService( courseName, courseDescription)
-        .then((responseAfteraddingCourse) => {
+        .addCourseService(courseName, courseDescription)
+        .then((responseAfteraddingCourse: any) => {
             if (responseAfteraddingCourse.id) {
                 return res
                     .status(201)
@@ -19,6 +19,8 @@ const addNewCourseController = (req: Request, res: Response) => {
         })
         .catch((error) => {
             console.log(error);
+            res.status(500).json({ success: false, message: COURSE_ERRORS_MESSAGES.COURSE_ADD_ERROR_MESSAGE });
         });
 }
+
 export default { addNewCourseController };

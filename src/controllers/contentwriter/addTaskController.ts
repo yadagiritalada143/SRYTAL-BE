@@ -6,7 +6,7 @@ const addNewCourseTaskController = (req: Request, res: Response) => {
     const { moduleId, taskName, taskDescription } = req.body;
     addNewCourseTaskService
         .addCourseTaskService(moduleId, taskName, taskDescription)
-        .then((responseAfteraddingCourseTask) => {
+        .then((responseAfteraddingCourseTask: any) => {
             if (responseAfteraddingCourseTask.id) {
                 return res
                     .status(201)
@@ -21,4 +21,5 @@ const addNewCourseTaskController = (req: Request, res: Response) => {
             console.log(error);
         });
 }
+
 export default { addNewCourseTaskController };
