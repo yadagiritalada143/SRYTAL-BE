@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import getCourseById from '../../services/contentwriter/getCourseByIdService';
-import { COURSE_ERRORS_MESSAGES } from '../../constants/contentwriter/coursesMessages';
+import { COURSE_ERRORS_MESSAGES } from '../../constants/contentwriter/courseMessages';
 
 const getCourseByIdController = (req: Request, res: Response) => {
     const { id } = req.params;
@@ -10,7 +10,7 @@ const getCourseByIdController = (req: Request, res: Response) => {
         })
         .catch(error => {
             console.error(`Error in fetching course by Id: ${error}`);
-            res.status(500).json({ success: false, message: COURSE_ERRORS_MESSAGES.COURSE_FETCH_ERROR_MESSAGES });
+            res.status(500).json({ success: false, message: COURSE_ERRORS_MESSAGES.COURSE_ADD_ERROR_MESSAGE });
         });
 };
 
