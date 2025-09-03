@@ -5,9 +5,10 @@ interface FetchCourseByIdResponse {
     coursedata?: any;
 }
 
-const getCourseByIdService = async (id: string): Promise<FetchCourseByIdResponse> => {
+const getCourseById = async (id: string): Promise<FetchCourseByIdResponse> => {
     try {
-        const course = await CourseModel.find({})
+        console.log('Id at services is:', id);
+        const course = await CourseModel.findById(id)
             .populate({
                 path: 'modules',
                 populate: {
@@ -31,4 +32,4 @@ const getCourseByIdService = async (id: string): Promise<FetchCourseByIdResponse
     }
 };
 
-export default { getCourseByIdService };
+export default { getCourseById };

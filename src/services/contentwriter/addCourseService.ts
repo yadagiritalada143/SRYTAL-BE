@@ -1,12 +1,12 @@
-import CourseTaskModel from '../../model/courseTaskModel';
+import CourseModel from '../../model/coursesModel';
 
-const addCourseService = async ( courseName: string, courseDescription: string, ) => {
+const addCourseService = async (courseName: string, courseDescription: string,) => {
     try {
-        const CoursesToSave: any = new CourseTaskModel({ courseName, courseDescription});
-        const result = await CoursesToSave.save();
+        const CourseToSave: any = new CourseModel({ courseName, courseDescription });
+        const result = await CourseToSave.save();
         return result;
     } catch (error: any) {
-        console.error('Error in adding course:', error);
+        console.error('Error in adding new course:', error);
         return { success: false };
     }
 };

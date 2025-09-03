@@ -7,7 +7,7 @@ const addNewCourseController = (req: Request, res: Response) => {
     addNewCourseService
         .addCourseService(courseName, courseDescription)
         .then((responseAfteraddingCourse: any) => {
-            if (responseAfteraddingCourse.id) {
+            if (responseAfteraddingCourse._id) {
                 return res
                     .status(201)
                     .json({ message: COURSE_SUCCESS_MESSAGES.COURSE_ADD_SUCCESS_MESSAGE });

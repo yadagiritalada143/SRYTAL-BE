@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import getCourseById from '../../services/contentwriter/getCourseByIdService';
+import getCourseByIdService from '../../services/contentwriter/getCourseByIdService';
 import { COURSE_ERRORS_MESSAGES } from '../../constants/contentwriter/courseMessages';
 
 const getCourseByIdController = (req: Request, res: Response) => {
     const { id } = req.params;
-    getCourseById.getCourseByIdService(id)
+    getCourseByIdService.getCourseById(id)
         .then(CourseByIdResponse => {
             res.status(200).json(CourseByIdResponse);
         })
