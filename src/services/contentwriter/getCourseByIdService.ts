@@ -7,7 +7,14 @@ interface FetchCourseByIdResponse {
 
 const getCourseByIdService = async (id: string): Promise<FetchCourseByIdResponse> => {
     try {
-        const course = await CourseModel.findById(id).populate('modules');
+        const course = await CourseModel.find({})
+            .populate({
+                path: 'modules',
+                populate: {
+                    path: 'tasks',
+                    model: 'CourseTaskModel'
+                }
+            })
 
         if (!course) {
             return { success: false };

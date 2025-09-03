@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import getAllCoursesService from '../../services/contentwriter/getAllCoursesService';
 import { COURSE_ERRORS_MESSAGES } from '../../constants/contentwriter/courseMessages';
 
-const getAllCourses  = (req: Request, res: Response) => {
+const getAllCourses = (req: Request, res: Response) => {
     getAllCoursesService.AllCoursesService()
         .then((FetchAllCoursesResponse: any) => {
             res.status(200).json(FetchAllCoursesResponse);

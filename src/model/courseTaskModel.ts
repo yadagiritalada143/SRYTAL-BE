@@ -1,15 +1,11 @@
 import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import { ICourseTask } from '../interfaces/courseTask';
-import CourseModuleModel from './coursemoduleModel';
-import { required } from 'joi';
-
-
 
 const CourseTaskSchema = new mongoose.Schema({
+    moduleId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseModuleModel', required: true },
     taskName: { type: mongoose.Schema.Types.String, required: true, unique: true },
     taskDescription: { type: mongoose.Schema.Types.String },
-    moduleId: { type: mongoose.Schema.Types.ObjectId, ref: CourseModuleModel }
 },
     {
         collection: 'coursetask',
@@ -19,6 +15,6 @@ const CourseTaskSchema = new mongoose.Schema({
 
 CourseTaskSchema.plugin(uniqueValidator);
 
-const CourseTaskModel = mongoose.model<ICourseTask>('ICourseTask', CourseTaskSchema);
+const CourseTaskModel = mongoose.model<ICourseTask>('CourseTaskModel', CourseTaskSchema);
 
 export default CourseTaskModel;
