@@ -1,15 +1,23 @@
 import mongoose, { Schema } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
-import {ICourses} from '../interfaces/courses';
+import { ICourses } from '../interfaces/courses';
 
 const CoursesSchema = new mongoose.Schema({
-    courseName:{ type: mongoose.Schema.Types.String, unique: true },
-    courseDescription: { type: mongoose.Schema.Types.String }
+    id: { type: mongoose.Schema.Types.ObjectId },
+    courseName: { type: mongoose.Schema.Types.String, unique: true },
+    courseDescription: { type: mongoose.Schema.Types.String },
 },
-{
-    collection: 'courses',
-    toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    {
+        collection: 'courses',
+        toObject: { virtuals: true },
+        toJSON: { virtuals: true }
+    }
+);
+
+CoursesSchema.virtual('modules', {
+    ref: 'CourseModule',
+    localField: '_id',
+    foreignField: 'courseId'
 });
 
 CoursesSchema.plugin(uniqueValidator);

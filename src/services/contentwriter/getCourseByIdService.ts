@@ -7,7 +7,7 @@ interface FetchCourseByIdResponse {
 
 const getCourseByIdService = async (id: string): Promise<FetchCourseByIdResponse> => {
     try {
-        const course = await CourseModel.findById(id);
+        const course = await CourseModel.findById(id).populate('modules');
 
         if (!course) {
             return { success: false };
@@ -20,7 +20,7 @@ const getCourseByIdService = async (id: string): Promise<FetchCourseByIdResponse
         };
     } catch (error) {
         console.error(`Error in fetching course By id: ${error}`);
-       return { success: false };
+        return { success: false };
     }
 };
 
