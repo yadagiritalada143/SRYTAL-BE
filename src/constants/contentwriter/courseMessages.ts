@@ -4,5 +4,5 @@ export const COURSE_SUCCESS_MESSAGES = {
 
 export const COURSE_ERROR_MESSAGES = {
     COURSE_ADD_ERROR_MESSAGE: 'Error occured while adding new Course !',
-    COURSE_FETCH_ERROR_MESSAGES: 'Error in fetching course details !',
+    COURSE_FETCH_ERROR_MESSAGE: 'Error in fetching course details !',
 };

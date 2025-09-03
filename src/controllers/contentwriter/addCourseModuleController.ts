@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import addCourseModuleService from '../../services/contentwriter/addCourseModuleService';
-import { COURSE_MODULE_ADD_SUCCESS_MESSAGES, COURSE_MODULE_ADD_ERRORS_MESSAGES } from '../../constants/contentwriter/coursemoduleMessages';
+import { COURSE_MODULE_SUCCESS_MESSAGES, COURSE_MODULE_ERRORS_MESSAGES } from '../../constants/contentwriter/coursemoduleMessages';
 
 const addNewCourseModuleController = (req: Request, res: Response) => {
     const { courseId, moduleName, moduleDescription } = req.body;
@@ -10,11 +10,11 @@ const addNewCourseModuleController = (req: Request, res: Response) => {
             if (responseAfteraddingCourseModule.id) {
                 return res
                     .status(201)
-                    .json({ message: COURSE_MODULE_ADD_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE });
+                    .json({ message: COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE });
             } else {
                 return res
                     .status(400)
-                    .json({ message: COURSE_MODULE_ADD_ERRORS_MESSAGES.COURSE_MODULE_ADD_ERROR_MESSAGE });
+                    .json({ message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_ADD_ERROR_MESSAGE });
             }
         })
         .catch((error) => {
