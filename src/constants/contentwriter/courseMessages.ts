@@ -1,4 +1,4 @@
-export const COURSE_ADD_SUCCESS_MESSAGES = {
+export const COURSE_SUCCESS_MESSAGES = {
     COURSE_ADD_SUCCESS_MESSAGE: 'New course added Successfully !',
 }
 

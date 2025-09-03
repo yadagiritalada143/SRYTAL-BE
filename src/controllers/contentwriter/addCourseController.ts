@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import addNewCourseService from '../../services/contentwriter/addCourseService';
-import { COURSE_ADD_SUCCESS_MESSAGES, COURSE_ERRORS_MESSAGES } from '../../constants/contentwriter/courseMessages';
+import { COURSE_SUCCESS_MESSAGES, COURSE_ERRORS_MESSAGES } from '../../constants/contentwriter/courseMessages';
 
 const addNewCourseController = (req: Request, res: Response) => {
     const { courseName, courseDescription } = req.body;
@@ -10,7 +10,7 @@ const addNewCourseController = (req: Request, res: Response) => {
             if (responseAfteraddingCourse.id) {
                 return res
                     .status(201)
-                    .json({ message: COURSE_ADD_SUCCESS_MESSAGES.COURSE_ADD_SUCCESS_MESSAGE });
+                    .json({ message: COURSE_SUCCESS_MESSAGES.COURSE_ADD_SUCCESS_MESSAGE });
             } else {
                 return res
                     .status(400)
