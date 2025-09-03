@@ -7,7 +7,6 @@ interface FetchCourseByIdResponse {
 
 const getCourseById = async (id: string): Promise<FetchCourseByIdResponse> => {
     try {
-        console.log('Id at services is:', id);
         const course = await CourseModel.findById(id)
             .populate({
                 path: 'modules',
