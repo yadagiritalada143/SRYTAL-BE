@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import addNewCourseTaskService from '../../services/contentwriter/addTaskService';
+import addNewCourseTaskService from '../../services/contentwriter/addCourseTaskService';
 import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../../constants/contentwriter/coursetaskMessages';
 
-const addNewCourseTaskController = (req: Request, res: Response) => {
+const addTaskToModule = (req: Request, res: Response) => {
     const { moduleId, taskName, taskDescription } = req.body;
     addNewCourseTaskService
         .addCourseTaskService(moduleId, taskName, taskDescription)
@@ -22,4 +22,4 @@ const addNewCourseTaskController = (req: Request, res: Response) => {
         });
 }
 
-export default { addNewCourseTaskController };
+export default { addTaskToModule };

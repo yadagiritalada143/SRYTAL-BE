@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import getCourseByIdService from '../../services/contentwriter/getCourseByIdService';
 import { COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessages';
 
-const getCourseByIdController = (req: Request, res: Response) => {
+const getCourseDetailsById = (req: Request, res: Response) => {
     const { id } = req.params;
     getCourseByIdService.getCourseById(id)
         .then(CourseByIdResponse => {
@@ -14,4 +14,4 @@ const getCourseByIdController = (req: Request, res: Response) => {
         });
 };
 
-export default { getCourseByIdController }
+export default { getCourseDetailsById }

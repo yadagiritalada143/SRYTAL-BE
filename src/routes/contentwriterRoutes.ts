@@ -2,16 +2,16 @@ import express, { Router } from 'express';
 import validateJWT from '../middlewares/validateJWT';
 import addCourseController from '../controllers/contentwriter/addCourseController';
 import getAllCoursesController from '../controllers/contentwriter/getAllCoursesController';
-import getCourseByIdController from '../controllers/contentwriter/getCourseByIdController';
+import getCourseDetailsByIdController from '../controllers/contentwriter/getCourseByIdController';
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
-import addTaskController from '../controllers/contentwriter/addTaskController';
+import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
 
 const contentwriterRouter: Router = express.Router();
 
-contentwriterRouter.post('/addCourse', validateJWT, addCourseController.addNewCourseController);
+contentwriterRouter.post('/addCourse', validateJWT, addCourseController.addNewCourse);
 contentwriterRouter.get('/getAllCourses', validateJWT, getAllCoursesController.getAllCourses);
-contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseByIdController.getCourseByIdController);
-contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleController.addNewCourseModuleController);
-contentwriterRouter.post('/addCourseTask', validateJWT, addTaskController.addNewCourseTaskController);
+contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseDetailsByIdController.getCourseDetailsById);
+contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleController.addModuleToCourse);
+contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.addTaskToModule);
 
 export default contentwriterRouter;

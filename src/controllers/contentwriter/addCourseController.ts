@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import addNewCourseService from '../../services/contentwriter/addCourseService';
 import { COURSE_SUCCESS_MESSAGES, COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessages';
 
-const addNewCourseController = (req: Request, res: Response) => {
+const addNewCourse = (req: Request, res: Response) => {
     const { courseName, courseDescription } = req.body;
     addNewCourseService
         .addCourseService(courseName, courseDescription)
@@ -23,4 +23,4 @@ const addNewCourseController = (req: Request, res: Response) => {
         });
 }
 
-export default { addNewCourseController };
+export default { addNewCourse };
