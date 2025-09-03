@@ -1,9 +1,9 @@
-import { Request, Response } from 'express'; 
+import { Request, Response } from 'express';
 import addCourseModuleService from '../../services/contentwriter/addCourseModuleService';
 import { COURSESMODULE_ADD_SUCCESS_MESSAGES, COURSEMODULE_ADD_ERRORS_MESSAGES } from '../../constants/contentwriter/coursemoduleMessages';
 
 const addNewCourseModuleController = (req: Request, res: Response) => {
-    const {courseId, moduleName, moduleDescription} = req.body;
+    const { courseId, moduleName, moduleDescription } = req.body;
     addCourseModuleService
         .addNewCourseModuleService(courseId, moduleName, moduleDescription)
         .then((responseAfteraddingCourseModule) => {
@@ -20,6 +20,5 @@ const addNewCourseModuleController = (req: Request, res: Response) => {
         .catch((error) => {
             console.log(error);
         });
-    
 }
 export default { addNewCourseModuleController };

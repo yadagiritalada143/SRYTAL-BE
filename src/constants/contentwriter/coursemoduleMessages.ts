@@ -4,5 +4,4 @@ export const COURSESMODULE_ADD_SUCCESS_MESSAGES = {
 
 export const COURSEMODULE_ADD_ERRORS_MESSAGES = {
     COURSEMODULE_ADD_ERROR_MESSAGE: 'Error occured while adding coursemodule !',
-    
 };
