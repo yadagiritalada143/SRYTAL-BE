@@ -7,7 +7,14 @@ interface FetchAllCoursesResponse {
 
 const AllCoursesService = (): Promise<FetchAllCoursesResponse> => {
     return new Promise((resolve, reject) => {
-        CourseModel.find({}).populate('modules')
+        CourseModel.find({})
+            .populate({
+                path: 'modules',
+                populate: {
+                    path: 'tasks',
+                    model: 'CourseTaskModel'
+                }
+            })
             .then((courses: any) => {
                 if (!courses) {
                     reject({ success: false });
