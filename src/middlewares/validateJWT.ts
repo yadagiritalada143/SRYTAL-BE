@@ -7,7 +7,7 @@ dotenv.config();
 const SECRET_KEY = process.env.SECRET_KEY!;
 
 const validateJWT = (req: Request, res: Response, next: NextFunction) => {
-    const authToken: any = req.headers['auth_token'];
+    const authToken: any = req.headers['auth_token'] || req.headers['authorization']?.split(' ')[1];
     if (authToken) {
         jwt.verify(authToken, SECRET_KEY, (error: any, decoded: any) => {
             if (error) {
