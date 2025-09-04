@@ -1,4 +1,7 @@
 import express, { Express } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerOptions from './config/swagger';
 import dotenv from 'dotenv';
 import morgan from 'morgan';
 import cors from 'cors';
@@ -17,6 +20,10 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
 const SECRET_KEY = process.env.SECRET_KEY!;
+
+// Swagger setup
+const swaggerDocs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(express.json());
 app.use(
