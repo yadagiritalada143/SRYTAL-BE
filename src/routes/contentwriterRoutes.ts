@@ -1,8 +1,10 @@
 import express, { Router } from 'express';
 import validateJWT from '../middlewares/validateJWT';
+import addCourseController from '../controllers/contentwriter/addCourseController';
 import getAllCoursesController from '../controllers/contentwriter/getAllCoursesController';
-import getCourseByIdController from '../controllers/contentwriter/getCourseByIdController';
+import getCourseDetailsByIdController from '../controllers/contentwriter/getCourseByIdController';
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
+import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
 
 const contentwriterRouter: Router = express.Router();
 
@@ -82,7 +84,53 @@ contentwriterRouter.get('/getAllCourses', validateJWT, getAllCoursesController.g
  *       500:
  *         description: Server error
  */
-contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseByIdController.getCourseByIdController);
+contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseDetailsByIdController.getCourseDetailsById);
+
+/**
+ * @swagger
+ * /contentwriter/addCourse:
+ *   post:
+ *     summary: Add a new course
+ *     description: Add a new course to the platform. This action requires authentication.
+ *     tags:
+ *       - ContentWriter
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               courseName:
+ *                 type: string
+ *               courseDescription:
+ *                 type: string
+ *             required:
+ *               - courseName
+ *     responses:
+ *       201:
+ *         description: Successfully added the new course.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 courseId:
+ *                   type: string
+ *                 courseName:
+ *                   type: string
+ *                 courseDescription:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+contentwriterRouter.post('/addCourse', validateJWT, addCourseController.addNewCourse);
 
 /**
  * @swagger
@@ -118,10 +166,55 @@ contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseByIdControll
  *       500:
  *         description: Server error
  */
-contentwriterRouter.post(
-    '/addCourseModule',
-    validateJWT,
-    addCourseModuleController.addNewCourseModuleController
-);
+contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleController.addModuleToCourse);
+
+/**
+ * @swagger
+ * /contentwriter/addCourseTask:
+ *   post:
+ *     summary: Add a task to a course module
+ *     description: Add a new task to an existing course module. This action requires authentication.
+ *     tags:
+ *       - ContentWriter
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               taskName:
+ *                 type: string
+ *               taskDescription:
+ *                 type: string
+ *               moduleId:
+ *                 type: string
+ *             required:
+ *               - taskName
+ *               - moduleId
+ *     responses:
+ *       201:
+ *         description: Successfully added the task to the course module.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 taskId:
+ *                   type: string
+ *                 taskName:
+ *                   type: string
+ *                 taskDescription:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.addTaskToModule);
 
 export default contentwriterRouter;
