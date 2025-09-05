@@ -4,8 +4,9 @@ import { COURSE_SUCCESS_MESSAGES, COURSE_ERROR_MESSAGES } from '../../constants/
 
 const addNewCourse = (req: Request, res: Response) => {
     const { courseName, courseDescription } = req.body;
+    const status = 'ACTIVE'; 
     addNewCourseService
-        .addCourseService(courseName, courseDescription)
+        .addCourseService(courseName, courseDescription, status)
         .then((responseAfteraddingCourse: any) => {
             if (responseAfteraddingCourse._id) {
                 return res

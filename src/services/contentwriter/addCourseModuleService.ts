@@ -1,8 +1,8 @@
 import CourseModuleModel from '../../model/coursemoduleModel';
 
-const addNewCourseModuleService = async (courseId:string, moduleName: string, moduleDescription: string, ) => {
+const addNewCourseModuleService = async (courseId:string, moduleName: string, moduleDescription: string, status: string ) => {
     try {
-        const CoursesModuleToSave: any = new CourseModuleModel({courseId, moduleName, moduleDescription});
+        const CoursesModuleToSave: any = new CourseModuleModel({courseId, moduleName, moduleDescription, status});
         const result = await CoursesModuleToSave.save();
         return result;
     } catch (error: any) {
