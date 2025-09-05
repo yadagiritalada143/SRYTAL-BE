@@ -222,10 +222,12 @@ contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.
  * @swagger
  * /contentwriter/updatecoursetask:
  *   put:
- *     summary: Update course task by Content Writer
- *      tags: [Course Task]
+ *     summary: Update a course task deatils or status of the task
+ *     description: Update an existing course task as a Content Writer. We can update the task name, description. Additionaly we can either ARCHIEVE the task or ACTIVE the task. This action requires authentication.
+ *     tags:
+ *       - ContentWriter
  *     security:
- *       - bearerAuth: [] # JWT Bearer token required
+ *       - BearerAuth: [] # JWT Bearer token required
  *     requestBody:
  *       required: true
  *       content:
@@ -240,22 +242,34 @@ contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.
  *             properties:
  *               id:
  *                 type: string
- *                 description: MongoDB ID of the course task
+ *                 description: ID of the course task to update
  *               taskName:
  *                 type: string
+ *                 description: Updated task name
  *               taskDescription:
  *                 type: string
+ *                 description: Updated task description
  *               status:
  *                 type: string
+ *                 description: Updated status of the task ("ACTIVE" or "ARCHIVE")
  *     responses:
  *       200:
  *         description: Course task updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Course task updated successfully"
  *       400:
- *         description: Invalid status
+ *         description: Invalid input or status provided
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
  *       500:
  *         description: Internal server error
  */
-
 contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskController.updateCourseTaskController)
 
 export default contentwriterRouter;
