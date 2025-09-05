@@ -5,9 +5,9 @@ interface FetchAllCoursesResponse {
     courses?: any;
 }
 
-const AllCoursesService = (status: string): Promise<FetchAllCoursesResponse> => {
+const AllCoursesService = (): Promise<FetchAllCoursesResponse> => {
     return new Promise((resolve, reject) => {
-        CourseModel.find({status})
+        CourseModel.find({})
             .populate({
                 path: 'modules',
                 populate: {

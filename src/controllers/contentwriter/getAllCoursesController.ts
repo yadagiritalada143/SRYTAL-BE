@@ -3,8 +3,7 @@ import getAllCoursesService from '../../services/contentwriter/getAllCoursesServ
 import { COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessages';
 
 const getAllCourses = (req: Request, res: Response) => {
-      const status = "ACTIVE";
-    getAllCoursesService.AllCoursesService(status)
+    getAllCoursesService.AllCoursesService()
         .then((FetchAllCoursesResponse: any) => {
             res.status(200).json(FetchAllCoursesResponse);
         })
