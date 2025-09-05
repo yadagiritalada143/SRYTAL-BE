@@ -5,6 +5,7 @@ import getAllCoursesController from '../controllers/contentwriter/getAllCoursesC
 import getCourseDetailsByIdController from '../controllers/contentwriter/getCourseByIdController';
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
 import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
+import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
 
 const contentwriterRouter: Router = express.Router();
 
@@ -216,5 +217,45 @@ contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleControl
  *         description: Server error
  */
 contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.addTaskToModule);
+
+/**
+ * @swagger
+ * /contentwriter/updatecoursetask:
+ *   put:
+ *     summary: Update course task by Content Writer
+ *      tags: [Course Task]
+ *     security:
+ *       - bearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - taskName
+ *               - taskDescription
+ *               - status
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: MongoDB ID of the course task
+ *               taskName:
+ *                 type: string
+ *               taskDescription:
+ *                 type: string
+ *               status:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Course task updated successfully
+ *       400:
+ *         description: Invalid status
+ *       500:
+ *         description: Internal server error
+ */
+
+contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskController.updateCourseTaskController)
 
 export default contentwriterRouter;
