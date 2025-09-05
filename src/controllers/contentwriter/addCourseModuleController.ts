@@ -4,7 +4,7 @@ import { COURSE_MODULE_SUCCESS_MESSAGES, COURSE_MODULE_ERRORS_MESSAGES } from '.
 
 const addModuleToCourse = (req: Request, res: Response) => {
     const { courseId, moduleName, moduleDescription } = req.body;
-    const status='ACTIVE';
+    const status = 'ACTIVE';
     addCourseModuleService
         .addNewCourseModuleService(courseId, moduleName, moduleDescription, status)
         .then((responseAfteraddingCourseModule) => {
