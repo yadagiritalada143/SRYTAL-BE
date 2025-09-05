@@ -297,10 +297,10 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *             properties:
  *               id:
  *                 type: string
- *                 description: Mongo ID of the course module
+ *                 description: ID of the course module
  *               courseId:
  *                 type: string
- *                 description: Mongo ID of the course 
+ *                 description: ID of the course 
  *               moduleName:
  *                 type: string
  *                 description: Updated module name

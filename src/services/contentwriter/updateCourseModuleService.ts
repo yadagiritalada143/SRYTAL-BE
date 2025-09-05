@@ -2,20 +2,20 @@ import CourseModuleModel from '../../model/coursemoduleModel';
 
 interface updateCourseModuleResponse {
     success: boolean;
-    responseAfterUpdate?: any;
+    responseAfterModuleUpdate?: any;
 }
 
 const updateCourseModule = async (id: string, moduleName: string, moduleDescription: string, status: string): Promise<updateCourseModuleResponse> => {
     try {
-        const result = await CourseModuleModel.updateMany({ _id: id }, { moduleName, moduleDescription, status });
+        const result = await CourseModuleModel.updateOne({ _id: id }, { moduleName, moduleDescription, status });
         if (!result) {
             return { success: false };
         }
 
-        return { success: true, responseAfterUpdate: result };
+        return { success: true, responseAfterModuleUpdate: result };
     } catch (error: any) {
         console.error(`Error in updating module: ${error}`);
-        return { success: false, responseAfterUpdate: error };
+        return { success: false, responseAfterModuleUpdate: error };
     }
 }
 
