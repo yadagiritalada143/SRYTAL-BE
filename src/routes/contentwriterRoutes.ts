@@ -5,6 +5,7 @@ import getAllCoursesController from '../controllers/contentwriter/getAllCoursesC
 import getCourseDetailsByIdController from '../controllers/contentwriter/getCourseByIdController';
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
 import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
+import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
 
 const contentwriterRouter: Router = express.Router();
 
@@ -216,5 +217,59 @@ contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleControl
  *         description: Server error
  */
 contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.addTaskToModule);
+
+/**
+ * @swagger
+ * /contentwriter/updatecoursetask:
+ *   put:
+ *     summary: Update a course task deatils or status of the task
+ *     description: Update an existing course task as a Content Writer. We can update the task name, description. Additionaly we can either ARCHIEVE the task or ACTIVE the task. This action requires authentication.
+ *     tags:
+ *       - ContentWriter
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - taskName
+ *               - taskDescription
+ *               - status
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course task to update
+ *               taskName:
+ *                 type: string
+ *                 description: Updated task name
+ *               taskDescription:
+ *                 type: string
+ *                 description: Updated task description
+ *               status:
+ *                 type: string
+ *                 description: Updated status of the task ("ACTIVE" or "ARCHIVE")
+ *     responses:
+ *       200:
+ *         description: Course task updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Course task updated successfully"
+ *       400:
+ *         description: Invalid input or status provided
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error
+ */
+contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskController.updateCourseTaskController)
 
 export default contentwriterRouter;
