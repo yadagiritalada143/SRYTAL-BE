@@ -5,7 +5,7 @@ interface FetchAllCoursesResponse {
     courses?: any;
 }
 
-const AllCoursesService = (status:string): Promise<FetchAllCoursesResponse> => {
+const AllCoursesService = (status: string): Promise<FetchAllCoursesResponse> => {
     return new Promise((resolve, reject) => {
         CourseModel.find({status})
             .populate({
