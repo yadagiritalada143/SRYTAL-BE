@@ -20,6 +20,7 @@ commonRouter.get('/', (req, res) => {
     res.status(200).json({ message: 'Successfully server up and running !' });
 });
 
+commonRouter.post('/login', commonController.login);
 commonRouter.get('/getVisitorCount', commonController.updateVisitorCount);
 commonRouter.post('/sendContactUsMail', sendContactUsMailController.sendContactUsMail);
 commonRouter.post('/updateApplicationWalkThrough', updateApplicationWalkThroughController.updateApplicationWalkThrough);
