@@ -22,7 +22,7 @@ const updateCourseController = async (req: Request, res: Response) => {
         );
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {
-        console.error(`Error in updating course task: ${error}`);
+        console.error(`Error in updating course: ${error}`);
         res.status(500).json({
             success: false,
             message: COURSE_ERROR_MESSAGES.COURSE_UPDATE_ERROR_MESSAGE,
