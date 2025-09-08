@@ -20,6 +20,79 @@ commonRouter.get('/', (req, res) => {
     res.status(200).json({ message: 'Successfully server up and running !' });
 });
 
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Users login
+ *     description: Authenticates a user and returns a JWT access token and refresh token.
+ *     tags:
+ *       - Login
+ *     requestBody:
+ *       description: Login credentials
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *               password:
+ *                 type: string
+ *                 format: password
+ *     responses:
+ *       200:
+ *         description: login Successfully 
+ *         headers:
+ *           X-CSRF-Token:
+ *             description: CSRF token for frontend protection
+ *             schema:
+ *               type: string
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 id:
+ *                   type: string
+ *                   example: 60f6c0b8b9f1e12d4cd57b2f
+ *                 userRole:
+ *                   type: string
+ *                 passwordResetRequired:
+ *                   type: boolean
+ *                 applicationWalkThrough:
+ *                   type: boolean
+ *                 token:
+ *                   type: string
+ *                   description: JWT access token
+ *                 refreshToken:
+ *                   type: string
+ *                   description: Refresh token
+ *                 firstName:
+ *                   type: string
+ *                 lastName:
+ *                   type: string
+ *       401:
+ *         description: Invalid email or password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *       500:
+ *         description: Internal server error
+ */
 commonRouter.post('/login', commonController.login);
 commonRouter.get('/getVisitorCount', commonController.updateVisitorCount);
 commonRouter.post('/sendContactUsMail', sendContactUsMailController.sendContactUsMail);
