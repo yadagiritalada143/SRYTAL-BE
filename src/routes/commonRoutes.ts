@@ -22,12 +22,12 @@ commonRouter.get('/', (req, res) => {
 
 /**
  * @swagger
- * /admin/login:
+ * /login:
  *   post:
  *     summary: Users login
  *     description: Authenticates a user and returns a JWT access token and refresh token.
  *     tags:
- *       - Authentication
+ *       - Login
  *     requestBody:
  *       description: Login credentials
  *       required: true
