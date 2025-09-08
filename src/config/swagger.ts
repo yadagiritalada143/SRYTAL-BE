@@ -4,7 +4,7 @@ const swaggerOptions = {
         info: {
             title: 'SRYTAL Backend API Documentation',
             version: '1.0.0',
-            description: 'API documentation for managing courses, modules, and tasks',
+            description: 'API documentation for managing SRYTAL APIs',
         },
         servers: [
             {

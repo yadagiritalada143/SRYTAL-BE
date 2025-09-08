@@ -7,6 +7,7 @@ import addCourseModuleController from '../controllers/contentwriter/addCourseMod
 import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
 import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
 import updateCourseModuleController from '../controllers/contentwriter/updateCourseModuleController';
+import updateCourseController from '../controllers/contentwriter/updateCourseController';
 
 const contentwriterRouter: Router = express.Router();
 
@@ -329,6 +330,60 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *         description: Internal server error
  */
 
-contentwriterRouter.put('/updatecoursemodule',validateJWT, updateCourseModuleController.updateCourseModuleController);
+contentwriterRouter.put('/updatecoursemodule', validateJWT, updateCourseModuleController.updateCourseModuleController);
+
+/**
+ * @swagger
+ * /contentwriter/updatecourse:
+ *   put:
+ *     summary: Update course details (name, description, and status) 
+ *     description: Allows a content writer to update a course by providing its ID along with new values for name, description, and status.
+ *     tags:
+ *       - ContentWriter
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - courseName
+ *               - courseDescription
+ *               - status
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course
+ *               courseName:
+ *                 type: string
+ *                 description: Updated course name
+ *               courseDescription:
+ *                 type: string
+ *                 description: Updated course description
+ *               status:
+ *                 type: string
+ *                 description: Updated status of the course ("ACTIVE" or "ARCHIVE")
+ *     responses:
+ *       200:
+ *         description: Course updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Course updated successfully"
+ *       400:
+ *         description: Invalid input or status provided
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error
+ */
+contentwriterRouter.put('/updatecourse', validateJWT, updateCourseController.updateCourseController)
 
 export default contentwriterRouter;
