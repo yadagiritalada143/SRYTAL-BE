@@ -12,7 +12,7 @@ const updateCourse = async (id: string, courseName: string, courseDescription: s
              return { success: false };
         }
 
-         return { success: false, responseAfterUpdateCourse: result };
+         return { success: true, responseAfterUpdateCourse: result };
     } catch(error:any){
         console.error(`Error in updating Course: ${error}`);
          return { success: false, responseAfterUpdateCourse: error };
