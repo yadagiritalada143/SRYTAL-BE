@@ -6,6 +6,7 @@ const CourseModuleSchema = new mongoose.Schema({
     moduleName: { type: mongoose.Schema.Types.String, unique: true },
     moduleDescription: { type: mongoose.Schema.Types.String },
     courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseModel' },
+    thumbnail: { type: mongoose.Schema.Types.String },
     status: { type: mongoose.Schema.Types.String },
 },
     {

@@ -3,10 +3,10 @@ import addNewCourseService from '../../services/contentwriter/addCourseService';
 import { COURSE_SUCCESS_MESSAGES, COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessages';
 
 const addNewCourse = (req: Request, res: Response) => {
-    const { courseName, courseDescription } = req.body;
+    const { courseName, courseDescription, thumbnail  } = req.body;
     const status = 'ACTIVE'; 
     addNewCourseService
-        .addCourseService(courseName, courseDescription, status)
+        .addCourseService(courseName, courseDescription,thumbnail, status)
         .then((responseAfteraddingCourse: any) => {
             if (responseAfteraddingCourse._id) {
                 return res

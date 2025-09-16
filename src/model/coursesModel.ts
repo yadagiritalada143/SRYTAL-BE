@@ -6,6 +6,7 @@ const CoursesSchema = new mongoose.Schema({
     id: { type: mongoose.Schema.Types.ObjectId },
     courseName: { type: mongoose.Schema.Types.String, unique: true },
     courseDescription: { type: mongoose.Schema.Types.String },
+    thumbnail: { type: mongoose.Schema.Types.String },
     status: { type: mongoose.Schema.Types.String },
 },
     {

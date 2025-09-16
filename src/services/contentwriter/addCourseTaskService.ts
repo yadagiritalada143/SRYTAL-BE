@@ -1,8 +1,8 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 
-const addCourseTaskService = async ( moduleId: string, taskName: string, taskDescription: string, status: string ) => {
+const addCourseTaskService = async ( moduleId: string, taskName: string, taskDescription: string, thumbnail: string, status: string ) => {
     try {
-        const CoursesTaskToSave: any = new CourseTaskModel({moduleId, taskName, taskDescription, status});
+        const CoursesTaskToSave: any = new CourseTaskModel({moduleId, taskName, taskDescription, thumbnail, status});
         const result = await CoursesTaskToSave.save();
         return result;
     } catch (error: any) {

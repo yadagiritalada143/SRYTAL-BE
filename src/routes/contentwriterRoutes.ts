@@ -98,7 +98,7 @@ contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseDetailsByIdC
  *     tags:
  *       - ContentWriter
  *     security:
- *       - BearerAuth: [] # JWT Bearer token required
+ *       - BearerAuth: []  # JWT Bearer token required
  *     requestBody:
  *       required: true
  *       content:
@@ -110,6 +110,9 @@ contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseDetailsByIdC
  *                 type: string
  *               courseDescription:
  *                 type: string
+ *               thumbnail:
+ *                 type: string
+ *                 format: uri
  *             required:
  *               - courseName
  *     responses:
@@ -128,10 +131,26 @@ contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseDetailsByIdC
  *                   type: string
  *                 courseDescription:
  *                   type: string
+ *                 thumbnail:
+ *                   type: string
  *       401:
  *         description: Unauthorized. Missing or invalid Authorization header.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  *       500:
  *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
  */
 contentwriterRouter.post('/addCourse', validateJWT, addCourseController.addNewCourse);
 
@@ -157,6 +176,8 @@ contentwriterRouter.post('/addCourse', validateJWT, addCourseController.addNewCo
  *               moduleDescription:
  *                 type: string
  *               courseId:
+ *                 type: string
+ *               thumbnail:
  *                 type: string
  *             required:
  *               - moduleName
@@ -193,6 +214,8 @@ contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleControl
  *               taskDescription:
  *                 type: string
  *               moduleId:
+ *                 type: string
+ *               thumbnail:
  *                 type: string
  *             required:
  *               - taskName

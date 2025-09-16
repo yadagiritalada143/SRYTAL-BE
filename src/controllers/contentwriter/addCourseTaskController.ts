@@ -3,10 +3,10 @@ import addNewCourseTaskService from '../../services/contentwriter/addCourseTaskS
 import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../../constants/contentwriter/coursetaskMessages';
 
 const addTaskToModule = (req: Request, res: Response) => {
-    const { moduleId, taskName, taskDescription } = req.body;
+    const { moduleId, taskName, taskDescription,thumbnail } = req.body;
     const status = 'ACTIVE';
     addNewCourseTaskService
-        .addCourseTaskService(moduleId, taskName, taskDescription, status)
+        .addCourseTaskService(moduleId, taskName, taskDescription, thumbnail, status)
         .then((responseAfteraddingCourseTask: any) => {
             if (responseAfteraddingCourseTask.id) {
                 return res
