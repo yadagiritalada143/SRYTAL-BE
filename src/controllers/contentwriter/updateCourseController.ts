@@ -5,7 +5,7 @@ import isValidStatus from '../../util/validateCourseStatusTypesUtil';
 
 const updateCourseController = async (req: Request, res: Response) => {
     try {
-        const { id, courseName, courseDescription, status } = req.body;
+        const { id, courseName, courseDescription, thumbnail, status } = req.body;
 
         if (!isValidStatus(status)) {
             return res.status(400).json({
@@ -18,6 +18,7 @@ const updateCourseController = async (req: Request, res: Response) => {
             id,
             courseName,
             courseDescription,
+            thumbnail,
             status.toUpperCase(),
         );
         res.status(200).json(updateCourseResponse);

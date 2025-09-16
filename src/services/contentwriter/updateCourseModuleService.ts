@@ -5,9 +5,9 @@ interface updateCourseModuleResponse {
     responseAfterModuleUpdate?: any;
 }
 
-const updateCourseModule = async (id: string, moduleName: string, moduleDescription: string, status: string): Promise<updateCourseModuleResponse> => {
+const updateCourseModule = async (id: string, moduleName: string, moduleDescription: string, thumbnail: string, status: string): Promise<updateCourseModuleResponse> => {
     try {
-        const result = await CourseModuleModel.updateOne({ _id: id }, { moduleName, moduleDescription, status });
+        const result = await CourseModuleModel.updateOne({ _id: id }, { moduleName, moduleDescription, thumbnail, status });
         if (!result) {
             return { success: false };
         }
