@@ -3,10 +3,10 @@ import addCourseModuleService from '../../services/contentwriter/addCourseModule
 import { COURSE_MODULE_SUCCESS_MESSAGES, COURSE_MODULE_ERRORS_MESSAGES } from '../../constants/contentwriter/coursemoduleMessages';
 
 const addModuleToCourse = (req: Request, res: Response) => {
-    const { courseId, moduleName, moduleDescription } = req.body;
+    const { courseId, moduleName, moduleDescription, thumbnail } = req.body;
     const status = 'ACTIVE';
     addCourseModuleService
-        .addNewCourseModuleService(courseId, moduleName, moduleDescription, status)
+        .addNewCourseModuleService(courseId, moduleName, moduleDescription, thumbnail, status)
         .then((responseAfteraddingCourseModule) => {
             if (responseAfteraddingCourseModule.id) {
                 return res
