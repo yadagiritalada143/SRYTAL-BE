@@ -274,6 +274,9 @@ contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.
  *               taskDescription:
  *                 type: string
  *                 description: Updated task description
+ *               thumbnail:
+ *                 type: string
+ *                 format: uri
  *               status:
  *                 type: string
  *                 description: Updated status of the task ("ACTIVE" or "ARCHIVE")
@@ -305,7 +308,7 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *     tags: 
  *       - ContentWriter
  *     security:
- *       - bearerAuth: []
+ *       - bearerAuth: [] # JWT Bearer token required
  *     requestBody:
  *       required: true
  *       content:
@@ -331,6 +334,9 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *               moduleDescription:
  *                 type: string
  *                 description: Updated module description
+ *               thumbnail:
+ *                 type: string
+ *                 format: uri
  *               status:
  *                 type: string
  *                 description: Updated status of the module ("ACTIVE" or "ARCHIVE")
@@ -344,7 +350,6 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Module updated successfully"
  *       400:
  *         description: Invalid input or status provided
  *       401:
@@ -386,6 +391,9 @@ contentwriterRouter.put('/updatecoursemodule', validateJWT, updateCourseModuleCo
  *               courseDescription:
  *                 type: string
  *                 description: Updated course description
+ *               thumbnail:
+ *                 type: string
+ *                 format: uri
  *               status:
  *                 type: string
  *                 description: Updated status of the course ("ACTIVE" or "ARCHIVE")
@@ -399,7 +407,6 @@ contentwriterRouter.put('/updatecoursemodule', validateJWT, updateCourseModuleCo
  *               properties:
  *                 message:
  *                   type: string
- *                   example: "Course updated successfully"
  *       400:
  *         description: Invalid input or status provided
  *       401:

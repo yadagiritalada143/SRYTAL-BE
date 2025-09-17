@@ -5,9 +5,9 @@ interface updateCourseTaskResponse {
     responseAfterUpdate?: any;
 }
 
-const updateCourseTask = async (id: string, taskName: string, taskDescription: string, status: string): Promise<updateCourseTaskResponse> => {
+const updateCourseTask = async (id: string, taskName: string, taskDescription: string, thumbnail: string, status: string): Promise<updateCourseTaskResponse> => {
     try {
-        const result = await CourseTaskModel.updateMany({ _id: id }, { taskName,  taskDescription, status });
+        const result = await CourseTaskModel.updateMany({ _id: id }, { taskName,  taskDescription, thumbnail, status });
         if (!result) {
             return { success: false };
         }
