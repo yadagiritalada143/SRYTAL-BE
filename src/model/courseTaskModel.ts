@@ -8,6 +8,7 @@ const CourseTaskSchema = new mongoose.Schema({
     taskDescription: { type: mongoose.Schema.Types.String },
     thumbnail: { type: mongoose.Schema.Types.String },
     status: { type: mongoose.Schema.Types.String },
+    type: { type: mongoose.Schema.Types.String },
 },
     {
         collection: 'coursetask',

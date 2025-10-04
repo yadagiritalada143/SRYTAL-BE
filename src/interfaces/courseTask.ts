@@ -5,5 +5,6 @@ export interface ICourseTask extends Document {
     taskName: string;
     taskDescription: string;
     thumbnail?: string;
+    type: string;
 
 }
