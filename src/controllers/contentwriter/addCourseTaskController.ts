@@ -5,8 +5,9 @@ import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../..
 const addTaskToModule = (req: Request, res: Response) => {
     const { moduleId, taskName, taskDescription,thumbnail } = req.body;
     const status = 'ACTIVE';
+    const type = 'TEXT';
     addNewCourseTaskService
-        .addCourseTaskService(moduleId, taskName, taskDescription, thumbnail, status)
+        .addCourseTaskService(moduleId, taskName, taskDescription, thumbnail, status, type)
         .then((responseAfteraddingCourseTask: any) => {
             if (responseAfteraddingCourseTask.id) {
                 return res

@@ -217,6 +217,8 @@ contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleControl
  *                 type: string
  *               thumbnail:
  *                 type: string
+ *               type:
+ *                 type: string
  *             required:
  *               - taskName
  *               - moduleId
@@ -235,6 +237,8 @@ contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleControl
  *                 taskName:
  *                   type: string
  *                 taskDescription:
+ *                   type: string
+ *                 type:
  *                   type: string
  *       401:
  *         description: Unauthorized. Missing or invalid Authorization header.
