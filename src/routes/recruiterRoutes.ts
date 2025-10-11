@@ -13,9 +13,122 @@ import validateJWT from '../middlewares/validateJWT';
 const recruiterRouter: Router = express.Router();
 
 recruiterRouter.post('/login', commonController.login);
+
+/**
+ * @swagger
+ * /recruiter/getCompanyDetails:
+ *   get:
+ *     summary: Get all pool company details
+ *     description: a list of all pool companies along with their contact details and status.
+ *     tags:
+ *       - Recruiter
+ *     security:
+ *       - BearerAuth: []  # JWT Bearer token required
+ *     responses:
+ *       200:
+ *         description: Pool companies fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 poolCompaniesResponse:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                       companyName:
+ *                         type: string
+ *                       primaryContact:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                             format: email
+ *                           phone:
+ *                             type: string
+ *                       secondaryContact_1:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                             format: email
+ *                           phone:
+ *                             type: string
+ *                       secondaryContact_2:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                             format: email
+ *                           phone:
+ *                             type: string
+ *                       status:
+ *                         type: string
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       lastUpdatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       401:
+ *         description: Unauthorized - Missing or invalid token
+ *       500:
+ *         description: Internal server error
+ */
 recruiterRouter.get('/getCompanyDetails', recruiterController.getPoolCompanyDetails);
 recruiterRouter.get('/getCompanyDetailsByIdByRecruiter/:id', recruiterController.getPoolCompanyDetailsById);
 recruiterRouter.post('/addCompanyByRecruiter', recruiterController.addPoolCompany);
+
+/**
+ * @swagger
+ * /recruiter/addCommentByRecruiter:
+ *   post:
+ *     summary: Add a comment by recruiter
+ *     description: Allows a recruiter to add a comment to a candidate’s pool company profile.
+ *     tags:
+ *       - Recruiter
+ *     security:
+ *       - BearerAuth: []  # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - comment
+ *             properties:
+ *               id:
+ *                 type: string
+ *               comment:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Comment successfully added
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 responseAfterCommentAdded:
+ *                   type: object
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *       500:
+ *         description: Internal Server Error
+ */
 recruiterRouter.post('/addCommentByRecruiter', validateJWT, addCommentByRecruiterController.addCommentByRecruiter);
 
 /**
@@ -27,7 +140,7 @@ recruiterRouter.post('/addCommentByRecruiter', validateJWT, addCommentByRecruite
  *     tags:
  *       - Recruiter
  *     security:
- *       - bearerAuth: []  # JWT Bearer token required
+ *       - BearerAuth: []  # JWT Bearer token required
  *     requestBody:
  *       required: true
  *       content:
@@ -88,28 +201,9 @@ recruiterRouter.post('/addCommentByRecruiter', validateJWT, addCommentByRecruite
  *                   type: boolean
  *       401:
  *         description: Unauthorized or validation error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
  *       500:
  *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
  */
-
 recruiterRouter.post('/updateCompanyByRecruiter', updateCompanyByRecruiterController.updateCompanyByRecruiter);
 recruiterRouter.post('/addTalentPoolCandidateToTracker', validateJWT, addTalentPoolCandidatesByRecruiterController.addTalentPoolCandidateByRecruiter);
 recruiterRouter.get('/getAllTalentPoolCandidates', validateJWT, getAllTalentPoolCandidatesByRecruiterController.getAllTalentPoolCandidatesByRecruiter);
