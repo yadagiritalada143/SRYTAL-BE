@@ -8,6 +8,8 @@ import addCourseTaskController from '../controllers/contentwriter/addCourseTaskC
 import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
 import updateCourseModuleController from '../controllers/contentwriter/updateCourseModuleController';
 import updateCourseController from '../controllers/contentwriter/updateCourseController';
+import multer from 'multer';
+const upload = multer({ storage: multer.memoryStorage() });
 
 const contentwriterRouter: Router = express.Router();
 
@@ -152,7 +154,7 @@ contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseDetailsByIdC
  *                 error:
  *                   type: string
  */
-contentwriterRouter.post('/addCourse', validateJWT, addCourseController.addNewCourse);
+contentwriterRouter.post('/addCourse', upload.single('coursethumbnail'), addCourseController.addNewCourse);
 
 /**
  * @swagger
