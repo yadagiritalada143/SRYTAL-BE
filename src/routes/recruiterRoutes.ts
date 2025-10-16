@@ -87,7 +87,91 @@ recruiterRouter.post('/login', commonController.login);
  *         description: Internal server error
  */
 recruiterRouter.get('/getCompanyDetails', recruiterController.getPoolCompanyDetails);
+
+/**
+ * @swagger
+ * /recruiter/getCompanyDetailsByIdByRecruiter/{id}:
+ *   get:
+ *     summary: Get pool company details by ID
+ *     description: Retrieve specific pool company details, including comments and contact info, using the company ID.
+ *     tags:
+ *       - Recruiter
+ *     security:
+ *       - BearerAuth: []  # JWT Bearer token required
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the pool company
+ *     responses:
+ *       200:
+ *         description: Pool company fetched successfully
+ *       401:
+ *         description: Unauthorized - Missing or invalid token
+ *       500:
+ *         description: Internal server error
+ */
 recruiterRouter.get('/getCompanyDetailsByIdByRecruiter/:id', recruiterController.getPoolCompanyDetailsById);
+
+/**
+ * @swagger
+ * /recruiter/addCompanyByRecruiter:
+ *   post:
+ *     summary: Add a new pool company
+ *     description: Allows a recruiter to add a new pool company along with contact and status details.
+ *     tags:
+ *       - Recruiter
+ *     security:
+ *       - BearerAuth: []  # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - companyName
+ *               - primaryContact
+ *               - status
+ *             properties:
+ *               companyName:
+ *                 type: string
+ *               primaryContact:
+ *                 type: object
+ *                 required:
+ *                   - name
+ *                   - email
+ *                   - phone
+ *                 properties:
+ *                   name:
+ *                     type: string
+ *                   email:
+ *                     type: string
+ *                     format: email
+ *                   phone:
+ *                     type: string
+ *               status:
+ *                 type: string
+ *               createdAt:
+ *                  type: string
+ *                  formate: date-time
+ *     responses:
+ *       200:
+ *         description: Pool company added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *       401:
+ *         description: Unauthorized - Missing or invalid token
+ *       500:
+ *         description: Internal Server Error
+ */
 recruiterRouter.post('/addCompanyByRecruiter', recruiterController.addPoolCompany);
 
 /**
