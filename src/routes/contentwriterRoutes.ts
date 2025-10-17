@@ -120,17 +120,6 @@ contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseDetailsByIdC
  *     responses:
  *       201:
  *         description: Successfully added the new course.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 courseName:
- *                   type: string
- *                 courseDescription:
- *                   type: string
- *                 coursethumbnail:
- *                   type: string
  *       401:
  *         description: Unauthorized. Missing or invalid Authorization header.
  *       500:
@@ -151,18 +140,19 @@ contentwriterRouter.post('/addCourse', upload.single('coursethumbnail'), addCour
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
- *               moduleName:
- *                 type: string
- *               moduleDescription:
- *                 type: string
  *               courseId:
  *                 type: string
- *               thumbnail:
+ *               moduleName:
+ *                 type: 
+ *               moduleDescription:
  *                 type: string
+ *               coursemodulethumbnail:
+ *                 type: string
+ *                 format: binary
  *             required:
  *               - moduleName
  *               - courseId
@@ -174,7 +164,7 @@ contentwriterRouter.post('/addCourse', upload.single('coursethumbnail'), addCour
  *       500:
  *         description: Server error
  */
-contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleController.addModuleToCourse);
+contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnail'), addCourseModuleController.addModuleToCourse);
 
 /**
  * @swagger
