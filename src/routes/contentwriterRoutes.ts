@@ -189,18 +189,19 @@ contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleControl
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
+ *               moduleId:
+ *                 type: string
  *               taskName:
  *                 type: string
  *               taskDescription:
  *                 type: string
- *               moduleId:
+ *               taskthumbnail:
  *                 type: string
- *               thumbnail:
- *                 type: string
+ *                 format: binary
  *               type:
  *                 type: string
  *             required:
@@ -209,27 +210,12 @@ contentwriterRouter.post('/addCourseModule', validateJWT, addCourseModuleControl
  *     responses:
  *       201:
  *         description: Successfully added the task to the course module.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                 taskId:
- *                   type: string
- *                 taskName:
- *                   type: string
- *                 taskDescription:
- *                   type: string
- *                 type:
- *                   type: string
  *       401:
  *         description: Unauthorized. Missing or invalid Authorization header.
  *       500:
  *         description: Server error
  */
-contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.addTaskToModule);
+contentwriterRouter.post('/addCourseTask', upload.single('taskthumbnail'), addCourseTaskController.addTaskToModule);
 
 /**
  * @swagger
