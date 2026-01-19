@@ -14,7 +14,7 @@ const emailConfiguration: any = {
   }
 }
 
-const sendResetPasswordMail  = async (firstName: string, lastName: string, userName: string, tempPassword: string) => {
+const sendResetPasswordMail = async (firstName: string, lastName: string, userName: string, tempPassword: string) => {
   try {
     const transporter = nodemailer.createTransport(emailConfiguration);
     const mailBody = `     
@@ -79,12 +79,12 @@ const sendResetPasswordMail  = async (firstName: string, lastName: string, userN
         return error;
       }
 
-      console.log('Info after sent:', info.response)
+      console.warn(`Info after sent: ${info.response}`)
       return info.response;
     });
     return result;
   } catch (error) {
-    console.log(`Error in sending Email at services: ${error}`);
+    console.error(`Error in sending Email at services: ${error}`);
     return error;
   }
 }

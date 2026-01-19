@@ -8,7 +8,8 @@ const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const SECRET_KEY = process.env.SECRET_KEY;
 const validateJWT = (req, res, next) => {
-    const authToken = req.headers['auth_token'];
+    var _a;
+    const authToken = req.headers['auth_token'] || ((_a = req.headers['authorization']) === null || _a === void 0 ? void 0 : _a.split(' ')[1]);
     if (authToken) {
         jsonwebtoken_1.default.verify(authToken, SECRET_KEY, (error, decoded) => {
             if (error) {
