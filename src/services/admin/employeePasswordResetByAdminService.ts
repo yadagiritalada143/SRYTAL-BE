@@ -29,9 +29,9 @@ const employeePasswordResetByAdmin = async (employeeId: string) => {
         return { success: true, message: 'Email sent successfully. Please login with temporary password.' };
 
     } catch (error) {
-        console.error('Error occurred while resetting password:', error);
+        console.error(`Error occurred while resetting password: ${error}`);
         throw error;
     }
 }
 
-export default { employeePasswordResetByAdmin };
+export default { employeePasswordResetByAdmin }

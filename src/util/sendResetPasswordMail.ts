@@ -56,9 +56,7 @@ const sendResetPasswordMail  = async (firstName: string, lastName: string, userN
             admin@srytal.com
           </a>.
         </p>
-
         <br>
-
         <p style="margin: 20px 0 5px; font-size: 14px; color: #333;">Regards,</p>
         <p style="font-size: 14px; font-weight: bold; color: #333;">
           SRYTAL SYSTEMS INDIA PVT LTD.
@@ -86,9 +84,9 @@ const sendResetPasswordMail  = async (firstName: string, lastName: string, userN
     });
     return result;
   } catch (error) {
-    console.log('Error in sending Email at services: ', error);
+    console.log(`Error in sending Email at services: ${error}`);
     return error;
   }
 }
 
-export default { sendResetPasswordMail  }
+export default { sendResetPasswordMail }
