@@ -8,8 +8,9 @@ const coursetaskMessages_1 = require("../../constants/contentwriter/coursetaskMe
 const addTaskToModule = (req, res) => {
     const { moduleId, taskName, taskDescription, thumbnail } = req.body;
     const status = 'ACTIVE';
+    const type = 'TEXT';
     addCourseTaskService_1.default
-        .addCourseTaskService(moduleId, taskName, taskDescription, thumbnail, status)
+        .addCourseTaskService(moduleId, taskName, taskDescription, thumbnail, status, type)
         .then((responseAfteraddingCourseTask) => {
         if (responseAfteraddingCourseTask.id) {
             return res

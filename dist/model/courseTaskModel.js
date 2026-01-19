@@ -11,6 +11,7 @@ const CourseTaskSchema = new mongoose_1.default.Schema({
     taskDescription: { type: mongoose_1.default.Schema.Types.String },
     thumbnail: { type: mongoose_1.default.Schema.Types.String },
     status: { type: mongoose_1.default.Schema.Types.String },
+    type: { type: mongoose_1.default.Schema.Types.String },
 }, {
     collection: 'coursetask',
     toObject: { virtuals: true },
