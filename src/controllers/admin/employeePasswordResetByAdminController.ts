@@ -14,7 +14,7 @@ const employeePasswordResetByAdmin = (req: Request, res: Response) => {
             }
         })
         .catch((error: any) => {
-            console.log('Error occured while asking to reset the password:', error)
+            console.error(`Error occured while asking to reset the password: ${error}`)
             res.status(500).json({ success: true, message: ADMIN_ERROR_MESSAGES.RESET_EMPLOYEE_PASSWORD_ERROR });
         })
 }

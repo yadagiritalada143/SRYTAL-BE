@@ -40,7 +40,6 @@ const addPackageToEmployeeByAdminController_1 = __importDefault(require("../cont
 const getEmployeePackagesByAdminController_1 = __importDefault(require("../controllers/admin/getEmployeePackagesByAdminController"));
 const deleteEmployeePackagesByAdminController_1 = __importDefault(require("../controllers/admin/deleteEmployeePackagesByAdminController"));
 const deleteEmployeeTaskByAdminController_1 = __importDefault(require("../controllers/admin/deleteEmployeeTaskByAdminController"));
-const addCourseByAdminController_1 = __importDefault(require("../controllers/admin/addCourseByAdminController"));
 const adminRouter = express_1.default.Router();
 adminRouter.post('/login', commonController_1.default.login);
 adminRouter.get('/refreshToken', commonController_1.default.refreshToken);
@@ -49,6 +48,65 @@ adminRouter.post('/registerEmployeeByAdmin', validateJWT_1.default, registration
 adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT_1.default, getEmployeeDetailsByAdminController_1.default.getUserDetails);
 adminRouter.put('/updateEmployeeDetailsByAdmin', (0, validateProfileUpdate_1.default)(userSchema_1.default), validateJWT_1.default, updateEmployeeDetailsByAdminController_1.default.updateProfile);
 adminRouter.get('/getAllEmployeeDetailsByAdmin', validateJWT_1.default, getAllEmployeeDetailsByAdminController_1.default.getAllEmployeeDetails);
+/**
+ * @swagger
+ * /admin/employeePasswordResetByAdmin:
+ *   post:
+ *     summary: Reset employee password by admin
+ *     description: Allows an admin to reset an employee's password. A temporary password is generated, hashed, saved, and emailed to the employee.
+ *     tags:
+ *       - Admin
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - employeeId
+ *             properties:
+ *               employeeId:
+ *                 type: string
+ *                 description: Unique identifier of the employee
+ *                 example: EMP12345
+ *     responses:
+ *       200:
+ *         description: Password reset successful
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Password reset failed (user not found or error in reset)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unable to reset employee password"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Unable to reset employee password"
+ */
 adminRouter.post('/employeePasswordResetByAdmin', employeePasswordResetByAdminController_1.default.employeePasswordResetByAdmin);
 adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT_1.default, getAllBloodGroupsByAdminController_1.default.getAllBloodGroupsDetails);
 adminRouter.post('/addBloodGroupByAdmin', validateJWT_1.default, addBloodGroupByAdminController_1.default.addNewBloodgroupByAdmin);
@@ -77,5 +135,4 @@ adminRouter.post('/addPackagetoEmployeeByAdmin', validateJWT_1.default, addPacka
 adminRouter.get('/getEmployeePackagesByAdmin/:employeeId', validateJWT_1.default, getEmployeePackagesByAdminController_1.default.getEmployeePackageDetailsByAdmin);
 adminRouter.delete('/deleteEmployeePackagesByAdmin', validateJWT_1.default, deleteEmployeePackagesByAdminController_1.default.deleteEmployeePackageByAdmin);
 adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT_1.default, deleteEmployeeTaskByAdminController_1.default.deleteEmployeeTaskByAdmin);
-adminRouter.post('/addNewCourse', validateJWT_1.default, addCourseByAdminController_1.default.addCourseByAdminController);
 exports.default = adminRouter;

@@ -290,6 +290,25 @@ recruiterRouter.post('/addCommentByRecruiter', validateJWT, addCommentByRecruite
  */
 recruiterRouter.post('/updateCompanyByRecruiter', updateCompanyByRecruiterController.updateCompanyByRecruiter);
 recruiterRouter.post('/addTalentPoolCandidateToTracker', validateJWT, addTalentPoolCandidatesByRecruiterController.addTalentPoolCandidateByRecruiter);
+
+/**
+ * @swagger
+ * /recruiter/getAllTalentPoolCandidates:
+ *   get:
+ *     summary: Get all talent pool candidates
+ *     description: Fetches a list of all candidates in the talent pool.
+ *     tags:
+ *       - Recruiter
+ *     security:
+ *       - BearerAuth: []  # JWT Bearer token required
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the list of talent pool candidates
+ *       401:
+ *         description: Unauthorized - JWT token is missing or invalid
+ *       500:
+ *         description: Internal server error - Unable to fetch candidate details
+ */
 recruiterRouter.get('/getAllTalentPoolCandidates', validateJWT, getAllTalentPoolCandidatesByRecruiterController.getAllTalentPoolCandidatesByRecruiter);
 recruiterRouter.get('/getTalentPoolCandidateById/:id', validateJWT, getTalentPoolCandidateDetailsController.getTalentPoolCandidateDetailsByRecruiter);
 recruiterRouter.post('/addCommentToTalentPoolCandidate', validateJWT, addCommentToPoolCandidateController.addCommentToPoolCandidateByRecruiter);
