@@ -17,7 +17,7 @@ const addNewBloodgroupByAdmin = (req: Request, res: Response) => {
             }
         })
         .catch((error) => {
-            console.log(error);
+            console.error(error);
             return res.status(500).json({ message: BLOOD_GROUP_ERROR_MESSAGES.BLOOD_GROUP_UNEXPECTED_ERROR_MESSAGE });
         });
 };
