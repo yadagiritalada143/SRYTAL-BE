@@ -18,7 +18,7 @@ const addEmployeeRoleByAdmin = (req: Request, res: Response) => {
             }
         })
         .catch((error) => {
-            console.log(error);
+            console.error(error);
         });
 };
 

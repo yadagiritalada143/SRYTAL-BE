@@ -14,7 +14,7 @@ const addTaskByAdminController = (req: Request, res: Response) => {
             res.status(200).json(responseAfteraddingTask);
         })
         .catch((error: any) => {
-            console.log(`Error while adding Tasks: ${error}`);
+            console.error(`Error while adding Tasks: ${error}`);
             res.status(500).json({ success: false, message: TASK_ERROR_MESSAGES.TASK_ADD_ERROR_MESSAGE });
         });
 };

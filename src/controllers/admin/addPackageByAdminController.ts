@@ -11,7 +11,7 @@ const addPackageByAdminController = (req: Request, res: Response) => {
             res.status(200).json({ succes: true });
         })
         .catch((error: any) => {
-            console.log(`Error while adding packages: ${error}`);
+            console.error(`Error while adding packages: ${error}`);
             res.status(500).json({ success: false, message: PACKAGE_ERROR_MESSAGES.PACKAGE_ADD_ERROR_MESSAGE });
         });
 };

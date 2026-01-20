@@ -18,7 +18,7 @@ const addEmploymentTypeByAdmin = (req: Request, res: Response) => {
             }
         })
         .catch((error) => {
-            console.log(error);
+            console.error(error);
             return res.status(500).json({ message: EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_UNEXPECTED_ERROR_MESSAGE });
         });
 };
