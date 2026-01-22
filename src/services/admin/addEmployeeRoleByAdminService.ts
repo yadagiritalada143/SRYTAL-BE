@@ -6,7 +6,7 @@ const addEmployeeRoleByAdmin = async (designation: string) => {
         const result = await employeeRoleToSave.save();
         return result;
     } catch (error: any) {
-        console.error('Error in adding employee role:', error);
+        console.error(`Error in adding employee role: ${error}`);
         return { success: false };
     }
 };

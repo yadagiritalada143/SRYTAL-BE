@@ -15,7 +15,7 @@ const updateBloodGroupByAdmin = async (id: string, type: string): Promise<update
             return { success: false };
         }
     } catch (error: any) {
-        console.error('Error in  updating blood group: ', error);
+        console.error(`Error in  updating blood group: ${error}`);
         return { success: false, responseAfterupdate: error }
     }
 }

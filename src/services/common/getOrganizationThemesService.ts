@@ -5,7 +5,7 @@ const getOrgThemes = async (organization_name: string): Promise<any> => {
         const result = await OrganizationThemesModel.findOne({ organization_name });
         return result;
     } catch (error: any) {
-        console.log('Error occured while fetching the themes: ', error);
+        console.error(`Error occured while fetching the themes: ${error}`);
         return error;
     }
 }

@@ -42,7 +42,7 @@ const employeePackageDetailsById = async (
             employeePackageDetails: filteredData
         };
     } catch (error) {
-        console.error('Error in fetching Employee Package details by ID:', error);
+        console.error(`Error in fetching Employee Package details by ID: ${error}`);
         return { success: false };
     }
 };

@@ -38,7 +38,7 @@ const getEmployeeDetailsByAdmin = (id: string): Promise<FetchUserResponse> => {
                 }
             })
             .catch((error: any) => {
-                console.error('Error in fetching details:', error);
+                console.error(`Error in fetching details: ${error}`);
                 reject({ success: false });
             });
     });

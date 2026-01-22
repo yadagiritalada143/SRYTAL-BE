@@ -101,7 +101,7 @@ const authenticateAccount = ({
         }
       })
       .catch((error: any) => {
-        console.error('Error in authentication:', error);
+        console.error(`Error in authentication: ${error}`);
         reject({ success: false });
       });
   });
@@ -129,7 +129,7 @@ const refreshToken = async (token: string): Promise<string> => {
 
     return newToken;
   } catch (error) {
-    console.log('Error in refresh token', error);
+    console.error(`Error in refresh token: ${error}`);
     throw new Error('Invalid user token');
   }
 };

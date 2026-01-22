@@ -8,7 +8,7 @@ const updateProfileImageDetails = async (fileNameToUpload: string, userIdToUpdat
 
         return { success: true };
     } catch (error) {
-        console.log('Error while updating the profile image: ', error);
+        console.error(`Error while updating the profile image: ${error}`);
         return { success: false, error: error };
     }
 }
