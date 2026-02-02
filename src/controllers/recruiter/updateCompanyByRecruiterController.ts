@@ -14,7 +14,7 @@ const updateCompanyByRecruiter = (req: Request, res: Response) => {
 
         })
         .catch((error: any) => {
-            console.log(`Error while updating pool company details at controller level: ${error}`);
+            console.error(`Error while updating pool company details at controller level: ${error}`);
             res.status(500).json({ success: false, message: RECRUITER_ERROR_MESSAGES.ERROR_UPDATING_POOL_COMPANY_DETAILS });
         });
 }

@@ -9,7 +9,7 @@ const db_options = {
 };
 
 mongoose.connect(db_connection_string, db_options)
-    .then(() => console.log('MongoDB connection successfully !'))
+    .then(() => console.warn('MongoDB connection successfully !'))
     .catch(err => {
         console.error('Failed to connect to MongoDB', err);
         process.exit(1);
@@ -19,7 +19,7 @@ const connectToDb = () => {
     const db = mongoose.connection;
     db.on('error', console.error.bind(console, 'MongoDB connection error:'));
     db.once('open', () => {
-        console.log('Connected to MongoDB !!');
+        console.warn('Connected to MongoDB !!');
     });
 }
 

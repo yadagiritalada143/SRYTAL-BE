@@ -12,10 +12,10 @@ const uploadThumbnailToS3 = async (fileName: string, buffer: any, mimetype: stri
 
         s3Client.upload(params, (error: any, data: any) => {
             if (error) {
-                console.error('Error uploading to S3 bucket:', error);
+                console.error(`Error uploading to S3 bucket: ${error}`);
                 reject(error);
             }
-            console.log('Data is:', data);
+            console.warn(`Data is: ${error}`);
             resolve(data);
         });
     });

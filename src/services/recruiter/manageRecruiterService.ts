@@ -25,7 +25,7 @@ const getPoolCompanyDetails = (): Promise<any> => {
                 resolve({ success: true, poolCompaniesResponse: responseToSendBack })
             })
             .catch((error: any) => {
-                console.log(`Error in fetching pool companies list at service level: ${error}`)
+                console.error(`Error in fetching pool companies list at service level: ${error}`)
                 reject({ success: false });
             })
     })

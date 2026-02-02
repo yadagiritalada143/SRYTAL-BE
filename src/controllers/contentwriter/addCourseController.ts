@@ -20,7 +20,7 @@ const addNewCourse = async (req: Request, res: Response) => {
                     return responseAfterProfileImageUpload.key;
                 })
                 .catch((error: any) => {
-                    console.log(`Error occured while Thumbnail Image upload: ${error}`);
+                    console.error(`Error occured while Thumbnail Image upload: ${error}`);
                     res.status(500).json({ success: false, message: 'Error updating the thumbnail' });
                 })
         }
