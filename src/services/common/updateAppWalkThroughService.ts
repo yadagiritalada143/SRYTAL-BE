@@ -5,7 +5,7 @@ const updateAppWalkThrough = async (applicationWalkThroughToUpdate: any) => {
         const result = await UserModel.updateOne({ _id: applicationWalkThroughToUpdate.user_id }, { applicationWalkThrough: Number(applicationWalkThroughToUpdate.applicationWalkThrough) });
         return result;
     } catch (error: any) {
-        console.log(`Error occured while updating applicationwalk through: ${error}`);
+        console.error(`Error occured while updating applicationwalk through: ${error}`);
         return error;
     }
 }

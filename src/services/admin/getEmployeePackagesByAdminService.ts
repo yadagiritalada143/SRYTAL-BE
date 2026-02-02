@@ -37,7 +37,7 @@ const getEmployeePackageDetailsByAdmin = async (employeeId: string): Promise<Fet
             employeePackageDetails: filtered
         };
     } catch (error) {
-        console.error('Error in fetching Employee Package details:', error);
+        console.error(`Error in fetching Employee Package details ${error}`);
         return { success: false };
     }
 };

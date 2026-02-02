@@ -12,7 +12,7 @@ const hardDeleteEmployeeProfileByAdmin = async (userIdToDelete: any): Promise<de
                 resolve({ success: true });
             })
             .catch((error: any) => {
-                console.error('Error in hard deleting Profile:', error);
+                console.error(`Error in hard deleting Profile: ${error}`);
                 reject({ success: false });
             });
     });
@@ -27,7 +27,7 @@ const softDeleteEmployeeProfileByAdmin = async (userIdToDelete: string): Promise
                 resolve({ success: true });
             })
             .catch((error: any) => {
-                console.error('Error in soft deleting Profile:', error);
+                console.error(`Error in soft deleting Profile: ${error}`);
                 reject({ success: false });
             });
     });

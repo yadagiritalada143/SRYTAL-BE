@@ -28,7 +28,7 @@ const getAllEmployeeDetailsByAdmin = (organizationId: string, userId: string): P
                 }
             })
             .catch((error: any) => {
-                console.error('Error in fetching Employee details:', error);
+                console.error(`Error in fetching Employee details: ${error}`);
                 reject({ success: false });
             });
     });

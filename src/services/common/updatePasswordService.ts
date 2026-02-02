@@ -19,7 +19,7 @@ const updatePassword = async (updatePasswordDetails: any) => {
                                     resolve({ success: true, message: 'Password updated Successfully !' });
                                 })
                                 .catch((error: any) => {
-                                    console.log(`Error occured while update the Password: ${error}`);
+                                    console.error(`Error occured while update the Password: ${error}`);
                                     reject({ success: false, message: 'Error while updating the password !' });
                                 })
                         }
@@ -28,7 +28,7 @@ const updatePassword = async (updatePasswordDetails: any) => {
                 }
             })
             .catch((error: any) => {
-                console.log(`Error while updating the password ! ${error}`);
+                console.error(`Error while updating the password ! ${error}`);
                 reject({ success: false, message: 'Error while updating the password !' });
             })
     });

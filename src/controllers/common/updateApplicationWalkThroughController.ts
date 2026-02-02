@@ -9,7 +9,7 @@ const updateApplicationWalkThrough = (req: Request, res: Response) => {
             res.status(200).json({ success: true });
         })
         .catch((error: any) => {
-            console.log(`Error occured in Controller layer: ${error}`);
+            console.error(`Error occured in Controller layer: ${error}`);
             res.status(401).json({ success: false, message: APPLICATION_WALK_THROUGH_ERROR_MESSAGE.UPDATE_APP_WALK_THROUGH_ERROR })
         });
 }

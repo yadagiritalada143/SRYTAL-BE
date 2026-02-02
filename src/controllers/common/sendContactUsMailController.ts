@@ -9,7 +9,7 @@ const sendContactUsMail = (req: Request, res: Response) => {
             res.status(200).json({ success: true, message: 'Mail sent successfully !' });
         })
         .catch((error: any) => {
-            console.log('Error while sending email at controller lever:', error);
+            console.error(`Error while sending email at controller lever: ${error}`);
             res.status(500).json({ success: false, message: EMAIL_ERROR_MESSAGE.SEND_NOTIFICATION_ERROR })
         })
 }

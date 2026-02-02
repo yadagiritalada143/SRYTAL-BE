@@ -29,7 +29,7 @@ const updateEmployeeProfileByAdmin = async (userDetailsToUpdate: IUser): Promise
                 });
             })
             .catch((error: any) => {
-                console.error('Error in updating Profile:', error);
+                console.error(`Error in updating Profile: ${error}`);
                 reject({ success: false });
             });
 

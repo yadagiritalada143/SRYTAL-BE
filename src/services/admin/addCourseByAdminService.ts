@@ -6,7 +6,7 @@ const addCourseByAdminService = async (courseName: string, courseDescription: st
         const result = await CoursesToSave.save();
         return result;
     } catch (error: any) {
-        console.error('Error in adding Courses:', error);
+        console.error(`Error in adding Courses: ${error}`);
         return { success: false };
     }
 };

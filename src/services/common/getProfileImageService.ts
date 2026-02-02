@@ -6,7 +6,7 @@ const getProfileImage = async (userId: string) => {
         const profileOriginaImagePath = profileDetails?.profileImage || '';
         return { success: true, imagePath: profileOriginaImagePath };
     } catch (error: any) {
-        console.log('Error while fetching the profile image: ', error);
+        console.error(`Error while fetching the profile image: ${error}`);
         return { success: false, error: error };
     }
 }

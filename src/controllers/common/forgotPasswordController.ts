@@ -12,7 +12,7 @@ const forgotPassword = (req: Request, res: Response) => {
             }
         })
         .catch((error: any) => {
-            console.log(`Error occured in forgot password flow: ${error}`);
+            console.error(`Error occured in forgot password flow: ${error}`);
             res.status(500).json({ success: false, message: 'Error occured in forgot password flow !' });
         });
 }

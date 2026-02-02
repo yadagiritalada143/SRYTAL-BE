@@ -25,7 +25,7 @@ const getPackageDetailsByAdmin = async (id: string): Promise<FetchPackagesDetail
             packageDetails
         };
     } catch (error) {
-        console.error('Error in fetching Package details:', error);
+        console.error(`Error in fetching Package details: ${error}`);
         return { success: false };
     }
 };

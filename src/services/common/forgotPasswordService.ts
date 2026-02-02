@@ -27,7 +27,7 @@ const forgotPassword = async (email: string) => {
                 }
             })
             .catch((error: any) => {
-                console.log(`Error in forget password flow:  ${error}`);
+                console.error(`Error in forget password flow:  ${error}`);
                 reject({ success: false, message: 'Error in forget password flow !' });
             })
     });
