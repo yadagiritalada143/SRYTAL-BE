@@ -33,7 +33,7 @@ const addNewCourse = async (req: Request, res: Response) => {
             res.status(500).json({ success: false, message: COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE });
         }
     } catch (error: any) {
-        console.log(error);
+        console.log(`Error in adding new Course: ${error}`);
         res.status(500).json({ success: false, message: COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE });
     }
 }

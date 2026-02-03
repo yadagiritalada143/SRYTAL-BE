@@ -20,7 +20,7 @@ const addTaskToModule = (req: Request, res: Response) => {
             }
         })
         .catch((error) => {
-            console.error(error);
+            console.error(`Error in adding Task to Module: ${error}`);
         });
 }
 
