@@ -6,7 +6,7 @@ const updatePoolCandidateDetails = async (detailsToUpdate: any) => {
         const result = await TalentPoolCandidatesModel.updateOne({ _id: detailsToUpdate.id }, detailsToUpdate);
         return { success: result.acknowledged };
     } catch (error: any) {
-        console.log('Error occured while updating the pool candidate details:', error);
+        console.error('Error occured while updating the pool candidate details:', error);
         return { success: false };
     }
 }

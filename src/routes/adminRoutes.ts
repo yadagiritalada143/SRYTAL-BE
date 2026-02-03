@@ -42,8 +42,162 @@ adminRouter.post('/login', commonController.login);
 adminRouter.get('/refreshToken', commonController.refreshToken);
 adminRouter.get('/logout', validateJWT, commonController.logout);
 adminRouter.post('/registerEmployeeByAdmin', validateJWT, registerEmployeeByAdminController.register);
+
+/**
+ * @swagger
+ * /admin/getEmployeeDetailsByAdmin/{id}:
+ *   get:
+ *     summary: Get employee details by admin
+ *     description: Fetch detailed information of a specific employee by employee ID. Requires admin authentication.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "64f1a2b9c123456789abcd03"
+ *         description: Employee user ID
+ *     responses:
+ *       200:
+ *         description: Employee details fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 userDetails:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "64f1a2b9c123456789abcd03"
+ *                     firstName:
+ *                       type: string
+ *                       example: "John"
+ *                     lastName:
+ *                       type: string
+ *                       example: "Doe"
+ *                     email:
+ *                       type: string
+ *                       example: "john.doe@example.com"
+ *                     mobileNumber:
+ *                       type: string
+ *                       example: "9876543210"
+ *                     employeeId:
+ *                       type: string
+ *                       example: "EMP-001"
+ *                     dateOfBirth:
+ *                       type: string
+ *                       format: date
+ *                       example: "1995-06-15"
+ *                     bloodGroup:
+ *                       type: object
+ *                       description: Blood group details (populated)
+ *                     employmentType:
+ *                       type: object
+ *                       description: Employment type details (populated)
+ *                     employeeRole:
+ *                       type: object
+ *                       description: Employee role details (populated)
+ *                     organization:
+ *                       type: object
+ *                       description: Organization details (populated)
+ *                     bankDetailsInfo:
+ *                       type: object
+ *                       description: Employee bank details
+ *                     presentAddress:
+ *                       type: string
+ *                       example: "123 Main Street, City"
+ *                     permanentAddress:
+ *                       type: string
+ *                       example: "456 Home Street, City"
+ *       401:
+ *         description: Unauthorized - Invalid or missing JWT
+ *       404:
+ *         description: Employee not found
+ *       500:
+ *         description: Error while fetching employee details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Error while fetching user details"
+ */
 adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetailsByAdminController.getUserDetails);
 adminRouter.put('/updateEmployeeDetailsByAdmin', validateProfileRequest(userSchema), validateJWT, updateEmployeeDetailsByAdminController.updateProfile);
+
+/**
+ * @swagger
+ * /admin/getAllEmployeeDetailsByAdmin:
+ *   get:
+ *     summary: Get all employee details by admin
+ *     description: Fetch all employees belonging to the logged-in admin's organization.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Employee details fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 usersList:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64f1a2b9c123456789abcd03"
+ *                       name:
+ *                         type: string
+ *                         example: "John Doe"
+ *                       email:
+ *                         type: string
+ *                         example: "john.doe@example.com"
+ *                       bloodGroup:
+ *                         type: object
+ *                       employmentType:
+ *                         type: object
+ *                       employeeRole:
+ *                         type: object
+ *                       organization:
+ *                         type: object
+ *       401:
+ *         description: Unauthorized - Invalid or missing JWT
+ *       500:
+ *         description: Error while fetching employee details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Error while fetching user details"
+ */
 adminRouter.get('/getAllEmployeeDetailsByAdmin', validateJWT, getAllEmployeeDetailsByAdminController.getAllEmployeeDetails);
 
 /**
@@ -105,7 +259,6 @@ adminRouter.get('/getAllEmployeeDetailsByAdmin', validateJWT, getAllEmployeeDeta
  *                   type: string
  *                   example: "Unable to reset employee password"
  */
-
 adminRouter.post('/employeePasswordResetByAdmin', employeePasswordResetByAdminController.employeePasswordResetByAdmin);
 adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT, getAllBloodGroupsByAdminController.getAllBloodGroupsDetails);
 adminRouter.post('/addBloodGroupByAdmin', validateJWT, addBloodGroupByAdminController.addNewBloodgroupByAdmin);

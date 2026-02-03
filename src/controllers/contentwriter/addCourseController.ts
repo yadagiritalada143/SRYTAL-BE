@@ -20,7 +20,7 @@ const addNewCourse = async (req: Request, res: Response) => {
                     return responseAfterProfileImageUpload.key;
                 })
                 .catch((error: any) => {
-                    console.log(`Error occured while Thumbnail Image upload: ${error}`);
+                    console.error(`Error occured while Thumbnail Image upload: ${error}`);
                     res.status(500).json({ success: false, message: 'Error updating the thumbnail' });
                 })
         }
@@ -33,7 +33,7 @@ const addNewCourse = async (req: Request, res: Response) => {
             res.status(500).json({ success: false, message: COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE });
         }
     } catch (error: any) {
-        console.log(error);
+        console.log(`Error in adding new Course: ${error}`);
         res.status(500).json({ success: false, message: COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE });
     }
 }
