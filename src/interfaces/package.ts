@@ -7,3 +7,8 @@ export interface IPackage extends Document {
     endDate?: Date;
     approvers?: mongoose.Schema.Types.Array;
 }
+
+export interface FetchPackagesDetailsResponse {
+    success: boolean;
+    packageDetails?: any;
+}

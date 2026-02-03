@@ -1,10 +1,6 @@
 import PackagesModel from '../../model/packageModel';
 import TaskModel from '../../model/taskModel';
-
-interface FetchPackagesDetailsResponse {
-    success: boolean;
-    packageDetails?: any;
-}
+import {FetchPackagesDetailsResponse} from '../../interfaces/package';
 
 const getPackageDetailsByAdmin = async (id: string): Promise<FetchPackagesDetailsResponse> => {
     try {
