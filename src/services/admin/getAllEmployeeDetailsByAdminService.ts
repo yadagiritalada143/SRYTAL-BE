@@ -1,14 +1,9 @@
 import UserModel from '../../model/userModel';
+import { FetchEmployeeDetailsResponse } from '../../interfaces/user';
 
-interface FetchEmployeeDetailsResponse {
-    success: boolean;
-    usersList?: any;
-}
-
-const getAllEmployeeDetailsByAdmin = (organizationId: string, userId: string): Promise<FetchEmployeeDetailsResponse> => {
-
-    return new Promise((resolve, reject) => {
-        UserModel.find({
+const getAllEmployeeDetailsByAdmin = async ( organizationId: string, userId: string ): Promise<FetchEmployeeDetailsResponse> => {
+    try {
+        const users = await UserModel.find({
             organization: organizationId,
             _id: { $ne: userId }, // Exclude the user with the provided userId
             isDeleted: false
@@ -16,22 +11,20 @@ const getAllEmployeeDetailsByAdmin = (organizationId: string, userId: string): P
             .populate('bloodGroup')
             .populate('employmentType')
             .populate('employeeRole')
-            .populate('organization')
-            .then((users: any) => {
-                if (!users) {
-                    reject({ success: false });
-                } else {
-                    resolve({
-                        success: true,
-                        usersList: users
-                    });
-                }
-            })
-            .catch((error: any) => {
-                console.error(`Error in fetching Employee details: ${error}`);
-                reject({ success: false });
-            });
-    });
+            .populate('organization');
+
+        if (!users) {
+            return { success: false };
+        }
+
+        return {
+            success: true,
+            usersList: users
+        };
+    } catch (error) {
+        console.error(`Error in fetching Employee details: ${error}`);
+        throw { success: false };
+    }
 };
 
 export default { getAllEmployeeDetailsByAdmin }

@@ -1,18 +1,26 @@
 import { Request, Response } from 'express';
-import { COMMON_ERRORS } from '../../constants/commonErrorMessages';
+import { COMMON_ERRORS, HTTP_STATUS } from '../../constants/commonErrorMessages';
 import allEmployeeDetailsServices from '../../services/admin/getAllEmployeeDetailsByAdminService'
 
-const getAllEmployeeDetails = (req: Request, res: Response) => {
-    const { organizationId, userId } = req.body;
-    allEmployeeDetailsServices
-        .getAllEmployeeDetailsByAdmin(organizationId, userId)
-        .then(fetchAllEmployeeDetailsByAdminResponse => {
-            res.status(200).json(fetchAllEmployeeDetailsByAdminResponse);
-        })
-        .catch(error => {
-            console.error(`Error in fetching Employee details: ${error}`);
-            res.status(500).json({ success: false, message: COMMON_ERRORS.USER_FETCHING_ERROR });
+const getAllEmployeeDetails = async (req: Request, res: Response) => {
+    try {
+        const { organizationId, userId } = req.body;
+
+        const fetchAllEmployeeDetailsByAdminResponse =
+            await allEmployeeDetailsServices.getAllEmployeeDetailsByAdmin(
+                organizationId,
+                userId
+            );
+
+        res.status(HTTP_STATUS.OK).json(fetchAllEmployeeDetailsByAdminResponse);
+    } catch (error) {
+        console.error(`Error in fetching Employee details: ${error}`);
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: COMMON_ERRORS.USER_FETCHING_ERROR,
         });
+    }
 };
+
 
 export default { getAllEmployeeDetails }

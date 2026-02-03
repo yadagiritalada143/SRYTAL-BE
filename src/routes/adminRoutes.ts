@@ -275,8 +275,274 @@ adminRouter.put('/updateEmployeeRoleByAdmin', validateJWT, updateEmployeeRoleByA
 adminRouter.delete('/deleteEmployeeRoleByAdmin/:id', validateJWT, deleteEmployeeRoleByAdminController.deleteEmployeeRole);
 adminRouter.delete('/deletePoolCandidatesByAdmin/:id', validateJWT, deletePoolCandidateByadminController.deletePoolCandidateByAdmin);
 adminRouter.delete('/deletePoolCompanyByAdmin/:id', validateJWT, deletePoolCompanyByAdminController.deletePoolCompanyByAdmin);
+
+/**
+ * @swagger
+ * /admin/addPackageByAdmin:
+ *   post:
+ *     tags:
+ *       - Admin 
+ *     summary: Add package by admin
+ *     description: Admin can add a new package using multipart form data. JWT authentication required.
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: Gold Package
+ *               description:
+ *                 type: string
+ *                 example: Gold level subscription package
+ *               startDate:
+ *                 type: string
+ *                 format: date-time
+ *                 example: 2026-01-01
+ *               endDate:
+ *                 type: string
+ *                 format: date-time
+ *                 example: 2026-12-31
+ *               approvers:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                   example: 65a8f1c2b3d4e5f678901234
+ *               isDeleted:
+ *                 type: boolean
+ *                 example: false
+ *     responses:
+ *       200:
+ *         description: Package added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Package added successfully
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add package
+ */
 adminRouter.post('/addPackageByAdmin', validateJWT, addPackageByAdminController.addPackageByAdminController);
+
+/**
+ * @swagger
+ * /admin/getAllPackagesByAdmin:
+ *   get:
+ *     tags:
+ *       - Admin
+ *     summary: Get all packages with tasks (Admin)
+ *     description: Fetch all non-deleted packages along with their associated tasks. JWT authentication is required.
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Packages fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 packagesList:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: 65a8f1c2b3d4e5f678901234
+ *                       title:
+ *                         type: string
+ *                         example: Gold Package
+ *                       description:
+ *                         type: string
+ *                         example: Gold level subscription
+ *                       startDate:
+ *                         type: string
+ *                         format: date-time
+ *                         example: 2026-01-01T00:00:00.000Z
+ *                       endDate:
+ *                         type: string
+ *                         format: date-time
+ *                         example: 2026-12-31T23:59:59.000Z
+ *                       approvers:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                               example: 65b9f1c2b3d4e5f678901999
+ *                             firstName:
+ *                               type: string
+ *                               example: John
+ *                             lastName:
+ *                               type: string
+ *                               example: Doe
+ *                       tasks:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             _id:
+ *                               type: string
+ *                               example: 66c9f1c2b3d4e5f678902222
+ *                             title:
+ *                               type: string
+ *                               example: Initial Setup
+ *                             createdBy:
+ *                               type: object
+ *                               properties:
+ *                                 _id:
+ *                                   type: string
+ *                                   example: 65d9f1c2b3d4e5f678903333
+ *                                 firstName:
+ *                                   type: string
+ *                                   example: Alice
+ *                                 lastName:
+ *                                   type: string
+ *                                   example: Smith
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to fetch packages
+ */
 adminRouter.get('/getAllPackagesByAdmin', validateJWT, getAllPackagesByAdminController.getAllPackagesDetails);
+
+/**
+ * @swagger
+ * /admin/getPackageDetailsByAdmin/{id}:
+ *   get:
+ *     tags:
+ *       - Admin
+ *     summary: Get package details by admin
+ *     description: Fetch details of a single package along with associated tasks. JWT authentication required.
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: The ID of the package to fetch
+ *         schema:
+ *           type: string
+ *           example: 65a8f1c2b3d4e5f678901234
+ *     responses:
+ *       200:
+ *         description: Package details fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 packageDetails:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 65a8f1c2b3d4e5f678901234
+ *                     title:
+ *                       type: string
+ *                       example: Gold Package
+ *                     description:
+ *                       type: string
+ *                       example: Gold level subscription
+ *                     startDate:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2026-01-01T00:00:00.000Z
+ *                     endDate:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2026-12-31T23:59:59.000Z
+ *                     approvers:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 65b9f1c2b3d4e5f678901999
+ *                           firstName:
+ *                             type: string
+ *                             example: John
+ *                           lastName:
+ *                             type: string
+ *                             example: Doe
+ *                     tasks:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 66c9f1c2b3d4e5f678902222
+ *                           title:
+ *                             type: string
+ *                             example: Initial Setup
+ *                           createdBy:
+ *                             type: object
+ *                             properties:
+ *                               _id:
+ *                                 type: string
+ *                                 example: 65d9f1c2b3d4e5f678903333
+ *                               firstName:
+ *                                 type: string
+ *                                 example: Alice
+ *                               lastName:
+ *                                 type: string
+ *                                 example: Smith
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to fetch package details
+ */
 adminRouter.get('/getPackageDetailsByAdmin/:id', validateJWT, getPackageDetailsByAdminController.getPackageDetailsByAdmin);
 adminRouter.delete('/deletePackageByAdmin/:id', validateJWT, deletePackageByAdminController.deletePackageByAdmin);
 adminRouter.put('/updatePackageByAdmin', validateJWT, updatePackageByAdminController.updatePackageByAdminController);

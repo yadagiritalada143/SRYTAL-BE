@@ -25,4 +25,8 @@ interface IUser extends Document {
   refreshToken?: string;
 };
 
+ export interface FetchEmployeeDetailsResponse {
+    success: boolean;
+    usersList?: any;
+} 
 export default IUser;
