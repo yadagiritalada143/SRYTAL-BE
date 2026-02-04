@@ -19,6 +19,7 @@ const generateOfferLetterBySuperadmin = async (req: Request, res: Response) => {
       workLocation
     );
   } catch (error) {
+    
     console.error(`Error generating offer letter: ${error}`);
     res.status(500).json({ message: 'Error generating offer letter by superadmin.' });
   }
