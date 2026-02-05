@@ -35,6 +35,7 @@ import addPackageToEmployeeByAdminController from '../controllers/admin/addPacka
 import getEmployeePackageByAdminController from '../controllers/admin/getEmployeePackagesByAdminController';
 import deleteEmployeePackagesByAdminController from '../controllers/admin/deleteEmployeePackagesByAdminController';
 import deleteEmployeeTaskByAdminController from '../controllers/admin/deleteEmployeeTaskByAdminController';
+import generateSalarySlipByAdminController from '../controllers/admin/generateSalarySlipByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -553,5 +554,405 @@ adminRouter.post('/addPackagetoEmployeeByAdmin', validateJWT, addPackageToEmploy
 adminRouter.get('/getEmployeePackagesByAdmin/:employeeId', validateJWT, getEmployeePackageByAdminController.getEmployeePackageDetailsByAdmin);
 adminRouter.delete('/deleteEmployeePackagesByAdmin', validateJWT, deleteEmployeePackagesByAdminController.deleteEmployeePackageByAdmin);
 adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTaskByAdminController.deleteEmployeeTaskByAdmin);
+
+/**
+ * @swagger
+ * /admin/generateSalarySlip:
+ *   post:
+ *     summary: Generate Salary Slip PDF
+ *     description: Generates a salary slip PDF for an employee based on provided salary details. The PDF is returned as a downloadable file.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - employeeId
+ *               - employeeName
+ *               - designation
+ *               - department
+ *               - dateOfJoining
+ *               - payPeriod
+ *               - bankName
+ *               - IFSCCODE
+ *               - bankAccountNumber
+ *               - transactionType
+ *               - panNumber
+ *               - totalWorkingDays
+ *               - daysWorked
+ *               - basicSalary
+ *               - payDate
+ *             properties:
+ *               employeeId:
+ *                 type: string
+ *                 description: Unique employee identifier
+ *                 example: "EMP001"
+ *               employeeName:
+ *                 type: string
+ *                 description: Full name of the employee
+ *                 example: "Ramya Thummala"
+ *               designation:
+ *                 type: string
+ *                 description: Job title/designation
+ *                 example: "JUNIOR SOFTWARE ENGINEER (FTE)"
+ *               department:
+ *                 type: string
+ *                 description: Department name
+ *                 example: "Engineering"
+ *               dateOfJoining:
+ *                 type: string
+ *                 description: Date of joining (YYYY-MM-DD)
+ *                 example: "2024-01-15"
+ *               payPeriod:
+ *                 type: string
+ *                 description: Pay period month and year
+ *                 example: "January 2026"
+ *               bankName:
+ *                 type: string
+ *                 description: Employee bank name
+ *                 example: "HDFC Bank"
+ *               IFSCCODE:
+ *                 type: string
+ *                 description: Bank IFSC code
+ *                 example: "SBIN0001007"
+ *               bankAccountNumber:
+ *                 type: string
+ *                 description: Employee bank account number
+ *                 example: "1234567890"
+ *               transactionType:
+ *                 type: string
+ *                 description: Payment transaction type (NEFT/IMPS/RTGS)
+ *                 example: "NEFT"
+ *               transactionId:
+ *                 type: string
+ *                 description: Transaction reference ID (optional)
+ *                 example: "ABCD13234545567SFFDGF"
+ *               panNumber:
+ *                 type: string
+ *                 description: Employee PAN number
+ *                 example: "ABCDE1234F"
+ *               uanNumber:
+ *                 type: string
+ *                 description: Universal Account Number for PF (optional)
+ *                 example: "000000000000"
+ *               totalWorkingDays:
+ *                 type: number
+ *                 description: Total working days in the month
+ *                 example: 22
+ *               daysWorked:
+ *                 type: number
+ *                 description: Actual days worked by employee
+ *                 example: 22
+ *               lossOfPayDays:
+ *                 type: number
+ *                 description: Loss of pay days (optional, default 0)
+ *                 example: 0
+ *               basicSalary:
+ *                 type: number
+ *                 description: Basic salary amount
+ *                 example: 5000
+ *               hraPercentage:
+ *                 type: number
+ *                 description: HRA percentage of basic (optional, default 0%)
+ *                 example: 0
+ *               specialAllowance:
+ *                 type: number
+ *                 description: Special allowance amount (optional)
+ *                 example: 0
+ *               otherAllowances:
+ *                 type: number
+ *                 description: Other allowances amount (optional)
+ *                 example: 1000
+ *               pfPercentage:
+ *                 type: number
+ *                 description: PF percentage of basic (optional, default 0%)
+ *                 example: 0
+ *               professionalTax:
+ *                 type: number
+ *                 description: Professional tax amount (optional, default 0)
+ *                 example: 0
+ *               incomeTax:
+ *                 type: number
+ *                 description: Income tax/TDS amount (optional)
+ *                 example: 0
+ *               otherDeductions:
+ *                 type: number
+ *                 description: Other deductions (optional)
+ *                 example: 0
+ *               payDate:
+ *                 type: string
+ *                 description: Payment date shown in footer (YYYY-MM-DD)
+ *                 example: "2026-01-31"
+ *     responses:
+ *       200:
+ *         description: PDF file generated successfully
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Invalid request data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Missing required fields for salary slip generation
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An unexpected error occurred while generating salary slip
+ */
+adminRouter.post('/generateSalarySlip', generateSalarySlipByAdminController.generateSalarySlip);
+
+/**
+ * @swagger
+ * /admin/previewSalarySlip:
+ *   post:
+ *     summary: Preview Salary Slip
+ *     description: Generates a salary slip and returns it as base64 along with calculation details for preview purposes.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - employeeId
+ *               - employeeName
+ *               - designation
+ *               - department
+ *               - dateOfJoining
+ *               - payPeriod
+ *               - bankName
+ *               - IFSCCODE
+ *               - bankAccountNumber
+ *               - transactionType
+ *               - panNumber
+ *               - totalWorkingDays
+ *               - daysWorked
+ *               - basicSalary
+ *               - payDate
+ *             properties:
+ *               employeeId:
+ *                 type: string
+ *                 description: Unique employee identifier
+ *                 example: "EMP001"
+ *               employeeName:
+ *                 type: string
+ *                 description: Full name of the employee
+ *                 example: "Ramya Thummala"
+ *               designation:
+ *                 type: string
+ *                 description: Job title/designation
+ *                 example: "JUNIOR SOFTWARE ENGINEER (FTE)"
+ *               department:
+ *                 type: string
+ *                 description: Department name
+ *                 example: "Engineering"
+ *               dateOfJoining:
+ *                 type: string
+ *                 description: Date of joining (YYYY-MM-DD)
+ *                 example: "2024-01-15"
+ *               payPeriod:
+ *                 type: string
+ *                 description: Pay period month and year
+ *                 example: "January 2026"
+ *               bankName:
+ *                 type: string
+ *                 description: Employee bank name
+ *                 example: "HDFC Bank"
+ *               IFSCCODE:
+ *                 type: string
+ *                 description: Bank IFSC code
+ *                 example: "SBIN0001007"
+ *               bankAccountNumber:
+ *                 type: string
+ *                 description: Employee bank account number
+ *                 example: "1234567890"
+ *               transactionType:
+ *                 type: string
+ *                 description: Payment transaction type (NEFT/IMPS/RTGS)
+ *                 example: "NEFT"
+ *               transactionId:
+ *                 type: string
+ *                 description: Transaction reference ID (optional)
+ *                 example: "ABCD13234545567SFFDGF"
+ *               panNumber:
+ *                 type: string
+ *                 description: Employee PAN number
+ *                 example: "ABCDE1234F"
+ *               uanNumber:
+ *                 type: string
+ *                 description: Universal Account Number for PF (optional)
+ *                 example: "000000000000"
+ *               totalWorkingDays:
+ *                 type: number
+ *                 description: Total working days in the month
+ *                 example: 22
+ *               daysWorked:
+ *                 type: number
+ *                 description: Actual days worked by employee
+ *                 example: 22
+ *               lossOfPayDays:
+ *                 type: number
+ *                 description: Loss of pay days (optional, default 0)
+ *                 example: 0
+ *               basicSalary:
+ *                 type: number
+ *                 description: Basic salary amount
+ *                 example: 5000
+ *               hraPercentage:
+ *                 type: number
+ *                 description: HRA percentage of basic (optional, default 0%)
+ *                 example: 0
+ *               specialAllowance:
+ *                 type: number
+ *                 description: Special allowance amount (optional)
+ *                 example: 0
+ *               otherAllowances:
+ *                 type: number
+ *                 description: Other allowances amount (optional)
+ *                 example: 1000
+ *               pfPercentage:
+ *                 type: number
+ *                 description: PF percentage of basic (optional, default 0%)
+ *                 example: 0
+ *               professionalTax:
+ *                 type: number
+ *                 description: Professional tax amount (optional, default 0)
+ *                 example: 0
+ *               incomeTax:
+ *                 type: number
+ *                 description: Income tax/TDS amount (optional)
+ *                 example: 0
+ *               otherDeductions:
+ *                 type: number
+ *                 description: Other deductions (optional)
+ *                 example: 0
+ *               payDate:
+ *                 type: string
+ *                 description: Payment date shown in footer (YYYY-MM-DD)
+ *                 example: "2026-01-31"
+ *     responses:
+ *       200:
+ *         description: Salary slip preview generated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Salary slip generated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     fileName:
+ *                       type: string
+ *                       example: "January-2026-Ramya-Thummala_Salary-Slip.pdf"
+ *                     pdfBase64:
+ *                       type: string
+ *                       example: "JVBERi0xLjQKJeLjz9..."
+ *                     calculations:
+ *                       type: object
+ *                       properties:
+ *                         basicSalary:
+ *                           type: number
+ *                           example: 50000
+ *                         hra:
+ *                           type: number
+ *                           example: 20000
+ *                         specialAllowance:
+ *                           type: number
+ *                           example: 0
+ *                         conveyanceAllowance:
+ *                           type: number
+ *                           example: 1600
+ *                         medicalAllowance:
+ *                           type: number
+ *                           example: 1250
+ *                         otherAllowances:
+ *                           type: number
+ *                           example: 1000
+ *                         grossEarnings:
+ *                           type: number
+ *                           example: 82850
+ *                         providentFund:
+ *                           type: number
+ *                           example: 6000
+ *                         professionalTax:
+ *                           type: number
+ *                           example: 200
+ *                         incomeTax:
+ *                           type: number
+ *                           example: 5000
+ *                         otherDeductions:
+ *                           type: number
+ *                           example: 0
+ *                         totalDeductions:
+ *                           type: number
+ *                           example: 11200
+ *                         netPay:
+ *                           type: number
+ *                           example: 71650
+ *                         netPayInWords:
+ *                           type: string
+ *                           example: "Rupees Seventy One Thousand Six Hundred Fifty Only"
+ *       400:
+ *         description: Invalid request data
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Missing required fields for salary slip generation
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An unexpected error occurred while generating salary slip
+ */
+adminRouter.post('/previewSalarySlip', generateSalarySlipByAdminController.previewSalarySlip);
 
 export default adminRouter;
