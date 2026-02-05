@@ -1,7 +1,8 @@
 import PDFDocument from 'pdfkit';
 import { Response } from 'express';
-import { addHeader, addFooter } from '../../pdfs/headerFooter';
-import {  salaryTable } from '../../pdfs/tableHelper';
+import { addHeader } from '../../pdfs/headerFooter';
+import { addFooter } from '../../pdfs/footer';
+import { salaryTable } from '../../pdfs/tableHelper';
 
 
 const generateOfferLetterBySuperadmin = async (
@@ -26,7 +27,7 @@ const generateOfferLetterBySuperadmin = async (
   addHeader(doc);
 
   const leftPadding = 30;
-// -------------------------------------ADDRESS BLOCK--------------------------
+  // -------------------------------------ADDRESS BLOCK--------------------------
 
   doc.fontSize(10).font('Helvetica-Bold').text('To,', leftPadding);
   doc.moveDown(0.5);
@@ -52,7 +53,7 @@ DR.NO: [DOOR NUMBER],
 
   doc.moveDown();
 
-// ----------BODY---------------
+  // ----------BODY---------------
 
   doc.font('Helvetica').text('Congratulations!!!');
   doc.moveDown();
@@ -79,58 +80,74 @@ DR.NO: [DOOR NUMBER],
 
   doc.font('Helvetica-Bold').text('3. COMPENSATION');
   doc.moveDown();
-  doc.font('Helvetica').text(
-    `Your total salary per annum is INR ${compensation} only.
-Details of your salary structure are given in the Annexure.`
-  );
+  doc.font('Helvetica').text(`Your total salary per annum is INR ${compensation} only. Details of your salary structure are given in the Annexure.`);
   doc.moveDown();
 
   doc.font('Helvetica-Bold').text('4. LEAVE');
   doc.moveDown();
-  doc.font('Helvetica').text(
-    `You will be entitled to 20 days leave in a calendar year on monthly accrual basis.
-If your joining is between a calendar year, the said number of leaves shall be pro-rated.`
-  );
+  doc.font('Helvetica').text(`You will be entitled to 20 days leave in a calendar year on monthly accrual basis.
+  If your joining is between a calendar year, the said number of leaves shall be pro-rated.`);
   doc.moveDown();
 
   doc.font('Helvetica-Bold').text('5. PLACEMENT OF WORK');
   doc.moveDown();
   doc.font('Helvetica').text(
-    `Your place of work will be at ${workLocation}.
-You shall be liable to serve in any Position, Department or Shift as assigned.
-The company may also transfer you to any of its establishments or associate companies.`
-  );
+    `Your place of work will be at ${workLocation}. You shall be liable to serve in any Position, Department or Shift as assigned.
+     The company may also transfer you to any of its establishments or associate companies.`);
   doc.moveDown();
+
   doc.font('Helvetica-Bold').text('2.PLACEMENT OF WORK  ');
+  doc.moveDown();
   doc.font('Helvetica').text(
     `${role}\nYour place of work will be at Hyderabad.`
   );
   doc.moveDown();
+
   doc.font('Helvetica').text(`You shall be liable to serve in any Position, Department or Shift as you may be assigned from 
 time to time.`);
-doc.moveDown();
-doc.font('Helvetica').text(`During your employment, you may be transferred to any of the establishments of the 
+  doc.moveDown();
+
+  doc.font('Helvetica').text(`During your employment, you may be transferred to any of the establishments of the 
 Company or associate Companies in which case you will be governed by the rules and 
 regulations applicable to that establishment.  `);
+  doc.moveDown();
+
   doc.font('Helvetica-Bold').text('2. DESIGNATION');
   doc.font('Helvetica').text(
     `${role}\nExample: Senior Software Engineer (D3); Level – A3`
   );
-  doc.moveDown(2);
+  doc.moveDown(1);
+  doc.font('Helvetica').text('ANNEXURE - SALARY STRUCTURE', { align: 'center' });
 
-
-
+  doc.moveDown();
   const tableData = [
     { component: 'Basic Salary', perAnnum: '₹6,00,000', perMonth: '₹50,000', },
     { component: 'House Rent Allowance', perAnnum: '₹8,00,000', perMonth: '₹66,667', },
 
   ];
 
-  const startX = doc.page.margins.left; 
+  const startX = doc.page.margins.left;
   const startY = doc.y;
   salaryTable(doc, startX, startY, tableData);
+  doc.x = doc.page.margins.left;
+  doc.y = startY + 120;
   doc.moveDown();
+
+  doc.font('Helvetica').text(`You shall be liable to serve in any Position, Department or Shift as you may be assigned from 
+  time to time.`);
+  doc.moveDown();
+  doc.font('Helvetica').text(`You shall be liable to serve in any Position, Department or Shift as you may be assigned from 
+time to time.`);
+  doc.moveDown();
+
+    doc.font('Helvetica-Bold').text('2.PLACEMENT OF WORK  ');
+  doc.moveDown();
+    doc.font('Helvetica').text(`You shall be liable to serve in any Position, Department or Shift as you may be assigned from 
+time to time.`);
+  doc.moveDown();
+  addFooter(doc);
   doc.end();
+
 };
 
-export default { generateOfferLetterBySuperadmin };
+export default { generateOfferLetterBySuperadmin }; 
