@@ -53,7 +53,7 @@ export const salarySlipTemplate = `
         .salary-slip-container {
             max-width: 800px;
             width: 100%;
-            margin: 20px auto 0 auto;
+            margin: 70px auto 0 auto; 
             border: 2px solid #5dade2;
             overflow: hidden;
             background-color: rgba(255, 255, 255, 0.95);
@@ -65,7 +65,7 @@ export const salarySlipTemplate = `
             text-align: center;
             font-size: 16px;
             font-weight: bold;
-            color: #5dade2;
+            color: #0c0c0c;
             border-bottom: 1px solid #ddd;
         }
 
@@ -264,7 +264,7 @@ export const salarySlipTemplate = `
             padding: 15px 20px;
             background-color: #f8f9fa;
             border-top: 1px solid #ddd;
-            text-align: center;
+            text-align: left;
             font-size: 10px;
             color: #666;
         }
@@ -309,12 +309,12 @@ export const salarySlipTemplate = `
 
         .column-header.earnings {
             background-color: #abebc6;
-            color: #1e8449;
+            color: #0c0c0c;
         }
 
         .column-header.deductions {
             background-color: #f5b7b1;
-            color: #c0392b;
+            color: #0c0c0c;
         }
 
         .column-content {

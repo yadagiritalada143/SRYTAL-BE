@@ -19,15 +19,15 @@ const COMPANY_DETAILS = {
 const PDF_HEADER_TEMPLATE = `
 <div style="width: 100%; font-size: 9px; padding: 10px 30px; box-sizing: border-box; border-bottom: 1px solid #ddd;">
     <div style="text-align: center; margin-bottom: 5px;">
-        <strong style="font-size: 16px; font-weight: bold; color: #5dade2;">SRYTAL Systems India Private Limited</strong>
+        <strong style="font-size: 16px; font-weight: bold; color: #2e8bc9;">SRYTAL Systems India Private Limited</strong>
     </div>
     <div style="text-align: center; color: #555; margin-bottom: 5px;">
         Hyderabad, Telangana - 500032. INDIA.
     </div>
     <div style="display: flex; justify-content: space-between; color: #555;">
         <div>
-            <span>GSTIN: 36ABOCS4994F1ZO</span><br/>
-            <span>CIN: U62013TS2024PTC190245</span>
+            <span><strong>GSTIN:</strong> 36ABOCS4994F1ZO</span><br/>
+            <span><strong>CIN:</strong> U62013TS2024PTC190245</span>
         </div>
         <div style="text-align: right;">
             <span>E-mail: admin@srytal.com</span><br/>
@@ -38,7 +38,7 @@ const PDF_HEADER_TEMPLATE = `
 `;
 
 const getPdfFooterTemplate = (payDate: string): string => `
-<div style="width: 100%; font-size: 10px; padding: 10px 30px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center;">
+<div style="width: 100%; font-size: 10px; padding: 10px 30px; box-sizing: border-box; border-top: 1px solid #ddd; padding-top: 30px;  display: flex; justify-content: space-between; align-items: center;">
     <div style="color: #2c3e50; font-weight: 600;">
         Pay Date: ${payDate}
     </div>

@@ -61,7 +61,7 @@ export const generatePDFFromHTML = async (
         };
     } finally {
         if (browser) {
-            await browser.close();
+             await browser.close();
         }
     }
 };
