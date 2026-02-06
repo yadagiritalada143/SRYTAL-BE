@@ -19,7 +19,7 @@ export const salarySlipTemplate = `
         }
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             font-size: 12px;
             color: #333;
             background-color: #fff;
@@ -166,7 +166,7 @@ export const salarySlipTemplate = `
 
         .amount-column {
             text-align: right !important;
-            font-family: 'Consolas', monospace;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
         }
 
         .earnings-section {
@@ -217,7 +217,7 @@ export const salarySlipTemplate = `
         .net-pay-amount {
             font-size: 26px;
             font-weight: bold;
-            font-family: 'Consolas', monospace;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             background-color: rgba(255, 255, 255, 0.2);
             padding: 5px 15px;
         }
