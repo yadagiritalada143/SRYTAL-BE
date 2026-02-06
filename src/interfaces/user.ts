@@ -19,6 +19,8 @@ interface IUser extends Document {
   organization?: mongoose.Schema.Types.ObjectId;
   lastLoggedOn?: Date;
   employeeId?: string;
+  aadharNumber: string;
+  panCardNumber: string;
   dateOfBirth?: Date;
   presentAddress?: string;
   permanentAddress?: string;
@@ -29,4 +31,8 @@ interface IUser extends Document {
     success: boolean;
     usersList?: any;
 } 
+
+export interface UpdateProfileResponse {
+    success: boolean;
+}
 export default IUser;

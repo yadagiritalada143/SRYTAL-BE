@@ -31,6 +31,8 @@ const getEmployeeDetailsByAdmin = (id: string): Promise<FetchUserResponse> => {
                             organization: user.organization,
                             employeeId: user.employeeId,
                             dateOfBirth: user.dateOfBirth,
+                            aadharNumber: user.aadharNumber,
+                            panCardNumber: user.panCardNumber,
                             presentAddress: user.presentAddress,
                             permanentAddress: user.permanentAddress
                         }
