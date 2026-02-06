@@ -73,7 +73,6 @@ const getPayslipMonth = (payPeriod: string): string => {
 
     const nextMonthIndex = (monthIndex + 1) % 12;
     const nextYear = monthIndex === 11 ? year + 1 : year;
-
     return `${months[nextMonthIndex]} ${nextYear}`;
 };
 
@@ -96,44 +95,32 @@ const getPayPeriodDateRange = (payPeriod: string): string => {
 
     const monthIndex = months.findIndex(m => m.toLowerCase() === monthName.toLowerCase());
     if (monthIndex === -1 || isNaN(year)) return payPeriod;
-
     const lastDay = new Date(year, monthIndex + 1, 0).getDate();
-
     const formattedFirstDay = `01-${monthsShort[monthIndex]}-${year}`;
     const formattedLastDay = `${lastDay}-${monthsShort[monthIndex]}-${year}`;
-
     return `${formattedFirstDay} to ${formattedLastDay}`;
 };
 
 const calculateSalaryComponents = (request: ISalarySlipRequest): ISalaryCalculations => {
     const basicSalary = request.basicSalary;
-
     const hraPercentage = request.hraPercentage ?? SALARY_CALCULATION_DEFAULTS.HRA_PERCENTAGE;
     const hra = Math.round((basicSalary * hraPercentage) / 100);
-
     const conveyanceAllowance = request.conveyanceAllowance ?? SALARY_CALCULATION_DEFAULTS.CONVEYANCE_ALLOWANCE;
     const medicalAllowance = request.medicalAllowance ?? SALARY_CALCULATION_DEFAULTS.MEDICAL_ALLOWANCE;
     const specialAllowance = request.specialAllowance ?? 0;
     const otherAllowances = request.otherAllowances ?? 0;
-
     const grossEarnings = basicSalary + hra + specialAllowance + conveyanceAllowance + medicalAllowance + otherAllowances;
-
     const lopDays = request.lossOfPayDays ?? 0;
     const perDaySalary = grossEarnings / request.totalWorkingDays;
     const lopDeduction = Math.round(perDaySalary * lopDays);
     const adjustedGrossEarnings = grossEarnings - lopDeduction;
-
     const pfPercentage = request.pfPercentage ?? SALARY_CALCULATION_DEFAULTS.PF_PERCENTAGE;
     const providentFund = Math.round((basicSalary * pfPercentage) / 100);
-
     const professionalTax = request.professionalTax ?? SALARY_CALCULATION_DEFAULTS.PROFESSIONAL_TAX;
     const incomeTax = request.incomeTax ?? 0;
     const otherDeductions = request.otherDeductions ?? 0;
-
     const totalDeductions = providentFund + professionalTax + incomeTax + otherDeductions;
-
     const netPay = adjustedGrossEarnings - totalDeductions;
-
     const netPayInWords = convertAmountToWords(netPay);
 
     return {
@@ -156,7 +143,6 @@ const calculateSalaryComponents = (request: ISalarySlipRequest): ISalaryCalculat
 
 const prepareSalarySlipData = (request: ISalarySlipRequest): ISalarySlipData => {
     const calculations = calculateSalaryComponents(request);
-
     return {
         // Company Details
         companyName: COMPANY_DETAILS.companyName,
@@ -183,7 +169,6 @@ const prepareSalarySlipData = (request: ISalarySlipRequest): ISalarySlipData => 
         totalWorkingDays: request.totalWorkingDays,
         daysWorked: request.daysWorked,
         lossOfPayDays: request.lossOfPayDays || 0,
-
         // Calculated Values
         calculations,
     };
@@ -218,14 +203,11 @@ const generateSalarySlipPDF = async (request: ISalarySlipRequest): Promise<IPDFG
                 error: `Validation failed: ${validation.errors.join(', ')}`,
             };
         }
-
         const salarySlipData = prepareSalarySlipData(request);
-
         const htmlContent = pdfGenerator.injectDataIntoTemplate(
             salarySlipTemplate,
             salarySlipData as unknown as Record<string, any>
         );
-
         const pdfResult = await pdfGenerator.generatePDFWithHeaderFooter(
             htmlContent,
             PDF_HEADER_TEMPLATE,
@@ -241,17 +223,14 @@ const generateSalarySlipPDF = async (request: ISalarySlipRequest): Promise<IPDFG
                 printBackground: true,
             }
         );
-
         if (pdfResult.success) {
             const fileName = `${request.payPeriod.replace(/\s+/g, '-')}-${request.employeeName.replace(/\s+/g, '-')}_Salary-Slip.pdf`;
-
             return {
                 ...pdfResult,
                 fileName,
                 calculations: salarySlipData.calculations,
             };
         }
-
         return pdfResult;
     } catch (error: any) {
         console.error('Error generating salary slip:', error);

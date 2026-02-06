@@ -19,7 +19,6 @@ export const generatePDFFromHTML = async (
     options: IPDFGeneratorOptions = {}
 ): Promise<IPDFGenerationResult> => {
     let browser;
-
     try {
         const pdfOptions = { ...defaultPDFOptions, ...options };
 
@@ -32,9 +31,7 @@ export const generatePDFFromHTML = async (
                 '--disable-gpu',
             ],
         });
-
         const page = await browser.newPage();
-
         await page.setContent(htmlContent, {
             waitUntil: 'networkidle0',
         });
@@ -93,13 +90,11 @@ export const injectDataIntoTemplate = (
     data: Record<string, any>
 ): string => {
     let result = template;
-
     const replacePlaceholders = (obj: Record<string, any>, prefix: string = '') => {
         for (const key in obj) {
             if (Object.prototype.hasOwnProperty.call(obj, key)) {
                 const value = obj[key];
                 const placeholderKey = prefix ? `${prefix}.${key}` : key;
-
                 if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
                     replacePlaceholders(value, placeholderKey);
                 } else {
@@ -114,8 +109,4 @@ export const injectDataIntoTemplate = (
     return result;
 };
 
-export default {
-    generatePDFFromHTML,
-    generatePDFWithHeaderFooter,
-    injectDataIntoTemplate,
-};
+export default { generatePDFFromHTML, generatePDFWithHeaderFooter, injectDataIntoTemplate};

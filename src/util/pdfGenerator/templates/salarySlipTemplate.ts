@@ -121,7 +121,7 @@ export const salarySlipTemplate = `
             color: #2c3e50;
             font-weight: 700;
         }
-
+                       
         .highlight-row .detail-value {
             color: #1a5276;
             font-weight: 600;
