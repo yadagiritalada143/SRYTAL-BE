@@ -21,15 +21,12 @@ const updateEmployeeProfileByAdmin = async (userDetailsToUpdate: IUser): Promise
                 panCardNumber: userDetailsToUpdate.panCardNumber,
                 presentAddress: userDetailsToUpdate.presentAddress,
                 permanentAddress: userDetailsToUpdate.permanentAddress,
-            }
-        );
+            });
 
         return { success: true };
     } catch (error) {
         console.error(`Error in updating Profile: ${error}`);
-        throw {
-            success: false,
-        };
+        throw error;
     }
 };
 

@@ -53,4 +53,5 @@ UserSchema.virtual('id').get(function () {
 });
 
 const UserModel = mongoose.model<IUser>('UserSchema', UserSchema);
+
 export default UserModel;
