@@ -1,13 +1,10 @@
 import IUser from '../../interfaces/user';
 import UserModel from '../../model/userModel';
-
-interface UpdateProfileResponse {
-    success: boolean;
-}
+import { UpdateProfileResponse } from '../../interfaces/user';
 
 const updateEmployeeProfileByAdmin = async (userDetailsToUpdate: IUser): Promise<UpdateProfileResponse> => {
-    return new Promise(async (resolve, reject) => {
-        const result = await UserModel.updateOne(
+    try {
+        await UserModel.updateOne(
             { email: userDetailsToUpdate.email },
             {
                 firstName: userDetailsToUpdate.firstName,
@@ -20,20 +17,17 @@ const updateEmployeeProfileByAdmin = async (userDetailsToUpdate: IUser): Promise
                 organization: userDetailsToUpdate.organization,
                 employeeId: userDetailsToUpdate.employeeId,
                 dateOfBirth: userDetailsToUpdate.dateOfBirth,
+                aadharNumber: userDetailsToUpdate.aadharNumber,
+                panCardNumber: userDetailsToUpdate.panCardNumber,
                 presentAddress: userDetailsToUpdate.presentAddress,
-                permanentAddress: userDetailsToUpdate.permanentAddress
-            })
-            .then((responseAfterUpdateProfile: any) => {
-                resolve({
-                    success: true
-                });
-            })
-            .catch((error: any) => {
-                console.error(`Error in updating Profile: ${error}`);
-                reject({ success: false });
+                permanentAddress: userDetailsToUpdate.permanentAddress,
             });
 
-    });
-}
+        return { success: true };
+    } catch (error) {
+        console.error(`Error in updating Profile: ${error}`);
+        throw error;
+    }
+};
 
 export default { updateEmployeeProfileByAdmin };

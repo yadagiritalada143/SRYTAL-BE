@@ -34,6 +34,8 @@ const UserSchema = new mongoose.Schema(
     created_on: { type: mongoose.Schema.Types.Date },
     lastLoggedOn: { type: mongoose.Schema.Types.Date },
     dateOfBirth: { type: mongoose.Schema.Types.Date },
+    aadharNumber: { type: mongoose.Schema.Types.String },
+    panCardNumber: { type: mongoose.Schema.Types.String },
     presentAddress: { type: mongoose.Schema.Types.String },
     permanentAddress: { type: mongoose.Schema.Types.String },
     refreshToken: { type: mongoose.Schema.Types.String },
@@ -51,4 +53,5 @@ UserSchema.virtual('id').get(function () {
 });
 
 const UserModel = mongoose.model<IUser>('UserSchema', UserSchema);
+
 export default UserModel;
