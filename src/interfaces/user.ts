@@ -19,14 +19,21 @@ interface IUser extends Document {
   organization?: mongoose.Schema.Types.ObjectId;
   lastLoggedOn?: Date;
   employeeId?: string;
+  aadharNumber: string;
+  panCardNumber: string;
   dateOfBirth?: Date;
   presentAddress?: string;
   permanentAddress?: string;
   refreshToken?: string;
 };
 
- export interface FetchEmployeeDetailsResponse {
-    success: boolean;
-    usersList?: any;
-} 
+export interface FetchEmployeeDetailsResponse {
+  success: boolean;
+  usersList?: any;
+};
+
+export interface UpdateProfileResponse {
+  success: boolean;
+};
+
 export default IUser;
