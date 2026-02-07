@@ -2,7 +2,7 @@ import IUser from '../../interfaces/user';
 import UserModel from '../../model/userModel';
 import { UpdateProfileResponse } from '../../interfaces/user';
 
-const updateEmployeeProfileByAdmin = async ( userDetailsToUpdate: IUser ): Promise<UpdateProfileResponse> => {
+const updateEmployeeProfileByAdmin = async (userDetailsToUpdate: IUser): Promise<UpdateProfileResponse> => {
     try {
         await UserModel.updateOne(
             { email: userDetailsToUpdate.email },
@@ -24,9 +24,7 @@ const updateEmployeeProfileByAdmin = async ( userDetailsToUpdate: IUser ): Promi
             }
         );
 
-        return {
-            success: true,
-        };
+        return { success: true };
     } catch (error) {
         console.error(`Error in updating Profile: ${error}`);
         throw {
@@ -34,6 +32,5 @@ const updateEmployeeProfileByAdmin = async ( userDetailsToUpdate: IUser ): Promi
         };
     }
 };
-
 
 export default { updateEmployeeProfileByAdmin };
