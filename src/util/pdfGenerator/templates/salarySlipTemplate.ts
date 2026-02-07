@@ -1,5 +1,3 @@
-export const SALARY_SLIP_BACKGROUND_IMAGE = `data:image/png;base64,{{backgroundImageBase64}}`;
-
 export const salarySlipTemplate = `
 <!DOCTYPE html>
 <html lang="en">
@@ -32,31 +30,14 @@ export const salarySlipTemplate = `
             position: relative;
         }
 
-        /* Background watermark */
-        body::before {
-            content: '';
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 400px;
-            height: 150px;
-            background-image: url('{{backgroundImage}}');
-            background-size: contain;
-            background-repeat: no-repeat;
-            background-position: center;
-            opacity: 0.08;
-            z-index: -1;
-            pointer-events: none;
-        }
-
         .salary-slip-container {
+            position: relative;
             max-width: 800px;
             width: 100%;
             margin: 70px auto 0 auto; 
             border: 2px solid #5dade2;
             overflow: hidden;
-            background-color: rgba(255, 255, 255, 0.95);
+            background-color: #fff;
         }
 
         .slip-title {
