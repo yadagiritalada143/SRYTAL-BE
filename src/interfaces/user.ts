@@ -27,12 +27,13 @@ interface IUser extends Document {
   refreshToken?: string;
 };
 
- export interface FetchEmployeeDetailsResponse {
-    success: boolean;
-    usersList?: any;
-} 
+export interface FetchEmployeeDetailsResponse {
+  success: boolean;
+  usersList?: any;
+};
 
 export interface UpdateProfileResponse {
-    success: boolean;
-}
+  success: boolean;
+};
+
 export default IUser;
