@@ -56,10 +56,6 @@ const SALARY_CALCULATION_DEFAULTS = {
     MEDICAL_ALLOWANCE: 0,
 };
 
-const formatSalary = (amount: number): string => {
-    return amount.toLocaleString('en-IN');
-};
-
 const getPayslipMonth = (payPeriod: string): string => {
     const months = [
         'January', 'February', 'March', 'April', 'May', 'June',
