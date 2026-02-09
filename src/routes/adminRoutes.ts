@@ -639,7 +639,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *               uanNumber:
  *                 type: string
  *                 description: Universal Account Number for PF (optional)
- *                 example: "000000000000"
+ *                 example: N/A
  *               totalWorkingDays:
  *                 type: number
  *                 description: Total working days in the month
@@ -809,7 +809,7 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *               uanNumber:
  *                 type: string
  *                 description: Universal Account Number for PF (optional)
- *                 example: "000000000000"
+ *                 example: N/A
  *               totalWorkingDays:
  *                 type: number
  *                 description: Total working days in the month

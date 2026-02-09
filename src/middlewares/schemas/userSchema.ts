@@ -16,6 +16,8 @@ const userSchema = Joi.object({
     employeeRole: Joi.array().optional().allow(''),
     organization: Joi.string().optional().allow(''),
     dateOfBirth: Joi.date().optional().allow(''),
+    panCardNumber: Joi.string().optional().allow(''),
+    aadharCardNumber: Joi.string().optional().allow(''),
     presentAddress: Joi.string().optional().allow(''),
     permanentAddress: Joi.string().optional().allow('')
 

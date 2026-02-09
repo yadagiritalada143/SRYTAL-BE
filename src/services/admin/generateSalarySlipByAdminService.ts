@@ -56,6 +56,10 @@ const SALARY_CALCULATION_DEFAULTS = {
     MEDICAL_ALLOWANCE: 0,
 };
 
+const formatSalary = (amount: number): string => {
+    return amount.toLocaleString('en-IN');
+};
+
 const getPayslipMonth = (payPeriod: string): string => {
     const months = [
         'January', 'February', 'March', 'April', 'May', 'June',
@@ -165,7 +169,7 @@ const prepareSalarySlipData = (request: ISalarySlipRequest): ISalarySlipData => 
         transactionType: request.transactionType,
         transactionId: request.transactionId || '',
         panNumber: request.panNumber,
-        uanNumber: request.uanNumber || '-',
+        uanNumber: request.uanNumber || 'N/A',
         totalWorkingDays: request.totalWorkingDays,
         daysWorked: request.daysWorked,
         lossOfPayDays: request.lossOfPayDays || 0,
