@@ -165,7 +165,7 @@ const prepareSalarySlipData = (request: ISalarySlipRequest): ISalarySlipData => 
         transactionType: request.transactionType,
         transactionId: request.transactionId || '',
         panNumber: request.panNumber,
-        uanNumber: request.uanNumber || '-',
+        uanNumber: request.uanNumber || 'N/A',
         totalWorkingDays: request.totalWorkingDays,
         daysWorked: request.daysWorked,
         lossOfPayDays: request.lossOfPayDays || 0,

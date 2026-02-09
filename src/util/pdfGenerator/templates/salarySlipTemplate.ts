@@ -368,6 +368,10 @@ export const salarySlipTemplate = `
                         <span class="detail-label">Pay Period:</span>
                         <span class="detail-value">{{payPeriodRange}}</span>
                     </div>
+                     <div class="detail-row">
+                        <span class="detail-label">UAN Number:</span>
+                        <span class="detail-value">{{uanNumber}}</span>
+                    </div>
                 </div>
                 <div>
                     <div class="detail-row">
@@ -397,10 +401,6 @@ export const salarySlipTemplate = `
                 <div class="detail-row">
                     <span class="detail-label">PAN Number:</span>
                     <span class="detail-value">{{panNumber}}</span>
-                </div>
-                <div class="detail-row">
-                    <span class="detail-label">UAN Number:</span>
-                    <span class="detail-value">{{uanNumber}}</span>
                 </div>
             </div>
         </div>
@@ -501,7 +501,7 @@ export const salarySlipTemplate = `
                 This is a computer-generated document and does not require a signature.
             </div>
             <div style="margin-top: 5px;">
-                For any queries, please contact admin@srytal.com
+                For any queries, please contact <a href="mailto:admin@srytal.com">admin@srytal.com</a>
             </div>
         </div>
     </div>
