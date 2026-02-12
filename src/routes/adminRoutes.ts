@@ -38,9 +38,6 @@ import deleteEmployeeTaskByAdminController from '../controllers/admin/deleteEmpl
 import generateSalarySlipByAdminController from '../controllers/admin/generateSalarySlipByAdminController';
 import validateRegistrationSchema from '../middlewares/validateRegistrationSchema';
 import registrationSchema from '../middlewares/schemas/registrationSchema';
-import multer from 'multer';
-
-const upload = multer();
 
 const adminRouter: Router = express.Router();
 
@@ -64,7 +61,7 @@ adminRouter.get('/logout', validateJWT, commonController.logout);
  *     requestBody:
  *       required: true
  *       content:
- *         multipart/form-data:
+ *         application/json:
  *           schema:
  *             type: object
  *             required:
@@ -129,7 +126,7 @@ adminRouter.get('/logout', validateJWT, commonController.logout);
  *                   type: string
  *                   example: User creation failed
  */
-adminRouter.post('/registerEmployeeByAdmin', upload.none(), validateJWT, validateRegistrationSchema(registrationSchema), registerEmployeeByAdminController.register);
+adminRouter.post('/registerEmployeeByAdmin', validateJWT, validateRegistrationSchema(registrationSchema), registerEmployeeByAdminController.register);
 
 /**
  * @swagger

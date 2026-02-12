@@ -20,8 +20,8 @@ const registrationSchema = Joi.object({
         .min(3)
         .max(30)
         .pattern(/^[A-Za-z\s]+$/)
-        .required()
         .trim()
+        .required()
         .messages({
             'string.base': 'Last name should be a string',
             'string.empty': 'Last name is required',
@@ -48,9 +48,16 @@ const registrationSchema = Joi.object({
         .messages({
             'string.pattern.base': 'Mobile number must be exactly 10 digits',
         }),
-        userRole: Joi.string()
-        .valid('Employee', 'Recruiter','Content Writer')
+
+    userRole: Joi.string()
+        .valid('Employee', 'Recruiter', 'ContentWriter')
         .required()
+        .messages({
+            'string.base': 'User role should be a string',
+            'string.empty': 'User role is required',
+            'any.only': 'User role must be one of: Employee, Recruiter, ContentWriter',
+            'any.required': 'User role is required',
+        }),
 });
 
 export default registrationSchema;
