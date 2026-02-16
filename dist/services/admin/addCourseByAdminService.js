@@ -11,7 +11,7 @@ const addCourseByAdminService = async (courseName, courseDescription) => {
         return result;
     }
     catch (error) {
-        console.error('Error in adding Courses:', error);
+        console.error(`Error in adding Courses: ${error}`);
         return { success: false };
     }
 };

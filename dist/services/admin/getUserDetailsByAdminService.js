@@ -31,6 +31,8 @@ const getEmployeeDetailsByAdmin = (id) => {
                         organization: user.organization,
                         employeeId: user.employeeId,
                         dateOfBirth: user.dateOfBirth,
+                        aadharNumber: user.aadharNumber,
+                        panCardNumber: user.panCardNumber,
                         presentAddress: user.presentAddress,
                         permanentAddress: user.permanentAddress
                     }
@@ -38,7 +40,7 @@ const getEmployeeDetailsByAdmin = (id) => {
             }
         })
             .catch((error) => {
-            console.error('Error in fetching details:', error);
+            console.error(`Error in fetching details: ${error}`);
             reject({ success: false });
         });
     });

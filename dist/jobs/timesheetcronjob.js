@@ -52,7 +52,7 @@ const updateNextMonthTimeSheet = async () => {
     }
 };
 node_cron_1.default.schedule('0 0 25 * *', () => {
-    console.log("Cron triggered! Running on the 25th of each month...");
+    console.warn("Cron triggered! Running on the 25th of each month...");
     updateNextMonthTimeSheet();
 });
 exports.default = { updateNextMonthTimeSheet };

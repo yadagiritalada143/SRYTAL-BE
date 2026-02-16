@@ -35,7 +35,7 @@ const employeePackageDetailsById = async (employeeId, startDate, endDate) => {
         };
     }
     catch (error) {
-        console.error('Error in fetching Employee Package details by ID:', error);
+        console.error(`Error in fetching Employee Package details by ID: ${error}`);
         return { success: false };
     }
 };

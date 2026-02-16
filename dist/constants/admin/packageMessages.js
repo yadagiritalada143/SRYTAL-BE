@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.PACKAGE_SUCCESS_MESSAGES = exports.PACKAGE_ERROR_MESSAGES = void 0;
+exports.HTTP_STATUS = exports.PACKAGE_SUCCESS_MESSAGES = exports.PACKAGE_ERROR_MESSAGES = void 0;
 exports.PACKAGE_ERROR_MESSAGES = {
     PACKAGE_FETCH_ERROR_MESSAGE: 'Error occured while getting the Packages !!',
     PACKAGE_DETAILS_FETCH_ERROR_MESSAGE: 'Error occured while getting the Package Details !!',
@@ -12,4 +12,14 @@ exports.PACKAGE_ERROR_MESSAGES = {
 };
 exports.PACKAGE_SUCCESS_MESSAGES = {
     PACKAGE_ADD_SUCCESS_MESSAGE: 'Packages added Successfully !',
+};
+exports.HTTP_STATUS = {
+    OK: 200,
+    CREATED: 201,
+    BAD_REQUEST: 400,
+    UNAUTHORIZED: 401,
+    FORBIDDEN: 403,
+    NOT_FOUND: 404,
+    CONFLICT: 409,
+    INTERNAL_SERVER_ERROR: 500,
 };

@@ -38,7 +38,7 @@ const getAllPackagesWithTasksByAdmin = async () => {
         };
     }
     catch (error) {
-        console.error('Error in fetching all packages with tasks:', error);
+        console.error(`Error in fetching all packages with tasks: ${error}`);
         return { success: false };
     }
 };

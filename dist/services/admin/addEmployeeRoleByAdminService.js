@@ -11,7 +11,7 @@ const addEmployeeRoleByAdmin = async (designation) => {
         return result;
     }
     catch (error) {
-        console.error('Error in adding employee role:', error);
+        console.error(`Error in adding employee role: ${error}`);
         return { success: false };
     }
 };

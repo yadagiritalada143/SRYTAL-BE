@@ -13,7 +13,7 @@ const generateOfferLetterBySuperadmin = async (req, res) => {
         await generateOfferLetterBySuperadminService_1.default.generateOfferLetterBySuperadmin(res, nameOfTheCandidate, subject, role, dateOfJoining, compensation, workLocation);
     }
     catch (error) {
-        console.error('Error generating offer letter:', error);
+        console.error(`Error generating offer letter: ${error}`);
         res.status(500).json({ message: 'Error generating offer letter by superadmin.' });
     }
 };

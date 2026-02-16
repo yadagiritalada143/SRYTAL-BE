@@ -15,7 +15,7 @@ const updatePassword = (req, res) => {
         }
     })
         .catch((error) => {
-        console.log(`Error occured while updating the password: ${error}`);
+        console.error(`Error occured while updating the password: ${error}`);
         res.status(500).json({ success: false, message: 'Error occured while updating the password !' });
     });
 };

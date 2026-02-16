@@ -11,7 +11,7 @@ const addBloodgroupByAdmin = async (addBloodgroup) => {
         return result;
     }
     catch (error) {
-        console.error('Error in adding Blood Group details:', error);
+        console.error(`Error in adding Blood Group details: ${error}`);
         return { success: false };
     }
 };

@@ -10,7 +10,7 @@ const getOrgThemes = async (organization_name) => {
         return result;
     }
     catch (error) {
-        console.log('Error occured while fetching the themes: ', error);
+        console.error(`Error occured while fetching the themes: ${error}`);
         return error;
     }
 };
