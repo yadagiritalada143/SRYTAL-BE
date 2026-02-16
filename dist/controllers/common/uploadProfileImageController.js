@@ -32,7 +32,7 @@ const uploadProfileImage = async (req, res) => {
                     }
                 })
                     .catch((error) => {
-                    console.log(`Error occured while updating the Profile Image: ${error}`);
+                    console.error(`Error occured while updating the Profile Image: ${error}`);
                     res.status(500).json({ success: false, message: commonErrorMessages_1.EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
                 });
             }
@@ -41,12 +41,12 @@ const uploadProfileImage = async (req, res) => {
             }
         })
             .catch((error) => {
-            console.log(`Error occured while Profile Image upload: ${error}`);
+            console.error(`Error occured while Profile Image upload: ${error}`);
             res.status(500).json({ success: false, message: commonErrorMessages_1.EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
         });
     }
     catch (error) {
-        console.log(`Error occured while updating the Profile Image to S3: ${error}`);
+        console.error(`Error occured while updating the Profile Image to S3: ${error}`);
         res.status(500).json({ success: false, message: commonErrorMessages_1.EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
     }
 };

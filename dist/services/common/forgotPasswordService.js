@@ -30,7 +30,7 @@ const forgotPassword = async (email) => {
             }
         })
             .catch((error) => {
-            console.log(`Error in forget password flow:  ${error}`);
+            console.error(`Error in forget password flow:  ${error}`);
             reject({ success: false, message: 'Error in forget password flow !' });
         });
     });

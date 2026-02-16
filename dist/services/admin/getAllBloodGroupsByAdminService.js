@@ -19,7 +19,7 @@ const getAllBloodgroupsByAdmin = () => {
             }
         })
             .catch((error) => {
-            console.error('Error in fetching Blood Group details:', error);
+            console.error(`Error in fetching Blood Group details: ${error}`);
             reject({ success: false });
         });
     });

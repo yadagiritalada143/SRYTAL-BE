@@ -13,7 +13,7 @@ const addPackageToEmployeeByAdmin = (req, res) => {
         res.status(200).json({ succes: true });
     })
         .catch((error) => {
-        console.log(`Error while adding packages to employee: ${error}`);
+        console.error(`Error while adding packages to employee: ${error}`);
         res.status(500).json({ success: false, message: packageToEmployeeMessage_1.PACKAGE_TO_EMPLOYEE_ERROR_MESSAGE.ADD_PACKAGE_TO_EMPLOYEE_ERROR_MESSAGE });
     });
 };
