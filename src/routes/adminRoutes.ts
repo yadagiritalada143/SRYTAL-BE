@@ -38,6 +38,7 @@ import deleteEmployeeTaskByAdminController from '../controllers/admin/deleteEmpl
 import generateSalarySlipByAdminController from '../controllers/admin/generateSalarySlipByAdminController';
 import validateRegistrationSchema from '../middlewares/validateRegistrationSchema';
 import registrationSchema from '../middlewares/schemas/registrationSchema';
+import generateOfferLetterByAdminController from '../controllers/admin/generateOfferLetterByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -1038,5 +1039,86 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *                   example: An unexpected error occurred while generating salary slip
  */
 adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminController.previewSalarySlip);
+
+/**
+ * @swagger
+ * /admin/generateOfferLetterByAdmin:
+ *   post:
+ *     summary: Generate Offer Letter PDF by Admin
+ *     description: Generates an Offer Letter PDF based on the provided candidate and job details.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - nameOfTheCandidate
+ *               - subject
+ *               - role
+ *               - dateOfJoining
+ *               - compensation
+ *               - workLocation
+ *               - offerDate
+ *             properties:
+ *               nameOfTheCandidate:
+ *                 type: string
+ *                 example: John Doe
+ *               subject:
+ *                 type: string
+ *                 example: Offer of Appointment for the Post of Senior Software Engineer
+ *               role:
+ *                 type: string
+ *                 example: Senior Software Engineer
+ *               dateOfJoining:
+ *                 type: string
+ *                 example: 01 March 2026
+ *               compensation:
+ *                 type: string
+ *                 example: 8,00,000 INR per annum
+ *               workLocation:
+ *                 type: string
+ *                 example: Bangalore
+ *               offerDate:
+ *                 type: string
+ *                 example: 15 February 2026
+ *     responses:
+ *       200:
+ *         description: Offer Letter PDF generated successfully
+ *         content:
+ *           application/pdf:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       400:
+ *         description: Validation error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 error:
+ *                   type: string
+ *                   example: Candidate name is required
+ *       500:
+ *         description: Server error while generating offer letter
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error generating offer letter by admin.
+ */
+
+adminRouter.post('/generateOfferLetterByAdmin',  generateOfferLetterByAdminController.generateOfferLetterByAdmin);
 
 export default adminRouter;
