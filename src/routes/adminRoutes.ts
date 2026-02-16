@@ -723,7 +723,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *               uanNumber:
  *                 type: string
  *                 description: Universal Account Number for PF (optional)
- *                 example: N/A
+ *                 example: "N/A"
  *               totalWorkingDays:
  *                 type: number
  *                 description: Total working days in the month
@@ -748,10 +748,32 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                 type: number
  *                 description: Special allowance amount (optional)
  *                 example: 0
+ *               conveyanceAllowance:
+ *                 type: number
+ *                 description: Conveyance allowance amount (optional)
+ *                 example: 300
+ *               medicalAllowance:
+ *                 type: number
+ *                 description: Medical allowance amount (optional)
+ *                 example: 200
  *               otherAllowances:
  *                 type: number
  *                 description: Other allowances amount (optional)
  *                 example: 1000
+ *               additionalAllowances:
+ *                 type: array
+ *                 description: List of additional allowances
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       description: Name of the allowance
+ *                       example: "Festival Bonus"
+ *                     amount:
+ *                       type: number
+ *                       description: Amount of the allowance
+ *                       example: 1500
  *               pfPercentage:
  *                 type: number
  *                 description: PF percentage of basic (optional, default 0%)
@@ -893,7 +915,7 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *               uanNumber:
  *                 type: string
  *                 description: Universal Account Number for PF (optional)
- *                 example: N/A
+ *                 example: "N/A"
  *               totalWorkingDays:
  *                 type: number
  *                 description: Total working days in the month
@@ -942,74 +964,24 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *                 type: string
  *                 description: Payment date shown in footer (YYYY-MM-DD)
  *                 example: "2026-01-31"
- *     responses:
- *       200:
- *         description: Salary slip preview generated successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *                 message:
- *                   type: string
- *                   example: Salary slip generated successfully
- *                 data:
+ *               additionalAllowances:
+ *                 type: array
+ *                 description: List of additional allowances
+ *                 items:
  *                   type: object
+ *                   required:
+ *                     - name
+ *                     - amount
  *                   properties:
- *                     fileName:
+ *                     name:
  *                       type: string
- *                       example: "January-2026-Ramya-Thummala_Salary-Slip.pdf"
- *                     pdfBase64:
- *                       type: string
- *                       example: "JVBERi0xLjQKJeLjz9..."
- *                     calculations:
- *                       type: object
- *                       properties:
- *                         basicSalary:
- *                           type: number
- *                           example: 50000
- *                         hra:
- *                           type: number
- *                           example: 20000
- *                         specialAllowance:
- *                           type: number
- *                           example: 0
- *                         conveyanceAllowance:
- *                           type: number
- *                           example: 1600
- *                         medicalAllowance:
- *                           type: number
- *                           example: 1250
- *                         otherAllowances:
- *                           type: number
- *                           example: 1000
- *                         grossEarnings:
- *                           type: number
- *                           example: 82850
- *                         providentFund:
- *                           type: number
- *                           example: 6000
- *                         professionalTax:
- *                           type: number
- *                           example: 200
- *                         incomeTax:
- *                           type: number
- *                           example: 5000
- *                         otherDeductions:
- *                           type: number
- *                           example: 0
- *                         totalDeductions:
- *                           type: number
- *                           example: 11200
- *                         netPay:
- *                           type: number
- *                           example: 71650
- *                         netPayInWords:
- *                           type: string
- *                           example: "Rupees Seventy One Thousand Six Hundred Fifty Only"
+ *                       description: Name of the additional allowance
+ *                       example: "Festival Bonus"
+ *                     amount:
+ *                       type: number
+ *                       description: Amount for this allowance
+ *                       example: 1500
+ *     responses:
  *       400:
  *         description: Invalid request data
  *         content:

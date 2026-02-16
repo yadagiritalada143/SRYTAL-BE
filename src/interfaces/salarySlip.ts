@@ -30,6 +30,7 @@ export interface ISalarySlipRequest {
     professionalTax?: number;
     incomeTax?: number;
     otherDeductions?: number;
+    additionalAllowances?: IAdditionalAllowance[];
 }
 
 export interface ISalaryCalculations {
@@ -41,6 +42,8 @@ export interface ISalaryCalculations {
     medicalAllowance: number;
     otherAllowances: number;
     grossEarnings: number;
+    additionalAllowancesTotal: number;
+    additionalAllowancesDetails?: IAdditionalAllowance[];
 
     // Deductions
     providentFund: number;
@@ -84,4 +87,9 @@ export interface ISalarySlipData {
 
     // Calculated Values
     calculations: ISalaryCalculations;
+}
+
+export interface IAdditionalAllowance {
+    name: string;
+    amount: number;
 }
