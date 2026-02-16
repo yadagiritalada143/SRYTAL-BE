@@ -4,7 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.injectDataIntoTemplate = exports.generatePDFWithHeaderFooter = exports.generatePDFFromHTML = void 0;
-const puppeteer_1 = __importDefault(require("puppeteer"));
+const puppeteer_core_1 = __importDefault(require("puppeteer-core"));
+const chromium_1 = __importDefault(require("@sparticuz/chromium"));
 const defaultPDFOptions = {
     format: 'A4',
     landscape: false,
@@ -17,19 +18,38 @@ const defaultPDFOptions = {
     displayHeaderFooter: false,
     printBackground: true,
 };
+const getBrowser = async () => {
+    const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+    if (isVercel) {
+        const executablePath = await chromium_1.default.executablePath();
+        return puppeteer_core_1.default.launch({
+            args: chromium_1.default.args,
+            defaultViewport: { width: 1920, height: 1080 },
+            executablePath,
+            headless: true,
+        });
+    }
+    // Local development - use installed Chrome
+    return puppeteer_core_1.default.launch({
+        headless: true,
+        executablePath: process.platform === 'win32'
+            ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+            : process.platform === 'darwin'
+                ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+                : '/usr/bin/google-chrome',
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+        ],
+    });
+};
 const generatePDFFromHTML = async (htmlContent, options = {}) => {
     let browser;
     try {
         const pdfOptions = Object.assign(Object.assign({}, defaultPDFOptions), options);
-        browser = await puppeteer_1.default.launch({
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-            ],
-        });
+        browser = await getBrowser();
         const page = await browser.newPage();
         await page.setContent(htmlContent, {
             waitUntil: 'networkidle0',

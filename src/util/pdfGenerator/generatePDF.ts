@@ -1,4 +1,5 @@
-import puppeteer from 'puppeteer';
+import puppeteer from 'puppeteer-core';
+import chromium from '@sparticuz/chromium';
 import { IPDFGeneratorOptions, IPDFGenerationResult } from '../../interfaces/pdfGenerator';
 
 const defaultPDFOptions: IPDFGeneratorOptions = {
@@ -14,6 +15,36 @@ const defaultPDFOptions: IPDFGeneratorOptions = {
     printBackground: true,
 };
 
+const getBrowser = async () => {
+    const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+
+    if (isVercel) {
+        const executablePath = await chromium.executablePath();
+        return puppeteer.launch({
+            args: chromium.args,
+            defaultViewport: { width: 1920, height: 1080 },
+            executablePath,
+            headless: true,
+        });
+    }
+
+    // Local development - use installed Chrome
+    return puppeteer.launch({
+        headless: true,
+        executablePath: process.platform === 'win32'
+            ? 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe'
+            : process.platform === 'darwin'
+                ? '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+                : '/usr/bin/google-chrome',
+        args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+        ],
+    });
+};
+
 export const generatePDFFromHTML = async (
     htmlContent: string,
     options: IPDFGeneratorOptions = {}
@@ -22,15 +53,7 @@ export const generatePDFFromHTML = async (
     try {
         const pdfOptions = { ...defaultPDFOptions, ...options };
 
-        browser = await puppeteer.launch({
-            headless: true,
-            args: [
-                '--no-sandbox',
-                '--disable-setuid-sandbox',
-                '--disable-dev-shm-usage',
-                '--disable-gpu',
-            ],
-        });
+        browser = await getBrowser();
         const page = await browser.newPage();
         await page.setContent(htmlContent, {
             waitUntil: 'networkidle0',
@@ -58,7 +81,7 @@ export const generatePDFFromHTML = async (
         };
     } finally {
         if (browser) {
-             await browser.close();
+            await browser.close();
         }
     }
 };
@@ -109,4 +132,4 @@ export const injectDataIntoTemplate = (
     return result;
 };
 
-export default { generatePDFFromHTML, generatePDFWithHeaderFooter, injectDataIntoTemplate};
+export default { generatePDFFromHTML, generatePDFWithHeaderFooter, injectDataIntoTemplate };
