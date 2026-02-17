@@ -111,8 +111,8 @@ const calculateSalaryComponents = (request) => {
     const professionalTax = (_h = request.professionalTax) !== null && _h !== void 0 ? _h : SALARY_CALCULATION_DEFAULTS.PROFESSIONAL_TAX;
     const incomeTax = (_j = request.incomeTax) !== null && _j !== void 0 ? _j : 0;
     const otherDeductions = (_k = request.otherDeductions) !== null && _k !== void 0 ? _k : 0;
-    const totalDeductions = providentFund + professionalTax + incomeTax + otherDeductions;
-    const netPay = adjustedGrossEarnings - totalDeductions;
+    const totalDeductions = providentFund + professionalTax + incomeTax + otherDeductions + lopDeduction;
+    const netPay = grossEarnings - totalDeductions;
     const netPayInWords = (0, numberToWords_1.convertAmountToWords)(netPay);
     return {
         basicSalary: Number((0, numberToWords_1.formatIndianCurrency)(basicSalary).replace(/,/g, '')),
@@ -121,7 +121,8 @@ const calculateSalaryComponents = (request) => {
         conveyanceAllowance: Number((0, numberToWords_1.formatIndianCurrency)(conveyanceAllowance).replace(/,/g, '')),
         medicalAllowance: Number((0, numberToWords_1.formatIndianCurrency)(medicalAllowance).replace(/,/g, '')),
         otherAllowances: Number((0, numberToWords_1.formatIndianCurrency)(otherAllowances).replace(/,/g, '')),
-        grossEarnings: Number((0, numberToWords_1.formatIndianCurrency)(adjustedGrossEarnings).replace(/,/g, '')),
+        grossEarnings: Number((0, numberToWords_1.formatIndianCurrency)(grossEarnings).replace(/,/g, '')),
+        lossOfPayAmount: Number((0, numberToWords_1.formatIndianCurrency)(lopDeduction).replace(/,/g, '')),
         providentFund: Number((0, numberToWords_1.formatIndianCurrency)(providentFund).replace(/,/g, '')),
         professionalTax: Number((0, numberToWords_1.formatIndianCurrency)(professionalTax).replace(/,/g, '')),
         incomeTax: Number((0, numberToWords_1.formatIndianCurrency)(incomeTax).replace(/,/g, '')),

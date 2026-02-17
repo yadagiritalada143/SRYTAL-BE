@@ -469,6 +469,10 @@ exports.salarySlipTemplate = `
                 <div class="column-header deductions">DEDUCTIONS</div>
                 <div class="column-content">
                     <div class="column-row">
+                        <span>Loss of Pay ({{lossOfPayDays}} days)</span>
+                        <span class="amount-column">₹ {{calculations.lossOfPayAmount}}</span>
+                    </div>
+                    <div class="column-row">
                         <span>Provident Fund (PF)</span>
                         <span class="amount-column">₹ {{calculations.providentFund}}</span>
                     </div>

@@ -119,8 +119,8 @@ const calculateSalaryComponents = (request: ISalarySlipRequest): ISalaryCalculat
     const professionalTax = request.professionalTax ?? SALARY_CALCULATION_DEFAULTS.PROFESSIONAL_TAX;
     const incomeTax = request.incomeTax ?? 0;
     const otherDeductions = request.otherDeductions ?? 0;
-    const totalDeductions = providentFund + professionalTax + incomeTax + otherDeductions;
-    const netPay = adjustedGrossEarnings - totalDeductions;
+    const totalDeductions = providentFund + professionalTax + incomeTax + otherDeductions + lopDeduction;
+    const netPay = grossEarnings - totalDeductions;
     const netPayInWords = convertAmountToWords(netPay);
 
     return {
@@ -130,7 +130,8 @@ const calculateSalaryComponents = (request: ISalarySlipRequest): ISalaryCalculat
         conveyanceAllowance: Number(formatIndianCurrency(conveyanceAllowance).replace(/,/g, '')),
         medicalAllowance: Number(formatIndianCurrency(medicalAllowance).replace(/,/g, '')),
         otherAllowances: Number(formatIndianCurrency(otherAllowances).replace(/,/g, '')),
-        grossEarnings: Number(formatIndianCurrency(adjustedGrossEarnings).replace(/,/g, '')),
+        grossEarnings: Number(formatIndianCurrency(grossEarnings).replace(/,/g, '')),
+        lossOfPayAmount: Number(formatIndianCurrency(lopDeduction).replace(/,/g, '')),
         providentFund: Number(formatIndianCurrency(providentFund).replace(/,/g, '')),
         professionalTax: Number(formatIndianCurrency(professionalTax).replace(/,/g, '')),
         incomeTax: Number(formatIndianCurrency(incomeTax).replace(/,/g, '')),
