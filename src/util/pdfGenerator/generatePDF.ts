@@ -23,7 +23,7 @@ export const generatePDFFromHTML = async (
         const pdfOptions = { ...defaultPDFOptions, ...options };
 
         browser = await puppeteer.launch({
-            headless: true,
+            headless: false,
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -58,7 +58,7 @@ export const generatePDFFromHTML = async (
         };
     } finally {
         if (browser) {
-             await browser.close();
+            // await browser.close();
         }
     }
 };
