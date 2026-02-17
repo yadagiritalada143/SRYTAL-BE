@@ -110,7 +110,14 @@ const calculateSalaryComponents = (request: ISalarySlipRequest): ISalaryCalculat
     const specialAllowance = request.specialAllowance ?? 0;
     const otherAllowances = request.otherAllowances ?? 0;
     const additionalAllowances = request.additionalAllowances ?? [];
-    const additionalAllowancesTotal = additionalAllowances.reduce((sum, item) => sum + item.amount, 0);
+    const additionalAllowancesTotal = additionalAllowances.reduce((sum,item) => {
+        if(item.type === 'Add') {
+            return sum + item.amount;
+        } else if(item.type === 'Deduct') {
+            return sum - item.amount;
+        }
+        return sum;
+    }, 0);
     const grossEarnings = basicSalary + hra + specialAllowance + conveyanceAllowance + medicalAllowance + otherAllowances + additionalAllowancesTotal;
     const lopDays = request.lossOfPayDays ?? 0;
     const perDaySalary = grossEarnings / request.totalWorkingDays;
@@ -145,19 +152,6 @@ const calculateSalaryComponents = (request: ISalarySlipRequest): ISalaryCalculat
     };
 };
 
-const formattedDate = (dateInput: string | Date, format: 'DD-MMM-YYYY' | 'DD/MM/YYYY' = 'DD-MMM-YYYY'): string => {
-    const date = new Date(dateInput);
-    const day = String(date.getDate()).padStart(2, '0');
-    const monthIndex = date.getMonth();
-    const year = date.getFullYear();
-    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const monthName = monthsShort[monthIndex];
-    if (format === 'DD/MM/YYYY') {
-        return `${day}/${date.getMonth() + 1}/${year}`;
-    }
-    return `${day}-${monthName}-${year}`;
-};
-
 const prepareSalarySlipData = (request: ISalarySlipRequest): ISalarySlipData => {
     const calculations = calculateSalaryComponents(request);
     return {
@@ -175,7 +169,7 @@ const prepareSalarySlipData = (request: ISalarySlipRequest): ISalarySlipData => 
         payPeriod: request.payPeriod,
         payPeriodRange: getPayPeriodDateRange(request.payPeriod),
         payslipMonth: getPayslipMonth(request.payPeriod),
-        payDate: formattedDate(request.payDate),
+        payDate: request.payDate,
         bankName: request.bankName,
         IFSCCODE: request.IFSCCODE,
         bankAccountNumber: request.bankAccountNumber,
@@ -193,21 +187,6 @@ const prepareSalarySlipData = (request: ISalarySlipRequest): ISalarySlipData => 
 
 const validateRequest = (request: ISalarySlipRequest): { isValid: boolean; errors: string[] } => {
     const errors: string[] = [];
-    if (!request.payDate) {
-        errors.push("Pay date is required");
-    } else {
-        const date = new Date(request.payDate);
-        const [year, month, day] = request.payDate.split('-').map(Number);
-
-        if (
-            isNaN(date.getTime()) ||
-            date.getFullYear() !== year ||
-            date.getMonth() + 1 !== month ||
-            date.getDate() !== day
-        ) {
-            errors.push(`Pay date ${request.payDate} is invalid`);
-        }
-    }
 
     if (!request.employeeId) errors.push('Employee ID is required');
     if (!request.employeeName) errors.push('Employee Name is required');
@@ -243,7 +222,7 @@ const generateSalarySlipPDF = async (request: ISalarySlipRequest): Promise<IPDFG
         const pdfResult = await pdfGenerator.generatePDFWithHeaderFooter(
             htmlContent,
             PDF_HEADER_TEMPLATE,
-            getPdfFooterTemplate(formattedDate(request.payDate)),
+            getPdfFooterTemplate(request.payDate),
             {
                 format: 'A4',
                 margin: {

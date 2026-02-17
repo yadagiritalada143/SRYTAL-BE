@@ -92,4 +92,5 @@ export interface ISalarySlipData {
 export interface IAdditionalAllowance {
     name: string;
     amount: number;
+    type: 'Add' | 'Deduct';
 }

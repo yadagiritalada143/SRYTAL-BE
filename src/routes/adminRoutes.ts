@@ -774,6 +774,10 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                       type: number
  *                       description: Amount of the allowance
  *                       example: 1500
+ *                     type:
+ *                       type: string
+ *                       description: Type of allowance (Add/Deduct)
+ *                       example: "Add"
  *               pfPercentage:
  *                 type: number
  *                 description: PF percentage of basic (optional, default 0%)
@@ -829,7 +833,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                   type: string
  *                   example: An unexpected error occurred while generating salary slip
  */
-adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminController.generateSalarySlip);
+adminRouter.post('/generateSalarySlip', validateJWT,  generateSalarySlipByAdminController.generateSalarySlip);
 
 /**
  * @swagger
