@@ -38,6 +38,7 @@ import deleteEmployeeTaskByAdminController from '../controllers/admin/deleteEmpl
 import generateSalarySlipByAdminController from '../controllers/admin/generateSalarySlipByAdminController';
 import validateRegistrationSchema from '../middlewares/validateRegistrationSchema';
 import registrationSchema from '../middlewares/schemas/registrationSchema';
+import addFeedBackByAdminController from '../controllers/admin/addFeedBackByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -1038,5 +1039,112 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *                   example: An unexpected error occurred while generating salary slip
  */
 adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminController.previewSalarySlip);
+
+/**
+ * @swagger
+ * /admin/addfeedbackbyadmin:
+ *   post:
+ *     summary: Add Feedback Attribute By Admin
+ *     description: Admin can add a new feedback attribute by providing name, optional comment, and rating. JWT authentication required.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - rating
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: Customer Satisfaction
+ *               comment:
+ *                 type: string
+ *                 example: Rating given by customer
+ *               rating:
+ *                 type: number
+ *                 example: 5
+ *     responses:
+ *       200:
+ *         description: Feedback attribute created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Feedback added successfully.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 63f5b9f2a1e4c2a7f8d6e1a2
+ *                     name:
+ *                       type: string
+ *                       example: Customer Satisfaction
+ *                     comment:
+ *                       type: string
+ *                       example: Rating given by customer
+ *                     rating:
+ *                       type: number
+ *                       example: 5
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Bad Request - missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Name and rating are required.
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add feedback.
+ */
+
+adminRouter.post('/addfeedbackbyadmin',  addFeedBackByAdminController.addFeedBackByAdminController);
 
 export default adminRouter;
