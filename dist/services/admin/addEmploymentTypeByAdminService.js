@@ -11,7 +11,7 @@ const addEmploymentTypeByAdmin = async (employmentType) => {
         return result;
     }
     catch (error) {
-        console.error('Error in adding employment type:', error);
+        console.error(`Error in adding employment type: ${error}`);
         return { success: false };
     }
 };

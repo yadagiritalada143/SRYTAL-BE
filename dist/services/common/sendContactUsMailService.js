@@ -37,14 +37,14 @@ const sendContactUsMail = async (mailDetailsToFire) => {
             if (error) {
                 return error;
             }
-            console.log('info after sent:', info.response);
+            console.warn(`info after sent:', ${info.response}`);
             return info.response;
         });
-        console.log('Result after mail sent: ', result);
+        console.warn(`Result after mail sent: ${result}`);
         return result;
     }
     catch (error) {
-        console.log('Error in sending Email at services: ', error);
+        console.error(`Error in sending Email at services: ${error}`);
         return error;
     }
 };

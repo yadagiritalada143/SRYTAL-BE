@@ -5,16 +5,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const commonErrorMessages_1 = require("../../constants/commonErrorMessages");
 const getAllEmployeeDetailsByAdminService_1 = __importDefault(require("../../services/admin/getAllEmployeeDetailsByAdminService"));
-const getAllEmployeeDetails = (req, res) => {
-    const { organizationId, userId } = req.body;
-    getAllEmployeeDetailsByAdminService_1.default
-        .getAllEmployeeDetailsByAdmin(organizationId, userId)
-        .then(fetchAllEmployeeDetailsByAdminResponse => {
-        res.status(200).json(fetchAllEmployeeDetailsByAdminResponse);
-    })
-        .catch(error => {
+const getAllEmployeeDetails = async (req, res) => {
+    try {
+        const { organizationId, userId } = req.body;
+        const fetchAllEmployeeDetailsByAdminResponse = await getAllEmployeeDetailsByAdminService_1.default.getAllEmployeeDetailsByAdmin(organizationId, userId);
+        res.status(commonErrorMessages_1.HTTP_STATUS.OK).json(fetchAllEmployeeDetailsByAdminResponse);
+    }
+    catch (error) {
         console.error(`Error in fetching Employee details: ${error}`);
-        res.status(500).json({ success: false, message: commonErrorMessages_1.COMMON_ERRORS.USER_FETCHING_ERROR });
-    });
+        res.status(commonErrorMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: commonErrorMessages_1.COMMON_ERRORS.USER_FETCHING_ERROR,
+        });
+    }
 };
 exports.default = { getAllEmployeeDetails };

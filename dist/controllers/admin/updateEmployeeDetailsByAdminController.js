@@ -5,15 +5,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const updateEmployeeDetailsByAdminService_1 = __importDefault(require("../../services/admin/updateEmployeeDetailsByAdminService"));
 const commonErrorMessages_1 = require("../../constants/commonErrorMessages");
-const updateProfile = (req, res) => {
-    updateEmployeeDetailsByAdminService_1.default
-        .updateEmployeeProfileByAdmin(req.body)
-        .then((updateProfileResponse) => {
-        res.status(200).json(updateProfileResponse);
-    })
-        .catch((error) => {
+const updateProfile = async (req, res) => {
+    try {
+        const updateProfileResponse = await updateEmployeeDetailsByAdminService_1.default.updateEmployeeProfileByAdmin(req.body);
+        res.status(commonErrorMessages_1.HTTP_STATUS.OK).json(updateProfileResponse);
+    }
+    catch (error) {
         console.error(`Error in updating profile details: ${error}`);
-        res.status(500).json({ success: false, message: commonErrorMessages_1.COMMON_ERRORS.USER_UPDATING_ERROR });
-    });
+        res.status(commonErrorMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: commonErrorMessages_1.COMMON_ERRORS.USER_UPDATING_ERROR });
+    }
 };
 exports.default = { updateProfile };

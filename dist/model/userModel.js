@@ -36,6 +36,8 @@ const UserSchema = new mongoose_1.default.Schema({
     created_on: { type: mongoose_1.default.Schema.Types.Date },
     lastLoggedOn: { type: mongoose_1.default.Schema.Types.Date },
     dateOfBirth: { type: mongoose_1.default.Schema.Types.Date },
+    aadharNumber: { type: mongoose_1.default.Schema.Types.String },
+    panCardNumber: { type: mongoose_1.default.Schema.Types.String },
     presentAddress: { type: mongoose_1.default.Schema.Types.String },
     permanentAddress: { type: mongoose_1.default.Schema.Types.String },
     refreshToken: { type: mongoose_1.default.Schema.Types.String },

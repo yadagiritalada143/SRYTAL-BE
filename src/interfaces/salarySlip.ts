@@ -43,6 +43,7 @@ export interface ISalaryCalculations {
     grossEarnings: number;
 
     // Deductions
+    lossOfPayAmount: number;
     providentFund: number;
     professionalTax: number;
     incomeTax: number;

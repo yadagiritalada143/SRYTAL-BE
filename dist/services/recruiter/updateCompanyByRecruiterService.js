@@ -11,7 +11,7 @@ const updatePoolCompanyDetails = async (detailsToUpdate) => {
         return { success: result.acknowledged };
     }
     catch (error) {
-        console.log('Error occured while updating the pool company details:', error);
+        console.error('Error occured while updating the pool company details:', error);
         return { success: false };
     }
 };

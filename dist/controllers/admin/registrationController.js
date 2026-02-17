@@ -40,7 +40,7 @@ const register = (req, res) => {
         if (error.message === registrationMessages_1.ERRORS.EMAIL_EXISTS) {
             return res.status(409).json({ message: error.message });
         }
-        console.log(error);
+        console.error(error);
         return res.status(500).json({ message: registrationMessages_1.ERRORS.USER_CREATION_ERROR });
     });
 };

@@ -15,7 +15,7 @@ const deleteBloodGroupByAdmin = async (id) => {
         }
     }
     catch (error) {
-        console.error('Error in  deleting blood group: ', error);
+        console.error(`Error in  deleting blood group: ${error}`);
         return { success: false, responseAfterDelete: error };
     }
 };

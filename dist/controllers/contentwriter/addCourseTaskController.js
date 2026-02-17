@@ -24,7 +24,7 @@ const addTaskToModule = (req, res) => {
         }
     })
         .catch((error) => {
-        console.log(error);
+        console.error(`Error in adding Task to Module: ${error}`);
     });
 };
 exports.default = { addTaskToModule };

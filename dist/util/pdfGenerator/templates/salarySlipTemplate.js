@@ -1,4 +1,7 @@
-export const salarySlipTemplate = `
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.salarySlipTemplate = void 0;
+exports.salarySlipTemplate = `
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -515,5 +518,4 @@ export const salarySlipTemplate = `
 </body>
 </html>
 `;
-
-export default salarySlipTemplate;
+exports.default = exports.salarySlipTemplate;

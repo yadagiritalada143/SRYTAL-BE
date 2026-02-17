@@ -15,7 +15,7 @@ const updateBloodGroupByAdmin = async (id, type) => {
         }
     }
     catch (error) {
-        console.error('Error in  updating blood group: ', error);
+        console.error(`Error in  updating blood group: ${error}`);
         return { success: false, responseAfterupdate: error };
     }
 };

@@ -10,7 +10,7 @@ const updateAppWalkThrough = async (applicationWalkThroughToUpdate) => {
         return result;
     }
     catch (error) {
-        console.log(`Error occured while updating applicationwalk through: ${error}`);
+        console.error(`Error occured while updating applicationwalk through: ${error}`);
         return error;
     }
 };
