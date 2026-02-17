@@ -807,7 +807,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                   type: string
  *                   example: An unexpected error occurred while generating salary slip
  */
-adminRouter.post('/generateSalarySlip',  generateSalarySlipByAdminController.generateSalarySlip);
+adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminController.generateSalarySlip);
 
 /**
  * @swagger
