@@ -59,6 +59,9 @@ export const generatePDFFromHTML = async (
             waitUntil: 'networkidle0',
         });
 
+        // Wait for fonts to load
+        await page.evaluateHandle('document.fonts.ready');
+
         const pdfBuffer = await page.pdf({
             format: pdfOptions.format,
             landscape: pdfOptions.landscape,

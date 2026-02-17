@@ -8,6 +8,9 @@ exports.salarySlipTemplate = `
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salary Slip - {{payPeriod}}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -20,7 +23,7 @@ exports.salarySlipTemplate = `
         }
 
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             font-size: 12px;
             color: #333;
             background-color: #fff;
@@ -150,7 +153,7 @@ exports.salarySlipTemplate = `
 
         .amount-column {
             text-align: right !important;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
         }
 
         .earnings-section {
@@ -201,7 +204,7 @@ exports.salarySlipTemplate = `
         .net-pay-amount {
             font-size: 26px;
             font-weight: bold;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
             background-color: rgba(255, 255, 255, 0.2);
             padding: 5px 15px;
         }
