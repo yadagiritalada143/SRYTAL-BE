@@ -10,7 +10,7 @@ export interface ISalarySlipRequest {
     IFSCCODE: string;
     bankAccountNumber: string;
     transactionType: string;
-    transactionId?: string;
+    transactionId: string;
     panNumber: string;
     uanNumber?: string;
     totalWorkingDays: number;
@@ -30,6 +30,7 @@ export interface ISalarySlipRequest {
     professionalTax?: number;
     incomeTax?: number;
     otherDeductions?: number;
+    additionalAllowances?: IAdditionalAllowance[];
 }
 
 export interface ISalaryCalculations {
@@ -53,6 +54,8 @@ export interface ISalaryCalculations {
     // Net Pay
     netPay: number;
     netPayInWords: string;
+    additionalAllowancesTotal: number;
+    additionalAllowancesDetails?: IAdditionalAllowance[];
 }
 
 export interface ISalarySlipData {
@@ -85,4 +88,10 @@ export interface ISalarySlipData {
 
     // Calculated Values
     calculations: ISalaryCalculations;
+}
+
+export interface IAdditionalAllowance {
+    name: string;
+    amount: number;
+    type: 'Add' | 'Deduct';
 }

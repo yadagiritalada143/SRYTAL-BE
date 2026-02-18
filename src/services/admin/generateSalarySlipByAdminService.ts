@@ -109,7 +109,16 @@ const calculateSalaryComponents = (request: ISalarySlipRequest): ISalaryCalculat
     const medicalAllowance = request.medicalAllowance ?? SALARY_CALCULATION_DEFAULTS.MEDICAL_ALLOWANCE;
     const specialAllowance = request.specialAllowance ?? 0;
     const otherAllowances = request.otherAllowances ?? 0;
-    const grossEarnings = basicSalary + hra + specialAllowance + conveyanceAllowance + medicalAllowance + otherAllowances;
+    const additionalAllowances = request.additionalAllowances ?? [];
+    const additionalAllowancesTotal = additionalAllowances.reduce((sum,item) => {
+        if(item.type === 'Add') {
+            return sum + item.amount;
+        } else if(item.type === 'Deduct') {
+            return sum - item.amount;
+        }
+        return sum;
+    }, 0);
+    const grossEarnings = basicSalary + hra + specialAllowance + conveyanceAllowance + medicalAllowance + otherAllowances +additionalAllowancesTotal;;
     const lopDays = request.lossOfPayDays ?? 0;
     const perDaySalary = grossEarnings / request.totalWorkingDays;
     const lopDeduction = Math.round(perDaySalary * lopDays);
@@ -139,6 +148,8 @@ const calculateSalaryComponents = (request: ISalarySlipRequest): ISalaryCalculat
         totalDeductions: Number(formatIndianCurrency(totalDeductions).replace(/,/g, '')),
         netPay: Number(formatIndianCurrency(netPay).replace(/,/g, '')),
         netPayInWords,
+        additionalAllowancesTotal: Number(formatIndianCurrency(additionalAllowancesTotal).replace(/,/g, '')),
+        additionalAllowancesDetails: additionalAllowances,
     };
 };
 
