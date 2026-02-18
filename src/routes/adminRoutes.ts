@@ -1315,7 +1315,7 @@ adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedBackAttr
  *                   type: string
  *                   example: Error fetching feedback attributes
  */
-adminRouter.get('/getallfeedbackattributesbyadmin',  getAllFeedBackAttributeByAdminController.getAllFeedBackAttributes);
+adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT, getAllFeedBackAttributeByAdminController.getAllFeedBackAttributes);
 
 /**
  * @swagger
@@ -1393,6 +1393,6 @@ adminRouter.get('/getallfeedbackattributesbyadmin',  getAllFeedBackAttributeByAd
  *                   type: string
  *                   example: Error deleting feedback attribute
  */
-adminRouter.delete('/deletefeedbackattributebyadmin/:id', deleteFeedBackAttributeByAdminController.deleteFeedBackAttributeByAdminController);
+adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT, deleteFeedBackAttributeByAdminController.deleteFeedBackAttributeByAdminController);
 
 export default adminRouter;
