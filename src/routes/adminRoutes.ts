@@ -39,6 +39,7 @@ import generateSalarySlipByAdminController from '../controllers/admin/generateSa
 import validateRegistrationSchema from '../middlewares/validateRegistrationSchema';
 import registrationSchema from '../middlewares/schemas/registrationSchema';
 import addFeedBackAttributeByAdminController from '../controllers/admin/addFeedBackAttributeByAdminController';
+import updateFeedBackAttributeByAdminController from '../controllers/admin/updateFeedBackAttributeByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -1132,5 +1133,54 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                   example: Failed to add feedback.
  */
 adminRouter.post('/addfeedbackattributebyadmin',  addFeedBackAttributeByAdminController.addFeedBackAttributeByAdminController);
+
+/**
+ * @swagger
+ * /admin/updatefeedbackattributebyadmin:
+ *   put:
+ *     summary: Update Feedback Attribute by Admin
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - bearerAuth: []
+ *     description: Updates the name of an existing feedback attribute by admin.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - name
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 example: "65f123abc4567890def12345"
+ *               name:
+ *                 type: string
+ *                 example: "Service Quality"
+ *     responses:
+ *       200:
+ *         description: Feedback attribute updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Feedback attribute updated successfully
+ *       400:
+ *         description: Bad Request
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *       500:
+ *         description: Internal Server Error
+ */
+adminRouter.put('/updatefeedbackattributebyadmin', validateJWT, updateFeedBackAttributeByAdminController.updateFeedBackAttributeByAdminController);
 
 export default adminRouter;
