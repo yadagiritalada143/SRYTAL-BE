@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import updateFeedBackAttributeByAdminService from '../../services/admin/updateFeedBackAttributeByAdminService';
+import updateFeedbackAttributeByAdminService from '../../services/admin/updateFeedbackAttributeByAdminService';
 import { FEEDBACK_ATTRIBUTE_ERROR_MESSAGES, FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES, HTTP_STATUS } from '../../constants/admin/feedBackattributeMessages';
 
-const updateFeedBackAttributeByAdminController = async (req: Request, res: Response): Promise<Response> => {
+const updateFeedbackAttributeByAdminController = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { id, name } = req.body;
-        await updateFeedBackAttributeByAdminService.updateFeedBackAttributeByAdminService(id, name);
+        await updateFeedbackAttributeByAdminService.updateFeedbackAttributeByAdminService(id, name);
         return res.status(HTTP_STATUS.OK).json({ success: true, message: FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FEEDBACK_ATTRIBUTE_UPDATE_SUCCESS_MESSAGE });
 
     } catch (error: any) {
@@ -14,4 +14,4 @@ const updateFeedBackAttributeByAdminController = async (req: Request, res: Respo
     }
 } 
 
-export default { updateFeedBackAttributeByAdminController }
+export default { updateFeedbackAttributeByAdminController };

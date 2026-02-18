@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import getFeedBackAttributes from '../../services/admin/getAllFeedBackAttributeByAdminService';
+import getFeedbackAttributes from '../../services/admin/getAllFeedbackAttributeByAdminService';
 import { FEEDBACK_ATTRIBUTE_ERROR_MESSAGES, FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES, HTTP_STATUS } from '../../constants/admin/feedBackattributeMessages';
 
-const getAllFeedBackAttributes = async (req: Request, res: Response): Promise<Response> => {
+const getAllFeedbackAttributesByAdminController = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const feedbackAttributes = await getFeedBackAttributes.getAllFeedBackAttributeByAdminService();
+        const feedbackAttributes = await getFeedbackAttributes.getAllFeedbackAttributeByAdminService();
         return res.status(HTTP_STATUS.OK).json({ success: true, message: FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FETCH_ALL_FEEDBACK_ATTRIBUTES_SUCCESS_MESSAGE, data: feedbackAttributes });
     } catch (error: any) {
         console.error(`Error fetching feedback attributes: ${error}`);
@@ -12,4 +12,4 @@ const getAllFeedBackAttributes = async (req: Request, res: Response): Promise<Re
     }
 };
 
-export default { getAllFeedBackAttributes };
+export default { getAllFeedbackAttributesByAdminController };

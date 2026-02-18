@@ -1,11 +1,11 @@
 import {Request, Response} from 'express';
-import deleteFeedBackAttribute from '../../services/admin/deleteFeedBackeAttributeByAdminService';
+import deleteFeedbackAttribute from '../../services/admin/deleteFeedbackeAttributeByAdminService';
 import { FEEDBACK_ATTRIBUTE_ERROR_MESSAGES, FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES, HTTP_STATUS } from '../../constants/admin/feedBackattributeMessages';
 
-const deleteFeedBackAttributeByAdminController = async (req: Request, res: Response): Promise<Response> => {
+const deleteFeedbackAttributeByAdminController = async (req: Request, res: Response): Promise<Response> => {
     try {
         const id = req.params.id;
-        const deleteResult = await deleteFeedBackAttribute.deleteFeedBackAttributeByAdminService(id);
+        const deleteResult = await deleteFeedbackAttribute.deleteFeedbackAttributeByAdminService(id);
 
         if(deleteResult.success) {
             return res.status(HTTP_STATUS.OK).json({ success: true, message: FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FEEDBACK_ATTRIBUTE_DELETE_SUCCESS_MESSAGE, data: deleteResult });
@@ -18,4 +18,4 @@ const deleteFeedBackAttributeByAdminController = async (req: Request, res: Respo
     }
 };
 
-export default { deleteFeedBackAttributeByAdminController };
+export default { deleteFeedbackAttributeByAdminController };

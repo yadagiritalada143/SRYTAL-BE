@@ -1,11 +1,11 @@
 import {Request, Response} from 'express';
-import getFeedBackAttributes from '../../services/admin/getFeedBackAttributeByAdminService';
+import getFeedbackAttributes from '../../services/admin/getFeedbackAttributeByAdminService';
 import { FEEDBACK_ATTRIBUTE_ERROR_MESSAGES, FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES, HTTP_STATUS } from '../../constants/admin/feedBackattributeMessages';
 
-const getFeedBackAttributeByAdminController = async (req: Request, res: Response): Promise<Response> => {
+const getFeedbackAttributeByAdminController = async (req: Request, res: Response): Promise<Response> => {
     try {
         const {id} = req.params;
-        const feedbackAttributeDetails = await getFeedBackAttributes.getFeedBackAttributeByAdminService(id);
+        const feedbackAttributeDetails = await getFeedbackAttributes.getFeedbackAttributeByAdminService(id);
         if(!feedbackAttributeDetails) {
             return res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FEEDBACK_ATTRIBUTE_NOT_FOUND_ERROR_MESSAGE });
         }
@@ -16,4 +16,4 @@ const getFeedBackAttributeByAdminController = async (req: Request, res: Response
     }
 }
 
-export default { getFeedBackAttributeByAdminController };
+export default { getFeedbackAttributeByAdminController };

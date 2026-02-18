@@ -38,11 +38,11 @@ import deleteEmployeeTaskByAdminController from '../controllers/admin/deleteEmpl
 import generateSalarySlipByAdminController from '../controllers/admin/generateSalarySlipByAdminController';
 import validateRegistrationSchema from '../middlewares/validateRegistrationSchema';
 import registrationSchema from '../middlewares/schemas/registrationSchema';
-import addFeedBackAttributeByAdminController from '../controllers/admin/addFeedBackAttributeByAdminController';
-import updateFeedBackAttributeByAdminController from '../controllers/admin/updateFeedBackAttributeByAdminController';
-import getFeedBackAttributeByAdminController from '../controllers/admin/getFeedBackAttributeByAdminController';
-import getAllFeedBackAttributeByAdminController from '../controllers/admin/getAllFeedBackAttributeByAdminController';
-import deleteFeedBackAttributeByAdminController from '../controllers/admin/deleteFeedBackAttributeByAdminController';
+import addFeedbackAttributeByAdminController from '../controllers/admin/addFeedbackAttributeByAdminController'
+import updateFeedbackAttributeByAdminController from '../controllers/admin/updateFeedbackAttributeByAdminController';
+import getFeedbackAttributeByAdminController from '../controllers/admin/getFeedbackAttributeByAdminController';
+import getAllFeedbackAttributeByAdminController from '../controllers/admin/getAllFeedbackAttributeByAdminController';
+import deleteFeedbackAttributeByAdminController from '../controllers/admin/deleteFeedbackAttributeByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -1135,7 +1135,7 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                   type: string
  *                   example: Failed to add feedback.
  */
-adminRouter.post('/addfeedbackattributebyadmin',  addFeedBackAttributeByAdminController.addFeedBackAttributeByAdminController);
+adminRouter.post('/addfeedbackattributebyadmin',  addFeedbackAttributeByAdminController.addFeedbackAttributeByAdminController);
 
 /**
  * @swagger
@@ -1145,7 +1145,7 @@ adminRouter.post('/addfeedbackattributebyadmin',  addFeedBackAttributeByAdminCon
  *     tags:
  *       - Admin
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     description: Updates the name of an existing feedback attribute by admin.
  *     requestBody:
  *       required: true
@@ -1184,7 +1184,7 @@ adminRouter.post('/addfeedbackattributebyadmin',  addFeedBackAttributeByAdminCon
  *       500:
  *         description: Internal Server Error
  */
-adminRouter.put('/updatefeedbackattributebyadmin', validateJWT, updateFeedBackAttributeByAdminController.updateFeedBackAttributeByAdminController);
+adminRouter.put('/updatefeedbackattributebyadmin', validateJWT, updateFeedbackAttributeByAdminController.updateFeedbackAttributeByAdminController);
 
 /**
  * @swagger
@@ -1256,7 +1256,7 @@ adminRouter.put('/updatefeedbackattributebyadmin', validateJWT, updateFeedBackAt
  *                   type: string
  *                   example: Error fetching feedback attribute
  */
-adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedBackAttributeByAdminController.getFeedBackAttributeByAdminController);
+adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedbackAttributeByAdminController.getFeedbackAttributeByAdminController);
 
 /**
  * @swagger
@@ -1266,7 +1266,7 @@ adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedBackAttr
  *     tags:
  *       - Admin 
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     description: Fetch all feedback attributes. Requires admin JWT authentication.
  *     responses:
  *       200:
@@ -1315,7 +1315,7 @@ adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedBackAttr
  *                   type: string
  *                   example: Error fetching feedback attributes
  */
-adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT, getAllFeedBackAttributeByAdminController.getAllFeedBackAttributes);
+adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT, getAllFeedbackAttributeByAdminController.getAllFeedbackAttributesByAdminController);
 
 /**
  * @swagger
@@ -1325,7 +1325,7 @@ adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT, getAllFeedBackA
  *     tags:
  *       - Admin
  *     security:
- *       - bearerAuth: []
+ *       - BearerAuth: []
  *     description: Deletes a feedback attribute by its ID. Requires admin JWT authentication.
  *     parameters:
  *       - name: id
@@ -1393,6 +1393,6 @@ adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT, getAllFeedBackA
  *                   type: string
  *                   example: Error deleting feedback attribute
  */
-adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT, deleteFeedBackAttributeByAdminController.deleteFeedBackAttributeByAdminController);
+adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT, deleteFeedbackAttributeByAdminController.deleteFeedbackAttributeByAdminController);
 
 export default adminRouter;
