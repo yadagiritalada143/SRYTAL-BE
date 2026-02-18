@@ -1082,7 +1082,7 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Feedback added successfully.
+ *                   example: Feedback added successfully.s
  *                 data:
  *                   type: object
  *                   properties:
