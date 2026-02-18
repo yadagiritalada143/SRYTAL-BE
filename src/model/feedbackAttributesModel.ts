@@ -6,7 +6,7 @@ const FeedbackAttributesSchema = new mongoose.Schema({
     name: { type: mongoose.Schema.Types.String, required: true },
 },
 {
-    collection: 'feedback-attribute',
+    collection: 'feedback-attributes',
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
 });

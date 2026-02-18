@@ -1042,7 +1042,7 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
 
 /**
  * @swagger
- * /admin/feedbackattributebyadmin:
+ * /admin/addfeedbackattributebyadmin:
  *   post:
  *     summary: Add Feedback Attribute By Admin
  *     description: Admin can add a new feedback attribute by providing name, optional comment, and rating. JWT authentication required.
@@ -1131,6 +1131,6 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                   type: string
  *                   example: Failed to add feedback.
  */
-adminRouter.post('/feedbackattributebyadmin', validateJWT, addFeedBackAttributeByAdminController.addFeedBackAttributeByAdminController);
+adminRouter.post('/addfeedbackattributebyadmin',  addFeedBackAttributeByAdminController.addFeedBackAttributeByAdminController);
 
 export default adminRouter;
