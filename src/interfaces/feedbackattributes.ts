@@ -6,17 +6,17 @@ interface IFeedbackAttributes extends Document {
     updatedAt?: Date;
 };
 
-export interface updateFeedBackAttributeResponse {
+export interface updateFeedbackAttributeResponse {
     success: boolean;
     responseAfterupdate?: any;
 }
 
-export interface FetchAllFeedBackAttributes {
+export interface FetchAllFeedbackAttributes {
     success: boolean;
     feedbackAttributeResponse: any;
 }
 
- export interface DeleteFeedBackAttributeByAdminResponse {
+ export interface DeleteFeedbackAttributeByAdminResponse {
     success: boolean;
     responseAfterDelete?: any;
  };

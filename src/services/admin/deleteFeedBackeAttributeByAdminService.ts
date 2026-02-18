@@ -1,7 +1,7 @@
 import FeedbackAttributesModel from '../../model/feedbackAttributesModel';
-import { DeleteFeedBackAttributeByAdminResponse } from '../../interfaces/feedbackattributes';
+import { DeleteFeedbackAttributeByAdminResponse } from '../../interfaces/feedbackattributes';
 
-const deleteFeedbackAttributeByAdminService = async (id: string): Promise<DeleteFeedBackAttributeByAdminResponse> => {
+const deleteFeedbackAttributeByAdminService = async (id: string): Promise<DeleteFeedbackAttributeByAdminResponse> => {
     try {
         const result = await FeedbackAttributesModel.findByIdAndDelete(id);
         if(result) {

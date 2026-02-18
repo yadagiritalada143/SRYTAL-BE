@@ -1,7 +1,7 @@
 import FeedbackAttributesModel from "../../model/feedbackAttributesModel";
-import {updateFeedBackAttributeResponse} from '../../interfaces/feedbackattributes';
+import {updateFeedbackAttributeResponse} from '../../interfaces/feedbackattributes';
 
-const updateFeedbackAttributeByAdminService = async (id: string, name: string): Promise<updateFeedBackAttributeResponse > => {
+const updateFeedbackAttributeByAdminService = async (id: string, name: string): Promise<updateFeedbackAttributeResponse > => {
     try {
         const result = await FeedbackAttributesModel.updateOne({ _id: id }, { name });
         if (result) {

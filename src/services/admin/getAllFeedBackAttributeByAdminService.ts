@@ -1,7 +1,7 @@
 import FeedbackAttributesModel from '../../model/feedbackAttributesModel';
-import  {FetchAllFeedBackAttributes} from '../../interfaces/feedbackattributes';
+import  {FetchAllFeedbackAttributes} from '../../interfaces/feedbackattributes';
 
-const getAllFeedbackAttributeByAdminService = async (): Promise<FetchAllFeedBackAttributes> => {
+const getAllFeedbackAttributeByAdminService = async (): Promise<FetchAllFeedbackAttributes> => {
     const getallfeedbacks = await FeedbackAttributesModel.find();
     const feedbackAttributes = getallfeedbacks.map((feedbackAttribute) =>({
         id: feedbackAttribute.id,
