@@ -696,6 +696,11 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                 type: string
  *                 description: Pay period month and year
  *                 example: "January 2026"
+ *               payDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Payment date (YYYY-MM-DD)
+ *                 example: "2026-01-31"
  *               bankName:
  *                 type: string
  *                 description: Employee bank name
@@ -723,7 +728,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *               uanNumber:
  *                 type: string
  *                 description: Universal Account Number for PF (optional)
- *                 example: N/A
+ *                 example: "N/A"
  *               totalWorkingDays:
  *                 type: number
  *                 description: Total working days in the month
@@ -768,10 +773,27 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                 type: number
  *                 description: Other deductions (optional)
  *                 example: 0
- *               payDate:
- *                 type: string
- *                 description: Payment date shown in footer (YYYY-MM-DD)
- *                 example: "2026-01-31"
+ *               additionalAllowances:
+ *                 type: array
+ *                 description: Optional list of additional earnings or deductions
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - name
+ *                     - amount
+ *                     - type
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       example: "Performance Bonus"
+ *                     amount:
+ *                       type: number
+ *                       example: 3000
+ *                     type:
+ *                       type: string
+ *                       enum: [Add, Deduct]
+ *                       example: "Add"
+ *
  *     responses:
  *       200:
  *         description: PDF file generated successfully
@@ -807,7 +829,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                   type: string
  *                   example: An unexpected error occurred while generating salary slip
  */
-adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminController.generateSalarySlip);
+adminRouter.post('/generateSalarySlip', validateJWT,  generateSalarySlipByAdminController.generateSalarySlip);
 
 /**
  * @swagger
@@ -884,7 +906,7 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *                 example: "NEFT"
  *               transactionId:
  *                 type: string
- *                 description: Transaction reference ID (optional)
+ *                 description: Transaction reference ID
  *                 example: "ABCD13234545567SFFDGF"
  *               panNumber:
  *                 type: string
@@ -893,7 +915,7 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *               uanNumber:
  *                 type: string
  *                 description: Universal Account Number for PF (optional)
- *                 example: N/A
+ *                 example: "N/A"
  *               totalWorkingDays:
  *                 type: number
  *                 description: Total working days in the month
@@ -922,6 +944,27 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *                 type: number
  *                 description: Other allowances amount (optional)
  *                 example: 1000
+ *               additionalAllowances:
+ *                 type: array
+ *                 description: Additional dynamic allowances or deductions
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - type
+ *                     - amount
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       description: Name of the allowance/deduction
+ *                       example: "Performance Bonus"
+ *                     amount:
+ *                       type: number
+ *                       example: 3000
+ *                     type:
+ *                       type: string
+ *                       enum: [Add, Deduct]
+ *                       description: Add will increase earnings, Deduct will reduce earnings
+ *                       example: "Add"
  *               pfPercentage:
  *                 type: number
  *                 description: PF percentage of basic (optional, default 0%)
@@ -986,6 +1029,23 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *                         otherAllowances:
  *                           type: number
  *                           example: 1000
+ *                         additionalAllowancesTotal:
+ *                           type: number
+ *                           example: 5000
+ *                         additionalAllowancesDetails:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               type:
+ *                                 type: string
+ *                                 example: "Add"
+ *                               label:
+ *                                 type: string
+ *                                 example: "Performance Bonus"
+ *                               amount:
+ *                                 type: number
+ *                                 example: 5000
  *                         grossEarnings:
  *                           type: number
  *                           example: 82850
@@ -1012,30 +1072,8 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *                           example: "Rupees Seventy One Thousand Six Hundred Fifty Only"
  *       400:
  *         description: Invalid request data
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: Missing required fields for salary slip generation
  *       500:
  *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: An unexpected error occurred while generating salary slip
  */
 adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminController.previewSalarySlip);
 
