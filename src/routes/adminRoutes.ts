@@ -38,7 +38,7 @@ import deleteEmployeeTaskByAdminController from '../controllers/admin/deleteEmpl
 import generateSalarySlipByAdminController from '../controllers/admin/generateSalarySlipByAdminController';
 import validateRegistrationSchema from '../middlewares/validateRegistrationSchema';
 import registrationSchema from '../middlewares/schemas/registrationSchema';
-import addFeedBackByAdminController from '../controllers/admin/addFeedBackByAdminController';
+import addFeedBackAttributeByAdminController from '../controllers/admin/addFeedBackAttributeByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -1042,7 +1042,7 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
 
 /**
  * @swagger
- * /admin/addfeedbackbyadmin:
+ * /admin/feedbackattributebyadmin:
  *   post:
  *     summary: Add Feedback Attribute By Admin
  *     description: Admin can add a new feedback attribute by providing name, optional comment, and rating. JWT authentication required.
@@ -1131,7 +1131,6 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                   type: string
  *                   example: Failed to add feedback.
  */
-
-adminRouter.post('/addfeedbackbyadmin', validateJWT, addFeedBackByAdminController.addFeedBackByAdminController);
+adminRouter.post('/feedbackattributebyadmin', validateJWT, addFeedBackAttributeByAdminController.addFeedBackAttributeByAdminController);
 
 export default adminRouter;

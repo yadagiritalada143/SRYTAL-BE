@@ -1,9 +1,9 @@
-export const FEEDBACK_MESSAGES = {
-    FEEDBACK_ADD_SUCCESS_MESSAGE: 'Feedback added successfully !!',
+export const FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES = {
+    FEEDBACK_ADD_SUCCESS_MESSAGE: 'Feedback attribute added successfully !!',
 };
 
-export const FEEDBACK_ERROR_MESSAGES = {
-    FEEDBACK_ADD_ERROR_MESSAGE: 'Error occured while adding feedback. !!',
+export const FEEDBACK_ATTRIBUTE_ERROR_MESSAGES = {
+    FEEDBACK_ADD_ERROR_MESSAGE: 'Error occured while adding feedback attribute. !!',
 };
 
 export const HTTP_STATUS = {
