@@ -4,9 +4,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const userModel_1 = __importDefault(require("../../model/userModel"));
-const getAllEmployeeDetailsByAdmin = (organizationId, userId) => {
-    return new Promise((resolve, reject) => {
-        userModel_1.default.find({
+const getAllEmployeeDetailsByAdmin = async (organizationId, userId) => {
+    try {
+        const users = await userModel_1.default.find({
             organization: organizationId,
             _id: { $ne: userId }, // Exclude the user with the provided userId
             isDeleted: false
@@ -14,22 +14,18 @@ const getAllEmployeeDetailsByAdmin = (organizationId, userId) => {
             .populate('bloodGroup')
             .populate('employmentType')
             .populate('employeeRole')
-            .populate('organization')
-            .then((users) => {
-            if (!users) {
-                reject({ success: false });
-            }
-            else {
-                resolve({
-                    success: true,
-                    usersList: users
-                });
-            }
-        })
-            .catch((error) => {
-            console.error('Error in fetching Employee details:', error);
-            reject({ success: false });
-        });
-    });
+            .populate('organization');
+        if (!users) {
+            return { success: false };
+        }
+        return {
+            success: true,
+            usersList: users
+        };
+    }
+    catch (error) {
+        console.error(`Error in fetching Employee details: ${error}`);
+        throw { success: false };
+    }
 };
 exports.default = { getAllEmployeeDetailsByAdmin };

@@ -27,12 +27,12 @@ const getProfileImage = (req, res) => {
             res.setHeader('Content-Type', responseFromS3.imageDetails.contentType);
             res.status(200).send(responseFromS3.imageDetails.body);
         }).catch((error) => {
-            console.log('Error from S3 while fetching profile image is:', error);
+            console.error(`Error from S3 while fetching profile image is: ${error}`);
             res.status(401).json(error);
         });
     })
         .catch((error) => {
-        console.log(`Error occured while fetching the Profile Image: ${error}`);
+        console.error(`Error occured while fetching the Profile Image: ${error}`);
         res.status(500).json({ success: false, message: commonErrorMessages_1.EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_GETTING_ERROR });
     });
 };

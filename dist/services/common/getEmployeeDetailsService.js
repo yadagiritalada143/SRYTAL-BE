@@ -40,7 +40,7 @@ const getEmployeeDetails = (id) => {
             }
         })
             .catch((error) => {
-            console.error('Error in getting employee details:', error);
+            console.error(`Error in getting employee details: ${error}`);
             reject({ success: false });
         });
     });

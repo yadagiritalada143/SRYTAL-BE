@@ -22,7 +22,7 @@ const addModuleToCourse = async (req, res) => {
                 return responseAfterProfileImageUpload.key;
             })
                 .catch((error) => {
-                console.log(`Error occured while Thumbnail Image upload: ${error}`);
+                console.error(`Error occured while Thumbnail Image upload: ${error}`);
                 res.status(500).json({ success: false, message: 'Error updating the thumbnail' });
             });
         }
@@ -35,7 +35,7 @@ const addModuleToCourse = async (req, res) => {
         }
     }
     catch (error) {
-        console.log(error);
+        console.error(`Error in adding Module to Course: ${error}`);
         res.status(500).json({ success: false, message: coursemoduleMessages_1.COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_ADD_ERROR_MESSAGE });
     }
 };

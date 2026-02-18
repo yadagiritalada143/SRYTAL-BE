@@ -15,7 +15,7 @@ const uploadImageToS3 = async (fileName, buffer, mimetype, s3FolderNameToUpload)
         };
         s3Client_1.default.upload(params, (error, data) => {
             if (error) {
-                console.error('Error uploading to S3 bucket:', error);
+                console.error(`Error uploading to S3 bucket: ${error}`);
                 reject(error);
             }
             resolve(data);
@@ -30,7 +30,7 @@ const getProfileImageFromS3 = async (fileName, s3FolderNameToUpload) => {
         };
         s3Client_1.default.getObject(params, (error, data) => {
             if (error) {
-                console.error('Error fetching from S3:', error);
+                console.error(`Error fetching from S3: ${error}`);
                 reject(error);
             }
             const responseFromS3 = {

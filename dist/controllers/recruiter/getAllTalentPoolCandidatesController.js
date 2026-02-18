@@ -12,7 +12,7 @@ const getAllTalentPoolCandidatesByRecruiter = (req, res) => {
         res.status(200).json(getAllTalentPoolCandidatesResponse);
     })
         .catch(error => {
-        console.error(`Error in fetching all talent pool candidates details:${error} `);
+        console.error(`Error in fetching all talent pool candidates details:${error}`);
         res.status(500).json({ success: false, message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_CANDIDATE_DETAILS });
     });
 };

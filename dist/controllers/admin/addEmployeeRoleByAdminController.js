@@ -22,7 +22,7 @@ const addEmployeeRoleByAdmin = (req, res) => {
         }
     })
         .catch((error) => {
-        console.log(error);
+        console.error(error);
     });
 };
 exports.default = { addEmployeeRoleByAdmin };

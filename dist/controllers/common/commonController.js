@@ -68,7 +68,7 @@ const refreshToken = (req, res) => {
         .then((token) => res.status(200).json({ token }))
         .catch((error) => {
         if (error === 'Invalid user token')
-            console.log('Failed to refresh the token', error);
+            console.error(`Failed to refresh the token: ${error}`);
         res.status(403).json({
             success: false,
             message: 'Invalid user token',
