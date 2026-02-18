@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import deleteFeedbackAttribute from '../../services/admin/deleteFeedbackAttributeByAdminService';
-import { FEEDBACK_ATTRIBUTE_ERROR_MESSAGES, FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES, HTTP_STATUS } from '../../constants/admin/feedbackattributeMessages';
+import { FEEDBACK_ATTRIBUTE_ERROR_MESSAGES, FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES, HTTP_STATUS } from '../../constants/admin/feedbackAttributeMessages';
 
 const deleteFeedbackAttributeByAdminController = async (req: Request, res: Response): Promise<Response> => {
     try {
