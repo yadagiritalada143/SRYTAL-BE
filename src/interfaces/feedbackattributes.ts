@@ -11,4 +11,9 @@ export interface updateFeedBackAttributeResponse {
     responseAfterupdate?: any;
 }
 
+export interface FetchAllFeedBackAttributes {
+    success: boolean;
+    feedbackAttributeRepository: any;
+}
+
 export default IFeedbackAttributes;

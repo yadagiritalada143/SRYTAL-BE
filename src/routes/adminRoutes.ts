@@ -41,6 +41,7 @@ import registrationSchema from '../middlewares/schemas/registrationSchema';
 import addFeedBackAttributeByAdminController from '../controllers/admin/addFeedBackAttributeByAdminController';
 import updateFeedBackAttributeByAdminController from '../controllers/admin/updateFeedBackAttributeByAdminController';
 import getFeedBackAttributeByAdminController from '../controllers/admin/getFeedBackAttributeByAdminController';
+import getAllFeedBackAttributeByAdminController from '../controllers/admin/getAllFeedBackAttributeByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -1256,5 +1257,65 @@ adminRouter.put('/updatefeedbackattributebyadmin', validateJWT, updateFeedBackAt
  */
 
 adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedBackAttributeByAdminController.getFeedBackAttributeByAdminController);
+
+/**
+ * @swagger
+ * /admin/getallfeedbackattributesbyadmin:
+ *   get:
+ *     summary: Get All Feedback Attributes
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - bearerAuth: []
+ *     description: Fetch all feedback attributes. Requires admin JWT authentication.
+ *     responses:
+ *       200:
+ *         description: Feedback attributes fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Feedback attributes fetched successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
+ *                     feedbackAttributeResponse:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "65f123abc4567890def12345"
+ *                           name:
+ *                             type: string
+ *                             example: "Service Quality"
+ *       401:
+ *         description: Unauthorized - Invalid or missing JWT
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error fetching feedback attributes
+ */
+
+adminRouter.get('/getallfeedbackattributesbyadmin',  getAllFeedBackAttributeByAdminController.getAllFeedBackAttributes);
 
 export default adminRouter;
