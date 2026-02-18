@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import updateFeedbackAttributeByAdminService from '../../services/admin/updateFeedbackAttributeByAdminService';
-import { FEEDBACK_ATTRIBUTE_ERROR_MESSAGES, FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES, HTTP_STATUS } from '../../constants/admin/feedBackattributeMessages';
+import { FEEDBACK_ATTRIBUTE_ERROR_MESSAGES, FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES, HTTP_STATUS } from '../../constants/admin/feedbackattributeMessages';
 
 const updateFeedbackAttributeByAdminController = async (req: Request, res: Response): Promise<Response> => {
     try {
