@@ -2,12 +2,13 @@ import { Request, Response } from 'express';
 import generateSalarySlipByAdminService from '../../services/admin/generateSalarySlipByAdminService';
 import { SALARY_SLIP_SUCCESS_MESSAGES, SALARY_SLIP_ERROR_MESSAGES, HTTP_STATUS } from '../../constants/admin/salarySlipMessages';
 import { ISalarySlipRequest } from '../../interfaces/salarySlip';
+import sendSalarySlipNotificationEmail from '../../util/sendSalarySlipNotificationEmail';
 
 const generateSalarySlip = async (req: Request, res: Response) => {
     try {
         const salarySlipRequest: ISalarySlipRequest = req.body;
 
-        if (!salarySlipRequest.employeeId || !salarySlipRequest.employeeName || !salarySlipRequest.basicSalary) {
+        if (!salarySlipRequest.employeeId || !salarySlipRequest.employeeName || !salarySlipRequest.basicSalary || !salarySlipRequest.employeeEmail) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_MISSING_REQUIRED_FIELDS,
@@ -19,7 +20,19 @@ const generateSalarySlip = async (req: Request, res: Response) => {
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `attachment; filename="${result.fileName}"`);
             res.setHeader('Content-Length', result.pdfBuffer.length);
-            return res.send(result.pdfBuffer);
+            res.send(result.pdfBuffer);
+
+            // Send salary slip notification email asynchronously (fire and forget)
+            sendSalarySlipNotificationEmail.sendSalarySlipNotificationEmail({
+                employeeName: salarySlipRequest.employeeName,
+                employeeEmail: salarySlipRequest.employeeEmail,
+                payPeriod: salarySlipRequest.payPeriod,
+                payDate: salarySlipRequest.payDate,
+            }).catch((error) => {
+                console.error('Failed to send salary slip notification email:', error);
+            });
+
+            return;
         } else {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
@@ -39,7 +52,7 @@ const generateSalarySlip = async (req: Request, res: Response) => {
 const previewSalarySlip = async (req: Request, res: Response) => {
     try {
         const salarySlipRequest: ISalarySlipRequest = req.body;
-        if (!salarySlipRequest.employeeId || !salarySlipRequest.employeeName || !salarySlipRequest.basicSalary) {
+        if (!salarySlipRequest.employeeId || !salarySlipRequest.employeeName || !salarySlipRequest.basicSalary || !salarySlipRequest.employeeEmail) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_MISSING_REQUIRED_FIELDS,

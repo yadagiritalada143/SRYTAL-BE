@@ -157,12 +157,9 @@ const formattedDate = (dateInput: string | Date, format: 'DD-MMM-YYYY' | 'DD/MM/
 const prepareSalarySlipData = (request: ISalarySlipRequest): ISalarySlipData => {
     const calculations = calculateSalaryComponents(request);
     return {
-        // Company Details
         companyName: COMPANY_DETAILS.companyName,
         companyAddress: COMPANY_DETAILS.companyAddress,
         backgroundImage: COMPANY_DETAILS.backgroundImage,
-
-        // Employee Details
         employeeId: request.employeeId,
         employeeName: request.employeeName,
         designation: request.designation,
@@ -171,7 +168,7 @@ const prepareSalarySlipData = (request: ISalarySlipRequest): ISalarySlipData => 
         payPeriod: request.payPeriod,
         payPeriodRange: getPayPeriodDateRange(request.payPeriod),
         payslipMonth: getPayslipMonth(request.payPeriod),
-        payDate:  formattedDate(request.payDate),
+        payDate: formattedDate(request.payDate),
         bankName: request.bankName,
         IFSCCODE: request.IFSCCODE,
         bankAccountNumber: request.bankAccountNumber,
@@ -182,7 +179,6 @@ const prepareSalarySlipData = (request: ISalarySlipRequest): ISalarySlipData => 
         totalWorkingDays: request.totalWorkingDays,
         daysWorked: request.daysWorked,
         lossOfPayDays: request.lossOfPayDays || 0,
-        // Calculated Values
         calculations,
     };
 };
@@ -207,6 +203,7 @@ const validateRequest = (request: ISalarySlipRequest): { isValid: boolean; error
 
     if (!request.employeeId) errors.push('Employee ID is required');
     if (!request.employeeName) errors.push('Employee Name is required');
+    if (!request.employeeEmail) errors.push('Employee Email is required');
     if (!request.designation) errors.push('Designation is required');
     if (!request.department) errors.push('Department is required');
     if (!request.payPeriod) errors.push('Pay Period is required');

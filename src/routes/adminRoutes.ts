@@ -663,6 +663,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *             required:
  *               - employeeId
  *               - employeeName
+ *               - employeeEmail
  *               - designation
  *               - department
  *               - dateOfJoining
@@ -685,6 +686,10 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                 type: string
  *                 description: Full name of the employee
  *                 example: "Ramya Thummala"
+ *               employeeEmail:
+ *                 type: string
+ *                 description: Employee email address for salary notification
+ *                 example: "ramya@srytal.com"
  *               designation:
  *                 type: string
  *                 description: Job title/designation
@@ -833,6 +838,7 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *             required:
  *               - employeeId
  *               - employeeName
+ *               - employeeEmail
  *               - designation
  *               - department
  *               - dateOfJoining
@@ -855,6 +861,10 @@ adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminCo
  *                 type: string
  *                 description: Full name of the employee
  *                 example: "Ramya Thummala"
+ *               employeeEmail:
+ *                 type: string
+ *                 description: Employee email address for salary notification
+ *                 example: "ramya@srytal.com"
  *               designation:
  *                 type: string
  *                 description: Job title/designation
