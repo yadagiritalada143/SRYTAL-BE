@@ -4,7 +4,6 @@ import {FEEDBACK_ATTRIBUTE_ERROR_MESSAGES, FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES, 
 
 const addFeedBackAttributeByAdminController = async (req: Request, res: Response): Promise<Response> => {
     try {
-      
         const { name } = req.body;
         await addFeedbackAttributes.addFeedbackAttributeByAdminService(name);
         return res.status(HTTP_STATUS.OK).json({success: true, message: FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FEEDBACK_ATTRIBUTE_ADD_SUCCESS_MESSAGE });
