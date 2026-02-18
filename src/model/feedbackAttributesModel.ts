@@ -4,11 +4,9 @@ import IFeedbackAttributes from '../interfaces/feedbackattributes';
 
 const FeedbackAttributesSchema = new mongoose.Schema({
     name: { type: mongoose.Schema.Types.String, required: true },
-    comment: { type: mongoose.Schema.Types.String },
-    rating: { type: mongoose.Schema.Types.Number },
 },
 {
-    collection: 'feedback',
+    collection: 'feedback-attribute',
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
 });

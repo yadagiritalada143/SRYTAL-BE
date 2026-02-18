@@ -5,9 +5,9 @@ import {FEEDBACK_MESSAGES, FEEDBACK_ERROR_MESSAGES, HTTP_STATUS} from '../../con
 const addFeedBackByAdminController = async (req: Request, res: Response): Promise<Response> => {
     try {
       
-        const { name, comment, rating } = req.body;
-         const result = await addFeedback.addFeedbackByAdminService(name, comment, rating);
-         return res.status(HTTP_STATUS.OK).json({success: true, message: FEEDBACK_MESSAGES.FEEDBACK_ADD_SUCCESS_MESSAGE });
+        const { name } = req.body;
+        await addFeedback.addFeedbackByAdminService(name);
+        return res.status(HTTP_STATUS.OK).json({success: true, message: FEEDBACK_MESSAGES.FEEDBACK_ADD_SUCCESS_MESSAGE });
 
     } catch ( error: any) {
         console.error(`Error while adding feedback: ${error}`);

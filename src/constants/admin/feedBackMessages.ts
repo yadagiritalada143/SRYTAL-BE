@@ -1,9 +1,9 @@
 export const FEEDBACK_MESSAGES = {
-    FEEDBACK_ADD_SUCCESS_MESSAGE: 'Feedback added successfully.',
+    FEEDBACK_ADD_SUCCESS_MESSAGE: 'Feedback added successfully !!',
 };
 
 export const FEEDBACK_ERROR_MESSAGES = {
-    FEEDBACK_ADD_ERROR_MESSAGE: 'Failed to add feedback.',
+    FEEDBACK_ADD_ERROR_MESSAGE: 'Error occured while adding feedback. !!',
 };
 
 export const HTTP_STATUS = {

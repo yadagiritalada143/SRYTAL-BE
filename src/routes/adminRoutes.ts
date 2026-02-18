@@ -1058,17 +1058,10 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *             type: object
  *             required:
  *               - name
- *               - rating
  *             properties:
  *               name:
  *                 type: string
- *                 example: Customer Satisfaction
- *               comment:
- *                 type: string
- *                 example: Rating given by customer
- *               rating:
- *                 type: number
- *                 example: 5
+ *                 example: "name of the attribute"
  *     responses:
  *       200:
  *         description: Feedback attribute created successfully
@@ -1082,7 +1075,7 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Feedback added successfully.s
+ *                   example: Feedback added successfully !
  *                 data:
  *                   type: object
  *                   properties:
@@ -1091,13 +1084,7 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                       example: 63f5b9f2a1e4c2a7f8d6e1a2
  *                     name:
  *                       type: string
- *                       example: Customer Satisfaction
- *                     comment:
- *                       type: string
- *                       example: Rating given by customer
- *                     rating:
- *                       type: number
- *                       example: 5
+ *                       example: "Teamwork"
  *                     createdAt:
  *                       type: string
  *                       format: date-time
@@ -1145,6 +1132,6 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                   example: Failed to add feedback.
  */
 
-adminRouter.post('/addfeedbackbyadmin',  addFeedBackByAdminController.addFeedBackByAdminController);
+adminRouter.post('/addfeedbackbyadmin', validateJWT, addFeedBackByAdminController.addFeedBackByAdminController);
 
 export default adminRouter;

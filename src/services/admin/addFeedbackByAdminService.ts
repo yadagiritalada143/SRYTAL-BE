@@ -1,8 +1,8 @@
 import FeedbackAttributesModel from '../../model/feedbackAttributesModel';
 
-const addFeedbackByAdminService = async (name: string, comment?: string, rating?: number) => {
+const addFeedbackByAdminService = async (name: string) => {
     try {
-       const createdAttribute: any = new FeedbackAttributesModel({ name, comment, rating });
+       const createdAttribute: any = new FeedbackAttributesModel({ name });
        const result = await createdAttribute.save();
        return result;
     } catch (error: any) {
