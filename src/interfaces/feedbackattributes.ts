@@ -13,7 +13,12 @@ export interface updateFeedBackAttributeResponse {
 
 export interface FetchAllFeedBackAttributes {
     success: boolean;
-    feedbackAttributeRepository: any;
+    feedbackAttributeResponse: any;
 }
+
+ export interface DeleteFeedBackAttributeByAdminResponse {
+    success: boolean;
+    responseAfterDelete?: any;
+ };
 
 export default IFeedbackAttributes;

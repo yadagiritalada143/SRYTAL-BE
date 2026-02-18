@@ -42,6 +42,7 @@ import addFeedBackAttributeByAdminController from '../controllers/admin/addFeedB
 import updateFeedBackAttributeByAdminController from '../controllers/admin/updateFeedBackAttributeByAdminController';
 import getFeedBackAttributeByAdminController from '../controllers/admin/getFeedBackAttributeByAdminController';
 import getAllFeedBackAttributeByAdminController from '../controllers/admin/getAllFeedBackAttributeByAdminController';
+import deleteFeedBackAttributeByAdminController from '../controllers/admin/deleteFeedBackAttributeByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -1255,7 +1256,6 @@ adminRouter.put('/updatefeedbackattributebyadmin', validateJWT, updateFeedBackAt
  *                   type: string
  *                   example: Error fetching feedback attribute
  */
-
 adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedBackAttributeByAdminController.getFeedBackAttributeByAdminController);
 
 /**
@@ -1315,7 +1315,84 @@ adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedBackAttr
  *                   type: string
  *                   example: Error fetching feedback attributes
  */
-
 adminRouter.get('/getallfeedbackattributesbyadmin',  getAllFeedBackAttributeByAdminController.getAllFeedBackAttributes);
+
+/**
+ * @swagger
+ * /admin/deletefeedbackattributebyadmin/{id}:
+ *   delete:
+ *     summary: Delete Feedback Attribute by Admin
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - bearerAuth: []
+ *     description: Deletes a feedback attribute by its ID. Requires admin JWT authentication.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the feedback attribute to delete
+ *         schema:
+ *           type: string
+ *           example: "65f123abc4567890def12345"
+ *     responses:
+ *       200:
+ *         description: Feedback attribute deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Feedback attribute deleted successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
+ *                     responseAfterDelete:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                           example: "65f123abc4567890def12345"
+ *                         name:
+ *                           type: string
+ *                           example: "Service Quality"
+ *       404:
+ *         description: Feedback attribute not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Feedback attribute not found
+ *       401:
+ *         description: Unauthorized - Invalid or missing JWT
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting feedback attribute
+ */
+adminRouter.delete('/deletefeedbackattributebyadmin/:id', deleteFeedBackAttributeByAdminController.deleteFeedBackAttributeByAdminController);
 
 export default adminRouter;
