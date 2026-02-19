@@ -132,14 +132,24 @@ const calculateSalaryComponents = (request) => {
         netPayInWords,
     };
 };
+const formattedDate = (dateInput, format = 'DD-MMM-YYYY') => {
+    const date = new Date(dateInput);
+    const day = String(date.getDate()).padStart(2, '0');
+    const monthIndex = date.getMonth();
+    const year = date.getFullYear();
+    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthName = monthsShort[monthIndex];
+    if (format === 'DD/MM/YYYY') {
+        return `${day}/${date.getMonth() + 1}/${year}`;
+    }
+    return `${day}-${monthName}-${year}`;
+};
 const prepareSalarySlipData = (request) => {
     const calculations = calculateSalaryComponents(request);
     return {
-        // Company Details
         companyName: COMPANY_DETAILS.companyName,
         companyAddress: COMPANY_DETAILS.companyAddress,
         backgroundImage: COMPANY_DETAILS.backgroundImage,
-        // Employee Details
         employeeId: request.employeeId,
         employeeName: request.employeeName,
         designation: request.designation,
@@ -148,7 +158,7 @@ const prepareSalarySlipData = (request) => {
         payPeriod: request.payPeriod,
         payPeriodRange: getPayPeriodDateRange(request.payPeriod),
         payslipMonth: getPayslipMonth(request.payPeriod),
-        payDate: request.payDate,
+        payDate: formattedDate(request.payDate),
         bankName: request.bankName,
         IFSCCODE: request.IFSCCODE,
         bankAccountNumber: request.bankAccountNumber,
@@ -159,16 +169,30 @@ const prepareSalarySlipData = (request) => {
         totalWorkingDays: request.totalWorkingDays,
         daysWorked: request.daysWorked,
         lossOfPayDays: request.lossOfPayDays || 0,
-        // Calculated Values
         calculations,
     };
 };
 const validateRequest = (request) => {
     const errors = [];
+    if (!request.payDate) {
+        errors.push("Pay date is required");
+    }
+    else {
+        const date = new Date(request.payDate);
+        const [year, month, day] = request.payDate.split('-').map(Number);
+        if (isNaN(date.getTime()) ||
+            date.getFullYear() !== year ||
+            date.getMonth() + 1 !== month ||
+            date.getDate() !== day) {
+            errors.push(`Pay date ${request.payDate} is invalid`);
+        }
+    }
     if (!request.employeeId)
         errors.push('Employee ID is required');
     if (!request.employeeName)
         errors.push('Employee Name is required');
+    if (!request.employeeEmail)
+        errors.push('Employee Email is required');
     if (!request.designation)
         errors.push('Designation is required');
     if (!request.department)
@@ -200,7 +224,7 @@ const generateSalarySlipPDF = async (request) => {
         }
         const salarySlipData = prepareSalarySlipData(request);
         const htmlContent = generatePDF_1.default.injectDataIntoTemplate(salarySlipTemplate_1.default, salarySlipData);
-        const pdfResult = await generatePDF_1.default.generatePDFWithHeaderFooter(htmlContent, PDF_HEADER_TEMPLATE, getPdfFooterTemplate(request.payDate), {
+        const pdfResult = await generatePDF_1.default.generatePDFWithHeaderFooter(htmlContent, PDF_HEADER_TEMPLATE, getPdfFooterTemplate(formattedDate(request.payDate)), {
             format: 'A4',
             margin: {
                 top: '60px',
