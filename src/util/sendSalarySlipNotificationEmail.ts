@@ -2,24 +2,35 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { ISalarySlipEmailDetails } from '../interfaces/salarySlip';
 
+const formatPayDate = (dateString: string): string => {
+  const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const parts = dateString.split('-');
+  if (parts.length !== 3) return dateString;
+  const year = parts[0];
+  const monthIndex = parseInt(parts[1], 10) - 1;
+  const day = parts[2];
+  if (isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11) return dateString;
+  return `${year}-${monthsShort[monthIndex]}-${day}`;
+};
+
 dotenv.config();
 
 const emailConfiguration: any = {
-    service: process.env.EMAIL_CONFIG_SERVICE,
-    host: process.env.EMAIL_CONFIG_HOST,
-    port: Number(process.env.EMAIL_CONFIG_PORT),
-    secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
-    auth: {
-        user: process.env.EMAIL_CONFIG_AUTH_USER,
-        pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-    }
+  service: process.env.EMAIL_CONFIG_SERVICE,
+  host: process.env.EMAIL_CONFIG_HOST,
+  port: Number(process.env.EMAIL_CONFIG_PORT),
+  secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
+  auth: {
+    user: process.env.EMAIL_CONFIG_AUTH_USER,
+    pass: process.env.EMAIL_CONFIG_AUTH_PASS,
+  }
 };
 
 const sendSalarySlipNotificationEmail = async (details: ISalarySlipEmailDetails): Promise<void> => {
-    try {
-        const transporter = nodemailer.createTransport(emailConfiguration);
+  try {
+    const transporter = nodemailer.createTransport(emailConfiguration);
 
-        const mailBody = `
+    const mailBody = `
 <html>
   <body style="font-family: serif; background-color: #f4f4f9; padding: 20px;">
     <div style="max-width: 750px; height: auto; margin: 0 auto; border: 1px solid #f7f1f4; border-radius: 5px;">
@@ -46,7 +57,7 @@ const sendSalarySlipNotificationEmail = async (details: ISalarySlipEmailDetails)
             <b>Pay Period:</b> ${details.payPeriod}
           </p>
           <p style="margin: 0; font-size: 14px; color: #333;">
-            <b>Pay Date:</b> ${details.payDate}
+            <b>Pay Date:</b> ${formatPayDate(details.payDate)}
           </p>
         </div>
 
@@ -77,18 +88,18 @@ const sendSalarySlipNotificationEmail = async (details: ISalarySlipEmailDetails)
   </body>
 </html>`;
 
-        const mailOptions = {
-            from: process.env.EMAIL_FROM,
-            to: details.employeeEmail,
-            subject: `Salary Processed - ${details.payPeriod}`,
-            html: mailBody,
-        };
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: details.employeeEmail,
+      subject: `Salary Processed - ${details.payPeriod}`,
+      html: mailBody,
+    };
 
-        await transporter.sendMail(mailOptions);
-        console.log(`Salary slip notification email sent successfully to ${details.employeeEmail}`);
-    } catch (error) {
-        console.error(`Error sending salary slip notification email to ${details.employeeEmail}:`, error);
-    }
+    await transporter.sendMail(mailOptions);
+    console.log(`Salary slip notification email sent successfully to ${details.employeeEmail}`);
+  } catch (error) {
+    console.error(`Error sending salary slip notification email to ${details.employeeEmail}:`, error);
+  }
 };
 
 export default { sendSalarySlipNotificationEmail };
