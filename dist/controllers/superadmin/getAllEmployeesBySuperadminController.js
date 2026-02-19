@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const superadminErrorMessage_1 = require("../../constants/superadmin/superadminErrorMessage");
+const superadminErrorMessage_1 = require("../../constants/superAdmin/superadminErrorMessage");
 const getAllEmployeesBySuperadminService_1 = __importDefault(require("../../services/superadmin/getAllEmployeesBySuperadminService"));
 const getAllEmployeesBySuperadmin = (req, res) => {
     const { organizationId } = req.params;

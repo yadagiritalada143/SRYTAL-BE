@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { SUPERADMIN_ERROR } from '../../constants/superadmin/superadminErrorMessage';
+import { SUPERADMIN_ERROR } from '../../constants/superAdmin/superadminErrorMessage';
 import allEmployeesBySuperadminServices from '../../services/superadmin/getAllEmployeesBySuperadminService';
 
 const getAllEmployeesBySuperadmin = (req: Request, res: Response) => {
