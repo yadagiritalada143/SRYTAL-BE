@@ -8,3 +8,5 @@ Clone the code
     - Run the command to start "npm run start"
 
 Make sure you have placed .env file before running the application.
+
+Below is the documentation for the application work flow
