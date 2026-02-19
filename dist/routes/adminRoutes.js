@@ -43,6 +43,11 @@ const deleteEmployeeTaskByAdminController_1 = __importDefault(require("../contro
 const generateSalarySlipByAdminController_1 = __importDefault(require("../controllers/admin/generateSalarySlipByAdminController"));
 const validateRegistrationSchema_1 = __importDefault(require("../middlewares/validateRegistrationSchema"));
 const registrationSchema_1 = __importDefault(require("../middlewares/schemas/registrationSchema"));
+const addFeedbackAttributeByAdminController_1 = __importDefault(require("../controllers/admin/addFeedbackAttributeByAdminController"));
+const updateFeedbackAttributeByAdminController_1 = __importDefault(require("../controllers/admin/updateFeedbackAttributeByAdminController"));
+const getFeedbackAttributeByAdminController_1 = __importDefault(require("../controllers/admin/getFeedbackAttributeByAdminController"));
+const getAllFeedbackAttributeByAdminController_1 = __importDefault(require("../controllers/admin/getAllFeedbackAttributeByAdminController"));
+const deleteFeedbackAttributeByAdminController_1 = __importDefault(require("../controllers/admin/deleteFeedbackAttributeByAdminController"));
 const adminRouter = express_1.default.Router();
 adminRouter.post('/login', commonController_1.default.login);
 adminRouter.get('/refreshToken', commonController_1.default.refreshToken);
@@ -653,6 +658,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT_1.default, deleteEm
  *             required:
  *               - employeeId
  *               - employeeName
+ *               - employeeEmail
  *               - designation
  *               - department
  *               - dateOfJoining
@@ -675,6 +681,10 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT_1.default, deleteEm
  *                 type: string
  *                 description: Full name of the employee
  *                 example: "Ramya Thummala"
+ *               employeeEmail:
+ *                 type: string
+ *                 description: Employee email address for salary notification
+ *                 example: "ramya@srytal.com"
  *               designation:
  *                 type: string
  *                 description: Job title/designation
@@ -822,6 +832,7 @@ adminRouter.post('/generateSalarySlip', validateJWT_1.default, generateSalarySli
  *             required:
  *               - employeeId
  *               - employeeName
+ *               - employeeEmail
  *               - designation
  *               - department
  *               - dateOfJoining
@@ -844,6 +855,10 @@ adminRouter.post('/generateSalarySlip', validateJWT_1.default, generateSalarySli
  *                 type: string
  *                 description: Full name of the employee
  *                 example: "Ramya Thummala"
+ *               employeeEmail:
+ *                 type: string
+ *                 description: Employee email address for salary notification
+ *                 example: "ramya@srytal.com"
  *               designation:
  *                 type: string
  *                 description: Job title/designation
@@ -1032,4 +1047,350 @@ adminRouter.post('/generateSalarySlip', validateJWT_1.default, generateSalarySli
  *                   example: An unexpected error occurred while generating salary slip
  */
 adminRouter.post('/previewSalarySlip', validateJWT_1.default, generateSalarySlipByAdminController_1.default.previewSalarySlip);
+/**
+ * @swagger
+ * /admin/addfeedbackattributebyadmin:
+ *   post:
+ *     summary: Add Feedback Attribute By Admin
+ *     description: Admin can add a new feedback attribute by providing name, optional comment, and rating. JWT authentication required.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: "name of the attribute"
+ *     responses:
+ *       200:
+ *         description: Feedback attribute created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Feedback added successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 63f5b9f2a1e4c2a7f8d6e1a2
+ *                     name:
+ *                       type: string
+ *                       example: "Teamwork"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Bad Request - missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Name and rating are required.
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add feedback.
+ */
+adminRouter.post('/addfeedbackattributebyadmin', addFeedbackAttributeByAdminController_1.default.addFeedbackAttributeByAdminController);
+/**
+ * @swagger
+ * /admin/updatefeedbackattributebyadmin:
+ *   put:
+ *     summary: Update Feedback Attribute by Admin
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     description: Updates the name of an existing feedback attribute by admin.
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - name
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 example: "65f123abc4567890def12345"
+ *               name:
+ *                 type: string
+ *                 example: "Service Quality"
+ *     responses:
+ *       200:
+ *         description: Feedback attribute updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Feedback attribute updated successfully
+ *       400:
+ *         description: Bad Request
+ *       401:
+ *         description: Unauthorized - Invalid or missing token
+ *       500:
+ *         description: Internal Server Error
+ */
+adminRouter.put('/updatefeedbackattributebyadmin', validateJWT_1.default, updateFeedbackAttributeByAdminController_1.default.updateFeedbackAttributeByAdminController);
+/**
+ * @swagger
+ * /admin/getfeedbackattributebyadmin/{id}:
+ *   get:
+ *     summary: Get Feedback Attribute by Admin
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     description: Fetch a single feedback attribute by ID. Requires admin JWT authentication.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: The ID of the feedback attribute to fetch
+ *         required: true
+ *         schema:
+ *           type: string
+ *           example: "65f123abc4567890def12345"
+ *     responses:
+ *       200:
+ *         description: Feedback attribute fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Feedback attribute fetched successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "65f123abc4567890def12345"
+ *                     name:
+ *                       type: string
+ *                       example: "Service Quality"
+ *       404:
+ *         description: Feedback attribute not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Feedback attribute not found
+ *       401:
+ *         description: Unauthorized - Invalid or missing JWT
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error fetching feedback attribute
+ */
+adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT_1.default, getFeedbackAttributeByAdminController_1.default.getFeedbackAttributeByAdminController);
+/**
+ * @swagger
+ * /admin/getallfeedbackattributesbyadmin:
+ *   get:
+ *     summary: Get All Feedback Attributes
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     description: Fetch all feedback attributes. Requires admin JWT authentication.
+ *     responses:
+ *       200:
+ *         description: Feedback attributes fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Feedback attributes fetched successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
+ *                     feedbackAttributeResponse:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           id:
+ *                             type: string
+ *                             example: "65f123abc4567890def12345"
+ *                           name:
+ *                             type: string
+ *                             example: "Service Quality"
+ *       401:
+ *         description: Unauthorized - Invalid or missing JWT
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error fetching feedback attributes
+ */
+adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT_1.default, getAllFeedbackAttributeByAdminController_1.default.getAllFeedbackAttributesByAdminController);
+/**
+ * @swagger
+ * /admin/deletefeedbackattributebyadmin/{id}:
+ *   delete:
+ *     summary: Delete Feedback Attribute by Admin
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     description: Deletes a feedback attribute by its ID. Requires admin JWT authentication.
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the feedback attribute to delete
+ *         schema:
+ *           type: string
+ *           example: "65f123abc4567890def12345"
+ *     responses:
+ *       200:
+ *         description: Feedback attribute deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Feedback attribute deleted successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
+ *                     responseAfterDelete:
+ *                       type: object
+ *                       properties:
+ *                         _id:
+ *                           type: string
+ *                           example: "65f123abc4567890def12345"
+ *                         name:
+ *                           type: string
+ *                           example: "Service Quality"
+ *       404:
+ *         description: Feedback attribute not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Feedback attribute not found
+ *       401:
+ *         description: Unauthorized - Invalid or missing JWT
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting feedback attribute
+ */
+adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT_1.default, deleteFeedbackAttributeByAdminController_1.default.deleteFeedbackAttributeByAdminController);
 exports.default = adminRouter;

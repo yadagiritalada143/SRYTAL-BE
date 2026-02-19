@@ -1,6 +1,7 @@
 export interface ISalarySlipRequest {
     employeeId: string;
     employeeName: string;
+    employeeEmail: string;
     designation: string;
     department: string;
     dateOfJoining: string;
@@ -16,16 +17,12 @@ export interface ISalarySlipRequest {
     totalWorkingDays: number;
     daysWorked: number;
     lossOfPayDays?: number;
-
-    // Earnings
     basicSalary: number;
     hraPercentage?: number;
     specialAllowance?: number;
     conveyanceAllowance?: number;
     medicalAllowance?: number;
     otherAllowances?: number;
-
-    // Deductions
     pfPercentage?: number;
     professionalTax?: number;
     incomeTax?: number;
@@ -33,7 +30,6 @@ export interface ISalarySlipRequest {
 }
 
 export interface ISalaryCalculations {
-    // Earnings
     basicSalary: number;
     hra: number;
     specialAllowance: number;
@@ -41,27 +37,21 @@ export interface ISalaryCalculations {
     medicalAllowance: number;
     otherAllowances: number;
     grossEarnings: number;
-
-    // Deductions
+    lossOfPayAmount: number;
     providentFund: number;
     professionalTax: number;
     incomeTax: number;
     otherDeductions: number;
     totalDeductions: number;
-
-    // Net Pay
     netPay: number;
     netPayInWords: string;
 }
 
 export interface ISalarySlipData {
-    // Company Details
     companyName: string;
     companyAddress: string;
     companyLogo?: string;
     backgroundImage?: string;
-
-    // Employee Details
     employeeId: string;
     employeeName: string;
     designation: string;
@@ -81,7 +71,12 @@ export interface ISalarySlipData {
     totalWorkingDays: number;
     daysWorked: number;
     lossOfPayDays: number;
-
-    // Calculated Values
     calculations: ISalaryCalculations;
+}
+
+export interface ISalarySlipEmailDetails {
+    employeeName: string;
+    employeeEmail: string;
+    payPeriod: string;
+    payDate: string;
 }
