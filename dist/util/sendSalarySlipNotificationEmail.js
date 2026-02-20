@@ -5,6 +5,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const formatPayDate = (dateString) => {
+    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const parts = dateString.split('-');
+    if (parts.length !== 3)
+        return dateString;
+    const year = parts[0];
+    const monthIndex = parseInt(parts[1], 10) - 1;
+    const day = parts[2];
+    if (isNaN(monthIndex) || monthIndex < 0 || monthIndex > 11)
+        return dateString;
+    return `${year}-${monthsShort[monthIndex]}-${day}`;
+};
 dotenv_1.default.config();
 const emailConfiguration = {
     service: process.env.EMAIL_CONFIG_SERVICE,
@@ -46,7 +58,7 @@ const sendSalarySlipNotificationEmail = async (details) => {
             <b>Pay Period:</b> ${details.payPeriod}
           </p>
           <p style="margin: 0; font-size: 14px; color: #333;">
-            <b>Pay Date:</b> ${details.payDate}
+            <b>Pay Date:</b> ${formatPayDate(details.payDate)}
           </p>
         </div>
 

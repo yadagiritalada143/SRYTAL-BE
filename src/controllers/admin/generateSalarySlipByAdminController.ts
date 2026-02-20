@@ -3,6 +3,7 @@ import generateSalarySlipByAdminService from '../../services/admin/generateSalar
 import { SALARY_SLIP_SUCCESS_MESSAGES, SALARY_SLIP_ERROR_MESSAGES, HTTP_STATUS } from '../../constants/admin/salarySlipMessages';
 import { ISalarySlipRequest } from '../../interfaces/salarySlip';
 import sendSalarySlipNotificationEmail from '../../util/sendSalarySlipNotificationEmail';
+import manageSalarySlips from '../../util/manageSalarySlips';
 
 const generateSalarySlip = async (req: Request, res: Response) => {
     try {
@@ -30,6 +31,15 @@ const generateSalarySlip = async (req: Request, res: Response) => {
                 payDate: salarySlipRequest.payDate,
             }).catch((error) => {
                 console.error('Failed to send salary slip notification email:', error);
+            });
+
+            manageSalarySlips.uploadSalarySlipToS3({
+                mongoId: salarySlipRequest._id,
+                employeeName: salarySlipRequest.employeeName,
+                payPeriod: salarySlipRequest.payPeriod,
+                pdfBuffer: result.pdfBuffer,
+            }).catch((error) => {
+                console.error('Failed to upload salary slip to S3:', error);
             });
 
             return;

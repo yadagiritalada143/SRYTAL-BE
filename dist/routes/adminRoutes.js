@@ -656,6 +656,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT_1.default, deleteEm
  *           schema:
  *             type: object
  *             required:
+ *               - _id
  *               - employeeId
  *               - employeeName
  *               - employeeEmail
@@ -673,6 +674,10 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT_1.default, deleteEm
  *               - basicSalary
  *               - payDate
  *             properties:
+ *               _id:
+ *                 type: string
+ *                 description: MongoDB document ID of the employee
+ *                 example: "507f1f77bcf86cd799439011"
  *               employeeId:
  *                 type: string
  *                 description: Unique employee identifier

@@ -661,6 +661,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *           schema:
  *             type: object
  *             required:
+ *               - _id
  *               - employeeId
  *               - employeeName
  *               - employeeEmail
@@ -678,6 +679,10 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *               - basicSalary
  *               - payDate
  *             properties:
+ *               _id:
+ *                 type: string
+ *                 description: MongoDB document ID of the employee
+ *                 example: "507f1f77bcf86cd799439011"
  *               employeeId:
  *                 type: string
  *                 description: Unique employee identifier
@@ -1145,7 +1150,7 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                   type: string
  *                   example: Failed to add feedback.
  */
-adminRouter.post('/addfeedbackattributebyadmin',  addFeedbackAttributeByAdminController.addFeedbackAttributeByAdminController);
+adminRouter.post('/addfeedbackattributebyadmin', addFeedbackAttributeByAdminController.addFeedbackAttributeByAdminController);
 
 /**
  * @swagger
