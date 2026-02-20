@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const generateSalarySlipByAdminService_1 = __importDefault(require("../../services/admin/generateSalarySlipByAdminService"));
 const salarySlipMessages_1 = require("../../constants/admin/salarySlipMessages");
 const sendSalarySlipNotificationEmail_1 = __importDefault(require("../../util/sendSalarySlipNotificationEmail"));
+const manageSalarySlips_1 = __importDefault(require("../../util/manageSalarySlips"));
 const generateSalarySlip = async (req, res) => {
     try {
         const salarySlipRequest = req.body;
@@ -29,6 +30,14 @@ const generateSalarySlip = async (req, res) => {
                 payDate: salarySlipRequest.payDate,
             }).catch((error) => {
                 console.error('Failed to send salary slip notification email:', error);
+            });
+            manageSalarySlips_1.default.uploadSalarySlipToS3({
+                mongoId: salarySlipRequest._id,
+                employeeName: salarySlipRequest.employeeName,
+                payPeriod: salarySlipRequest.payPeriod,
+                pdfBuffer: result.pdfBuffer,
+            }).catch((error) => {
+                console.error('Failed to upload salary slip to S3:', error);
             });
             return;
         }
