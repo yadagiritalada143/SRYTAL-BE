@@ -1,4 +1,5 @@
 export interface ISalarySlipRequest {
+    _id: string;
     employeeId: string;
     employeeName: string;
     employeeEmail: string;
@@ -79,4 +80,11 @@ export interface ISalarySlipEmailDetails {
     employeeEmail: string;
     payPeriod: string;
     payDate: string;
+}
+
+export interface IUploadSalarySlipParams {
+    mongoId: string;
+    employeeName: string;
+    payPeriod: string;
+    pdfBuffer: Buffer;
 }
