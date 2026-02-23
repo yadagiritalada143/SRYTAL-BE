@@ -12,6 +12,7 @@ import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
 import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
 import updateEmployeeTimesheetController from '../controllers/common/updateEmployeeTimesheetController';
+import getEmployeeSalarySlipController from '../controllers/common/getEmployeeSalarySlipController';
 const upload = multer({ storage: multer.memoryStorage() });
 
 const commonRouter: Router = express.Router();
@@ -105,5 +106,107 @@ commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getP
 commonRouter.post('/forgotPassword', forgotPasswordController.forgotPassword);
 commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT, employeePackageDetailsByIdController.employeePackageDetailsByIdController);
 commonRouter.put('/updateEmployeeTimesheet', validateJWT, updateEmployeeTimesheetController.updateEmployeeTimesheetController);
+
+/**
+ * @swagger
+ * /common/getemployeesalaryslip/{mongoId}:
+ *   get:
+ *     summary: Get employee salary slips
+ *     description: Returns a list of salary slips from S3 for a given employee
+ *     tags:
+ *       - common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - mongoId
+ *             properties:
+ *               mongoId:
+ *                 type: string
+ *                 example: 642f3c1a5e9b8a00123abcde
+ *                 description: MongoDB ID of the employee
+ *     responses:
+ *       200:
+ *         description: Successfully fetched salary slips
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Salary slips fetched successfully
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       mongoId:
+ *                         type: string
+ *                         example: 642f3c1a5e9b8a00123abcde
+ *                       Key:
+ *                         type: string
+ *                         example: salary-slips/642f3c1a5e9b8a00123abcde/John-Doe-Feb-2026.pdf
+ *                       fileName:
+ *                         type: string
+ *                         example: John-Doe-Feb-2026.pdf
+ *                       downloadUrl:
+ *                         type: string
+ *                         format: uri
+ *                         example: https://signed-s3-url
+ *                       lastModified:
+ *                         type: string
+ *                         format: date-time
+ *                         example: 2026-02-01T10:00:00.000Z
+ *       400:
+ *         description: Missing or invalid parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Employee ID is required
+ *       401:
+ *         description: Unauthorized (JWT missing or invalid)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to fetch salary slips
+ */
+
+ commonRouter.get('/getEmployeeSalarySlips/:mongoId', validateJWT, getEmployeeSalarySlipController.getEmployeeSalarySlipController);
 
 export default commonRouter;

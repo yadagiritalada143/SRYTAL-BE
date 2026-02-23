@@ -88,3 +88,10 @@ export interface IUploadSalarySlipParams {
     payPeriod: string;
     pdfBuffer: Buffer;
 }
+
+export interface ISalarySlipResult {
+  mongoId: string;
+  fileName: string;
+  key: string;
+  downloadUrl: string;
+}
