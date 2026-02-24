@@ -102,3 +102,10 @@ export interface IDownloadSalarySlipRequest {
     month: string; // 3-letter month (e.g., "Jan", "Feb")
     year: string;  // 4-digit year (e.g., "2026")
 }
+
+export interface IDownloadSalarySlipResult {
+    success: boolean;
+    downloadUrl?: string;
+    fileName?: string;
+    error?: string;
+}

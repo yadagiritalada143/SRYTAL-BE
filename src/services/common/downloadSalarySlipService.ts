@@ -1,13 +1,6 @@
 import s3Client from '../../util/s3Client';
-import { IDownloadSalarySlipRequest } from '../../interfaces/salarySlip';
+import { IDownloadSalarySlipRequest, IDownloadSalarySlipResult } from '../../interfaces/salarySlip';
 import { bucketName, salarySlipsFolder } from '../../config/awsS3Config';
-
-interface IDownloadSalarySlipResult {
-    success: boolean;
-    downloadUrl?: string;
-    fileName?: string;
-    error?: string;
-}
 
 const downloadSalarySlipService = async (params: IDownloadSalarySlipRequest): Promise<IDownloadSalarySlipResult> => {
     const { mongoId, fullName, month, year } = params;
