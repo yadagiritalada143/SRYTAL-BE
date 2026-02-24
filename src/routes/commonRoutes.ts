@@ -12,6 +12,7 @@ import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
 import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
 import updateEmployeeTimesheetController from '../controllers/common/updateEmployeeTimesheetController';
+import downloadSalarySlipController from '../controllers/common/downloadSalarySlipController';
 const upload = multer({ storage: multer.memoryStorage() });
 
 const commonRouter: Router = express.Router();
@@ -105,5 +106,136 @@ commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getP
 commonRouter.post('/forgotPassword', forgotPasswordController.forgotPassword);
 commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT, employeePackageDetailsByIdController.employeePackageDetailsByIdController);
 commonRouter.put('/updateEmployeeTimesheet', validateJWT, updateEmployeeTimesheetController.updateEmployeeTimesheetController);
+
+/**
+ * @swagger
+ * /downloadSalarySlip:
+ *   post:
+ *     summary: Download a specific salary slip
+ *     description: Returns a pre-signed S3 URL for downloading a specific salary slip based on employee name, month, and year. Admin/SuperAdmin users can download any employee's salary slips, while regular employees can only download their own.
+ *     tags:
+ *       - common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - mongoId
+ *               - fullName
+ *               - month
+ *               - year
+ *             properties:
+ *               mongoId:
+ *                 type: string
+ *                 description: MongoDB ID of the employee (must match authenticated user)
+ *                 example: 642f3c1a5e9b8a00123abcde
+ *               fullName:
+ *                 type: string
+ *                 description: Full name of the employee
+ *                 example: John Doe
+ *               month:
+ *                 type: string
+ *                 description: 3-letter month abbreviation
+ *                 example: Feb
+ *               year:
+ *                 type: string
+ *                 description: 4-digit year
+ *                 example: "2026"
+ *     responses:
+ *       200:
+ *         description: Successfully generated download URL
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Salary slip download URL fetched successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     downloadUrl:
+ *                       type: string
+ *                       format: uri
+ *                       description: Pre-signed S3 URL valid for 5 minutes
+ *                       example: https://srytal-documents.s3.amazonaws.com/SalarySlips/...
+ *                     fileName:
+ *                       type: string
+ *                       example: John-Doe-Feb-2026.pdf
+ *       400:
+ *         description: Missing or invalid parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid request parameters. mongoId, fullName, month, and year are required
+ *       401:
+ *         description: Unauthorized (JWT missing or invalid)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No token provided !
+ *       403:
+ *         description: Forbidden - Non-admin user attempting to access another employee's salary slips
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: You are not authorized to access this employee's salary slips
+ *       404:
+ *         description: Salary slip not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Salary slip not found for the specified month and year
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occurred while fetching salary slip download URL
+ */
+commonRouter.post('/downloadSalarySlip', validateJWT, downloadSalarySlipController.downloadSalarySlipController);
 
 export default commonRouter;
