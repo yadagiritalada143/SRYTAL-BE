@@ -90,8 +90,15 @@ export interface IUploadSalarySlipParams {
 }
 
 export interface ISalarySlipResult {
-  mongoId: string;
-  fileName: string;
-  key: string;
-  downloadUrl: string;
+    mongoId: string;
+    fileName: string;
+    key: string;
+    downloadUrl: string;
+}
+
+export interface IDownloadSalarySlipRequest {
+    mongoId: string;
+    fullName: string;
+    month: string; // 3-letter month (e.g., "Jan", "Feb")
+    year: string;  // 4-digit year (e.g., "2026")
 }

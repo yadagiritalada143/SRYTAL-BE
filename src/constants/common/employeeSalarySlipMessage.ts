@@ -8,6 +8,9 @@ export const EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES = {
     EMPLOYEE_SALARY_SLIPS_FETCHING_ERROR: 'Error occurred while fetching employee salary slips',
     EMPLOYEE_ID_REQUIRED: 'Employee ID is required',
     EMPLOYEE_SALARY_SLIP_DOWNLOADED_ERROR: 'Error occurred while fetching salary slip download URL',
+    UNAUTHORIZED_ACCESS: 'You are not authorized to access this employee\'s salary slips',
+    SALARY_SLIP_NOT_FOUND: 'Salary slip not found for the specified month and year',
+    INVALID_REQUEST_PARAMS: 'Invalid request parameters. mongoId, fullName, month, and year are required',
 };
 
 export const HTTP_STATUS = {
