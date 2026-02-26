@@ -443,7 +443,35 @@ commonRouter.post('/uploadProfileImage', upload.single('profileImage'), validate
  */
 commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getProfileImage);
 
-
+/**
+ * @swagger
+ * /forgotPassword:
+ *   post:
+ *     summary: Generate temporary password and send to registered email
+ *     tags: 
+ *     - Common
+ *     security:
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 format: email
+ *                 example: johndoe@example.com
+ *     responses:
+ *       200:
+ *         description: Temporary password sent successfully
+ *       401:
+ *         description: Unauthorized (Invalid or missing JWT)
+ *       500:
+ *         description: Server error
+ */
 commonRouter.post('/forgotPassword', forgotPasswordController.forgotPassword);
 commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT, employeePackageDetailsByIdController.employeePackageDetailsByIdController);
 commonRouter.put('/updateEmployeeTimesheet', validateJWT, updateEmployeeTimesheetController.updateEmployeeTimesheetController);

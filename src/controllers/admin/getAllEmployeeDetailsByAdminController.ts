@@ -4,7 +4,7 @@ import allEmployeeDetailsServices from '../../services/admin/getAllEmployeeDetai
 
 const getAllEmployeeDetails = async (req: Request, res: Response) => {
     try {
-        const { organizationId, userId } = req.params;
+        const { organizationId, userId } = req.body; // Assuming organizationId and userId are sent in the request body
 
 
         const fetchAllEmployeeDetailsByAdminResponse =
