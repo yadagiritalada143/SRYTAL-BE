@@ -176,7 +176,7 @@ export const salarySlipTemplate = `
 
         /* Net Pay Section */
         .net-pay-section {
-            background: linear-gradient(135deg, #1e8449 0%, #27ae60 100%);
+            background: linear-gradient(135deg, #58be83 0%, #27ae60 100%);
             color: #fff;
             padding: 15px 25px;
             margin: 15px 20px;

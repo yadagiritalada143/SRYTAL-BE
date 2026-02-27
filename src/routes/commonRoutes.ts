@@ -97,6 +97,58 @@ commonRouter.get('/', (req, res) => {
 commonRouter.post('/login', commonController.login);
 commonRouter.get('/getVisitorCount', commonController.updateVisitorCount);
 commonRouter.post('/sendContactUsMail', sendContactUsMailController.sendContactUsMail);
+
+/**
+ * @swagger
+ * /updateApplicationWalkThrough:
+ *   post:
+ *     summary: Update Application Walkthrough Status
+ *     description: Updates the application walkthrough step/status for a specific user.
+ *     tags:
+ *       - Common
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_id
+ *               - applicationWalkThrough
+ *             properties:
+ *               user_id:
+ *                 type: string
+ *                 description: MongoDB User ID
+ *                 example: "65f1c2e8a1234567890abcde"
+ *               applicationWalkThrough:
+ *                 type: number
+ *                 description: Walkthrough step number or completion flag
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Application walkthrough updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       401:
+ *         description: Error occurred while updating application walkthrough
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Error occurred while updating application walkthrough"
+ */
 commonRouter.post('/updateApplicationWalkThrough', updateApplicationWalkThroughController.updateApplicationWalkThrough);
 
 /**
@@ -450,7 +502,6 @@ commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getP
  *     summary: Generate temporary password and send to registered email
  *     tags: 
  *     - Common
- *     security:
  *     requestBody:
  *       required: true
  *       content:
@@ -473,7 +524,211 @@ commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getP
  *         description: Server error
  */
 commonRouter.post('/forgotPassword', forgotPasswordController.forgotPassword);
+
+/**
+ * @swagger
+ * /fetchEmployeePackageDetailsById:
+ *   post:
+ *     summary: Fetch Employee Package Details By ID
+ *     description: Returns employee package details including packages, tasks and filtered timesheet data between startDate and endDate.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - employeeId
+ *               - startDate
+ *               - endDate
+ *             properties:
+ *               employeeId:
+ *                 type: string
+ *                 description: Optional. If provided, data will be fetched for this employee instead of userId.
+ *                 example: "64f1c2e8a1234567890abcdf"
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-01-01"
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-01-31"
+ *     responses:
+ *       200:
+ *         description: Successfully fetched employee package details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 employeePackageDetails:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "65a2c9e8a1234567890abcde"
+ *                       employeeId:
+ *                         type: string
+ *                         example: "64f1c2e8a1234567890abcde"
+ *                       packages:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             packageId:
+ *                               type: object
+ *                               description: Populated package details
+ *                             tasks:
+ *                               type: array
+ *                               items:
+ *                                 type: object
+ *                                 properties:
+ *                                   taskId:
+ *                                     type: object
+ *                                     description: Populated task details
+ *                                   timesheet:
+ *                                     type: array
+ *                                     items:
+ *                                       type: object
+ *                                       properties:
+ *                                         date:
+ *                                           type: string
+ *                                           format: date
+ *                                           example: "2025-01-15"
+ *                                         hours:
+ *                                           type: number
+ *                                           example: 8
+ *       400:
+ *         description: Missing required startDate or endDate
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 success: false
+ *                 message: "FROM date and TO date are required !!"
+ *       500:
+ *         description: Internal server error while fetching package details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 success: false
+ *                 message: "Error while fetching employee package details"
+ */
 commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT, employeePackageDetailsByIdController.employeePackageDetailsByIdController);
+
+/**
+ * @swagger
+ * /updateEmployeeTimesheet:
+ *   put:
+ *     summary: Update Employee Timesheet
+ *     description: Updates employee timesheet entries for specific packages and tasks. Only provided fields (except _id and date) will be updated.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - packages
+ *             properties:
+ *               packages:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - packageId
+ *                     - tasks
+ *                   properties:
+ *                     packageId:
+ *                       type: string
+ *                       example: "681aedaae9ba3f1f97143cf3"
+ *                     tasks:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         required:
+ *                           - taskId
+ *                           - timesheet
+ *                         properties:
+ *                           taskId:
+ *                             type: string
+ *                             example: "684a6dea7bc74ad8b336e305"
+ *                           timesheet:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               required:
+ *                                 - date
+ *                               properties:
+ *                                 date:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   example: "2025-06-28T18:30:00.000Z"
+ *                                 isHoliday:
+ *                                   type: boolean
+ *                                   example: false
+ *                                 isVacation:
+ *                                   type: boolean
+ *                                   example: false
+ *                                 isWeekOff:
+ *                                   type: boolean
+ *                                   example: false
+ *                                 hours:
+ *                                   type: number
+ *                                   example: 8
+ *                                 comments:
+ *                                   type: string
+ *                                   example: "working on Nodejs project"
+ *                                 leaveReason:
+ *                                   type: string
+ *                                   example: ""
+ *                                 status:
+ *                                   type: string
+ *                                   example: "SUBMITTED AND WAITING FOR APPROVAL"
+ *     responses:
+ *       200:
+ *         description: Timesheet updated successfully or validation response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterUpdateTimesheet:
+ *                   type: object
+ *                   description: MongoDB update result object
+ *                 message:
+ *                   type: string
+ *                   example: "No valid updates found in payload"
+ *       500:
+ *         description: Internal server error while updating timesheet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 success: false
+ *                 message: "Error while updating employee timesheet"
+ */
 commonRouter.put('/updateEmployeeTimesheet', validateJWT, updateEmployeeTimesheetController.updateEmployeeTimesheetController);
 
 /**
