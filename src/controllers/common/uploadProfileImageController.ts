@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import uploadImageToS3Utility from '../../util/manageProfileImages';
 import uploadProfileImageService from '../../services/common/uploadProfileImageService';
-import { EMPLOYEE_ERRORS } from '../../constants/commonErrorMessages';
+import { EMPLOYEE_ERRORS, HTTP_STATUS } from '../../constants/commonErrorMessages';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import { profileImagesFolder } from '../../config/awsS3Config';
@@ -25,26 +25,26 @@ const uploadProfileImage = async (req: Request, res: Response) => {
                         .updateProfileImageDetails(uniqueName, userId)
                         .then((responseAfterProfileImageUploaded: any) => {
                             if (!!responseAfterProfileImageUploaded && responseAfterProfileImageUploaded.success) {
-                                res.status(200).json(responseAfterProfileImageUploaded);
+                                res.status(HTTP_STATUS.OK).json(responseAfterProfileImageUploaded);
                             } else {
-                                res.status(401).json(responseAfterProfileImageUploaded);
+                                res.status(HTTP_STATUS.UNAUTHORIZED).json(responseAfterProfileImageUploaded);
                             }
                         })
                         .catch((error: any) => {
                             console.error(`Error occured while updating the Profile Image: ${error}`);
-                            res.status(500).json({ success: false, message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
+                            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
                         });
                 } else {
-                    res.status(500).json({ success: false, message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
+                    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
                 }
             })
             .catch((error: any) => {
                 console.error(`Error occured while Profile Image upload: ${error}`);
-                res.status(500).json({ success: false, message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
+                res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
             })
     } catch (error: any) {
         console.error(`Error occured while updating the Profile Image to S3: ${error}`);
-        res.status(500).json({ success: false, message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR });
     }
 }
 

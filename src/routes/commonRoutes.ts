@@ -12,6 +12,7 @@ import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
 import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
 import updateEmployeeTimesheetController from '../controllers/common/updateEmployeeTimesheetController';
+import downloadSalarySlipController from '../controllers/common/downloadSalarySlipController';
 const upload = multer({ storage: multer.memoryStorage() });
 
 const commonRouter: Router = express.Router();
@@ -96,14 +97,769 @@ commonRouter.get('/', (req, res) => {
 commonRouter.post('/login', commonController.login);
 commonRouter.get('/getVisitorCount', commonController.updateVisitorCount);
 commonRouter.post('/sendContactUsMail', sendContactUsMailController.sendContactUsMail);
+
+/**
+ * @swagger
+ * /updateApplicationWalkThrough:
+ *   post:
+ *     summary: Update Application Walkthrough Status
+ *     description: Updates the application walkthrough step/status for a specific user.
+ *     tags:
+ *       - Common
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - user_id
+ *               - applicationWalkThrough
+ *             properties:
+ *               user_id:
+ *                 type: string
+ *                 description: MongoDB User ID
+ *                 example: "65f1c2e8a1234567890abcde"
+ *               applicationWalkThrough:
+ *                 type: number
+ *                 description: Walkthrough step number or completion flag
+ *                 example: 1
+ *     responses:
+ *       200:
+ *         description: Application walkthrough updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       401:
+ *         description: Error occurred while updating application walkthrough
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Error occurred while updating application walkthrough"
+ */
 commonRouter.post('/updateApplicationWalkThrough', updateApplicationWalkThroughController.updateApplicationWalkThrough);
+
+/**
+ * @swagger
+ * /updatePassword:
+ *   post:
+ *     summary: Update user password
+ *     tags: 
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: "64f1c9e9e8a3b2a4c8f12345"
+ *               oldPassword:
+ *                 type: string
+ *                 example: "Temp@123"
+ *               newPassword:
+ *                 type: string
+ *                 example: "NewStrong@123"
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Password updated Successfully !
+ *       401:
+ *         description: Unauthorized / Invalid password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Temporary password is not matched !
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occured while updating the password !
+ */
 commonRouter.post('/updatePassword', validateJWT, updatePasswordController.updatePassword);
+
+/**
+ * @swagger
+ * /getOrganizationThemes/{organization_name}:
+ *   get:
+ *     summary: Get themes by organization name
+ *     tags: 
+ *       - Common
+ *     parameters:
+ *       - in: path
+ *         name: organization_name
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Name of the organization
+ *         example: "AcmeCorp"
+ *     responses:
+ *       200:
+ *         description: Themes fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 themesResponse:
+ *                   type: object
+ *                   description: Organization themes data
+ *                   example:
+ *                     _id: "65a123abc456def789012345"
+ *                     organization_name: "AcmeCorp"
+ *                     primaryColor: "#1976d2"
+ *                     secondaryColor: "#ffffff"
+ *                     logoUrl: "https://example.com/logo.png"
+ *       500:
+ *         description: Error while fetching organization themes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occured while fetching the themes !
+ */
 commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThemesController.getOrganizationThemes);
+
+/**
+ * @swagger
+ * /getEmployeeDetails:
+ *   get:
+ *     summary: Get employee details by user ID
+ *     tags: 
+ *      - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Employee user ID
+ *         example: "65b1f9e8a3c2d4f123456789"
+ *     responses:
+ *       200:
+ *         description: Employee details fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 employeeDetails:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "65b1f9e8a3c2d4f123456789"
+ *                     firstName:
+ *                       type: string
+ *                       example: John
+ *                     lastName:
+ *                       type: string
+ *                       example: Doe
+ *                     email:
+ *                       type: string
+ *                       example: john.doe@example.com
+ *                     mobileNumber:
+ *                       type: string
+ *                       example: "9876543210"
+ *                     bloodGroup:
+ *                       type: object
+ *                       description: Blood group details 
+ *                     bankDetailsInfo:
+ *                       type: object
+ *                       description: Bank details of employee
+ *                     employeeRole:
+ *                       type: object
+ *                       description: Employee role details 
+ *                     employmentType:
+ *                       type: object
+ *                       description: Employment type details
+ *                     organization:
+ *                       type: object
+ *                       description: Organization details 
+ *                     userRole:
+ *                       type: string
+ *                       example: EMPLOYEE
+ *                     passwordResetRequired:
+ *                       type: boolean
+ *                       example: false
+ *                     employeeId:
+ *                       type: string
+ *                       example: EMP001
+ *                     dateOfBirth:
+ *                       type: string
+ *                       format: date
+ *                       example: "1995-08-15"
+ *                     presentAddress:
+ *                       type: string
+ *                       example: Hyderabad, India
+ *                     permanentAddress:
+ *                       type: string
+ *                       example: Hyderabad, India
+ *       500:
+ *         description: Error while fetching employee details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error in fetching employee details
+ */
 commonRouter.get('/getEmployeeDetails', validateJWT, getEmployeeDetailsController.getEmployeeDetails);
+
+/**
+ * @swagger
+ * /uploadProfileImage:
+ *   post:
+ *     summary: Upload employee profile image
+ *     tags: 
+ *      - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - profileImage
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: "65b1f9e8a3c2d4f123456789"
+ *               profileImage:
+ *                 type: string
+ *                 format: binary
+ *                 description: Profile image file (jpg, png, etc.)
+ *     responses:
+ *       200:
+ *         description: Profile image uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: No file uploaded
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: No file uploaded.
+ *       401:
+ *         description: Unauthorized or update failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Error while uploading profile image
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occured while updating the Profile Image
+ */
 commonRouter.post('/uploadProfileImage', upload.single('profileImage'), validateJWT, uploadProfileImageController.uploadProfileImage);
+
+/**
+ * @swagger
+ * /getProfileImage:
+ *   get:
+ *     summary: Get employee profile image
+ *     tags: 
+ *     - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Employee user ID
+ *         example: "65b1f9e8a3c2d4f123456789"
+ *     responses:
+ *       200:
+ *         description: Profile image fetched successfully
+ *         content:
+ *           image/jpeg:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           image/png:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         description: Error while fetching image from S3
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Server error while fetching profile image
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occured while fetching the Profile Image
+ */
 commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getProfileImage);
+
+/**
+ * @swagger
+ * /forgotPassword:
+ *   post:
+ *     summary: Generate temporary password and send to registered email
+ *     tags: 
+ *     - Common
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 format: email
+ *                 example: johndoe@example.com
+ *     responses:
+ *       200:
+ *         description: Temporary password sent successfully
+ *       401:
+ *         description: Unauthorized (Invalid or missing JWT)
+ *       500:
+ *         description: Server error
+ */
 commonRouter.post('/forgotPassword', forgotPasswordController.forgotPassword);
+
+/**
+ * @swagger
+ * /fetchEmployeePackageDetailsById:
+ *   post:
+ *     summary: Fetch Employee Package Details By ID
+ *     description: Returns employee package details including packages, tasks and filtered timesheet data between startDate and endDate.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - employeeId
+ *               - startDate
+ *               - endDate
+ *             properties:
+ *               employeeId:
+ *                 type: string
+ *                 description: Optional. If provided, data will be fetched for this employee instead of userId.
+ *                 example: "64f1c2e8a1234567890abcdf"
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-01-01"
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2025-01-31"
+ *     responses:
+ *       200:
+ *         description: Successfully fetched employee package details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 employeePackageDetails:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "65a2c9e8a1234567890abcde"
+ *                       employeeId:
+ *                         type: string
+ *                         example: "64f1c2e8a1234567890abcde"
+ *                       packages:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             packageId:
+ *                               type: object
+ *                               description: Populated package details
+ *                             tasks:
+ *                               type: array
+ *                               items:
+ *                                 type: object
+ *                                 properties:
+ *                                   taskId:
+ *                                     type: object
+ *                                     description: Populated task details
+ *                                   timesheet:
+ *                                     type: array
+ *                                     items:
+ *                                       type: object
+ *                                       properties:
+ *                                         date:
+ *                                           type: string
+ *                                           format: date
+ *                                           example: "2025-01-15"
+ *                                         hours:
+ *                                           type: number
+ *                                           example: 8
+ *       400:
+ *         description: Missing required startDate or endDate
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 success: false
+ *                 message: "FROM date and TO date are required !!"
+ *       500:
+ *         description: Internal server error while fetching package details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 success: false
+ *                 message: "Error while fetching employee package details"
+ */
 commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT, employeePackageDetailsByIdController.employeePackageDetailsByIdController);
+
+/**
+ * @swagger
+ * /updateEmployeeTimesheet:
+ *   put:
+ *     summary: Update Employee Timesheet
+ *     description: Updates employee timesheet entries for specific packages and tasks. Only provided fields (except _id and date) will be updated.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - packages
+ *             properties:
+ *               packages:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - packageId
+ *                     - tasks
+ *                   properties:
+ *                     packageId:
+ *                       type: string
+ *                       example: "681aedaae9ba3f1f97143cf3"
+ *                     tasks:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         required:
+ *                           - taskId
+ *                           - timesheet
+ *                         properties:
+ *                           taskId:
+ *                             type: string
+ *                             example: "684a6dea7bc74ad8b336e305"
+ *                           timesheet:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               required:
+ *                                 - date
+ *                               properties:
+ *                                 date:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   example: "2025-06-28T18:30:00.000Z"
+ *                                 isHoliday:
+ *                                   type: boolean
+ *                                   example: false
+ *                                 isVacation:
+ *                                   type: boolean
+ *                                   example: false
+ *                                 isWeekOff:
+ *                                   type: boolean
+ *                                   example: false
+ *                                 hours:
+ *                                   type: number
+ *                                   example: 8
+ *                                 comments:
+ *                                   type: string
+ *                                   example: "working on Nodejs project"
+ *                                 leaveReason:
+ *                                   type: string
+ *                                   example: ""
+ *                                 status:
+ *                                   type: string
+ *                                   example: "SUBMITTED AND WAITING FOR APPROVAL"
+ *     responses:
+ *       200:
+ *         description: Timesheet updated successfully or validation response
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterUpdateTimesheet:
+ *                   type: object
+ *                   description: MongoDB update result object
+ *                 message:
+ *                   type: string
+ *                   example: "No valid updates found in payload"
+ *       500:
+ *         description: Internal server error while updating timesheet
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               example:
+ *                 success: false
+ *                 message: "Error while updating employee timesheet"
+ */
 commonRouter.put('/updateEmployeeTimesheet', validateJWT, updateEmployeeTimesheetController.updateEmployeeTimesheetController);
+
+/**
+ * @swagger
+ * /downloadSalarySlip:
+ *   post:
+ *     summary: Download a specific salary slip
+ *     description: Returns a pre-signed S3 URL for downloading a specific salary slip based on employee name, month, and year. Admin/SuperAdmin users can download any employee's salary slips, while regular employees can only download their own.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - mongoId
+ *               - fullName
+ *               - month
+ *               - year
+ *             properties:
+ *               mongoId:
+ *                 type: string
+ *                 description: MongoDB ID of the employee (must match authenticated user)
+ *                 example: 642f3c1a5e9b8a00123abcde
+ *               fullName:
+ *                 type: string
+ *                 description: Full name of the employee
+ *                 example: John Doe
+ *               month:
+ *                 type: string
+ *                 description: 3-letter month abbreviation
+ *                 example: Feb
+ *               year:
+ *                 type: string
+ *                 description: 4-digit year
+ *                 example: "2026"
+ *     responses:
+ *       200:
+ *         description: Successfully generated download URL
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Salary slip download URL fetched successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     downloadUrl:
+ *                       type: string
+ *                       format: uri
+ *                       description: Pre-signed S3 URL valid for 5 minutes
+ *                       example: https://srytal-documents.s3.amazonaws.com/SalarySlips/...
+ *                     fileName:
+ *                       type: string
+ *                       example: John-Doe-Feb-2026.pdf
+ *       400:
+ *         description: Missing or invalid parameters
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid request parameters. mongoId, fullName, month, and year are required
+ *       401:
+ *         description: Unauthorized (JWT missing or invalid)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No token provided !
+ *       403:
+ *         description: Forbidden - Non-admin user attempting to access another employee's salary slips
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: You are not authorized to access this employee's salary slips
+ *       404:
+ *         description: Salary slip not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Salary slip not found for the specified month and year
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occurred while fetching salary slip download URL
+ */
+commonRouter.post('/downloadSalarySlip', validateJWT, downloadSalarySlipController.downloadSalarySlipController);
 
 export default commonRouter;
