@@ -98,11 +98,380 @@ commonRouter.post('/login', commonController.login);
 commonRouter.get('/getVisitorCount', commonController.updateVisitorCount);
 commonRouter.post('/sendContactUsMail', sendContactUsMailController.sendContactUsMail);
 commonRouter.post('/updateApplicationWalkThrough', updateApplicationWalkThroughController.updateApplicationWalkThrough);
+
+/**
+ * @swagger
+ * /updatePassword:
+ *   post:
+ *     summary: Update user password
+ *     tags: 
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - oldPassword
+ *               - newPassword
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: "64f1c9e9e8a3b2a4c8f12345"
+ *               oldPassword:
+ *                 type: string
+ *                 example: "Temp@123"
+ *               newPassword:
+ *                 type: string
+ *                 example: "NewStrong@123"
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Password updated Successfully !
+ *       401:
+ *         description: Unauthorized / Invalid password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Temporary password is not matched !
+ *       500:
+ *         description: Server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occured while updating the password !
+ */
 commonRouter.post('/updatePassword', validateJWT, updatePasswordController.updatePassword);
+
+/**
+ * @swagger
+ * /getOrganizationThemes/{organization_name}:
+ *   get:
+ *     summary: Get themes by organization name
+ *     tags: 
+ *       - Common
+ *     parameters:
+ *       - in: path
+ *         name: organization_name
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Name of the organization
+ *         example: "AcmeCorp"
+ *     responses:
+ *       200:
+ *         description: Themes fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 themesResponse:
+ *                   type: object
+ *                   description: Organization themes data
+ *                   example:
+ *                     _id: "65a123abc456def789012345"
+ *                     organization_name: "AcmeCorp"
+ *                     primaryColor: "#1976d2"
+ *                     secondaryColor: "#ffffff"
+ *                     logoUrl: "https://example.com/logo.png"
+ *       500:
+ *         description: Error while fetching organization themes
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occured while fetching the themes !
+ */
 commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThemesController.getOrganizationThemes);
+
+/**
+ * @swagger
+ * /getEmployeeDetails:
+ *   get:
+ *     summary: Get employee details by user ID
+ *     tags: 
+ *      - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Employee user ID
+ *         example: "65b1f9e8a3c2d4f123456789"
+ *     responses:
+ *       200:
+ *         description: Employee details fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 employeeDetails:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: string
+ *                       example: "65b1f9e8a3c2d4f123456789"
+ *                     firstName:
+ *                       type: string
+ *                       example: John
+ *                     lastName:
+ *                       type: string
+ *                       example: Doe
+ *                     email:
+ *                       type: string
+ *                       example: john.doe@example.com
+ *                     mobileNumber:
+ *                       type: string
+ *                       example: "9876543210"
+ *                     bloodGroup:
+ *                       type: object
+ *                       description: Blood group details 
+ *                     bankDetailsInfo:
+ *                       type: object
+ *                       description: Bank details of employee
+ *                     employeeRole:
+ *                       type: object
+ *                       description: Employee role details 
+ *                     employmentType:
+ *                       type: object
+ *                       description: Employment type details
+ *                     organization:
+ *                       type: object
+ *                       description: Organization details 
+ *                     userRole:
+ *                       type: string
+ *                       example: EMPLOYEE
+ *                     passwordResetRequired:
+ *                       type: boolean
+ *                       example: false
+ *                     employeeId:
+ *                       type: string
+ *                       example: EMP001
+ *                     dateOfBirth:
+ *                       type: string
+ *                       format: date
+ *                       example: "1995-08-15"
+ *                     presentAddress:
+ *                       type: string
+ *                       example: Hyderabad, India
+ *                     permanentAddress:
+ *                       type: string
+ *                       example: Hyderabad, India
+ *       500:
+ *         description: Error while fetching employee details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error in fetching employee details
+ */
 commonRouter.get('/getEmployeeDetails', validateJWT, getEmployeeDetailsController.getEmployeeDetails);
+
+/**
+ * @swagger
+ * /uploadProfileImage:
+ *   post:
+ *     summary: Upload employee profile image
+ *     tags: 
+ *      - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - userId
+ *               - profileImage
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 example: "65b1f9e8a3c2d4f123456789"
+ *               profileImage:
+ *                 type: string
+ *                 format: binary
+ *                 description: Profile image file (jpg, png, etc.)
+ *     responses:
+ *       200:
+ *         description: Profile image uploaded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: No file uploaded
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: No file uploaded.
+ *       401:
+ *         description: Unauthorized or update failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Error while uploading profile image
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occured while updating the Profile Image
+ */
 commonRouter.post('/uploadProfileImage', upload.single('profileImage'), validateJWT, uploadProfileImageController.uploadProfileImage);
+
+/**
+ * @swagger
+ * /getProfileImage:
+ *   get:
+ *     summary: Get employee profile image
+ *     tags: 
+ *     - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Employee user ID
+ *         example: "65b1f9e8a3c2d4f123456789"
+ *     responses:
+ *       200:
+ *         description: Profile image fetched successfully
+ *         content:
+ *           image/jpeg:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *           image/png:
+ *             schema:
+ *               type: string
+ *               format: binary
+ *       401:
+ *         description: Error while fetching image from S3
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Server error while fetching profile image
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occured while fetching the Profile Image
+ */
 commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getProfileImage);
+
+/**
+ * @swagger
+ * /forgotPassword:
+ *   post:
+ *     summary: Generate temporary password and send to registered email
+ *     tags: 
+ *     - Common
+ *     security:
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - username
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 format: email
+ *                 example: johndoe@example.com
+ *     responses:
+ *       200:
+ *         description: Temporary password sent successfully
+ *       401:
+ *         description: Unauthorized (Invalid or missing JWT)
+ *       500:
+ *         description: Server error
+ */
 commonRouter.post('/forgotPassword', forgotPasswordController.forgotPassword);
 commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT, employeePackageDetailsByIdController.employeePackageDetailsByIdController);
 commonRouter.put('/updateEmployeeTimesheet', validateJWT, updateEmployeeTimesheetController.updateEmployeeTimesheetController);
@@ -114,7 +483,7 @@ commonRouter.put('/updateEmployeeTimesheet', validateJWT, updateEmployeeTimeshee
  *     summary: Download a specific salary slip
  *     description: Returns a pre-signed S3 URL for downloading a specific salary slip based on employee name, month, and year. Admin/SuperAdmin users can download any employee's salary slips, while regular employees can only download their own.
  *     tags:
- *       - common
+ *       - Common
  *     security:
  *       - BearerAuth: []
  *     requestBody:
