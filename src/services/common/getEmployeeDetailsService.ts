@@ -34,7 +34,9 @@ const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => 
               employeeId: employee.employeeId,
               dateOfBirth: employee.dateOfBirth,
               presentAddress: employee.presentAddress,
-              permanentAddress: employee.permanentAddress
+              permanentAddress: employee.permanentAddress,
+              aadharNumber: employee.aadharNumber,
+              panNumber: employee.panNumber,
             }
           });
         }
