@@ -12,6 +12,7 @@ const userSchema = joi_1.default.object({
     mobileNumber: joi_1.default.number().integer().min(0).optional().allow(''),
     bloodGroup: joi_1.default.string().optional().allow(''),
     bankDetailsInfo: {
+        bankName: joi_1.default.string().optional().allow(''),
         accountHolderName: joi_1.default.string().optional().allow(''),
         accountNumber: joi_1.default.string().optional().allow(''),
         ifscCode: joi_1.default.string().optional().allow(''),

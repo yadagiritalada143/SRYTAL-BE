@@ -8,9 +8,10 @@ const employeeSalarySlipMessage_1 = require("../../constants/common/employeeSala
 const userModel_1 = __importDefault(require("../../model/userModel"));
 const ADMIN_ROLES = ['admin', 'SuperAdmin'];
 const downloadSalarySlipController = async (req, res) => {
+    var _a;
     try {
         const { mongoId, fullName, month, year } = req.body;
-        const authenticatedUserId = req.body.userId;
+        const authenticatedUserId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
         // Validate required fields
         if (!mongoId || !fullName || !month || !year) {
             return res.status(employeeSalarySlipMessage_1.HTTP_STATUS.BAD_REQUEST).json({
