@@ -228,6 +228,108 @@ adminRouter.post('/registerEmployeeByAdmin', validateJWT_1.default, (0, validate
  *                   example: "Error while fetching user details"
  */
 adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT_1.default, getEmployeeDetailsByAdminController_1.default.getUserDetails);
+/**
+ * @swagger
+ * /admin/updateEmployeeDetailsByAdmin:
+ *   put:
+ *     summary: Update employee profile by admin
+ *     description: Updates employee profile fields using employee email as identifier.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: Email of the employee to update
+ *                 example: employee@example.com
+ *               firstName:
+ *                 type: string
+ *                 example: John
+ *               lastName:
+ *                 type: string
+ *                 example: Doe
+ *               mobileNumber:
+ *                 type: string
+ *                 example: "9876543210"
+ *               bloodGroup:
+ *                 type: string
+ *                 description: ObjectId reference of Bloodgroup document
+ *                 example: 65f1c2e8a1234567890abcd1
+ *               bankDetailsInfo:
+ *                 type: object
+ *                 properties:
+ *                   bankName:
+ *                     type: string
+ *                     example: State Bank of India
+ *                   accountHolderName:
+ *                     type: string
+ *                     example: John Doe
+ *                   accountNumber:
+ *                     type: string
+ *                     example: "1234567890"
+ *                   ifscCode:
+ *                     type: string
+ *                     example: SBIN0001234
+ *               employmentType:
+ *                 type: string
+ *                 description: ObjectId reference of Employmenttype document
+ *                 example: 65f1c2e8a1234567890abcd2
+ *               employeeRole:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: Array of ObjectId references of Employeerole documents
+ *                 example:
+ *                   - 65f1c2e8a1234567890abcd3
+ *                   - 65f1c2e8a1234567890abcd4
+ *               employeeId:
+ *                 type: string
+ *                 example: EMP001
+ *               dateOfBirth:
+ *                 type: string
+ *                 format: date
+ *                 example: 1995-08-15
+ *               aadharNumber:
+ *                 type: string
+ *                 example: "123412341234"
+ *               panCardNumber:
+ *                 type: string
+ *                 example: ABCDE1234F
+ *               presentAddress:
+ *                 type: string
+ *                 example: 123 Street, City, State
+ *               permanentAddress:
+ *                 type: string
+ *                 example: 456 Street, City, State
+ *             additionalProperties: false
+ *     responses:
+ *       200:
+ *         description: Employee profile updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized - Invalid or missing JWT
+ *       500:
+ *         description: Internal server error
+ */
 adminRouter.put('/updateEmployeeDetailsByAdmin', (0, validateProfileUpdate_1.default)(userSchema_1.default), validateJWT_1.default, updateEmployeeDetailsByAdminController_1.default.updateProfile);
 /**
  * @swagger

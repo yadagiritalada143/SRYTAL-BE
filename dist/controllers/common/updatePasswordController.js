@@ -5,7 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const updatePasswordService_1 = __importDefault(require("../../services/common/updatePasswordService"));
 const updatePassword = (req, res) => {
-    updatePasswordService_1.default.updatePassword(req.body)
+    const updatePasswordDetails = Object.assign(Object.assign({}, req.body), req.user);
+    updatePasswordService_1.default.updatePassword(updatePasswordDetails)
         .then((responseAfterPasswordUpdate) => {
         if (!!responseAfterPasswordUpdate && responseAfterPasswordUpdate.success) {
             res.status(200).json(responseAfterPasswordUpdate);

@@ -11,11 +11,12 @@ const randomPasswordGenerate = () => {
     return (Math.floor(Math.random() * 90000000) + 10000000) + '';
 };
 const register = (req, res) => {
+    const { organizationId } = req.user || {};
     const newRegistrationData = req.body;
     const randomPassword = randomPasswordGenerate();
     newRegistrationData.password = randomPassword;
     newRegistrationData.passwordResetRequired = true;
-    newRegistrationData.organization = newRegistrationData.organizationId;
+    newRegistrationData.organization = organizationId;
     newRegistrationData.applicationWalkThrough = 1;
     newRegistrationData.isDeleted = false;
     registerEmployeeByAdminService_1.default

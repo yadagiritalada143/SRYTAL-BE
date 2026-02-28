@@ -15,8 +15,10 @@ const validateJWT = (req, res, next) => {
             if (error) {
                 return res.status(403).json({ message: "Invalid token !" });
             }
-            req.body.userId = decoded.userId || '';
-            req.body.organizationId = decoded.organizationId || '';
+            req.user = {
+                userId: decoded.userId || '',
+                organizationId: decoded.organizationId || ''
+            };
             next();
         });
     }
