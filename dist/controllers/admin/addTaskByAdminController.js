@@ -6,10 +6,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const addTaskByAdminService_1 = __importDefault(require("../../services/admin/addTaskByAdminService"));
 const taskMessages_1 = require("../../constants/admin/taskMessages");
 const addTaskByAdminController = (req, res) => {
+    var _a;
     let taskDetails = req.body;
     taskDetails.createdAt = new Date();
     taskDetails.lastUpdatedAt = new Date();
-    taskDetails.createdBy = req.body.userId;
+    taskDetails.createdBy = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
     taskDetails.isDeleted = false;
     addTaskByAdminService_1.default
         .addTaskByAdmin(taskDetails)

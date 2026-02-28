@@ -76,7 +76,8 @@ const refreshToken = (req, res) => {
     });
 };
 const logout = (req, res) => {
-    const userId = req.body.userId;
+    var _a;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
     manageCommonService_1.default.logout(userId).then(() => {
         res.status(200).json({ success: true, message: 'Successfully logged out' });
     });

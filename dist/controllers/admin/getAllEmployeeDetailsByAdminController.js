@@ -7,7 +7,7 @@ const commonErrorMessages_1 = require("../../constants/commonErrorMessages");
 const getAllEmployeeDetailsByAdminService_1 = __importDefault(require("../../services/admin/getAllEmployeeDetailsByAdminService"));
 const getAllEmployeeDetails = async (req, res) => {
     try {
-        const { organizationId, userId } = req.body;
+        const { organizationId, userId } = req.user || {};
         const fetchAllEmployeeDetailsByAdminResponse = await getAllEmployeeDetailsByAdminService_1.default.getAllEmployeeDetailsByAdmin(organizationId, userId);
         res.status(commonErrorMessages_1.HTTP_STATUS.OK).json(fetchAllEmployeeDetailsByAdminResponse);
     }

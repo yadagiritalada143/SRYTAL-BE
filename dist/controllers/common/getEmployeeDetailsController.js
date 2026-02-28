@@ -6,8 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const commonErrorMessages_1 = require("../../constants/commonErrorMessages");
 const getEmployeeDetailsService_1 = __importDefault(require("../../services/common/getEmployeeDetailsService"));
 const getEmployeeDetails = (req, res) => {
+    var _a;
     getEmployeeDetailsService_1.default
-        .getEmployeeDetails(req.body.userId)
+        .getEmployeeDetails((_a = req.user) === null || _a === void 0 ? void 0 : _a.userId)
         .then(getEmployeeDetailsResponse => {
         res.status(commonErrorMessages_1.HTTP_STATUS.OK).json(getEmployeeDetailsResponse);
     })
