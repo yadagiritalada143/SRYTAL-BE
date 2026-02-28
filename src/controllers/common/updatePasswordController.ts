@@ -2,7 +2,8 @@ import { Request, Response } from 'express';
 import updatePasswordService from '../../services/common/updatePasswordService';
 
 const updatePassword = (req: Request, res: Response) => {
-    updatePasswordService.updatePassword(req.body)
+    const updatePasswordDetails = { ...req.body, ...req.user };
+    updatePasswordService.updatePassword(updatePasswordDetails)
         .then((responseAfterPasswordUpdate: any) => {
             if (!!responseAfterPasswordUpdate && responseAfterPasswordUpdate.success) {
                 res.status(200).json(responseAfterPasswordUpdate);

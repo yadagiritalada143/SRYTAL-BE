@@ -9,11 +9,12 @@ const randomPasswordGenerate = () => {
 }
 
 const register = (req: Request, res: Response) => {
+    const { organizationId } = req.user || {};
     const newRegistrationData = req.body;
     const randomPassword = randomPasswordGenerate();
     newRegistrationData.password = randomPassword;
     newRegistrationData.passwordResetRequired = true;
-    newRegistrationData.organization = newRegistrationData.organizationId;
+    newRegistrationData.organization = organizationId;
     newRegistrationData.applicationWalkThrough = 1;
     newRegistrationData.isDeleted = false;
     adminSignUpService
