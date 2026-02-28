@@ -18,6 +18,7 @@ const UserSchema = new mongoose.Schema(
     passwordResetRequired: { type: mongoose.Schema.Types.String },
     bloodGroup: { type: mongoose.Schema.Types.ObjectId, ref: Bloodgroup },
     bankDetailsInfo: {
+      bankName: { type: mongoose.Schema.Types.String },
       accountHolderName: { type: mongoose.Schema.Types.String },
       accountNumber: { type: mongoose.Schema.Types.String },
       ifscCode: { type: mongoose.Schema.Types.String },
