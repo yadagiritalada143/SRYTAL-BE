@@ -8,6 +8,7 @@ const userSchema = Joi.object({
     mobileNumber: Joi.number().integer().min(0).optional().allow(''),
     bloodGroup: Joi.string().optional().allow(''),
     bankDetailsInfo: {
+        bankName: Joi.string().optional().allow(''),
         accountHolderName: Joi.string().optional().allow(''),
         accountNumber: Joi.string().optional().allow(''),
         ifscCode: Joi.string().optional().allow(''),
