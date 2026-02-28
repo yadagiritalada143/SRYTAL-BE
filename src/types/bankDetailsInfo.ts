@@ -1,5 +1,6 @@
 type BankDetailsInfo = {
     accountHolderName: string;
+    bankName: string;
     accountNumber: string;
     ifscCode: string;
 };
