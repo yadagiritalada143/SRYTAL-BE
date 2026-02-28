@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { EMPLOYEE_ERRORS,HTTP_STATUS } from '../../constants/commonErrorMessages';
+import { EMPLOYEE_ERRORS, HTTP_STATUS } from '../../constants/commonErrorMessages';
 import getEmployeeDetailsService from '../../services/common/getEmployeeDetailsService';
 
 
 const getEmployeeDetails = (req: Request, res: Response) => {
     getEmployeeDetailsService
-        .getEmployeeDetails(req.body.userId)
+        .getEmployeeDetails(req.user?.userId as string)
         .then(getEmployeeDetailsResponse => {
             res.status(HTTP_STATUS.OK).json(getEmployeeDetailsResponse);
         })

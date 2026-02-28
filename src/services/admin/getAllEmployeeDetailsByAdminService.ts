@@ -1,7 +1,7 @@
 import UserModel from '../../model/userModel';
 import { FetchEmployeeDetailsResponse } from '../../interfaces/user';
 
-const getAllEmployeeDetailsByAdmin = async ( organizationId: string, userId: string ): Promise<FetchEmployeeDetailsResponse> => {
+const getAllEmployeeDetailsByAdmin = async (organizationId: string, userId: string): Promise<FetchEmployeeDetailsResponse> => {
     try {
         const users = await UserModel.find({
             organization: organizationId,
