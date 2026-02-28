@@ -4,12 +4,12 @@ import allEmployeeDetailsServices from '../../services/admin/getAllEmployeeDetai
 
 const getAllEmployeeDetails = async (req: Request, res: Response) => {
     try {
-        const { organizationId, userId } = req.body;
+        const { organizationId, userId } = req.user || {};
 
         const fetchAllEmployeeDetailsByAdminResponse =
             await allEmployeeDetailsServices.getAllEmployeeDetailsByAdmin(
-                organizationId,
-                userId
+                organizationId as string,
+                userId as string
             );
 
         res.status(HTTP_STATUS.OK).json(fetchAllEmployeeDetailsByAdminResponse);

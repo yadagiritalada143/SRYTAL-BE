@@ -8,7 +8,7 @@ const ADMIN_ROLES = ['admin', 'SuperAdmin'];
 const downloadSalarySlipController = async (req: Request, res: Response): Promise<any> => {
     try {
         const { mongoId, fullName, month, year } = req.body;
-        const authenticatedUserId = req.body.userId;
+        const authenticatedUserId = req.user?.userId;
 
         // Validate required fields
         if (!mongoId || !fullName || !month || !year) {
