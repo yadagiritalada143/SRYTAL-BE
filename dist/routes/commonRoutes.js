@@ -50,7 +50,7 @@ commonRouter.get('/', (req, res) => {
  *                 format: password
  *     responses:
  *       200:
- *         description: login Successfully
+ *         description: login Successfully !!
  *         headers:
  *           X-CSRF-Token:
  *             description: CSRF token for frontend protection
@@ -98,6 +98,67 @@ commonRouter.get('/', (req, res) => {
  */
 commonRouter.post('/login', commonController_1.default.login);
 commonRouter.get('/getVisitorCount', commonController_1.default.updateVisitorCount);
+/**
+ * @swagger
+ * /sendContactUsMail:
+ *   post:
+ *     summary: Send Contact Us Email
+ *     description: Sends a contact email to the admin with customer details.
+ *     tags:
+ *      - Common
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - companyName
+ *               - customerEmail
+ *               - subject
+ *               - message
+ *             properties:
+ *               companyName:
+ *                 type: string
+ *                 example: ABC Technologies
+ *               customerEmail:
+ *                 type: string
+ *                 format: email
+ *                 example: customer@example.com
+ *               subject:
+ *                 type: string
+ *                 example: Inquiry about your services
+ *               message:
+ *                 type: string
+ *                 example: We would like to discuss potential collaboration.
+ *     responses:
+ *       200:
+ *         description: Mail sent successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Mail sent successfully !
+ *       500:
+ *         description: Failed to send email
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to send notification email.
+ */
 commonRouter.post('/sendContactUsMail', sendContactUsMailController_1.default.sendContactUsMail);
 /**
  * @swagger
