@@ -375,6 +375,10 @@ export const salarySlipTemplate = `
                         <span class="detail-label">UAN Number:</span>
                         <span class="detail-value">{{uanNumber}}</span>
                     </div>
+                    <div class="detail-row">
+                        <span class="detail-label">PAN Number:</span>
+                        <span class="detail-value">{{panNumber}}</span>
+                    </div>
                 </div>
                 <div>
                     <div class="detail-row">
@@ -397,13 +401,6 @@ export const salarySlipTemplate = `
                         <span class="detail-label">Transaction ID:</span>
                         <span class="detail-value">{{transactionId}}</span>
                     </div>
-                </div>
-            </div>
-            <!-- PAN and UAN on same row -->
-            <div class="details-grid" style="margin-top: 10px;">
-                <div class="detail-row">
-                    <span class="detail-label">PAN Number:</span>
-                    <span class="detail-value">{{panNumber}}</span>
                 </div>
             </div>
         </div>
