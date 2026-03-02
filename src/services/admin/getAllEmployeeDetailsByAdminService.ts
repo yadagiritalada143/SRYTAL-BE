@@ -10,6 +10,7 @@ const formatDate = (date?: Date): string | null => {
         year: 'numeric'
     });
 };
+
 const getAllEmployeeDetailsByAdmin = async (organizationId: string, userId: string): Promise<FetchEmployeeDetailsResponse> => {
     try {
         const users = await UserModel.find({
@@ -39,6 +40,8 @@ const getAllEmployeeDetailsByAdmin = async (organizationId: string, userId: stri
                 employmentType: user.employmentType,
                 employeeRole: user.employeeRole,
                 organization: user.organization,
+                userRole: user.userRole,
+                passwordResetRequired: user.passwordResetRequired,
                 employeeId: user.employeeId,
                 dateOfBirth: formatDate(user.dateOfBirth),
                 aadharNumber: user.aadharNumber,
