@@ -4,6 +4,7 @@ interface FetchUserResponse {
     success: boolean;
     userDetails?: any;
 }
+
 const formatDate = (date?: Date): string | null => {
     if (!date) return null;
 

@@ -57,5 +57,4 @@ const getAllEmployeeDetailsByAdmin = async (organizationId: string, userId: stri
     }
 };
 
-export default { getAllEmployeeDetailsByAdmin }
-
+export default { getAllEmployeeDetailsByAdmin };
