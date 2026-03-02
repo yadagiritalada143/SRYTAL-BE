@@ -37,6 +37,7 @@ const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => 
               permanentAddress: employee.permanentAddress,
               aadharNumber: employee.aadharNumber,
               panNumber: employee.panNumber,
+              dateOfJoining: employee.dateOfJoining
             }
           });
         }
