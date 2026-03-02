@@ -19,6 +19,7 @@ const userSchema = Joi.object({
     dateOfBirth: Joi.date().optional().allow(''),
     panCardNumber: Joi.string().optional().allow(''),
     aadharNumber: Joi.string().optional().allow(''),
+    dateOfJoining: Joi.date().optional().allow(''),
     presentAddress: Joi.string().optional().allow(''),
     permanentAddress: Joi.string().optional().allow('')
 

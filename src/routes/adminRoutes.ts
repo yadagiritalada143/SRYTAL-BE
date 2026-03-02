@@ -305,6 +305,10 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetail
  *               panCardNumber:
  *                 type: string
  *                 example: ABCDE1234F
+ *               dateOfJoining:
+ *                type: string
+ *                format: date
+ *                example: 2020-01-15
  *               presentAddress:
  *                 type: string
  *                 example: 123 Street, City, State
