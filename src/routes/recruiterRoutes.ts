@@ -617,6 +617,101 @@ recruiterRouter.get('/getTalentPoolCandidateById/:id', validateJWT, getTalentPoo
  *                   example: Error adding comment to pool candidate
  */
 recruiterRouter.post('/addCommentToTalentPoolCandidate', validateJWT, addCommentToPoolCandidateController.addCommentToPoolCandidateByRecruiter);
+
+/**
+ * @swagger
+ * /recruiter/updatePoolCandidateByRecruiter:
+ *   post:
+ *     tags:
+ *       - Recruiter
+ *     summary: Update a pool candidate's details by recruiter
+ *     description: This endpoint allows a recruiter to update the details of a talent pool candidate.
+ *     security:
+ *       - BearerAuth: [] 
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - candidateName
+ *               - contact
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: The unique identifier of the pool candidate
+ *                 example: "67bc100d4b1a1a60c257c091"
+ *               candidateName:
+ *                 type: string
+ *                 description: Candidate's name (mandatory)
+ *                 example: "veha"
+ *               contact:
+ *                 type: object
+ *                 required:
+ *                   - email
+ *                   - phone
+ *                 properties:
+ *                   email:
+ *                     type: string
+ *                     format: email
+ *                     description: Candidate's email address (unique & mandatory)
+ *                     example: "vedha@example.com"
+ *                   phone:
+ *                     type: string
+ *                     description: Candidate's phone number (unique & mandatory)
+ *                     example: "9876567898"
+ *               totalYearsOfExperience:
+ *                 type: number
+ *                 description: Candidate's total years of experience
+ *                 example: 10.5
+ *               relaventYearsOfExperience:
+ *                 type: number
+ *                 description: Candidate's relevant years of experience
+ *                 example: 5.7
+ *               evaluatedSkills:
+ *                 type: string
+ *                 description: Skills evaluated for the candidate
+ *                 example: "C, cpp, Java, javascript"
+ *     responses:
+ *       200:
+ *         description: Pool candidate updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       401:
+ *         description: Error updating pool candidate details (unauthorized or invalid data)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Error updating pool candidate details"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Error updating pool candidate details"
+ */
 recruiterRouter.post('/updatePoolCandidateByRecruiter', validateJWT, updatePoolCandidateController.updatePoolCandidateByRecruiter);
 
 export default recruiterRouter;
