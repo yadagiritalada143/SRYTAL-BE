@@ -39,6 +39,7 @@ const UserSchema = new mongoose_1.default.Schema({
     dateOfBirth: { type: mongoose_1.default.Schema.Types.Date },
     aadharNumber: { type: mongoose_1.default.Schema.Types.String },
     panCardNumber: { type: mongoose_1.default.Schema.Types.String },
+    dateOfJoining: { type: mongoose_1.default.Schema.Types.Date },
     presentAddress: { type: mongoose_1.default.Schema.Types.String },
     permanentAddress: { type: mongoose_1.default.Schema.Types.String },
     refreshToken: { type: mongoose_1.default.Schema.Types.String },

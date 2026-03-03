@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.injectDataIntoTemplate = exports.generatePDFWithHeaderFooter = exports.generatePDFFromHTML = void 0;
 const puppeteer_core_1 = __importDefault(require("puppeteer-core"));
 const chromium_1 = __importDefault(require("@sparticuz/chromium"));
+console.warn('[PDFGenerator] Module loaded');
 const defaultPDFOptions = {
     format: 'A4',
     landscape: false,
@@ -20,8 +21,15 @@ const defaultPDFOptions = {
 };
 const getBrowser = async () => {
     const isVercel = process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME;
+    console.warn('[PDFGenerator] getBrowser called');
+    console.warn('[PDFGenerator] Environment Check - VERCEL:', process.env.VERCEL || 'NOT SET');
+    console.warn('[PDFGenerator] Environment Check - AWS_LAMBDA_FUNCTION_NAME:', process.env.AWS_LAMBDA_FUNCTION_NAME || 'NOT SET');
+    console.warn('[PDFGenerator] Using Vercel/Lambda mode:', !!isVercel);
     if (isVercel) {
+        console.warn('[PDFGenerator] Getting chromium executable path for Vercel...');
         const executablePath = await chromium_1.default.executablePath();
+        console.warn('[PDFGenerator] Chromium executable path:', executablePath);
+        console.warn('[PDFGenerator] Launching puppeteer with chromium args...');
         return puppeteer_core_1.default.launch({
             args: chromium_1.default.args,
             defaultViewport: { width: 1920, height: 1080 },
@@ -29,6 +37,7 @@ const getBrowser = async () => {
             headless: true,
         });
     }
+    console.warn('[PDFGenerator] Using local Chrome for development...');
     // Local development - use installed Chrome
     return puppeteer_core_1.default.launch({
         headless: true,
@@ -47,15 +56,25 @@ const getBrowser = async () => {
 };
 const generatePDFFromHTML = async (htmlContent, options = {}) => {
     let browser;
+    console.warn('[PDFGenerator] generatePDFFromHTML called');
+    console.warn('[PDFGenerator] HTML content length:', htmlContent ? htmlContent.length : 0);
+    console.warn('[PDFGenerator] PDF Options:', JSON.stringify(options));
     try {
         const pdfOptions = Object.assign(Object.assign({}, defaultPDFOptions), options);
+        console.warn('[PDFGenerator] Merged PDF Options:', JSON.stringify(pdfOptions));
+        console.warn('[PDFGenerator] Getting browser...');
         browser = await getBrowser();
+        console.warn('[PDFGenerator] Browser launched successfully');
+        console.warn('[PDFGenerator] Creating new page...');
         const page = await browser.newPage();
+        console.warn('[PDFGenerator] Page created, setting content...');
         await page.setContent(htmlContent, {
             waitUntil: 'networkidle0',
         });
+        console.warn('[PDFGenerator] Content set, waiting for fonts...');
         // Wait for fonts to load
         await page.evaluateHandle('document.fonts.ready');
+        console.warn('[PDFGenerator] Fonts loaded, generating PDF...');
         const pdfBuffer = await page.pdf({
             format: pdfOptions.format,
             landscape: pdfOptions.landscape,
@@ -65,13 +84,18 @@ const generatePDFFromHTML = async (htmlContent, options = {}) => {
             footerTemplate: pdfOptions.footerTemplate || '',
             printBackground: pdfOptions.printBackground,
         });
+        console.warn('[PDFGenerator] PDF generated successfully!');
+        console.warn('[PDFGenerator] PDF buffer size:', pdfBuffer.length, 'bytes');
         return {
             success: true,
             pdfBuffer: Buffer.from(pdfBuffer),
         };
     }
     catch (error) {
-        console.error('Error generating PDF:', error);
+        console.error('[PDFGenerator] PDF Generation FAILED!');
+        console.error('[PDFGenerator] Error Name:', error.name);
+        console.error('[PDFGenerator] Error Message:', error.message);
+        console.error('[PDFGenerator] Error Stack:', error.stack);
         return {
             success: false,
             error: error.message || 'Failed to generate PDF',
@@ -79,7 +103,9 @@ const generatePDFFromHTML = async (htmlContent, options = {}) => {
     }
     finally {
         if (browser) {
+            console.warn('[PDFGenerator] Closing browser...');
             await browser.close();
+            console.warn('[PDFGenerator] Browser closed');
         }
     }
 };
