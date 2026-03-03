@@ -5,6 +5,16 @@ interface getEmployeeDetailsResponse {
   employeeDetails?: any;
 }
 
+const formatDate = (date?: Date): string | null => {
+    if (!date) return null;
+
+    return date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+    });
+};
+
 const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => {
   return new Promise((resolve, reject) => {
     UserModel.findOne({ _id: id })
@@ -32,11 +42,12 @@ const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => 
               userRole: employee.userRole,
               passwordResetRequired: employee.passwordResetRequired,
               employeeId: employee.employeeId,
-              dateOfBirth: employee.dateOfBirth,
+              dateOfBirth: formatDate(employee.dateOfBirth),
               presentAddress: employee.presentAddress,
               permanentAddress: employee.permanentAddress,
               aadharNumber: employee.aadharNumber,
               panNumber: employee.panNumber,
+              dateOfJoining: formatDate(employee.dateOfJoining)
             }
           });
         }

@@ -4,6 +4,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const userModel_1 = __importDefault(require("../../model/userModel"));
+const formatDate = (date) => {
+    if (!date)
+        return null;
+    return date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+    });
+};
 const getEmployeeDetails = (id) => {
     return new Promise((resolve, reject) => {
         userModel_1.default.findOne({ _id: id })
@@ -32,11 +41,12 @@ const getEmployeeDetails = (id) => {
                         userRole: employee.userRole,
                         passwordResetRequired: employee.passwordResetRequired,
                         employeeId: employee.employeeId,
-                        dateOfBirth: employee.dateOfBirth,
+                        dateOfBirth: formatDate(employee.dateOfBirth),
                         presentAddress: employee.presentAddress,
                         permanentAddress: employee.permanentAddress,
                         aadharNumber: employee.aadharNumber,
                         panNumber: employee.panNumber,
+                        dateOfJoining: formatDate(employee.dateOfJoining)
                     }
                 });
             }

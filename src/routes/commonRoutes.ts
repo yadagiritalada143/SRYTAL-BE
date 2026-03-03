@@ -355,7 +355,7 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
  *         example: "65b1f9e8a3c2d4f123456789"
  *     responses:
  *       200:
- *         description: Employee details fetched successfully
+ *         description: Employee details fetched successfully !!
  *         content:
  *           application/json:
  *             schema:
@@ -410,6 +410,15 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
  *                       type: string
  *                       format: date
  *                       example: "1995-08-15"
+ *                     panCardNumber:
+ *                      type: string
+ *                      example: ABCDE1234F
+ *                     aadharNumber:
+ *                      type: string
+ *                      example: "1234-5678-9012"
+ *                     dateOfJoining:
+ *                      type: string
+ *                      format: date
  *                     presentAddress:
  *                       type: string
  *                       example: Hyderabad, India
