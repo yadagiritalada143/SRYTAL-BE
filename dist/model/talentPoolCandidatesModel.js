@@ -24,6 +24,8 @@ const TalentPoolCandidatesSchema = new mongoose_1.default.Schema({
             comment: { type: mongoose_1.default.Schema.Types.String },
             updateAt: { type: mongoose_1.default.Schema.Types.Date }
         }],
+    isResumeWithDetailsUpload: { type: mongoose_1.default.Schema.Types.Boolean },
+    isResumeWithoutDetailsUpload: { type: mongoose_1.default.Schema.Types.Boolean },
     createdBy: { type: mongoose_1.default.Schema.Types.ObjectId, ref: userModel_1.default },
     createdAt: { type: mongoose_1.default.Schema.Types.Date },
     lastUpdatedAt: { type: mongoose_1.default.Schema.Types.Date }

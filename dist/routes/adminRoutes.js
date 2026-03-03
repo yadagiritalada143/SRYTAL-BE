@@ -305,6 +305,10 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT_1.default, getEmpl
  *               panCardNumber:
  *                 type: string
  *                 example: ABCDE1234F
+ *               dateOfJoining:
+ *                type: string
+ *                format: date
+ *                example: 2020-01-15
  *               presentAddress:
  *                 type: string
  *                 example: 123 Street, City, State
@@ -732,14 +736,661 @@ adminRouter.get('/getAllPackagesByAdmin', validateJWT_1.default, getAllPackagesB
  *                   example: Failed to fetch package details
  */
 adminRouter.get('/getPackageDetailsByAdmin/:id', validateJWT_1.default, getPackageDetailsByAdminController_1.default.getPackageDetailsByAdmin);
+/**
+ * @swagger
+ * /admin/deletePackageByAdmin/{id}:
+ *   delete:
+ *     summary: Delete Package by Admin
+ *     description: |
+ *       Deletes a package by Admin.
+ *       - If `confirmDelete` is true → Hard delete (permanently removes package).
+ *       - If `confirmDelete` is false → Soft delete (sets isDeleted to true).
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Package ID to delete
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               confirmDelete:
+ *                 type: boolean
+ *                 example: true
+ *             required:
+ *               - confirmDelete
+ *     responses:
+ *       200:
+ *         description: Package deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       500:
+ *         description: Server error while deleting package
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting package
+ */
 adminRouter.delete('/deletePackageByAdmin/:id', validateJWT_1.default, deletePackageByAdminController_1.default.deletePackageByAdmin);
+/**
+ * @swagger
+ * /admin/updatePackageByAdmin:
+ *   put:
+ *     summary: Update Package By Admin
+ *     description: Allows an admin to update an existing package using its ID.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - detailsToUpdate
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the package
+ *                 example: "67ff51b17ef83b9fefaf6d31"
+ *               detailsToUpdate:
+ *                 type: object
+ *                 description: Fields to update in the package
+ *                 properties:
+ *                   title:
+ *                     type: string
+ *                     example: "Srytal Development Package"
+ *                   description:
+ *                     type: string
+ *                     example: "Comprehensive package for Srytal development projects"
+ *                   approvers:
+ *                     type: array
+ *                     items:
+ *                       type: string
+ *                     example:
+ *                       - "67a7a2e92fe4be54addbd36f"
+ *     responses:
+ *       200:
+ *         description: Package updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterUpdate:
+ *                   type: object
+ *                   example:
+ *                     acknowledged: true
+ *                     matchedCount: 1
+ *                     modifiedCount: 1
+ *       500:
+ *         description: Package updating failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Package updating failed
+ */
 adminRouter.put('/updatePackageByAdmin', validateJWT_1.default, updatePackageByAdminController_1.default.updatePackageByAdminController);
+/**
+ * @swagger
+ * /admin/addTaskByAdmin:
+ *   post:
+ *     summary: Add Task By Admin
+ *     description: Creates a new task and assigns it to a package.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - packageId
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 description: Title of the task
+ *                 example: "This is testing add task-ramya-1"
+ *               packageId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the package
+ *                 example: "67ff51d17ef83b9fefaf6d35"
+ *               isDeleted:
+ *                 type: boolean
+ *                 description: Indicates if the task is deleted (will be overridden to false by backend)
+ *                 example: false
+ *     responses:
+ *       200:
+ *         description: Task added successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 _id:
+ *                   type: string
+ *                   example: "6801ab23ef83b9fefaf6d999"
+ *                 title:
+ *                   type: string
+ *                   example: "This is testing add task-ramya-1"
+ *                 packageId:
+ *                   type: string
+ *                   example: "67ff51d17ef83b9fefaf6d35"
+ *                 createdAt:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2026-03-03T10:15:30.000Z"
+ *                 lastUpdatedAt:
+ *                   type: string
+ *                   format: date-time
+ *                   example: "2026-03-03T10:15:30.000Z"
+ *                 createdBy:
+ *                   type: string
+ *                   example: "67a7a2e92fe4be54addbd36f"
+ *                 isDeleted:
+ *                   type: boolean
+ *                   example: false
+ *       500:
+ *         description: Error while adding task
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Task adding failed
+ */
 adminRouter.post('/addTaskByAdmin', validateJWT_1.default, addTaskByAdminController_1.default.addTaskByAdminController);
+/**
+ * @swagger
+ * /admin/updateTaskByAdmin:
+ *   put:
+ *     summary: Update Task By Admin
+ *     description: Updates an existing task by its ID.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the task
+ *                 example: "6801ab23ef83b9fefaf6d999"
+ *               title:
+ *                 type: string
+ *                 description: Updated title of the task
+ *                 example: "Updated task title"
+ *     responses:
+ *       200:
+ *         description: Task updated successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterUpdate:
+ *                   type: object
+ *                   description: MongoDB update result object
+ *                   example:
+ *                     acknowledged: true
+ *                     matchedCount: 1
+ *                     modifiedCount: 1
+ *       500:
+ *         description: Error while updating task
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Task updating failed
+ */
 adminRouter.put('/updateTaskByAdmin', validateJWT_1.default, updateTaskByAdminController_1.default.updateTaskByAdminController);
+/**
+ * @swagger
+ * /admin/deleteTaskByAdmin/{id}:
+ *   delete:
+ *     summary: Delete Task By Admin
+ *     description: |
+ *       Deletes a task by ID.
+ *       - If `confirmDelete` is true → performs a hard delete (permanent removal).
+ *       - If `confirmDelete` is false or not provided → performs a soft delete (sets isDeleted to true).
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB ObjectId of the task to delete
+ *         example: "6801ab23ef83b9fefaf6d999"
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               confirmDelete:
+ *                 type: boolean
+ *                 description: Set to true for permanent deletion, false for soft delete
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Task deleted successfully (soft or hard)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       500:
+ *         description: Error while deleting task
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Task deletion failed
+ */
 adminRouter.delete('/deleteTaskByAdmin/:id', validateJWT_1.default, deleteTaskByAdminController_1.default.deleteTaskByAdmin);
+/**
+ * @swagger
+ * /admin/addPackagetoEmployeeByAdmin:
+ *   post:
+ *     summary: Assign Package to Employee By Admin
+ *     description: |
+ *       Assigns one or more packages (with tasks) to an employee.
+ *       - If assignment already exists, it updates it.
+ *       - Otherwise, it creates a new record.
+ *       - The backend auto-generates monthly timesheet entries for each task.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - employeeId
+ *               - packages
+ *             properties:
+ *               employeeId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the employee
+ *                 example: "67aa1c35a9dcb98f11fc14d3"
+ *               packages:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - packageId
+ *                     - tasks
+ *                   properties:
+ *                     packageId:
+ *                       type: string
+ *                       description: MongoDB ObjectId of the package
+ *                       example: "67ff51d17ef83b9fefaf6d35"
+ *                     tasks:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         required:
+ *                           - taskId
+ *                         properties:
+ *                           taskId:
+ *                             type: string
+ *                             description: MongoDB ObjectId of the task
+ *                             example: "681396d992af6ac8a2a069cc"
+ *                           startDate:
+ *                             type: string
+ *                             format: date
+ *                             example: "2025-05-07"
+ *                           createdAt:
+ *                             type: string
+ *                             format: date
+ *                             example: "2025-05-10"
+ *                           currentMonthLastDay:
+ *                             type: string
+ *                             example: "Sat May 31 2025"
+ *     responses:
+ *       200:
+ *         description: Package assigned or updated successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       500:
+ *         description: Error while assigning package to employee
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while adding package to employee
+ */
 adminRouter.post('/addPackagetoEmployeeByAdmin', validateJWT_1.default, addPackageToEmployeeByAdminController_1.default.addPackageToEmployeeByAdmin);
+/**
+ * @swagger
+ * /admin/getEmployeePackagesByAdmin/{employeeId}:
+ *   get:
+ *     summary: Get Employee Packages By Admin
+ *     description: |
+ *       Retrieves all packages assigned to a specific employee.
+ *       - Populates package details.
+ *       - Populates task details.
+ *       - Excludes timesheet data from tasks in the response.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: employeeId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: MongoDB ObjectId of the employee
+ *         example: "67aa1c35a9dcb98f11fc14d3"
+ *     responses:
+ *       200:
+ *         description: Employee package details fetched successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 employeePackageDetails:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "6815a3c892af6ac8a2a01000"
+ *                       employeeId:
+ *                         type: string
+ *                         example: "67aa1c35a9dcb98f11fc14d3"
+ *                       packages:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             packageId:
+ *                               type: object
+ *                               description: Populated package details
+ *                               properties:
+ *                                 _id:
+ *                                   type: string
+ *                                   example: "67ff51d17ef83b9fefaf6d35"
+ *                                 title:
+ *                                   type: string
+ *                                   example: "Internal Development Package"
+ *                                 description:
+ *                                   type: string
+ *                                   example: "Handles internal development activities"
+ *                             tasks:
+ *                               type: array
+ *                               items:
+ *                                 type: object
+ *                                 description: Populated task details (without timesheet)
+ *                                 properties:
+ *                                   taskId:
+ *                                     type: object
+ *                                     properties:
+ *                                       _id:
+ *                                         type: string
+ *                                         example: "681396d992af6ac8a2a069cc"
+ *                                       title:
+ *                                         type: string
+ *                                         example: "Backend API Development"
+ *                                   timeSheetStatus:
+ *                                     type: string
+ *                                     example: "Submitted"
+ *                                   startDate:
+ *                                     type: string
+ *                                     format: date
+ *                                     example: "2025-05-07"
+ *                                   createdAt:
+ *                                     type: string
+ *                                     format: date
+ *                                     example: "2025-05-10"
+ *                                   currentMonthLastDay:
+ *                                     type: string
+ *                                     example: "Sat May 31 2025"
+ *       500:
+ *         description: Error while fetching employee package details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while fetching employee package details
+ */
 adminRouter.get('/getEmployeePackagesByAdmin/:employeeId', validateJWT_1.default, getEmployeePackagesByAdminController_1.default.getEmployeePackageDetailsByAdmin);
+/**
+ * @swagger
+ * /admin/deleteEmployeePackagesByAdmin:
+ *   delete:
+ *     summary: Delete Employee Package By Admin
+ *     description: |
+ *       Removes a specific package assigned to an employee.
+ *
+ *       - If the employee has multiple packages → only the specified package is removed.
+ *       - If it is the last remaining package → the entire employee-package document is deleted.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - employeeId
+ *               - packageId
+ *             properties:
+ *               employeeId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the employee
+ *                 example: "67aa1c35a9dcb98f11fc14d3"
+ *               packageId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the package to remove
+ *                 example: "67ff51d17ef83b9fefaf6d35"
+ *     responses:
+ *       200:
+ *         description: Employee package deleted successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterDelete:
+ *                   type: object
+ *                   description: Updated document or delete result
+ *                   example:
+ *                     acknowledged: true
+ *                     deletedCount: 1
+ *       500:
+ *         description: Error while deleting employee package
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while deleting employee package
+ */
 adminRouter.delete('/deleteEmployeePackagesByAdmin', validateJWT_1.default, deleteEmployeePackagesByAdminController_1.default.deleteEmployeePackageByAdmin);
+/**
+ * @swagger
+ * /admin/deleteEmployeeTaskByAdmin:
+ *   delete:
+ *     summary: Delete a Task Assigned to an Employee By Admin
+ *     description: |
+ *       Deletes a specific task from a package assigned to an employee.
+ *       - Removes only the specified task from the employee’s package.
+ *       - Updates the employee-package document in MongoDB.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - employeeId
+ *               - packageId
+ *               - taskId
+ *             properties:
+ *               employeeId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the employee
+ *                 example: "67aa1c35a9dcb98f11fc14d3"
+ *               packageId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the package containing the task
+ *                 example: "67ff51d17ef83b9fefaf6d35"
+ *               taskId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the task to delete
+ *                 example: "681396d992af6ac8a2a069cc"
+ *     responses:
+ *       200:
+ *         description: Task deleted successfully from employee package
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterDelete:
+ *                   type: object
+ *                   description: Updated employee-package document after task removal
+ *                   example:
+ *                     _id: "6815a3c892af6ac8a2a01000"
+ *                     employeeId: "67aa1c35a9dcb98f11fc14d3"
+ *                     packages:
+ *                       - packageId:
+ *                           _id: "67ff51d17ef83b9fefaf6d35"
+ *                         tasks: []
+ *       500:
+ *         description: Error while deleting employee task
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while deleting employee task
+ */
 adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT_1.default, deleteEmployeeTaskByAdminController_1.default.deleteEmployeeTaskByAdmin);
 /**
  * @swagger
@@ -919,7 +1570,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT_1.default, deleteEm
  *                   type: string
  *                   example: An unexpected error occurred while generating salary slip
  */
-adminRouter.post('/generateSalarySlip', validateJWT_1.default, generateSalarySlipByAdminController_1.default.generateSalarySlip);
+adminRouter.post('/generateSalarySlip', generateSalarySlipByAdminController_1.default.generateSalarySlip);
 /**
  * @swagger
  * /admin/previewSalarySlip:
