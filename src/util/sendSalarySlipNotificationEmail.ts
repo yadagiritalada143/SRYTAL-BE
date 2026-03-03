@@ -2,6 +2,8 @@ import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { ISalarySlipEmailDetails } from '../interfaces/salarySlip';
 
+console.warn('[SalarySlipEmail] Module loaded');
+
 const formatPayDate = (dateString: string): string => {
   const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
   const parts = dateString.split('-');
@@ -26,9 +28,32 @@ const emailConfiguration: any = {
   }
 };
 
+// Log email configuration status for debugging
+console.warn('[SalarySlipEmail] Email Configuration Check:');
+console.warn('[SalarySlipEmail] EMAIL_CONFIG_SERVICE:', process.env.EMAIL_CONFIG_SERVICE || 'NOT SET');
+console.warn('[SalarySlipEmail] EMAIL_CONFIG_HOST:', process.env.EMAIL_CONFIG_HOST || 'NOT SET');
+console.warn('[SalarySlipEmail] EMAIL_CONFIG_PORT:', process.env.EMAIL_CONFIG_PORT || 'NOT SET');
+console.warn('[SalarySlipEmail] EMAIL_CONFIG_SECURE:', process.env.EMAIL_CONFIG_SECURE || 'NOT SET');
+console.warn('[SalarySlipEmail] EMAIL_CONFIG_AUTH_USER:', process.env.EMAIL_CONFIG_AUTH_USER ? 'SET' : 'NOT SET');
+console.warn('[SalarySlipEmail] EMAIL_CONFIG_AUTH_PASS:', process.env.EMAIL_CONFIG_AUTH_PASS ? 'SET (length: ' + process.env.EMAIL_CONFIG_AUTH_PASS.length + ')' : 'NOT SET');
+console.warn('[SalarySlipEmail] EMAIL_FROM:', process.env.EMAIL_FROM || 'NOT SET');
+
 const sendSalarySlipNotificationEmail = async (details: ISalarySlipEmailDetails): Promise<void> => {
+  console.warn('[SalarySlipEmail] sendSalarySlipNotificationEmail called');
+  console.warn('[SalarySlipEmail] Employee Name:', details.employeeName);
+  console.warn('[SalarySlipEmail] Employee Email:', details.employeeEmail);
+  console.warn('[SalarySlipEmail] Pay Period:', details.payPeriod);
+  console.warn('[SalarySlipEmail] Pay Date:', details.payDate);
+
+  if (!details.employeeEmail) {
+    console.error('[SalarySlipEmail] ERROR: Employee email is missing!');
+    return;
+  }
+
   try {
+    console.warn('[SalarySlipEmail] Creating nodemailer transporter...');
     const transporter = nodemailer.createTransport(emailConfiguration);
+    console.warn('[SalarySlipEmail] Transporter created successfully');
 
     const mailBody = `
 <html>
@@ -95,10 +120,26 @@ const sendSalarySlipNotificationEmail = async (details: ISalarySlipEmailDetails)
       html: mailBody,
     };
 
-    await transporter.sendMail(mailOptions);
-    console.log(`Salary slip notification email sent successfully to ${details.employeeEmail}`);
-  } catch (error) {
-    console.error(`Error sending salary slip notification email to ${details.employeeEmail}:`, error);
+    console.warn('[SalarySlipEmail] Mail Options:', JSON.stringify({
+      from: mailOptions.from,
+      to: mailOptions.to,
+      subject: mailOptions.subject,
+      htmlLength: mailBody.length
+    }));
+    console.warn('[SalarySlipEmail] Sending email...');
+
+    const result = await transporter.sendMail(mailOptions);
+    console.warn('[SalarySlipEmail] Email sent SUCCESS!');
+    console.warn('[SalarySlipEmail] Message ID:', result.messageId);
+    console.warn('[SalarySlipEmail] Response:', result.response);
+    console.warn(`[SalarySlipEmail] Salary slip notification email sent successfully to ${details.employeeEmail}`);
+  } catch (error: any) {
+    console.error('[SalarySlipEmail] Email sending FAILED!');
+    console.error('[SalarySlipEmail] Error Name:', error.name);
+    console.error('[SalarySlipEmail] Error Message:', error.message);
+    console.error('[SalarySlipEmail] Error Code:', error.code);
+    console.error('[SalarySlipEmail] Error Stack:', error.stack);
+    console.error(`[SalarySlipEmail] Error sending salary slip notification email to ${details.employeeEmail}:`, error);
   }
 };
 
