@@ -741,7 +741,66 @@ adminRouter.get('/getAllPackagesByAdmin', validateJWT, getAllPackagesByAdminCont
  *                   example: Failed to fetch package details
  */
 adminRouter.get('/getPackageDetailsByAdmin/:id', validateJWT, getPackageDetailsByAdminController.getPackageDetailsByAdmin);
+
+/**
+ * @swagger
+ * /admin/deletePackageByAdmin/{id}:
+ *   delete:
+ *     summary: Delete Package by Admin
+ *     description: |
+ *       Deletes a package by Admin.
+ *       - If `confirmDelete` is true → Hard delete (permanently removes package).
+ *       - If `confirmDelete` is false → Soft delete (sets isDeleted to true).
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Package ID to delete
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               confirmDelete:
+ *                 type: boolean
+ *                 example: true
+ *             required:
+ *               - confirmDelete
+ *     responses:
+ *       200:
+ *         description: Package deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       500:
+ *         description: Server error while deleting package
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting package
+ */
 adminRouter.delete('/deletePackageByAdmin/:id', validateJWT, deletePackageByAdminController.deletePackageByAdmin);
+
 adminRouter.put('/updatePackageByAdmin', validateJWT, updatePackageByAdminController.updatePackageByAdminController);
 adminRouter.post('/addTaskByAdmin', validateJWT, addTaskToPackageByAdminController.addTaskByAdminController);
 adminRouter.put('/updateTaskByAdmin', validateJWT, updateTaskByAdminController.updateTaskByAdminController);
@@ -929,7 +988,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                   type: string
  *                   example: An unexpected error occurred while generating salary slip
  */
-adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminController.generateSalarySlip);
+adminRouter.post('/generateSalarySlip',  generateSalarySlipByAdminController.generateSalarySlip);
 
 /**
  * @swagger

@@ -5,6 +5,16 @@ interface FetchUserResponse {
     userDetails?: any;
 }
 
+const formatDate = (date?: Date): string | null => {
+    if (!date) return null;
+
+    return date.toLocaleDateString('en-IN', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric'
+    });
+};
+
 const getEmployeeDetailsByAdmin = (id: string): Promise<FetchUserResponse> => {
     return new Promise((resolve, reject) => {
         UserModel.findOne({ _id: id })
@@ -30,10 +40,10 @@ const getEmployeeDetailsByAdmin = (id: string): Promise<FetchUserResponse> => {
                             employeeRole: user.employeeRole,
                             organization: user.organization,
                             employeeId: user.employeeId,
-                            dateOfBirth: user.dateOfBirth,
+                            dateOfBirth: formatDate(user.dateOfBirth),
                             aadharNumber: user.aadharNumber,
                             panCardNumber: user.panCardNumber,
-                            dateOfJoining: user.dateOfJoining,
+                            dateOfJoining: formatDate(user.dateOfJoining),
                             presentAddress: user.presentAddress,
                             permanentAddress: user.permanentAddress
                         }
