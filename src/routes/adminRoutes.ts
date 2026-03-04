@@ -153,7 +153,7 @@ adminRouter.post('/registerEmployeeByAdmin', validateJWT, validateRegistrationSc
  *         description: Employee user ID
  *     responses:
  *       200:
- *         description: Employee details fetched successfully
+ *         description: Employee details fetched successfully !!
  *         content:
  *           application/json:
  *             schema:
@@ -309,6 +309,9 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetail
  *                type: string
  *                format: date
  *                example: 2020-01-15
+ *               uanNumber:
+ *                 type: string
+ *                 example: "123456789012345"
  *               presentAddress:
  *                 type: string
  *                 example: 123 Street, City, State
@@ -348,7 +351,7 @@ adminRouter.put('/updateEmployeeDetailsByAdmin', validateProfileRequest(userSche
  *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Employee details fetched successfully
+ *         description: Employee details fetched successfully !!
  *         content:
  *           application/json:
  *             schema:
