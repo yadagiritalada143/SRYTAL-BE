@@ -48,6 +48,7 @@ const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => 
               aadharNumber: employee.aadharNumber,
               panCardNumber: employee.panCardNumber,
               uanNumber: employee.uanNumber,
+              department: employee.department,
               dateOfJoining: formatDate(employee.dateOfJoining)
             }
           });

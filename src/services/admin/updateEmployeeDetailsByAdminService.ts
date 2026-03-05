@@ -19,6 +19,7 @@ const updateEmployeeProfileByAdmin = async (userDetailsToUpdate: IUser): Promise
                 aadharNumber: userDetailsToUpdate.aadharNumber,
                 panCardNumber: userDetailsToUpdate.panCardNumber,
                 uanNumber: userDetailsToUpdate.uanNumber,
+                department: userDetailsToUpdate.department,
                 dateOfJoining: userDetailsToUpdate.dateOfJoining,
                 presentAddress: userDetailsToUpdate.presentAddress,
                 permanentAddress: userDetailsToUpdate.permanentAddress,
