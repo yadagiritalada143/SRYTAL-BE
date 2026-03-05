@@ -413,6 +413,9 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
  *                     aadharNumber:
  *                      type: string
  *                      example: "1234-5678-9012"
+ *                     uanNumber:
+ *                      type: string
+ *                      example: "123456789012345"
  *                     dateOfJoining:
  *                      type: string
  *                      format: date

@@ -18,6 +18,7 @@ const updateEmployeeProfileByAdmin = async (userDetailsToUpdate) => {
             dateOfBirth: userDetailsToUpdate.dateOfBirth,
             aadharNumber: userDetailsToUpdate.aadharNumber,
             panCardNumber: userDetailsToUpdate.panCardNumber,
+            uanNumber: userDetailsToUpdate.uanNumber,
             dateOfJoining: userDetailsToUpdate.dateOfJoining,
             presentAddress: userDetailsToUpdate.presentAddress,
             permanentAddress: userDetailsToUpdate.permanentAddress,
