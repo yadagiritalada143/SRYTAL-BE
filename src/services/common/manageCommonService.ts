@@ -71,7 +71,7 @@ const authenticateAccount = ({
                     organizationId: user.organization,
                   },
                   SECRET_KEY,
-                  { expiresIn: '20m' }
+                  { expiresIn: '2d' }
                 );
                 const refreshToken = jwt.sign(
                   {
@@ -80,7 +80,7 @@ const authenticateAccount = ({
                     organizationId: user.organization,
                   },
                   SECRET_KEY,
-                  { expiresIn: '2d' }
+                  { expiresIn: '3d' }
                 );
                 user.lastLoggedOn = new Date();
                 user.refreshToken = refreshToken;
@@ -118,7 +118,7 @@ const refreshToken = async (token: string): Promise<string> => {
         organizationId: user.organizationId,
       },
       SECRET_KEY,
-      { expiresIn: '20m' }
+      { expiresIn: '2d' }
     );
 
     const userDetails = await UserModel.findOne({ _id: user.userId });
