@@ -312,6 +312,9 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetail
  *               uanNumber:
  *                 type: string
  *                 example: "123456789012345"
+ *               department:
+ *                 type: string
+ *                 example: "Engineering"
  *               presentAddress:
  *                 type: string
  *                 example: 123 Street, City, State

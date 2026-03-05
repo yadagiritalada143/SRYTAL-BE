@@ -39,6 +39,7 @@ const UserSchema = new mongoose.Schema(
     panCardNumber: { type: mongoose.Schema.Types.String },
     dateOfJoining: { type: mongoose.Schema.Types.Date },
     uanNumber: { type: mongoose.Schema.Types.String },
+    department: { type: mongoose.Schema.Types.String },
     presentAddress: { type: mongoose.Schema.Types.String },
     permanentAddress: { type: mongoose.Schema.Types.String },
     refreshToken: { type: mongoose.Schema.Types.String },
