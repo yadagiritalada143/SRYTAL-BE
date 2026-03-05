@@ -47,6 +47,7 @@ const getAllEmployeeDetailsByAdmin = async (organizationId, userId) => {
                 aadharNumber: user.aadharNumber,
                 panCardNumber: user.panCardNumber,
                 dateOfJoining: formatDate(user.dateOfJoining),
+                uanNumber: user.uanNumber,
                 presentAddress: user.presentAddress,
                 permanentAddress: user.permanentAddress
             }))

@@ -45,7 +45,8 @@ const getEmployeeDetails = (id) => {
                         presentAddress: employee.presentAddress,
                         permanentAddress: employee.permanentAddress,
                         aadharNumber: employee.aadharNumber,
-                        panNumber: employee.panNumber,
+                        panCardNumber: employee.panCardNumber,
+                        uanNumber: employee.uanNumber,
                         dateOfJoining: formatDate(employee.dateOfJoining)
                     }
                 });
