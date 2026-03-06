@@ -5,7 +5,7 @@ import { DEPARTMENT_ERROR_MESSAGES, DEPARTMENT_SUCCESS_MESSAGES, HTTP_STATUS } f
 const getDepartmentByAdminController = async (req: Request, res: Response): Promise<Response> => {
     try {
         const { _id } = req.params;
-        const departmentDetails = await getDepartmentDetails.getDepartmentByAdminService( _id );  
+        const departmentDetails = await getDepartmentDetails.getDepartmentByAdminService(_id);  
         if (!departmentDetails) {
             return res.status(HTTP_STATUS.NOT_FOUND).json({ success: false, message: DEPARTMENT_ERROR_MESSAGES.DEPARTMENT_NOT_FOUND_ERROR_MESSAGE });
         }
