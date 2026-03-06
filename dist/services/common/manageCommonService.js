@@ -50,12 +50,12 @@ const authenticateAccount = ({ email, password, }) => {
                             email: user.email,
                             userId: user.id,
                             organizationId: user.organization,
-                        }, SECRET_KEY, { expiresIn: '20m' });
+                        }, SECRET_KEY, { expiresIn: '2d' });
                         const refreshToken = jsonwebtoken_1.default.sign({
                             email: user.email,
                             userId: user.id,
                             organizationId: user.organization,
-                        }, SECRET_KEY, { expiresIn: '2d' });
+                        }, SECRET_KEY, { expiresIn: '3d' });
                         user.lastLoggedOn = new Date();
                         user.refreshToken = refreshToken;
                         await user.save();
@@ -87,7 +87,7 @@ const refreshToken = async (token) => {
             email: user.email,
             userId: user.userId,
             organizationId: user.organizationId,
-        }, SECRET_KEY, { expiresIn: '20m' });
+        }, SECRET_KEY, { expiresIn: '2d' });
         const userDetails = await userModel_1.default.findOne({ _id: user.userId });
         if (!userDetails || !userDetails.refreshToken) {
             throw new Error('Invalid user token');
