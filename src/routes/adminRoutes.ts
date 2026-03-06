@@ -45,6 +45,7 @@ import getAllFeedbackAttributeByAdminController from '../controllers/admin/getAl
 import deleteFeedbackAttributeByAdminController from '../controllers/admin/deleteFeedbackAttributeByAdminController';
 import addDepartmentByAdminController from '../controllers/admin/addDepartmentByAdminController';
 import getAllDepartmentByAdminController from '../controllers/admin/getAllDepartmentByAdminController';
+import getDepartmentByAdminController from '../controllers/admin/getDepartmentByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -2340,5 +2341,60 @@ adminRouter.post('/adddepartmentbyadmin', validateJWT, addDepartmentByAdminContr
  *         description: Internal server error
  */
 adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentByAdminController.getAllDepartmentByAdminController);
+
+/**
+ * @swagger
+ * /admin/getdepartmentbyadmin/{_id}:
+ *   get:
+ *     summary: Get department by ID
+ *     description: Fetch a specific department using its ID (Admin only).
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: _id
+ *         required: true
+ *         description: MongoDB ID of the department
+ *         schema:
+ *           type: string
+ *           example: 65f2a8c4e8c9f21a34567890
+ *     responses:
+ *       200:
+ *         description: Department fetched successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Department fetched successfully !!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 65f2a8c4e8c9f21a34567890
+ *                     departmentName:
+ *                       type: string
+ *                       example: Computer Science
+ *       404:
+ *         description: Department not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               message: Department not found
+ *       401:
+ *         description: Unauthorized - JWT token required
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.get('/getdepartmentbyadmin/:_id', validateJWT, getDepartmentByAdminController.getDepartmentByAdminController);
 
 export default adminRouter;
