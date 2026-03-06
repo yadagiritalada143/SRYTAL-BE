@@ -1,9 +1,11 @@
 export const DEPARTMENT_SUCCESS_MESSAGES = {
     DEPARTMENT_ADD_SUCCESS_MESSAGE: 'Department added successfully !!',
+    FETCH_ALL_DEPARTMENTS_SUCCESS_MESSAGE: 'Fetched all departments successfully !!',
 }
 
 export const DEPARTMENT_ERROR_MESSAGES = {
     DEPARTMENT_ADD_ERROR_MESSAGE: 'An error occurred while adding department !!',
+    FETCH_ALL_DEPARTMENTS_ERROR_MESSAGE: 'An error occurred while fetching all departments !!',
 }
 
 export const HTTP_STATUS = {
