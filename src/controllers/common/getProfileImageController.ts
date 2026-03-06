@@ -5,7 +5,7 @@ import getImageFromS3Utility from '../../util/manageProfileImages';
 import { profileImagesFolder } from '../../config/awsS3Config';
 
 const getProfileImage = (req: Request, res: Response) => {
-    const { userId } = req.body;
+    const userId  = req.query.userId as string;
 
     getProfileImageService
         .getProfileImage(userId)
