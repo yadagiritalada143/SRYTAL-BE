@@ -8,7 +8,7 @@ export const DEPARTMENT_ERROR_MESSAGES = {
     DEPARTMENT_ADD_ERROR_MESSAGE: 'An error occurred while adding department !!',
     FETCH_ALL_DEPARTMENTS_ERROR_MESSAGE: 'An error occurred while fetching all departments !!',
     FETCH_DEPARTMENT_ERROR_MESSAGE: 'An error occurred while fetching department details !!',
-    DEPARTMENT_NOT_FOUND_ERROR_MESSAGE: 'Department not found. !!'
+    DEPARTMENT_NOT_FOUND_ERROR_MESSAGE: 'Department not found !!'
 }
 
 export const HTTP_STATUS = {
