@@ -24,6 +24,7 @@ const userSchema = joi_1.default.object({
     panCardNumber: joi_1.default.string().optional().allow(''),
     aadharNumber: joi_1.default.string().optional().allow(''),
     uanNumber: joi_1.default.string().optional().allow(''),
+    department: joi_1.default.string().optional().allow(''),
     dateOfJoining: joi_1.default.date().optional().allow(''),
     presentAddress: joi_1.default.string().optional().allow(''),
     permanentAddress: joi_1.default.string().optional().allow('')
