@@ -44,6 +44,7 @@ import getFeedbackAttributeByAdminController from '../controllers/admin/getFeedb
 import getAllFeedbackAttributeByAdminController from '../controllers/admin/getAllFeedbackAttributeByAdminController';
 import deleteFeedbackAttributeByAdminController from '../controllers/admin/deleteFeedbackAttributeByAdminController';
 import addDepartmentByAdminController from '../controllers/admin/addDepartmentByAdminController';
+import getAllDepartmentByAdminController from '../controllers/admin/getAllDepartmentByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -2291,5 +2292,53 @@ adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT, deleteFee
  *                   example: Error while adding department
  */
 adminRouter.post('/adddepartmentbyadmin', validateJWT, addDepartmentByAdminController.addDepartmentByAdminController);
+
+/**
+ * @swagger
+ * /admin/getalldepartmentsbyadmin:
+ *   get:
+ *     summary: Get all departments
+ *     description: Fetch all departments available in admin.
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Departments fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Departments fetched successfully !!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
+ *                     departmentResponse:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 65f2a8c4e8c9f21a34567890
+ *                           departmentName:
+ *                             type: string
+ *                             example: Computer Science
+ *       401:
+ *         description: Unauthorized - Invalid or missing JWT token
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentByAdminController. getAllDepartmentByAdminController);
 
 export default adminRouter;
