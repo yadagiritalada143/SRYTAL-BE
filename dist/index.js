@@ -35,13 +35,22 @@ app.use((0, morgan_1.default)('dev'));
 app.use((0, cors_1.default)({
     exposedHeaders: ["*"]
 }));
-(0, databaseConfig_1.default)();
 app.use('/', commonRoutes_1.default);
 app.use('/admin', adminRoutes_1.default);
 app.use('/superadmin', superadminRoutes_1.default);
 app.use('/recruiter', recruiterRoutes_1.default);
 app.use('/contentwriter', contentwriterRoutes_1.default);
-timesheetcronjob_1.default.updateNextMonthTimeSheet();
-app.listen(port, () => {
-    console.log(`Server is running at  http://localhost:${port}`);
-});
+const startServer = async () => {
+    try {
+        await (0, databaseConfig_1.default)();
+        timesheetcronjob_1.default.updateNextMonthTimeSheet();
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port} [${process.env.NODE_ENV || 'development'}]`);
+        });
+    }
+    catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+};
+startServer();
