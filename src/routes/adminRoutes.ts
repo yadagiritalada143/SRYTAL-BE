@@ -43,6 +43,9 @@ import updateFeedbackAttributeByAdminController from '../controllers/admin/updat
 import getFeedbackAttributeByAdminController from '../controllers/admin/getFeedbackAttributeByAdminController';
 import getAllFeedbackAttributeByAdminController from '../controllers/admin/getAllFeedbackAttributeByAdminController';
 import deleteFeedbackAttributeByAdminController from '../controllers/admin/deleteFeedbackAttributeByAdminController';
+import addDepartmentByAdminController from '../controllers/admin/addDepartmentByAdminController';
+import getAllDepartmentByAdminController from '../controllers/admin/getAllDepartmentByAdminController';
+import getDepartmentByAdminController from '../controllers/admin/getDepartmentByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -186,7 +189,7 @@ adminRouter.post('/registerEmployeeByAdmin', validateJWT, validateRegistrationSc
  *                     dateOfBirth:
  *                       type: string
  *                       format: date
- *                       example: "1995-06-15"
+ *                       example: "10-Mar-1990"
  *                     bloodGroup:
  *                       type: object
  *                       description: Blood group details (populated)
@@ -202,6 +205,10 @@ adminRouter.post('/registerEmployeeByAdmin', validateJWT, validateRegistrationSc
  *                     bankDetailsInfo:
  *                       type: object
  *                       description: Employee bank details
+ *                     dateOfJoining:
+ *                      type: string
+ *                      format: date
+ *                      example: "15-Jan-2020"
  *                     presentAddress:
  *                       type: string
  *                       example: "123 Main Street, City"
@@ -298,7 +305,7 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetail
  *               dateOfBirth:
  *                 type: string
  *                 format: date
- *                 example: 1995-08-15
+ *                 example: 10-Mar-1990
  *               aadharNumber:
  *                 type: string
  *                 example: "123412341234"
@@ -308,10 +315,14 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetail
  *               dateOfJoining:
  *                type: string
  *                format: date
- *                example: 2020-01-15
+ *                example: 15-Jan-2020
  *               uanNumber:
  *                 type: string
  *                 example: "123456789012345"
+ *               department:
+ *                 type: string
+ *                 description: ObjectId reference of Department document
+ *                 example: 65f1c2e8a1234567890abcd5
  *               presentAddress:
  *                 type: string
  *                 example: 123 Street, City, State
@@ -460,6 +471,61 @@ adminRouter.get('/getAllEmployeeDetailsByAdmin', validateJWT, getAllEmployeeDeta
  *                   example: "Unable to reset employee password"
  */
 adminRouter.post('/employeePasswordResetByAdmin', employeePasswordResetByAdminController.employeePasswordResetByAdmin);
+
+/**
+ * @swagger
+ * /admin/getAllBloodGroupsByAdmin:
+ *   get:
+ *     summary: Get all blood groups
+ *     description: Fetch all blood group details available in the system (Admin access).
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Blood group list fetched successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 bloodGroupList:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64f8a1b2c12345abcd678901"
+ *                       bloodGroup:
+ *                         type: string
+ *                         example: "A+"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-02-10T10:30:00.000Z"
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-02-10T10:30:00.000Z"
+ *       500:
+ *         description: Error while fetching blood group details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error in fetching blood group details
+ */
 adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT, getAllBloodGroupsByAdminController.getAllBloodGroupsDetails);
 adminRouter.post('/addBloodGroupByAdmin', validateJWT, addBloodGroupByAdminController.addNewBloodgroupByAdmin);
 adminRouter.post('/deleteEmployeeByAdmin', validateJWT, deleteEmployeeDetailsByAdminController.deleteProfile);
@@ -1588,7 +1654,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                   type: string
  *                   example: An unexpected error occurred while generating salary slip
  */
-adminRouter.post('/generateSalarySlip',  generateSalarySlipByAdminController.generateSalarySlip);
+adminRouter.post('/generateSalarySlip', generateSalarySlipByAdminController.generateSalarySlip);
 
 /**
  * @swagger
@@ -2175,5 +2241,160 @@ adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT, getAllFeedbackA
  *                   example: Error deleting feedback attribute
  */
 adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT, deleteFeedbackAttributeByAdminController.deleteFeedbackAttributeByAdminController);
+
+/**
+ * @swagger
+ * /admin/adddepartmentbyadmin:
+ *   post:
+ *     summary: Add a new department by admin
+ *     description: This API allows an admin to create a new department in the system.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - departmentName
+ *             properties:
+ *               departmentName:
+ *                 type: string
+ *                 example: Computer Science
+ *     responses:
+ *       200:
+ *         description: Department added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Department added successfully
+ *       500:
+ *         description: Error while adding department
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while adding department
+ */
+adminRouter.post('/adddepartmentbyadmin', validateJWT, addDepartmentByAdminController.addDepartmentByAdminController);
+
+/**
+ * @swagger
+ * /admin/getalldepartmentsbyadmin:
+ *   get:
+ *     summary: Get all departments
+ *     description: Fetch all departments available in admin.
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Departments fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Departments fetched successfully !!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
+ *                     departmentResponse:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: 65f2a8c4e8c9f21a34567890
+ *                           departmentName:
+ *                             type: string
+ *                             example: Computer Science
+ *       401:
+ *         description: Unauthorized - Invalid or missing JWT token
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentByAdminController.getAllDepartmentByAdminController);
+
+/**
+ * @swagger
+ * /admin/getdepartmentbyadmin/{_id}:
+ *   get:
+ *     summary: Get department by ID
+ *     description: Fetch a specific department using its ID (Admin only).
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: _id
+ *         required: true
+ *         description: MongoDB ID of the department
+ *         schema:
+ *           type: string
+ *           example: 65f2a8c4e8c9f21a34567890
+ *     responses:
+ *       200:
+ *         description: Department fetched successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Department fetched successfully !!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 65f2a8c4e8c9f21a34567890
+ *                     departmentName:
+ *                       type: string
+ *                       example: Computer Science
+ *       404:
+ *         description: Department not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               message: Department not found
+ *       401:
+ *         description: Unauthorized - JWT token required
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.get('/getdepartmentbyadmin/:_id', validateJWT, getDepartmentByAdminController.getDepartmentByAdmin);
 
 export default adminRouter;

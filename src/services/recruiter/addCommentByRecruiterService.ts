@@ -1,6 +1,5 @@
 import PoolCompaniesModel from '../../model/poolCompanies';
 
-
 const addCommentByRecruiter = async ({ id, comment, userId }: any) => {
     let result = await PoolCompaniesModel.findByIdAndUpdate(id, {
         lastUpdatedAt: new Date(),

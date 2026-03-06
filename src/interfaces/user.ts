@@ -22,6 +22,7 @@ interface IUser extends Document {
   aadharNumber: string;
   panCardNumber: string;
   uanNumber?: string;
+  department?: string;
   dateOfBirth?: Date;
   dateOfJoining?: Date;
   presentAddress?: string;

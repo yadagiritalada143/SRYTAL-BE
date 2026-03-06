@@ -7,12 +7,14 @@ interface getEmployeeDetailsResponse {
 
 const formatDate = (date?: Date): string | null => {
     if (!date) return null;
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return null;
+    const day = String(d.getDate()).padStart(2, '0');
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const month = months[d.getMonth()];
+    const year = d.getFullYear();
 
-    return date.toLocaleDateString('en-IN', {
-        day: '2-digit',
-        month: 'short',
-        year: 'numeric'
-    });
+    return `${day}-${month}-${year}`;
 };
 
 const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => {
@@ -48,6 +50,7 @@ const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => 
               aadharNumber: employee.aadharNumber,
               panCardNumber: employee.panCardNumber,
               uanNumber: employee.uanNumber,
+              department: employee.department,
               dateOfJoining: formatDate(employee.dateOfJoining)
             }
           });

@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
 import { PACKAGE_ERROR_MESSAGES, HTTP_STATUS } from '../../constants/admin/packageMessages';
-import allPacakgesServices from '../../services/admin/getAllPackagesByAdminService';
+import allPackagesServices from '../../services/admin/getAllPackagesByAdminService';
 
 const getAllPackagesDetails = async (req: Request, res: Response) => {
     try {
-        const fetchAllPackagesByAdminResponse = await allPacakgesServices.getAllPackagesWithTasksByAdmin();
+        const fetchAllPackagesByAdminResponse = await allPackagesServices.getAllPackagesWithTasksByAdmin();
         res.status(HTTP_STATUS.OK).json(fetchAllPackagesByAdminResponse);
     } catch (error) {
         console.error(`Error in fetching Packages details: ${error}`);
