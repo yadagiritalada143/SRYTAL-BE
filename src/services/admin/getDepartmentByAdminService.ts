@@ -1,7 +1,7 @@
 import IDepartment from '../../interfaces/department';
 import DepartmentModel from '../../model/departmentModel';
 
-const getDepartmentByAdminService = async (_id: string): Promise<IDepartment | null> => {
+const getDepartmentByAdmin = async (_id: string): Promise<IDepartment | null> => {
     try {
         const departmentDetails = await DepartmentModel.findOne({_id: _id});
         return departmentDetails;
@@ -10,4 +10,4 @@ const getDepartmentByAdminService = async (_id: string): Promise<IDepartment | n
     };
 };
 
-export default { getDepartmentByAdminService };
+export default { getDepartmentByAdmin };

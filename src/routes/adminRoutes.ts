@@ -2395,6 +2395,6 @@ adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentByAdmi
  *       500:
  *         description: Internal server error
  */
-adminRouter.get('/getdepartmentbyadmin/:_id', validateJWT, getDepartmentByAdminController.getDepartmentByAdminController);
+adminRouter.get('/getdepartmentbyadmin/:_id', validateJWT, getDepartmentByAdminController.getDepartmentByAdmin);
 
 export default adminRouter;
