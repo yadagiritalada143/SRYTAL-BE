@@ -409,7 +409,7 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
  *                     dateOfBirth:
  *                       type: string
  *                       format: date
- *                       example: "1995-08-15"
+ *                       example: "10-Mar-1990"
  *                     panCardNumber:
  *                      type: string
  *                      example: ABCDE1234F
@@ -422,6 +422,7 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
  *                     dateOfJoining:
  *                      type: string
  *                      format: date
+ *                      example: "15-Jan-2020"
  *                     presentAddress:
  *                       type: string
  *                       example: Hyderabad, India

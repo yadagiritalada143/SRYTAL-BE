@@ -187,7 +187,7 @@ adminRouter.post('/registerEmployeeByAdmin', validateJWT, validateRegistrationSc
  *                     dateOfBirth:
  *                       type: string
  *                       format: date
- *                       example: "1995-06-15"
+ *                       example: "10-Mar-1990"
  *                     bloodGroup:
  *                       type: object
  *                       description: Blood group details (populated)
@@ -203,6 +203,10 @@ adminRouter.post('/registerEmployeeByAdmin', validateJWT, validateRegistrationSc
  *                     bankDetailsInfo:
  *                       type: object
  *                       description: Employee bank details
+ *                     dateOfJoining:
+ *                      type: string
+ *                      format: date
+ *                      example: "15-Jan-2020"
  *                     presentAddress:
  *                       type: string
  *                       example: "123 Main Street, City"
@@ -299,7 +303,7 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetail
  *               dateOfBirth:
  *                 type: string
  *                 format: date
- *                 example: 1995-08-15
+ *                 example: 10-Mar-1990
  *               aadharNumber:
  *                 type: string
  *                 example: "123412341234"
@@ -309,7 +313,7 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetail
  *               dateOfJoining:
  *                type: string
  *                format: date
- *                example: 2020-01-15
+ *                example: 15-Jan-2020
  *               uanNumber:
  *                 type: string
  *                 example: "123456789012345"
