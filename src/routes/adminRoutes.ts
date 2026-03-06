@@ -43,7 +43,7 @@ import updateFeedbackAttributeByAdminController from '../controllers/admin/updat
 import getFeedbackAttributeByAdminController from '../controllers/admin/getFeedbackAttributeByAdminController';
 import getAllFeedbackAttributeByAdminController from '../controllers/admin/getAllFeedbackAttributeByAdminController';
 import deleteFeedbackAttributeByAdminController from '../controllers/admin/deleteFeedbackAttributeByAdminController';
-import addDepartmentByAdminController from '../controllers/admin/addDepartmentByadminController';
+import addDepartmentByAdminController from '../controllers/admin/addDepartmentByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -315,7 +315,8 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetail
  *                 example: "123456789012345"
  *               department:
  *                 type: string
- *                 example: "Engineering"
+ *                 description: ObjectId reference of Department document
+ *                 example: 65f1c2e8a1234567890abcd5
  *               presentAddress:
  *                 type: string
  *                 example: 123 Street, City, State
