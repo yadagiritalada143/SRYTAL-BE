@@ -1653,7 +1653,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                   type: string
  *                   example: An unexpected error occurred while generating salary slip
  */
-adminRouter.post('/generateSalarySlip',  generateSalarySlipByAdminController.generateSalarySlip);
+adminRouter.post('/generateSalarySlip', generateSalarySlipByAdminController.generateSalarySlip);
 
 /**
  * @swagger
@@ -2339,6 +2339,6 @@ adminRouter.post('/adddepartmentbyadmin', validateJWT, addDepartmentByAdminContr
  *       500:
  *         description: Internal server error
  */
-adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentByAdminController. getAllDepartmentByAdminController);
+adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentByAdminController.getAllDepartmentByAdminController);
 
 export default adminRouter;
