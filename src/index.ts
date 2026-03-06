@@ -38,16 +38,25 @@ app.use(cors({
     exposedHeaders: ["*"]
 }));
 
-connectToDb();
-
 app.use('/', commonRouter);
 app.use('/admin', adminRouter);
 app.use('/superadmin', superadminRouter);
 app.use('/recruiter', recruiterRouter);
 app.use('/contentwriter', contentwriterRouter)
 
-schedularService.updateNextMonthTimeSheet();
+const startServer = async () => {
+    try {
+        await connectToDb();
 
-app.listen(port, () => {
-    console.log(`Server is running at  http://localhost:${port}`);
-});
+        schedularService.updateNextMonthTimeSheet();
+
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port} [${process.env.NODE_ENV || 'development'}]`);
+        });
+    } catch (error) {
+        console.error('Failed to start server:', error);
+        process.exit(1);
+    }
+};
+
+startServer();
