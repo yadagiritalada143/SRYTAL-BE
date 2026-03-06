@@ -3,8 +3,7 @@ import DepartmentModel from '../../model/departmentModel';
 
 const getDepartmentByAdmin = async (_id: string): Promise<IDepartment | null> => {
     try {
-        const departmentDetails = await DepartmentModel.findOne({_id: _id});
-        return departmentDetails;
+        return await DepartmentModel.findOne({_id});
     } catch (error: any) {
         throw new Error('Error in fetching department details');
     };
