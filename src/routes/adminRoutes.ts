@@ -43,6 +43,7 @@ import updateFeedbackAttributeByAdminController from '../controllers/admin/updat
 import getFeedbackAttributeByAdminController from '../controllers/admin/getFeedbackAttributeByAdminController';
 import getAllFeedbackAttributeByAdminController from '../controllers/admin/getAllFeedbackAttributeByAdminController';
 import deleteFeedbackAttributeByAdminController from '../controllers/admin/deleteFeedbackAttributeByAdminController';
+import addDepartmentByAdminController from '../controllers/admin/addDepartmentByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -314,7 +315,8 @@ adminRouter.get('/getEmployeeDetailsByAdmin/:id', validateJWT, getEmployeeDetail
  *                 example: "123456789012345"
  *               department:
  *                 type: string
- *                 example: "Engineering"
+ *                 description: ObjectId reference of Department document
+ *                 example: 65f1c2e8a1234567890abcd5
  *               presentAddress:
  *                 type: string
  *                 example: 123 Street, City, State
@@ -2233,5 +2235,57 @@ adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT, getAllFeedbackA
  *                   example: Error deleting feedback attribute
  */
 adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT, deleteFeedbackAttributeByAdminController.deleteFeedbackAttributeByAdminController);
+
+/**
+ * @swagger
+ * /admin/adddepartmentbyadmin:
+ *   post:
+ *     summary: Add a new department by admin
+ *     description: This API allows an admin to create a new department in the system.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - departmentName
+ *             properties:
+ *               departmentName:
+ *                 type: string
+ *                 example: Computer Science
+ *     responses:
+ *       200:
+ *         description: Department added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Department added successfully
+ *       500:
+ *         description: Error while adding department
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while adding department
+ */
+adminRouter.post('/adddepartmentbyadmin', validateJWT, addDepartmentByAdminController.addDepartmentByAdminController);
 
 export default adminRouter;
