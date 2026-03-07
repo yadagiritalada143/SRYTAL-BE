@@ -8,5 +8,9 @@ export interface FetchAllDepartmentsResponse {
     success: boolean;
     departmentResponse: any;
 }
+export interface updateDepartmentResponse {
+    success: boolean;
+    departmentResponse: any;
+}
 
 export default IDepartment;
