@@ -8,7 +8,10 @@ const commonErrorMessages_1 = require("../../constants/commonErrorMessages");
 const manageProfileImages_1 = __importDefault(require("../../util/manageProfileImages"));
 const awsS3Config_1 = require("../../config/awsS3Config");
 const getProfileImage = (req, res) => {
-    const { userId } = req.body;
+    if (!req.user) {
+        return res.status(401).json({ success: false, message: 'User not found' });
+    }
+    const userId = req.user.userId;
     getProfileImageService_1.default
         .getProfileImage(userId)
         .then((responseAftergetProfileImage) => {
