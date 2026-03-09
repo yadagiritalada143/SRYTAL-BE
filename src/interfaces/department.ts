@@ -13,4 +13,9 @@ export interface updateDepartmentResponse {
     departmentResponse: any;
 }
 
+export interface deleteDepartmentResponse {
+    success: boolean;
+    responseAfterDelete?: any;
+};
+
 export default IDepartment;
