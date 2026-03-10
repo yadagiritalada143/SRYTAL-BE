@@ -5,7 +5,7 @@ import { DEPARTMENT_SUCCESS_MESSAGES, DEPARTMENT_ERROR_MESSAGES, HTTP_STATUS } f
 
 const getAllDepartmentByAdminController = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const departments = await getAllDepartments.getAllDepartmentByAdminService();
+        const departments = await getAllDepartments.getAllDepartmentsByAdmin();
         return res.status(HTTP_STATUS.OK).json({ success: true, message: DEPARTMENT_SUCCESS_MESSAGES.FETCH_ALL_DEPARTMENTS_SUCCESS_MESSAGE, data: departments });
 
     } catch (error: any) {
