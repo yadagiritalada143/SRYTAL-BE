@@ -204,6 +204,9 @@ adminRouter.post('/registerEmployeeByAdmin', validateJWT, validateRegistrationSc
  *                     organization:
  *                       type: object
  *                       description: Organization details (populated)
+ *                     department:
+ *                       type: object
+ *                       description: Department details (populated)
  *                     bankDetailsInfo:
  *                       type: object
  *                       description: Employee bank details

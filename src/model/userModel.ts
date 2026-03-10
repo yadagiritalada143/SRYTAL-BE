@@ -5,6 +5,7 @@ import Employmenttype from '../model/employmentTypeModel';
 import Employeerole from '../model/employeeRole';
 import Organization from '../model/organization';
 import IUser from '../interfaces/user';
+import Department from '../model/departmentModel';
 
 const UserSchema = new mongoose.Schema(
   {
@@ -39,7 +40,7 @@ const UserSchema = new mongoose.Schema(
     panCardNumber: { type: mongoose.Schema.Types.String },
     dateOfJoining: { type: mongoose.Schema.Types.Date },
     uanNumber: { type: mongoose.Schema.Types.String },
-    department: { type: mongoose.Schema.Types.String },
+    department: { type: mongoose.Schema.Types.ObjectId, ref: Department },
     presentAddress: { type: mongoose.Schema.Types.String },
     permanentAddress: { type: mongoose.Schema.Types.String },
     refreshToken: { type: mongoose.Schema.Types.String },
