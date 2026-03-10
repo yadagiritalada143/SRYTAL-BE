@@ -46,6 +46,8 @@ import deleteFeedbackAttributeByAdminController from '../controllers/admin/delet
 import addDepartmentByAdminController from '../controllers/admin/addDepartmentByAdminController';
 import getAllDepartmentByAdminController from '../controllers/admin/getAllDepartmentByAdminController';
 import getDepartmentByAdminController from '../controllers/admin/getDepartmentByAdminController';
+import deleteDepartmentByAdminController from '../controllers/admin/deleteDepartmentByAdminController';
+import updateDepartmentByAdminController from '../controllers/admin/updateDepartmentByAdminController';
 
 const adminRouter: Router = express.Router();
 
@@ -2396,5 +2398,112 @@ adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentByAdmi
  *         description: Internal server error
  */
 adminRouter.get('/getdepartmentbyadmin/:_id', validateJWT, getDepartmentByAdminController.getDepartmentByAdmin);
+
+/**
+ * @swagger
+ * /admin/deletedepartmentbyadmin/{_id}:
+ *   delete:
+ *     summary: Delete a department by admin
+ *     description: This API allows an admin to delete a department using its ID.
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: _id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Department ID
+ *     responses:
+ *       200:
+ *         description: Department deleted successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Department deleted successfully !!
+ *       404:
+ *         description: Department not found
+ *       500:
+ *         description: Error deleting department
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting department
+ */
+adminRouter.delete('/deletedepartmentbyadmin/:_id', validateJWT, deleteDepartmentByAdminController.deleteDepartmentByAdmin);
+
+/**
+ * @swagger
+ * /admin/updatedepartmentbyadmin:
+ *   put:
+ *     summary: Update department by admin
+ *     description: Admin can update an existing department name using department ID.
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - _id
+ *               - departmentName
+ *             properties:
+ *               _id:
+ *                 type: string
+ *                 example: "64f1c2a9b9c123456789abcd"
+ *               departmentName:
+ *                 type: string
+ *                 example: "Human Resources"
+ *     responses:
+ *       200:
+ *         description: Department updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Department updated successfully !!
+ *       400:
+ *         description: Bad Request - Missing required fields or invalid data
+ *       500:
+ *         description: Error updating department
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to update department
+ */
+adminRouter.put('/updatedepartmentbyadmin', validateJWT, updateDepartmentByAdminController.updateDepartmentByAdmin)
 
 export default adminRouter;
