@@ -2036,7 +2036,7 @@ adminRouter.post('/addfeedbackattributebyadmin', addFeedbackAttributeByAdminCont
  *       500:
  *         description: Internal Server Error
  */
-adminRouter.put('/updatefeedbackattributebyadmin', validateJWT, updateFeedbackAttributeByAdminController.updateFeedbackAttributeByAdminController);
+adminRouter.put('/updatefeedbackattributebyadmin', validateJWT, updateFeedbackAttributeByAdminController.updateFeedbackAttributeByAdmin);
 
 /**
  * @swagger
@@ -2108,7 +2108,7 @@ adminRouter.put('/updatefeedbackattributebyadmin', validateJWT, updateFeedbackAt
  *                   type: string
  *                   example: Error fetching feedback attribute
  */
-adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedbackAttributeByAdminController.getFeedbackAttributeByAdminController);
+adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedbackAttributeByAdminController.getFeedbackAttributeByAdmin);
 
 /**
  * @swagger
@@ -2167,7 +2167,7 @@ adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT, getFeedbackAttr
  *                   type: string
  *                   example: Error fetching feedback attributes
  */
-adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT, getAllFeedbackAttributeByAdminController.getAllFeedbackAttributesByAdminController);
+adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT, getAllFeedbackAttributeByAdminController.getAllFeedbackAttributesByAdmin);
 
 /**
  * @swagger
@@ -2245,7 +2245,7 @@ adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT, getAllFeedbackA
  *                   type: string
  *                   example: Error deleting feedback attribute
  */
-adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT, deleteFeedbackAttributeByAdminController.deleteFeedbackAttributeByAdminController);
+adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT, deleteFeedbackAttributeByAdminController.deleteFeedbackAttributeByAdmin);
 
 /**
  * @swagger
@@ -2297,7 +2297,7 @@ adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT, deleteFee
  *                   type: string
  *                   example: Error while adding department
  */
-adminRouter.post('/adddepartmentbyadmin', validateJWT, addDepartmentByAdminController.addDepartmentByAdminController);
+adminRouter.post('/adddepartmentbyadmin', validateJWT, addDepartmentByAdminController.addDepartmentByAdmin);
 
 /**
  * @swagger
@@ -2345,7 +2345,7 @@ adminRouter.post('/adddepartmentbyadmin', validateJWT, addDepartmentByAdminContr
  *       500:
  *         description: Internal server error
  */
-adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentByAdminController.getAllDepartmentByAdminController);
+adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentByAdminController.getAllDepartmentByAdmin);
 
 /**
  * @swagger
