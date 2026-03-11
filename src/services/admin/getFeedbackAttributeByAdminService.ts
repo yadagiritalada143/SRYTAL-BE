@@ -1,7 +1,7 @@
 import FeedbackAttributesModel from '../../model/feedbackAttributesModel';
 import IFeedbackAttributes from '../../interfaces/feedbackattributes';
 
-const getFeedbackAttributeByAdminService = async (id: string): Promise<IFeedbackAttributes | null> =>{
+const getFeedbackAttributeByAdmin = async (id: string): Promise<IFeedbackAttributes | null> =>{
     try{
         const feedbackAttributeDetails = await FeedbackAttributesModel.findOne({_id: id});
         return feedbackAttributeDetails;
@@ -10,4 +10,4 @@ const getFeedbackAttributeByAdminService = async (id: string): Promise<IFeedback
     }
 }
 
-export default { getFeedbackAttributeByAdminService }
+export default { getFeedbackAttributeByAdmin }

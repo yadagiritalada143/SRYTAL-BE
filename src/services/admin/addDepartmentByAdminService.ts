@@ -1,6 +1,6 @@
 import Department from '../../model/departmentModel';
 
-const addDepartmentByAdminService = async (departmentName: string) => {
+const addDepartmentByAdmin = async (departmentName: string) => {
     try {
         const department = new Department({ departmentName });
         const result = await department.save();
@@ -12,4 +12,4 @@ const addDepartmentByAdminService = async (departmentName: string) => {
     }
 };
 
-export default { addDepartmentByAdminService };
+export default { addDepartmentByAdmin };
