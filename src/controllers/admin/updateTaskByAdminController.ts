@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import updateTaskService from '../../services/admin/updateTaskByAdminService';
 import { TASK_ERROR_MESSAGES } from '../../constants/admin/taskMessages';
 
-const updateTaskByAdminController = (req: Request, res: Response) => {
+const updateTaskByAdmin = (req: Request, res: Response) => {
     const taskDetails = req.body;
     taskDetails.lastUpdatedBy = new Date();
     updateTaskService
@@ -17,4 +17,4 @@ const updateTaskByAdminController = (req: Request, res: Response) => {
 
 }
 
-export default { updateTaskByAdminController }
+export default { updateTaskByAdmin }

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import updatePackageService from '../../services/admin/updatePackageByAdminService';
 import { PACKAGE_ERROR_MESSAGES } from '../../constants/admin/packageMessages';
 
-const updatePackageByAdminController = (req: Request, res: Response) => {
+const updatePackageByAdmin = (req: Request, res: Response) => {
     const { id, detailsToUpdate } = req.body;
     updatePackageService
         .updatePackageByAdmin(id, detailsToUpdate)
@@ -16,4 +16,4 @@ const updatePackageByAdminController = (req: Request, res: Response) => {
 
 }
 
-export default { updatePackageByAdminController }
+export default { updatePackageByAdmin }

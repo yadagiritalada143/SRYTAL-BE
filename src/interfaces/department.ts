@@ -4,9 +4,9 @@ interface IDepartment extends Document {
     departmentName: string;
 }
 
-export interface FetchAllDepartmentsResponse {
+interface FetchDepartmentsResponse {
     success: boolean;
-    departmentResponse: any;
+    departments?: any;
 }
 export interface updateDepartmentResponse {
     success: boolean;

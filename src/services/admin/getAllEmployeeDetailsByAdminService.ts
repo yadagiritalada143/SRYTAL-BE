@@ -6,7 +6,7 @@ const formatDate = (date?: Date): string | null => {
     const d = new Date(date);
     if (isNaN(d.getTime())) return null;
     const day = String(d.getDate()).padStart(2, '0');
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     const month = months[d.getMonth()];
     const year = d.getFullYear();
 
@@ -23,7 +23,8 @@ const getAllEmployeeDetailsByAdmin = async (organizationId: string, userId: stri
             .populate('bloodGroup')
             .populate('employmentType')
             .populate('employeeRole')
-            .populate('organization');
+            .populate('organization')
+            .populate('department');
 
         if (!users) {
             return { success: false };

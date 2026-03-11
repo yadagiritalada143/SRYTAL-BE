@@ -12,6 +12,6 @@ const DepartmentSchema: Schema = new mongoose.Schema({
 
 DepartmentSchema.plugin(uniqueValidator);
 
-const Department = mongoose.model<IDepartment>('Department', DepartmentSchema);
+const Department = mongoose.model<IDepartment>('DepartmentSchema', DepartmentSchema);
 
 export default Department;

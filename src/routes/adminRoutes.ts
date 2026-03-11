@@ -204,6 +204,9 @@ adminRouter.post('/registerEmployeeByAdmin', validateJWT, validateRegistrationSc
  *                     organization:
  *                       type: object
  *                       description: Organization details (populated)
+ *                     department:
+ *                       type: object
+ *                       description: Department details (populated)
  *                     bankDetailsInfo:
  *                       type: object
  *                       description: Employee bank details
@@ -613,7 +616,7 @@ adminRouter.delete('/deletePoolCompanyByAdmin/:id', validateJWT, deletePoolCompa
  *                   type: string
  *                   example: Failed to add package
  */
-adminRouter.post('/addPackageByAdmin', validateJWT, addPackageByAdminController.addPackageByAdminController);
+adminRouter.post('/addPackageByAdmin', validateJWT, addPackageByAdminController.addPackageByAdmin);
 
 /**
  * @swagger
@@ -943,7 +946,7 @@ adminRouter.delete('/deletePackageByAdmin/:id', validateJWT, deletePackageByAdmi
  *                   type: string
  *                   example: Package updating failed
  */
-adminRouter.put('/updatePackageByAdmin', validateJWT, updatePackageByAdminController.updatePackageByAdminController);
+adminRouter.put('/updatePackageByAdmin', validateJWT, updatePackageByAdminController.updatePackageByAdmin);
 
 /**
  * @swagger
@@ -1022,7 +1025,7 @@ adminRouter.put('/updatePackageByAdmin', validateJWT, updatePackageByAdminContro
  *                   type: string
  *                   example: Task adding failed
  */
-adminRouter.post('/addTaskByAdmin', validateJWT, addTaskToPackageByAdminController.addTaskByAdminController);
+adminRouter.post('/addTaskByAdmin', validateJWT, addTaskToPackageByAdminController.addTaskByAdmin);
 
 /**
  * @swagger
@@ -1083,7 +1086,7 @@ adminRouter.post('/addTaskByAdmin', validateJWT, addTaskToPackageByAdminControll
  *                   type: string
  *                   example: Task updating failed
  */
-adminRouter.put('/updateTaskByAdmin', validateJWT, updateTaskByAdminController.updateTaskByAdminController);
+adminRouter.put('/updateTaskByAdmin', validateJWT, updateTaskByAdminController.updateTaskByAdmin);
 
 /**
  * @swagger
@@ -1984,7 +1987,7 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                   type: string
  *                   example: Failed to add feedback.
  */
-adminRouter.post('/addfeedbackattributebyadmin', addFeedbackAttributeByAdminController.addFeedbackAttributeByAdminController);
+adminRouter.post('/addfeedbackattributebyadmin', addFeedbackAttributeByAdminController.addFeedbackAttributeByAdmin);
 
 /**
  * @swagger

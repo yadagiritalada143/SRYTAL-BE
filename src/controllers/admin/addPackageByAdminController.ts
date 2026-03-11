@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import addPackageByAdminService from "../../services/admin/addPackageByAdminService";
 import { PACKAGE_ERROR_MESSAGES, PACKAGE_SUCCESS_MESSAGES, HTTP_STATUS } from "../../constants/admin/packageMessages";
 
-const addPackageByAdminController = async (req: Request, res: Response) => {
+const addPackageByAdmin = async (req: Request, res: Response) => {
     try{
         const addPackageDetails = req.body;
          addPackageDetails.isDeleted = false;
@@ -15,4 +15,4 @@ const addPackageByAdminController = async (req: Request, res: Response) => {
     }
 }
 
-export default { addPackageByAdminController };
+export default { addPackageByAdmin };

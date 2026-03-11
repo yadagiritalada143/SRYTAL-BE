@@ -24,6 +24,7 @@ const getEmployeeDetailsByAdmin = (id: string): Promise<FetchUserResponse> => {
             .populate('employmentType')
             .populate('employeeRole')
             .populate('organization')
+            .populate('department')
             .then((user: any) => {
                 if (!user) {
                     reject({ success: false });
