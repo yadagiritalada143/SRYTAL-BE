@@ -5,5 +5,5 @@ export const BLOOD_GROUP_ERROR_MESSAGES = {
 };
 
 export const BLOOD_GROUP_SUCCESS_MESSAGES = {
-    BLOOD_GROUP_ADD_SUCCESS_MESSAGE: 'New Bloodgroup added Successfully !',
+    BLOOD_GROUP_ADD_SUCCESS_MESSAGE: 'Bloodgroup added Successfully !',
 }

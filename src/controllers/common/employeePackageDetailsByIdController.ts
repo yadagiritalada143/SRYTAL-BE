@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { PACKAGE_ERROR_MESSAGES } from '../../constants/admin/packageMessages';
 import employeePackageDetailsByIdService from '../../services/common/employeePackageDetailsByIdService';
 
-const employeePackageDetailsByIdController = (req: Request, res: Response) => {
+const employeePackageDetailsById = (req: Request, res: Response) => {
     const { userId, startDate, endDate } = req.body;
 
     let employeeIdToFetchTimeSheet = '';
@@ -29,4 +29,4 @@ const employeePackageDetailsByIdController = (req: Request, res: Response) => {
         });
 };
 
-export default { employeePackageDetailsByIdController };
+export default { employeePackageDetailsById };

@@ -24,6 +24,7 @@ const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => 
       .populate('employeeRole')
       .populate('employmentType')
       .populate('organization')
+      .populate('department')
       .then((employee: any) => {
         if (!employee) {
           reject({ success: false });

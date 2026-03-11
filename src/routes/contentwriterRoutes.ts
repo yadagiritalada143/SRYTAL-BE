@@ -276,7 +276,7 @@ contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.
  *       500:
  *         description: Internal server error
  */
-contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskController.updateCourseTaskController);
+contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskController.updateCourseTask);
 
 /**
  * @swagger

@@ -532,6 +532,63 @@ adminRouter.post('/employeePasswordResetByAdmin', employeePasswordResetByAdminCo
  *                   example: Error in fetching blood group details
  */
 adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT, getAllBloodGroupsByAdminController.getAllBloodGroupsDetails);
+
+/**
+ * @swagger
+ * /admin/addBloodGroupByAdmin:
+ *   post:
+ *     summary: Add a new blood group by admin
+ *     description: This API allows an admin to add a new blood group type.
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - type
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 example: "A+"
+ *     responses:
+ *       201:
+ *         description: Blood group added successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Blood group added successfully
+ *       400:
+ *         description: Blood group add failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add blood group
+ *       401:
+ *         description: Unauthorized (Invalid or missing JWT)
+ *       500:
+ *         description: Unexpected server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Unexpected error occurred
+ */
 adminRouter.post('/addBloodGroupByAdmin', validateJWT, addBloodGroupByAdminController.addNewBloodgroupByAdmin);
 adminRouter.post('/deleteEmployeeByAdmin', validateJWT, deleteEmployeeDetailsByAdminController.deleteProfile);
 adminRouter.delete('/deleteBloodGroupByAdmin/:id', validateJWT, deleteBloodGroupByAdminController.deleteBloodGroup);
