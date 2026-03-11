@@ -4,9 +4,9 @@ import deleteBloodGroupService from '../../services/admin/deleteBloodGroupByAdmi
 import { DELETE_ERROR_MESSAGES } from '../../constants/admin/manageUserMessages';
 
 const deleteBloodGroup = (req: Request, res: Response) => {
-    const id = req.params.id;
+    const { _id } = req.params;
     deleteBloodGroupService
-        .deleteBloodGroupByAdmin(id)
+        .deleteBloodGroupByAdmin(_id)
         .then((deleteBloodGroupResponse: any) => {
             res.status(200).json(deleteBloodGroupResponse);
         })

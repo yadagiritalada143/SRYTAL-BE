@@ -3,9 +3,9 @@ import updateBloodGroupService from '../../services/admin/updateBloodGroupByAdmi
 import { RECRUITER_ERROR_MESSAGES } from '../../constants/recruiterErrorMessages';
 
 const updateBloodGroup = (req: Request, res: Response) => {
-    const { id, type } = req.body;
+    const { _id, type } = req.body;
     updateBloodGroupService
-        .updateBloodGroupByAdmin(id, type)
+        .updateBloodGroupByAdmin(_id, type)
         .then((updateBloodGroupResponse: any) => {
             res.status(200).json(updateBloodGroupResponse);
         })

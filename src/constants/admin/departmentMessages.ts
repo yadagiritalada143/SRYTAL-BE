@@ -2,7 +2,8 @@ export const DEPARTMENT_SUCCESS_MESSAGES = {
     DEPARTMENT_ADD_SUCCESS_MESSAGE: 'Department added successfully !!',
     FETCH_ALL_DEPARTMENTS_SUCCESS_MESSAGE: 'Fetched all departments successfully !!',
     FETCH_DEPARTMENT_SUCCESS_MESSAGE: 'Fetched department details successfully !!',
-    DEPARTMENT_UPDATE_SUCCESS_MESSAGE: 'Department updated successfully !!'
+    DEPARTMENT_UPDATE_SUCCESS_MESSAGE: 'Department updated successfully !!',
+    DEPARTMENT_DELETE_SUCCESS_MESSAGE: 'Department deleted successfully !!'
 }
 
 export const DEPARTMENT_ERROR_MESSAGES = {

@@ -591,9 +591,154 @@ adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT, getAllBloodGroupsByAdm
  */
 adminRouter.post('/addBloodGroupByAdmin', validateJWT, addBloodGroupByAdminController.addNewBloodgroupByAdmin);
 adminRouter.post('/deleteEmployeeByAdmin', validateJWT, deleteEmployeeDetailsByAdminController.deleteProfile);
-adminRouter.delete('/deleteBloodGroupByAdmin/:id', validateJWT, deleteBloodGroupByAdminController.deleteBloodGroup);
-adminRouter.put('/updateBloodGroupByAdmin', validateJWT, updateBloodGroupByAdminController.updateBloodGroup);
+
+/**
+ * @swagger
+ * /admin/deleteBloodGroupByAdmin/{_id}:
+ *   delete:
+ *     summary: Delete blood group by admin
+ *     description: Admin can delete a blood group using its _id.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: _id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Blood group ID
+ *         example: 665af32e3f1d9a8a7c8b1234
+ *     responses:
+ *       200:
+ *         description: Blood group deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Blood group deleted successfully
+ *       404:
+ *         description: Blood group not found
+ *       400:
+ *         description: Invalid request
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.delete('/deleteBloodGroupByAdmin/:_id', validateJWT, deleteBloodGroupByAdminController.deleteBloodGroup);
+
+/**
+ * @swagger
+ * /admin/updateBloodGroupByAdmin:
+ *   put:
+ *     summary: Update blood group by admin
+ *     description: Admin can update the blood group type using the blood group _id.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - _id
+ *               - type
+ *             properties:
+ *               _id:
+ *                 type: string
+ *                 example: "665af32e3f1d9a8a7c8b1234"
+ *               type:
+ *                 type: string
+ *                 example: "A+"
+ *     responses:
+ *       200:
+ *         description: Blood group updated successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Blood group updated successfully
+ *       400:
+ *         description: Missing parameters
+ *       404:
+ *         description: Blood group not found
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.put('/updateBloodGroupByAdmin', validateJWT,  updateBloodGroupByAdminController.updateBloodGroup);
+
+/**
+ * @swagger
+ * /admin/addEmploymentTypeByAdmin:
+ *   post:
+ *     summary: Add Employment Type by Admin
+ *     description: Admin can create a new employment type.
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - employmentType
+ *             properties:
+ *               employmentType:
+ *                 type: string
+ *                 description: Name of the employment type
+ *                 example: Full Time
+ *     responses:
+ *       201:
+ *         description: Employment type added successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Employment type added successfully
+ *       400:
+ *         description: Employment type creation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add employment type
+ *       500:
+ *         description: Unexpected server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Unexpected error occurred
+ */
 adminRouter.post('/addEmploymentTypeByAdmin', validateJWT, addEmploymentTypeByAdminController.addEmploymentTypeByAdmin);
+
 adminRouter.get('/getallEmploymentTypesByAdmin', validateJWT, getAllEmploymentTypesByAdminController.getAllEmploymentTypesByAdmin);
 adminRouter.put('/updateEmploymentTypeByAdmin', validateJWT, updateEmploymentTypeByAdminController.updateEmploymentType);
 adminRouter.delete('/deleteEmploymentTypeByAdmin/:id', validateJWT, deleteEmploymentTypeByAdminController.deleteEmploymentType);
