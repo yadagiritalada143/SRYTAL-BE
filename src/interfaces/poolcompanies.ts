@@ -39,3 +39,7 @@ export interface IPoolCompanyResponse extends IPoolcompanies {
     success: boolean,
     poolCompanyResponse?: IPoolcompanies
 }
+
+export interface IDeletePoolCompanyResponse {
+    success: boolean;
+}

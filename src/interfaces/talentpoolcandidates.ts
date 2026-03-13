@@ -25,3 +25,17 @@ export interface ITalentPoolCandidates extends Document {
     createdAt: Date;
     lastUpdatedAt: Date;
 }
+
+export interface IDeletePoolCandidateResponse {
+    success: boolean;
+}
+
+export interface IFetchTalentPoolCandidatesListResponse {
+    success: boolean;
+    talentPoolCandidatesList?: any;
+}
+
+export interface IFetchTalentPoolCandidateDetailsResponse {
+    success: boolean;
+    talentPoolCandidateDetails?: any;
+}

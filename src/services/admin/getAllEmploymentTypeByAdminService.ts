@@ -1,11 +1,7 @@
 import Employmenttype from '../../model/employmentTypeModel';
+import { IFetchEmploymentTypeResponse } from '../../interfaces/employmenttype';
 
-interface FetchEmploymentTypeResponse {
-    success: boolean;
-    employmentTypesList?: any;
-}
-
-const getAllEmploymentTypesByAdmin = (): Promise<FetchEmploymentTypeResponse> => {
+const getAllEmploymentTypesByAdmin = (): Promise<IFetchEmploymentTypeResponse> => {
     return new Promise((resolve, reject) => {
         Employmenttype.find({})
             .then((employmentTypesList: any) => {

@@ -1,12 +1,7 @@
-import { any } from 'joi';
-import BloodgroupModel from '../../model/bloodGroupModel'
+import BloodgroupModel from '../../model/bloodGroupModel';
+import { IUpdateBloodGroupResponse } from '../../interfaces/bloodgroup';
 
-interface updateBloodGroupResponse {
-    success: boolean;
-    responseAfterupdate?: any;
-}
-
-const updateBloodGroupByAdmin = async (id: string, type: string): Promise<updateBloodGroupResponse> => {
+const updateBloodGroupByAdmin = async (id: string, type: string): Promise<IUpdateBloodGroupResponse> => {
     try {
         const result = await BloodgroupModel.updateOne({ _id: id }, { type });
         if (result) {
@@ -21,4 +16,3 @@ const updateBloodGroupByAdmin = async (id: string, type: string): Promise<update
 }
 
 export default { updateBloodGroupByAdmin };
-

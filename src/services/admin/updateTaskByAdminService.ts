@@ -1,11 +1,7 @@
 import TaskModel from '../../model/taskModel';
+import { IUpdateTaskResponse } from '../../interfaces/task';
 
-interface updateTaskResponse {
-    success: boolean;
-    responseAfterUpdate?: any;
-}
-
-const updateTaskByAdmin = async (taskDetails: any): Promise<updateTaskResponse> => {
+const updateTaskByAdmin = async (taskDetails: any): Promise<IUpdateTaskResponse> => {
     try {
         const result = await TaskModel.updateOne({ _id: taskDetails.id }, { ...taskDetails });
         if (result) {

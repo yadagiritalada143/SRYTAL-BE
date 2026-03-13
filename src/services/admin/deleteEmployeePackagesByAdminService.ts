@@ -1,26 +1,10 @@
 import EmployeePackageModel from '../../model/employeePackageModel';
-import { ObjectId } from 'mongoose';
-
-interface IEmployeePackage {
-    employeeId: ObjectId;
-    packages: {
-        packageId: ObjectId;
-        tasks: {
-            taskId: ObjectId;
-            startDate: Date;
-        }[];
-    }[];
-}
-
-interface DeleteEmployeePackagesResponse {
-    success: boolean;
-    responseAfterDelete?: any;
-}
+import { IDeleteEmployeePackagesResponse, IEmployeePackage }  from '../../interfaces/package';
 
 const deleteEmployeePackageServiceByAdmin = async (
     employeeId: string,
     packageId: string
-): Promise<DeleteEmployeePackagesResponse> => {
+): Promise<IDeleteEmployeePackagesResponse> => {
     try {
         const employeePackageDoc = await EmployeePackageModel.findOne({ employeeId }) as IEmployeePackage
         if (!employeePackageDoc) {

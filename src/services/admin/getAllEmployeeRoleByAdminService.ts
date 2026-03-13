@@ -1,12 +1,8 @@
 
 import Employeerole from '../../model/employeeRole';
+import { IFetchEmployeeRolesResponse } from '../../interfaces/employeerole';
 
-interface FetchEmployeeRolesResponse {
-    success: boolean;
-    employeeRoles?: any;
-}
-
-const getAllEmployeeRolesByAdmin = (): Promise<FetchEmployeeRolesResponse> => {
+const getAllEmployeeRolesByAdmin = (): Promise<IFetchEmployeeRolesResponse> => {
     return new Promise((resolve, reject) => {
         Employeerole.find({})
             .then((employeeRoles: any) => {

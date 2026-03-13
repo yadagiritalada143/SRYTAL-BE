@@ -1,6 +1,20 @@
 import { Document } from "mongoose";
 
-interface IEmployeerole extends Document {
+export interface IEmployeerole extends Document {
     employeerole: string;
 }
-export default IEmployeerole;
+
+export interface IDeleteEmployeeRoleResponse {
+    success: boolean;
+    responseAfterDelete?: any;
+}
+
+export interface IFetchEmployeeRolesResponse {
+    success: boolean;
+    employeeRoles?: any;
+}
+
+export interface IUpdateEmployeeRoleResponse {
+    success: boolean;
+    responseAfterUpdate?: any;
+}

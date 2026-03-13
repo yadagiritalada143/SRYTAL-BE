@@ -1,10 +1,7 @@
 import PackagesModel from '../../model/packageModel';
+import { IDeletePackageResponse } from '../../interfaces/employeepackages';
 
-interface deletePackageResponse {
-    success: boolean;
-}
-
-const hardDeletePackageServiceByAdmin = async (packageIdToDelete: any): Promise<deletePackageResponse> => {
+const hardDeletePackageServiceByAdmin = async (packageIdToDelete: any): Promise<IDeletePackageResponse> => {
     return new Promise(async (resolve, reject) => {
         await PackagesModel.deleteOne(
             { _id: packageIdToDelete })
@@ -18,7 +15,7 @@ const hardDeletePackageServiceByAdmin = async (packageIdToDelete: any): Promise<
     });
 }
 
-const softDeletePackageServiceByAdmin = async (packageIdToDelete: string): Promise<deletePackageResponse> => {
+const softDeletePackageServiceByAdmin = async (packageIdToDelete: string): Promise<IDeletePackageResponse> => {
     return new Promise(async (resolve, reject) => {
         await PackagesModel.updateOne(
             { _id: packageIdToDelete },

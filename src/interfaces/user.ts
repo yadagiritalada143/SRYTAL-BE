@@ -1,7 +1,7 @@
 import mongoose, { Document } from 'mongoose';
 import BankDetailsInfo from '../types/bankDetailsInfo';
 
-interface IUser extends Document {
+export interface IUser extends Document {
   id: number;
   firstName: string;
   lastName: string;
@@ -39,4 +39,17 @@ export interface UpdateProfileResponse {
   success: boolean;
 };
 
-export default IUser;
+export interface IFetchUserResponse {
+    success: boolean;
+    userDetails?: any;
+}
+
+export interface IGetEmployeeDetailsResponse {
+  success: boolean;
+  employeeDetails?: any;
+}
+
+export interface IFetchSuperadminEmployeeListResponse {
+    success: boolean;
+    superadminEmployeeList?: any;
+}

@@ -1,10 +1,7 @@
 import TaskModel from '../../model/taskModel';
+import { IDeleteTaskResponse } from '../../interfaces/task';
 
-interface deleteTaskResponse {
-    success: boolean;
-}
-
-const hardDeleteTaskByAdmin = async (taskIdToDelete: any): Promise<deleteTaskResponse> => {
+const hardDeleteTaskByAdmin = async (taskIdToDelete: any): Promise<IDeleteTaskResponse> => {
     return new Promise(async (resolve, reject) => {
         await TaskModel.deleteOne(
             { _id: taskIdToDelete })
@@ -18,7 +15,7 @@ const hardDeleteTaskByAdmin = async (taskIdToDelete: any): Promise<deleteTaskRes
     });
 }
 
-const softDeleteTaskByAdmin = async (taskIdToDelete: string): Promise<deleteTaskResponse> => {
+const softDeleteTaskByAdmin = async (taskIdToDelete: string): Promise<IDeleteTaskResponse> => {
     return new Promise(async (resolve, reject) => {
         await TaskModel.updateOne(
             { _id: taskIdToDelete },

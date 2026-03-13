@@ -51,3 +51,17 @@ export interface UpdateTimesheetPayload {
     employeeId: string | mongoose.Types.ObjectId;
     packages: PackageUpdate[];
 }
+
+export interface IDeletePackageResponse {
+    success: boolean;
+}
+
+export interface IFetchEmployeePackagesDetailsResponse {
+    success: boolean;
+    employeePackageDetails?: any;
+}
+
+export interface IFetchEmployeePackagesDetailsResponse {
+    success: boolean;
+    employeePackageDetails?: any;
+}
