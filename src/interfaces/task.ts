@@ -7,3 +7,12 @@ export interface ITask extends Document {
     lastUpdatedAt: Date;
     packageId: mongoose.Schema.Types.ObjectId;
 }
+
+export interface IDeleteTaskResponse {
+    success: boolean;
+}
+
+export interface IUpdateTaskResponse {
+    success: boolean;
+    responseAfterUpdate?: any;
+}

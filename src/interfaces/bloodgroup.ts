@@ -1,7 +1,15 @@
 import { Document } from "mongoose";
 
-interface IBloodgroup extends Document {
+export interface IBloodgroup extends Document {
     type: string;
 }
 
-export default IBloodgroup;
+export interface IFetchBloodGroupDetailsResponse {
+    success: boolean;
+    bloodGroupList?: any;
+}
+
+export interface IUpdateBloodGroupResponse {
+    success: boolean;
+    responseAfterupdate?: any;
+}

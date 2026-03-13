@@ -1,11 +1,7 @@
 import Employmenttype from '../../model/employmentTypeModel';
+import { IUpdateEmploymentTypeResponse } from '../../interfaces/employmenttype';
 
-interface updateEmploymentTypeResponse {
-    success: boolean;
-    responseAfterUpdate?: any;
-}
-
-const updateEmploymentTypeByAdmin = async (id: string, employmentType: string): Promise<updateEmploymentTypeResponse> => {
+const updateEmploymentTypeByAdmin = async (id: string, employmentType: string): Promise<IUpdateEmploymentTypeResponse> => {
     try {
         const result = await Employmenttype.updateMany({ _id: id }, { employmentType });
         if (!result) {

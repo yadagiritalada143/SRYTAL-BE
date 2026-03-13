@@ -1,15 +1,11 @@
 import EmployeePackageModel from '../../model/employeePackageModel';
-
-interface FetchEmployeePackagesDetailsResponse {
-    success: boolean;
-    employeePackageDetails?: any;
-}
+import { IFetchEmployeePackagesDetailsResponse } from '../../interfaces/employeepackages';
 
 const employeePackageDetailsById = async (
     employeeId: string,
     startDate: string,
     endDate: string
-): Promise<FetchEmployeePackagesDetailsResponse> => {
+): Promise<IFetchEmployeePackagesDetailsResponse> => {
     try {
         const employeePackageDetails = await EmployeePackageModel.find({ employeeId })
             .populate('packages.packageId')

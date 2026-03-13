@@ -1,11 +1,7 @@
 import CourseModuleModel from '../../model/coursemoduleModel';
+import { IUpdateCourseModuleResponse } from '../../interfaces/coursemodule';
 
-interface updateCourseModuleResponse {
-    success: boolean;
-    responseAfterModuleUpdate?: any;
-}
-
-const updateCourseModule = async (id: string, moduleName: string, moduleDescription: string, thumbnail: string, status: string): Promise<updateCourseModuleResponse> => {
+const updateCourseModule = async (id: string, moduleName: string, moduleDescription: string, thumbnail: string, status: string): Promise<IUpdateCourseModuleResponse> => {
     try {
         const result = await CourseModuleModel.updateOne({ _id: id }, { moduleName, moduleDescription, thumbnail, status });
         if (!result) {

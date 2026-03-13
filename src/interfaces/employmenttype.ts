@@ -1,7 +1,20 @@
 import { Document } from "mongoose";
 
-interface IEmploymenttype extends Document {
+export interface IEmploymenttype extends Document {
     employmentType: string;
 }
 
-export default IEmploymenttype;
+export interface IDeleteEmploymentTypeResponse {
+    success: boolean;
+    responseAfterDelete?: any;
+}
+
+export interface IFetchEmploymentTypeResponse {
+    success: boolean;
+    employmentTypesList?: any;
+}
+
+export interface IUpdateEmploymentTypeResponse {
+    success: boolean;
+    responseAfterUpdate?: any;
+}

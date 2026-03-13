@@ -1,11 +1,8 @@
 import Employeerole from '../../model/employeeRole';
+import { IUpdateEmployeeRoleResponse } from '../../interfaces/employeerole';
 
-interface updateEmployeeRoleResponse {
-    success: boolean;
-    responseAfterUpdate?: any;
-}
 
-const updateEmployeeRoleByAdmin = async (id: string, designation: string): Promise<updateEmployeeRoleResponse> => {
+const updateEmployeeRoleByAdmin = async (id: string, designation: string): Promise<IUpdateEmployeeRoleResponse> => {
     try {
         const result = await Employeerole.updateMany({ _id: id }, { designation });
         if (!result) {

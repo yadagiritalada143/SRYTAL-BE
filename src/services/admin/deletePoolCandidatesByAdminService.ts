@@ -1,10 +1,7 @@
 import TalentPoolCandidatesModel from '../../model/talentPoolCandidatesModel';
+import { IDeletePoolCandidateResponse } from '../../interfaces/talentpoolcandidates';
 
-interface deletePoolCandidateResponse {
-    success: boolean;
-}
-
-const hardDeletePoolCandidateByAdmin = async (poolCandidateIdToDelete: any): Promise<deletePoolCandidateResponse> => {
+const hardDeletePoolCandidateByAdmin = async (poolCandidateIdToDelete: any): Promise<IDeletePoolCandidateResponse> => {
     return new Promise(async (resolve, reject) => {
         await TalentPoolCandidatesModel.deleteOne(
             { _id: poolCandidateIdToDelete })
@@ -18,7 +15,7 @@ const hardDeletePoolCandidateByAdmin = async (poolCandidateIdToDelete: any): Pro
     });
 }
 
-const softDeletePoolCandidateByAdmin = async (poolCandidateIdToDelete: string): Promise<deletePoolCandidateResponse> => {
+const softDeletePoolCandidateByAdmin = async (poolCandidateIdToDelete: string): Promise<IDeletePoolCandidateResponse> => {
     return new Promise(async (resolve, reject) => {
         await TalentPoolCandidatesModel.updateOne(
             { _id: poolCandidateIdToDelete },

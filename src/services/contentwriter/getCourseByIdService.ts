@@ -1,11 +1,7 @@
 import CourseModel from '../../model/coursesModel';
+import { IFetchCourseByIdResponse } from '../../interfaces/courses';
 
-interface FetchCourseByIdResponse {
-    success: boolean;
-    coursedata?: any;
-}
-
-const getCourseById = async (id: string): Promise<FetchCourseByIdResponse> => {
+const getCourseById = async (id: string): Promise<IFetchCourseByIdResponse> => {
     try {
         const course = await CourseModel.findById(id)
             .populate({
