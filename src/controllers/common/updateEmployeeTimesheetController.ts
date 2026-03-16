@@ -5,7 +5,6 @@ import { UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES } from '../../constants/commo
 const updateEmployeeTimesheet = (req: Request, res: Response) => {
     const { userId } = req.body;
     let updateEmployeeTimeSheetPayload: any = {};
-
     let employeeIdToUpdateTimeSheet = '';
     if (req.body && req.body.employeeId) {
         employeeIdToUpdateTimeSheet = req.body.employeeId;

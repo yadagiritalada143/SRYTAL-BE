@@ -2,7 +2,7 @@ import UserModel from '../../model/userModel';
 import { IFetchSuperadminEmployeeListResponse } from '../../interfaces/user';
 
 
-const getAllEmployeesBySuperadminService = (organizationId: string): Promise<IFetchSuperadminEmployeeListResponse> => {
+const getAllEmployeesBySuperadmin = (organizationId: string): Promise<IFetchSuperadminEmployeeListResponse> => {
     return new Promise((resolve, reject) => {
         UserModel.find({ organization: organizationId })
             .then((users: any) => {
@@ -24,4 +24,4 @@ const getAllEmployeesBySuperadminService = (organizationId: string): Promise<IFe
 
 };
 
-export default { getAllEmployeesBySuperadminService }
+export default { getAllEmployeesBySuperadmin }

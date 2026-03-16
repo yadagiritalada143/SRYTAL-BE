@@ -33,7 +33,7 @@ const downloadSalarySlip = async (req: Request, res: Response): Promise<any> => 
             }
         }
 
-        const result = await downloadSalarySlipService.downloadSalarySlipService({ mongoId, fullName, month, year });
+        const result = await downloadSalarySlipService.downloadSalarySlip({ mongoId, fullName, month, year });
 
         if (!result.success) {
             if (result.error === 'SALARY_SLIP_NOT_FOUND') {

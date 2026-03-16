@@ -4,7 +4,7 @@ interface IDepartment extends Document {
     departmentName: string;
 }
 
-interface FetchDepartmentsResponse {
+export interface FetchDepartmentsResponse {
     success: boolean;
     departments?: any;
 }

@@ -25,7 +25,7 @@ const addModuleToCourse = async (req: Request, res: Response) => {
                 })
         }
 
-        const responseAfteraddingCourseModule = await addCourseModuleService.addNewCourseModuleService(courseId, moduleName, moduleDescription, uniqueThumbnailKey, 'ACTIVE');
+        const responseAfteraddingCourseModule = await addCourseModuleService.addNewCourseModule(courseId, moduleName, moduleDescription, uniqueThumbnailKey, 'ACTIVE');
 
         if (responseAfteraddingCourseModule) {
             return res.status(201).json({ message: COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE })

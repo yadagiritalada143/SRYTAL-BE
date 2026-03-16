@@ -5,7 +5,7 @@ import allEmployeesBySuperadminServices from '../../services/superadmin/getAllEm
 const getAllEmployeesBySuperadmin = (req: Request, res: Response) => {
     const { organizationId } = req.params;
     allEmployeesBySuperadminServices
-        .getAllEmployeesBySuperadminService(organizationId)
+        .getAllEmployeesBySuperadmin(organizationId)
         .then(fetchAllEmployeesBySuperadminResponse => {
             res.status(200).json(fetchAllEmployeesBySuperadminResponse);
         })
@@ -15,4 +15,4 @@ const getAllEmployeesBySuperadmin = (req: Request, res: Response) => {
         });
 };
 
-export default { getAllEmployeesBySuperadmin }
+export default { getAllEmployeesBySuperadmin };

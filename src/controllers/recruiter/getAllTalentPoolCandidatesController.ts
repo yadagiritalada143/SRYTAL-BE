@@ -4,7 +4,7 @@ import getAllTalentPoolCandidatesServices from '../../services/recruiter/getAllT
 
 const getAllTalentPoolCandidatesByRecruiter = (req: Request, res: Response) => {
     getAllTalentPoolCandidatesServices
-        .getAllTalentPoolCandidatesService()
+        .getAllTalentPoolCandidates()
         .then(getAllTalentPoolCandidatesResponse => {
             res.status(200).json(getAllTalentPoolCandidatesResponse);
         })

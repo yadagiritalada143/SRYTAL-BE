@@ -22,5 +22,4 @@ const getAllEmployeeDetails = async (req: Request, res: Response) => {
     }
 };
 
-
-export default { getAllEmployeeDetails }
+export default { getAllEmployeeDetails };

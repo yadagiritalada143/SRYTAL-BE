@@ -15,5 +15,4 @@ const updateEmploymentType = (req: Request, res: Response) => {
         });
 }
 
-export default { updateEmploymentType }
-
+export default { updateEmploymentType };
