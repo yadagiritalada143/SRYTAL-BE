@@ -25,7 +25,7 @@ const addNewCourse = async (req: Request, res: Response) => {
                 })
         }
 
-        const responseAfteraddingCourse = await addNewCourseService.addCourseService(courseName, courseDescription, uniqueThumbnailKey, 'ACTIVE')
+        const responseAfteraddingCourse = await addNewCourseService.addCourse(courseName, courseDescription, uniqueThumbnailKey, 'ACTIVE')
 
         if (responseAfteraddingCourse) {
             return res.status(201).json({ message: COURSE_SUCCESS_MESSAGES.COURSE_ADD_SUCCESS_MESSAGE });

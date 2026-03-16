@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { EMPLOYEE_ERRORS, HTTP_STATUS } from '../../constants/commonErrorMessages';
 import getEmployeeDetailsService from '../../services/common/getEmployeeDetailsService';
 
-
 const getEmployeeDetails = (req: Request, res: Response) => {
     getEmployeeDetailsService
         .getEmployeeDetails(req.user?.userId as string)

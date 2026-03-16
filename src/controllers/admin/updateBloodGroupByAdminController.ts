@@ -16,5 +16,4 @@ const updateBloodGroup = (req: Request, res: Response) => {
 
 }
 
-export default { updateBloodGroup }
-
+export default { updateBloodGroup };

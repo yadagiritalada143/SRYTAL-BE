@@ -1,6 +1,6 @@
 import CourseModel from '../../model/coursesModel';
 
-const addCourseByAdminService = async (courseName: string, courseDescription: string ) => {
+const addCourseByAdmin = async (courseName: string, courseDescription: string ) => {
     try {
         const CoursesToSave: any = new CourseModel({ courseName, courseDescription});
         const result = await CoursesToSave.save();
@@ -11,4 +11,4 @@ const addCourseByAdminService = async (courseName: string, courseDescription: st
     }
 };
 
-export default { addCourseByAdminService };
+export default { addCourseByAdmin };

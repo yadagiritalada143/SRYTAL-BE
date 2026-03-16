@@ -1,5 +1,5 @@
 import FeedbackAttributesModel from '../../model/feedbackAttributesModel';
-import  {FetchAllFeedbackAttributes} from '../../interfaces/feedbackattributes';
+import  { FetchAllFeedbackAttributes } from '../../interfaces/feedbackattributes';
 
 const getAllFeedbackAttributeByAdmin = async (): Promise<FetchAllFeedbackAttributes> => {
     const getallfeedbacks = await FeedbackAttributesModel.find();

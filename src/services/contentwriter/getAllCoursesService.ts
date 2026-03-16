@@ -1,7 +1,7 @@
 import CourseModel from '../../model/coursesModel';
 import { IFetchAllCoursesResponse } from '../../interfaces/courses';
 
-const AllCoursesService = (): Promise<IFetchAllCoursesResponse> => {
+const AllCourses = (): Promise<IFetchAllCoursesResponse> => {
     return new Promise((resolve, reject) => {
         CourseModel.find({})
             .populate({
@@ -28,4 +28,4 @@ const AllCoursesService = (): Promise<IFetchAllCoursesResponse> => {
     });
 };
 
-export default { AllCoursesService };
+export default { AllCourses };
