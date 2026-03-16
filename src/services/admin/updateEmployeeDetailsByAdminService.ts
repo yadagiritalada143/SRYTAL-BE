@@ -1,4 +1,4 @@
-import IUser from '../../interfaces/user';
+import { IUser } from '../../interfaces/user';
 import UserModel from '../../model/userModel';
 import { UpdateProfileResponse } from '../../interfaces/user';
 
@@ -22,7 +22,7 @@ const updateEmployeeProfileByAdmin = async (userDetailsToUpdate: IUser): Promise
                 firstName: userDetailsToUpdate.firstName,
                 lastName: userDetailsToUpdate.lastName,
                 mobileNumber: userDetailsToUpdate.mobileNumber,
-                bloodGroup: userDetailsToUpdate.bloodGroup,
+                bloodGroup: userDetailsToUpdate.bloodGroup || null,
                 bankDetailsInfo: userDetailsToUpdate.bankDetailsInfo,
                 employmentType: userDetailsToUpdate.employmentType,
                 employeeRole: userDetailsToUpdate.employeeRole,
@@ -31,7 +31,7 @@ const updateEmployeeProfileByAdmin = async (userDetailsToUpdate: IUser): Promise
                 aadharNumber: userDetailsToUpdate.aadharNumber,
                 panCardNumber: userDetailsToUpdate.panCardNumber,
                 uanNumber: userDetailsToUpdate.uanNumber,
-                department: userDetailsToUpdate.department,
+                department: userDetailsToUpdate.department || null,
                 dateOfJoining: formatDate(userDetailsToUpdate.dateOfJoining),
                 presentAddress: userDetailsToUpdate.presentAddress,
                 permanentAddress: userDetailsToUpdate.permanentAddress,

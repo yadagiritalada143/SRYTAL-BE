@@ -2044,7 +2044,7 @@ adminRouter.post('/previewSalarySlip', validateJWT, generateSalarySlipByAdminCon
  *                   type: string
  *                   example: Failed to add feedback.
  */
-adminRouter.post('/addfeedbackattributebyadmin', addFeedbackAttributeByAdminController.addFeedbackAttributeByAdmin);
+adminRouter.post('/addfeedbackattributebyadmin', validateJWT, addFeedbackAttributeByAdminController.addFeedbackAttributeByAdmin);
 
 /**
  * @swagger
