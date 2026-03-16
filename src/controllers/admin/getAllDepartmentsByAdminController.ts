@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import getAllDepartmentsByAdminService from '../../services/admin/getAllDepartmentByAdminService';
 import { DEPARTMENT_SUCCESS_MESSAGES, DEPARTMENT_ERROR_MESSAGES, HTTP_STATUS } from '../../constants/admin/departmentMessages';
 
-
 const getAllDepartmentsByAdmin = async (req: Request, res: Response): Promise<Response> => {
     try {
         const departments = await getAllDepartmentsByAdminService.getAllDepartmentsByAdmin();
