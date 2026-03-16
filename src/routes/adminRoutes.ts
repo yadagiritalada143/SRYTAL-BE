@@ -44,7 +44,7 @@ import getFeedbackAttributeByAdminController from '../controllers/admin/getFeedb
 import getAllFeedbackAttributeByAdminController from '../controllers/admin/getAllFeedbackAttributeByAdminController';
 import deleteFeedbackAttributeByAdminController from '../controllers/admin/deleteFeedbackAttributeByAdminController';
 import addDepartmentByAdminController from '../controllers/admin/addDepartmentByAdminController';
-import getAllDepartmentByAdminController from '../controllers/admin/getAllDepartmentByAdminController';
+import getAllDepartmentsByAdminController from '../controllers/admin/getAllDepartmentsByAdminController';
 import getDepartmentByAdminController from '../controllers/admin/getDepartmentByAdminController';
 import deleteDepartmentByAdminController from '../controllers/admin/deleteDepartmentByAdminController';
 import updateDepartmentByAdminController from '../controllers/admin/updateDepartmentByAdminController';
@@ -1716,7 +1716,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT, deleteEmployeeTask
  *                   type: string
  *                   example: An unexpected error occurred while generating salary slip
  */
-adminRouter.post('/generateSalarySlip', generateSalarySlipByAdminController.generateSalarySlip);
+adminRouter.post('/generateSalarySlip', validateJWT, generateSalarySlipByAdminController.generateSalarySlip);
 
 /**
  * @swagger
@@ -2402,7 +2402,7 @@ adminRouter.post('/adddepartmentbyadmin', validateJWT, addDepartmentByAdminContr
  *       500:
  *         description: Internal server error
  */
-adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentByAdminController.getAllDepartmentByAdmin);
+adminRouter.get('/getalldepartmentsbyadmin', validateJWT, getAllDepartmentsByAdminController.getAllDepartmentsByAdmin);
 
 /**
  * @swagger

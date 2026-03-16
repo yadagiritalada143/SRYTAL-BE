@@ -3,9 +3,9 @@ import getAllDepartmentsByAdminService from '../../services/admin/getAllDepartme
 import { DEPARTMENT_SUCCESS_MESSAGES, DEPARTMENT_ERROR_MESSAGES, HTTP_STATUS } from '../../constants/admin/departmentMessages';
 
 
-const getAllDepartmentByAdmin = async (req: Request, res: Response): Promise<Response> => {
+const getAllDepartmentsByAdmin = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const departments = await getAllDepartmentsByAdminService.getAllDepartmentByAdmin();
+        const departments = await getAllDepartmentsByAdminService.getAllDepartmentsByAdmin();
         return res.status(HTTP_STATUS.OK).json({ success: true, message: DEPARTMENT_SUCCESS_MESSAGES.FETCH_ALL_DEPARTMENTS_SUCCESS_MESSAGE, data: departments });
 
     } catch (error: any) {
@@ -14,4 +14,4 @@ const getAllDepartmentByAdmin = async (req: Request, res: Response): Promise<Res
     }
 };
 
-export default { getAllDepartmentByAdmin };
+export default { getAllDepartmentsByAdmin };

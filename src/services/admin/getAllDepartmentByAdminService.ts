@@ -1,7 +1,7 @@
 import Departmentmodel from '../../model/departmentModel';
 import { FetchDepartmentsResponse } from '../../interfaces/department';
 
-const getAllDepartmentByAdmin = async (): Promise<FetchDepartmentsResponse> => {
+const getAllDepartmentsByAdmin = async (): Promise<FetchDepartmentsResponse> => {
     try {
         const departments = await Departmentmodel.find({});
 
@@ -19,4 +19,4 @@ const getAllDepartmentByAdmin = async (): Promise<FetchDepartmentsResponse> => {
     }
 };
 
-export default { getAllDepartmentByAdmin };
+export default { getAllDepartmentsByAdmin };
