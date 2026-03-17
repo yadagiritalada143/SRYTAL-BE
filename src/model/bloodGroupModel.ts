@@ -1,5 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
-import IBloodgroup from '../interfaces/bloodgroup';
+import { IBloodgroup } from '../interfaces/bloodgroup';
 
 const BloodgroupSchema: Schema = new mongoose.Schema({
     type: { type: mongoose.Schema.Types.String, required: true },
