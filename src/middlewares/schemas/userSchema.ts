@@ -6,7 +6,7 @@ const userSchema = Joi.object({
     lastName: Joi.string().min(3).max(30).optional().allow(''),
     email: Joi.string().email().required(),
     mobileNumber: Joi.number().integer().min(0).optional().allow(''),
-    bloodGroup: Joi.string().optional().allow(''),
+    bloodGroup: Joi.string().optional().allow(null),
     bankDetailsInfo: {
         bankName: Joi.string().optional().allow(''),
         accountHolderName: Joi.string().optional().allow(''),
