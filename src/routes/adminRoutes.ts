@@ -591,7 +591,123 @@ adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT, getAllBloodGroupsByAdm
  */
 adminRouter.post('/addBloodGroupByAdmin', validateJWT, addBloodGroupByAdminController.addNewBloodgroupByAdmin);
 adminRouter.post('/deleteEmployeeByAdmin', validateJWT, deleteEmployeeDetailsByAdminController.deleteProfile);
+
+/**
+ * @swagger
+ * /admin/deleteBloodGroupByAdmin/{id}:
+ *   delete:
+ *     summary: Delete a blood group by Admin
+ *     description: Deletes a blood group record from the database using its ID.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: MongoDB ID of the blood group to delete
+ *         schema:
+ *           type: string
+ *           example: "64f1a2b3c4d5e6f7890abcd1"
+ *     responses:
+ *       200:
+ *         description: Blood group deleted successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterDelete:
+ *                   type: object
+ *                   description: Deleted blood group data
+ *       400:
+ *         description: Invalid ID supplied
+ *       401:
+ *         description: Unauthorized - JWT token missing or invalid
+ *       404:
+ *         description: Blood group not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting blood group
+ */
 adminRouter.delete('/deleteBloodGroupByAdmin/:id', validateJWT, deleteBloodGroupByAdminController.deleteBloodGroup);
+
+/**
+ * @swagger
+ * /admin/updateBloodGroupByAdmin:
+ *   put:
+ *     summary: Update a blood group by Admin
+ *     description: Updates the blood group type using its ID.
+ *     tags:
+ *       - Admin 
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - type
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: MongoDB ID of the blood group
+ *                 example: "64f1a2b3c4d5e6f7890abcd1"
+ *               type:
+ *                 type: string
+ *                 description: Blood group type
+ *                 example: "A+"
+ *     responses:
+ *       200:
+ *         description: Blood group updated successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterupdate:
+ *                   type: object
+ *                   description: MongoDB update result
+ *       400:
+ *         description: Bad request (missing or invalid fields)
+ *       401:
+ *         description: Unauthorized - JWT token missing or invalid
+ *       404:
+ *         description: Blood group not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error updating blood group details
+ */
 adminRouter.put('/updateBloodGroupByAdmin', validateJWT, updateBloodGroupByAdminController.updateBloodGroup);
 adminRouter.post('/addEmploymentTypeByAdmin', validateJWT, addEmploymentTypeByAdminController.addEmploymentTypeByAdmin);
 adminRouter.get('/getallEmploymentTypesByAdmin', validateJWT, getAllEmploymentTypesByAdminController.getAllEmploymentTypesByAdmin);
