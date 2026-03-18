@@ -1,6 +1,6 @@
 import mongoose, { Schema } from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
-import IDepartment from '../interfaces/department';
+import { IDepartment } from '../interfaces/department';
 
 const DepartmentSchema: Schema = new mongoose.Schema({
     departmentName: { type: mongoose.Schema.Types.String, required: true , unique: true },

@@ -1,6 +1,6 @@
 import { Document } from "mongoose";
 
-interface IDepartment extends Document {
+export interface IDepartment extends Document {
     departmentName: string;
 }
 
@@ -17,5 +17,3 @@ export interface deleteDepartmentResponse {
     success: boolean;
     responseAfterDelete?: any;
 };
-
-export default IDepartment;
