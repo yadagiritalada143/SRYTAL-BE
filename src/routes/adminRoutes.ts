@@ -55,12 +55,12 @@ adminRouter.post('/login', commonController.login);
 
 /**
  * @swagger
- * /admin/refreshToken:
+ * /refreshToken:
  *   get:
  *     summary: Refresh access token
  *     description: Generates a new access token using a valid refresh token passed in request headers.
  *     tags:
- *       - Admin
+ *       - Common
  *     parameters:
  *       - in: header
  *         name: refresh_token
@@ -120,12 +120,12 @@ adminRouter.get('/refreshToken', commonController.refreshToken);
 
 /**
  * @swagger
- * /admin/logout:
+ * /logout:
  *   get:
  *     summary: Logout user
  *     description: Clears the refresh token of the authenticated user and logs them out.
  *     tags:
- *       - Admin
+ *       - Common
  *     security:
  *       - BearerAuth: []
  *     responses:
