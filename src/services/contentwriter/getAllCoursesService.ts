@@ -1,11 +1,7 @@
 import CourseModel from '../../model/coursesModel';
+import { IFetchAllCoursesResponse } from '../../interfaces/courses';
 
-interface FetchAllCoursesResponse {
-    success: boolean;
-    courses?: any;
-}
-
-const AllCoursesService = (): Promise<FetchAllCoursesResponse> => {
+const AllCourses = (): Promise<IFetchAllCoursesResponse> => {
     return new Promise((resolve, reject) => {
         CourseModel.find({})
             .populate({
@@ -32,4 +28,4 @@ const AllCoursesService = (): Promise<FetchAllCoursesResponse> => {
     });
 };
 
-export default { AllCoursesService };
+export default { AllCourses };

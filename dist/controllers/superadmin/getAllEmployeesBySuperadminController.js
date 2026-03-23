@@ -8,7 +8,7 @@ const getAllEmployeesBySuperadminService_1 = __importDefault(require("../../serv
 const getAllEmployeesBySuperadmin = (req, res) => {
     const { organizationId } = req.params;
     getAllEmployeesBySuperadminService_1.default
-        .getAllEmployeesBySuperadminService(organizationId)
+        .getAllEmployeesBySuperadmin(organizationId)
         .then(fetchAllEmployeesBySuperadminResponse => {
         res.status(200).json(fetchAllEmployeesBySuperadminResponse);
     })

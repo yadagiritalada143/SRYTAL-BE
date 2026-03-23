@@ -13,5 +13,5 @@ const DepartmentSchema = new mongoose_1.default.Schema({
     toJSON: { virtuals: true }
 });
 DepartmentSchema.plugin(mongoose_unique_validator_1.default);
-const Department = mongoose_1.default.model('Department', DepartmentSchema);
+const Department = mongoose_1.default.model('DepartmentSchema', DepartmentSchema);
 exports.default = Department;

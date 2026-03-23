@@ -3,8 +3,9 @@ import addCommentByRecruiterService from "../../services/recruiter/addCommentByR
 import { RECRUITER_ERROR_MESSAGES } from '../../constants/recruiterErrorMessages';
 
 const addCommentByRecruiter = (req: Request, res: Response) => {
+    const userId = req.user?.userId;
     addCommentByRecruiterService
-        .addCommentByRecruiter(req.body)
+        .addCommentByRecruiter({ ...req.body, userId })
         .then((responseAfterCommentAdded: any) => {
 
             if (responseAfterCommentAdded && responseAfterCommentAdded.comments) {

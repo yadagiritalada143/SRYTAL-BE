@@ -3,7 +3,7 @@ import updateCourseService from '../../services/contentwriter/updateCourseServic
 import { COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessages';
 import isValidStatus from '../../util/validateCourseStatusTypesUtil';
 
-const updateCourseController = async (req: Request, res: Response) => {
+const updateCourse = async (req: Request, res: Response) => {
     try {
         const { id, courseName, courseDescription, thumbnail, status } = req.body;
 
@@ -31,4 +31,4 @@ const updateCourseController = async (req: Request, res: Response) => {
     }
 };
 
-export default { updateCourseController };
+export default { updateCourse };

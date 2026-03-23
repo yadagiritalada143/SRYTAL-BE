@@ -1,6 +1,6 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 
-const addCourseTaskService = async ( moduleId: string, taskName: string, taskDescription: string, thumbnail: string, status: string, type: string) => {
+const addCourseTask = async ( moduleId: string, taskName: string, taskDescription: string, thumbnail: string, status: string, type: string) => {
     try {
         const CoursesTaskToSave: any = new CourseTaskModel({moduleId, taskName, taskDescription, thumbnail, status, type});
         const result = await CoursesTaskToSave.save();
@@ -11,4 +11,4 @@ const addCourseTaskService = async ( moduleId: string, taskName: string, taskDes
     }
 };
 
-export default { addCourseTaskService };
+export default { addCourseTask };

@@ -6,3 +6,13 @@ export interface ICourses extends Document {
     thumbnail?: string;
     
 }
+
+export interface IFetchAllCoursesResponse {
+    success: boolean;
+    courses?: any;
+}
+
+export interface IFetchCourseByIdResponse {
+    success: boolean;
+    coursedata?: any;
+}

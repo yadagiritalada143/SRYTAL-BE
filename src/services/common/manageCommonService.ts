@@ -4,25 +4,9 @@ import dotenv from 'dotenv';
 import csrf from 'csrf-token';
 import UserModel from '../../model/userModel';
 import VisitorsCountModel from '../../model/visitorsCountModel';
+import { IAuthResponse, ILoginCredentials } from '../../interfaces/logincredentials';
 
 dotenv.config();
-
-interface LoginCredentials {
-  email: string;
-  password: string;
-}
-
-interface AuthResponse {
-  success: boolean;
-  id?: string;
-  userRole?: string;
-  token?: string;
-  passwordResetRequired?: string;
-  applicationWalkThrough?: number;
-  firstName?: string;
-  lastName?: string;
-  refreshToken?: string;
-}
 
 const SECRET_KEY = process.env.SECRET_KEY!;
 const updateVisitorCount = async () => {
@@ -51,7 +35,7 @@ const createCSRFToken = (): Promise<string> => {
 const authenticateAccount = ({
   email,
   password,
-}: LoginCredentials): Promise<AuthResponse> => {
+}: ILoginCredentials): Promise<IAuthResponse> => {
   return new Promise(async (resolve, reject) => {
     await UserModel.findOne({ email })
       .then((user: any) => {

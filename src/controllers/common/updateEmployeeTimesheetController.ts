@@ -2,10 +2,9 @@ import { Request, Response } from 'express';
 import updateEmployeeTimesheetService from '../../services/common/updateEmployeeTimesheetService';
 import { UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES } from '../../constants/common/employeeTimesheetErrorMessage';
 
-const updateEmployeeTimesheetController = (req: Request, res: Response) => {
+const updateEmployeeTimesheet = (req: Request, res: Response) => {
     const { userId } = req.body;
     let updateEmployeeTimeSheetPayload: any = {};
-
     let employeeIdToUpdateTimeSheet = '';
     if (req.body && req.body.employeeId) {
         employeeIdToUpdateTimeSheet = req.body.employeeId;
@@ -26,4 +25,4 @@ const updateEmployeeTimesheetController = (req: Request, res: Response) => {
         });
 }
 
-export default { updateEmployeeTimesheetController }
+export default { updateEmployeeTimesheet }

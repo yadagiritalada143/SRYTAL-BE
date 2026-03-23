@@ -6,3 +6,8 @@ export interface ICourseModule extends Document {
     courseId: mongoose.Schema.Types.ObjectId;
     thumbnail?: string;
 }
+
+export interface IUpdateCourseModuleResponse {
+    success: boolean;
+    responseAfterModuleUpdate?: any;
+}

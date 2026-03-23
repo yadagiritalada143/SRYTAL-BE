@@ -1,9 +1,5 @@
 import UserModel from '../../model/userModel';
-
-interface getEmployeeDetailsResponse {
-  success: boolean;
-  employeeDetails?: any;
-}
+import { IGetEmployeeDetailsResponse } from '../../interfaces/user';
 
 const formatDate = (date?: Date): string | null => {
     if (!date) return null;
@@ -17,13 +13,14 @@ const formatDate = (date?: Date): string | null => {
     return `${day}-${month}-${year}`;
 };
 
-const getEmployeeDetails = (id: string): Promise<getEmployeeDetailsResponse> => {
+const getEmployeeDetails = (id: string): Promise<IGetEmployeeDetailsResponse> => {
   return new Promise((resolve, reject) => {
     UserModel.findOne({ _id: id })
       .populate('bloodGroup')
       .populate('employeeRole')
       .populate('employmentType')
       .populate('organization')
+      .populate('department')
       .then((employee: any) => {
         if (!employee) {
           reject({ success: false });

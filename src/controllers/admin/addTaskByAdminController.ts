@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import addTaskByAdminService from '../../services/admin/addTaskByAdminService';
 import { TASK_ERROR_MESSAGES } from '../../constants/admin/taskMessages';
 
-const addTaskByAdminController = (req: Request, res: Response) => {
+const addTaskByAdmin = (req: Request, res: Response) => {
     let taskDetails = req.body;
     taskDetails.createdAt = new Date();
     taskDetails.lastUpdatedAt = new Date();
@@ -19,4 +19,4 @@ const addTaskByAdminController = (req: Request, res: Response) => {
         });
 };
 
-export default { addTaskByAdminController };
+export default { addTaskByAdmin };

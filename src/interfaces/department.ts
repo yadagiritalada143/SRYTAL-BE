@@ -1,12 +1,19 @@
 import { Document } from "mongoose";
 
-interface IDepartment extends Document {
+export interface IDepartment extends Document {
     departmentName: string;
 }
 
-export interface FetchAllDepartmentsResponse {
+export interface FetchDepartmentsResponse {
+    success: boolean;
+    departments?: any;
+}
+export interface updateDepartmentResponse {
     success: boolean;
     departmentResponse: any;
 }
 
-export default IDepartment;
+export interface deleteDepartmentResponse {
+    success: boolean;
+    responseAfterDelete?: any;
+};

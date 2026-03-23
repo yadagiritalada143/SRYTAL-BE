@@ -2,7 +2,7 @@ import s3Client from '../../util/s3Client';
 import { IDownloadSalarySlipRequest, IDownloadSalarySlipResult } from '../../interfaces/salarySlip';
 import { bucketName, salarySlipsFolder } from '../../config/awsS3Config';
 
-const downloadSalarySlipService = async (params: IDownloadSalarySlipRequest): Promise<IDownloadSalarySlipResult> => {
+const downloadSalarySlip = async (params: IDownloadSalarySlipRequest): Promise<IDownloadSalarySlipResult> => {
     const { mongoId, fullName, month, year } = params;
 
     try {
@@ -42,4 +42,4 @@ const downloadSalarySlipService = async (params: IDownloadSalarySlipRequest): Pr
     }
 };
 
-export default { downloadSalarySlipService };
+export default { downloadSalarySlip };

@@ -4,12 +4,20 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const departmentModel_1 = __importDefault(require("../../model/departmentModel"));
-const getAllDepartmentByAdminService = async () => {
-    const departments = await departmentModel_1.default.find();
-    const departmentResponse = departments.map((department) => ({
-        _id: department._id,
-        departmentName: department.departmentName,
-    }));
-    return { success: true, departmentResponse: departmentResponse };
+const getAllDepartmentsByAdmin = async () => {
+    try {
+        const departments = await departmentModel_1.default.find({});
+        if (!departments) {
+            throw { success: false };
+        }
+        return {
+            success: true,
+            departments: departments
+        };
+    }
+    catch (error) {
+        console.error(`Error in fetching Departments: ${error}`);
+        throw { success: false };
+    }
 };
-exports.default = { getAllDepartmentByAdminService };
+exports.default = { getAllDepartmentsByAdmin };

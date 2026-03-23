@@ -1,12 +1,8 @@
 import PackagesModel from '../../model/packageModel';
 import TaskModel from '../../model/taskModel';
+import { IFetchPackagesAndTasksResponse } from '../../interfaces/package';
 
-interface FetchPackagesAndTasksResponse {
-    success: boolean;
-    packagesList?: any[];
-}
-
-const getAllPackagesWithTasksByAdmin = async (): Promise<FetchPackagesAndTasksResponse> => {
+const getAllPackagesWithTasksByAdmin = async (): Promise<IFetchPackagesAndTasksResponse> => {
     try {
         const packagesList = await PackagesModel.find({ isDeleted: false })
             .populate('approvers', 'firstName lastName')

@@ -6,5 +6,9 @@ export interface ICourseTask extends Document {
     taskDescription: string;
     thumbnail?: string;
     type: string;
+}
 
+export interface IUpdateCourseTaskResponse {
+    success: boolean;
+    responseAfterUpdate?: any;
 }

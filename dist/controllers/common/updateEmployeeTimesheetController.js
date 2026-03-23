@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const updateEmployeeTimesheetService_1 = __importDefault(require("../../services/common/updateEmployeeTimesheetService"));
 const employeeTimesheetErrorMessage_1 = require("../../constants/common/employeeTimesheetErrorMessage");
-const updateEmployeeTimesheetController = (req, res) => {
+const updateEmployeeTimesheet = (req, res) => {
     const { userId } = req.body;
     let updateEmployeeTimeSheetPayload = {};
     let employeeIdToUpdateTimeSheet = '';
@@ -27,4 +27,4 @@ const updateEmployeeTimesheetController = (req, res) => {
         res.status(500).json({ success: false, message: employeeTimesheetErrorMessage_1.UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES.EMPLOYEE_TIMESHEET_UPDATING_ERROR_MESSAGE });
     });
 };
-exports.default = { updateEmployeeTimesheetController };
+exports.default = { updateEmployeeTimesheet };

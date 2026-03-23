@@ -7,5 +7,5 @@ exports.BLOOD_GROUP_ERROR_MESSAGES = {
     BLOOD_GROUP_UNEXPECTED_ERROR_MESSAGE: 'Something went wrong while adding the Blood groups !!',
 };
 exports.BLOOD_GROUP_SUCCESS_MESSAGES = {
-    BLOOD_GROUP_ADD_SUCCESS_MESSAGE: 'New Bloodgroup added Successfully !',
+    BLOOD_GROUP_ADD_SUCCESS_MESSAGE: 'Bloodgroup added Successfully !',
 };

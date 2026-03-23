@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const talentPoolCandidatesModel_1 = __importDefault(require("../../model/talentPoolCandidatesModel"));
-const getAllTalentPoolCandidatesService = () => {
+const getAllTalentPoolCandidates = () => {
     return new Promise((resolve, reject) => {
         talentPoolCandidatesModel_1.default
             .find({})
@@ -45,4 +45,4 @@ const getAllTalentPoolCandidatesService = () => {
         });
     });
 };
-exports.default = { getAllTalentPoolCandidatesService };
+exports.default = { getAllTalentPoolCandidates };

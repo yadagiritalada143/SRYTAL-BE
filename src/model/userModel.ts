@@ -4,7 +4,8 @@ import Bloodgroup from '../model/bloodGroupModel';
 import Employmenttype from '../model/employmentTypeModel';
 import Employeerole from '../model/employeeRole';
 import Organization from '../model/organization';
-import IUser from '../interfaces/user';
+import { IUser } from '../interfaces/user';
+import Department from '../model/departmentModel';
 
 const UserSchema = new mongoose.Schema(
   {
@@ -16,7 +17,7 @@ const UserSchema = new mongoose.Schema(
     mobileNumber: { type: mongoose.Schema.Types.Number },
     userRole: { type: mongoose.Schema.Types.String },
     passwordResetRequired: { type: mongoose.Schema.Types.String },
-    bloodGroup: { type: mongoose.Schema.Types.ObjectId, ref: Bloodgroup },
+    bloodGroup: { type: mongoose.Schema.Types.ObjectId, ref: Bloodgroup,  required: false, default: null },
     bankDetailsInfo: {
       bankName: { type: mongoose.Schema.Types.String },
       accountHolderName: { type: mongoose.Schema.Types.String },
@@ -39,7 +40,7 @@ const UserSchema = new mongoose.Schema(
     panCardNumber: { type: mongoose.Schema.Types.String },
     dateOfJoining: { type: mongoose.Schema.Types.Date },
     uanNumber: { type: mongoose.Schema.Types.String },
-    department: { type: mongoose.Schema.Types.String },
+    department: { type: mongoose.Schema.Types.ObjectId, ref: Department, required: false, default: null },
     presentAddress: { type: mongoose.Schema.Types.String },
     permanentAddress: { type: mongoose.Schema.Types.String },
     refreshToken: { type: mongoose.Schema.Types.String },

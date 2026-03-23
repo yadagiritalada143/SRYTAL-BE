@@ -13,4 +13,4 @@ const getAllPackagesDetails = async (req: Request, res: Response) => {
     }
 };
 
-export default { getAllPackagesDetails }
+export default { getAllPackagesDetails };

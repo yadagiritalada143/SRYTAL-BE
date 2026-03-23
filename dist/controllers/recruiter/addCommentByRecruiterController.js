@@ -6,8 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const addCommentByRecruiterService_1 = __importDefault(require("../../services/recruiter/addCommentByRecruiterService"));
 const recruiterErrorMessages_1 = require("../../constants/recruiterErrorMessages");
 const addCommentByRecruiter = (req, res) => {
+    var _a;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
     addCommentByRecruiterService_1.default
-        .addCommentByRecruiter(req.body)
+        .addCommentByRecruiter(Object.assign(Object.assign({}, req.body), { userId }))
         .then((responseAfterCommentAdded) => {
         if (responseAfterCommentAdded && responseAfterCommentAdded.comments) {
             responseAfterCommentAdded.comments.sort((a, b) => b.updateAt - a.updateAt);

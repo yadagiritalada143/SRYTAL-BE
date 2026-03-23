@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const s3Client_1 = __importDefault(require("../../util/s3Client"));
 const awsS3Config_1 = require("../../config/awsS3Config");
-const downloadSalarySlipService = async (params) => {
+const downloadSalarySlip = async (params) => {
     const { mongoId, fullName, month, year } = params;
     try {
         // Construct filename: Fullname-mon-year.pdf (e.g., John-Doe-Feb-2026.pdf)
@@ -41,4 +41,4 @@ const downloadSalarySlipService = async (params) => {
         throw new Error('Failed to fetch salary slip from S3');
     }
 };
-exports.default = { downloadSalarySlipService };
+exports.default = { downloadSalarySlip };

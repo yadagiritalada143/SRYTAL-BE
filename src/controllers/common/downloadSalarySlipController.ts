@@ -5,7 +5,7 @@ import UserModel from '../../model/userModel';
 
 const ADMIN_ROLES = ['admin', 'SuperAdmin'];
 
-const downloadSalarySlipController = async (req: Request, res: Response): Promise<any> => {
+const downloadSalarySlip = async (req: Request, res: Response): Promise<any> => {
     try {
         const { mongoId, fullName, month, year } = req.body;
         const authenticatedUserId = req.user?.userId;
@@ -33,7 +33,7 @@ const downloadSalarySlipController = async (req: Request, res: Response): Promis
             }
         }
 
-        const result = await downloadSalarySlipService.downloadSalarySlipService({ mongoId, fullName, month, year });
+        const result = await downloadSalarySlipService.downloadSalarySlip({ mongoId, fullName, month, year });
 
         if (!result.success) {
             if (result.error === 'SALARY_SLIP_NOT_FOUND') {
@@ -66,4 +66,4 @@ const downloadSalarySlipController = async (req: Request, res: Response): Promis
     }
 };
 
-export default { downloadSalarySlipController };
+export default { downloadSalarySlip };

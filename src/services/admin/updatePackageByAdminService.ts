@@ -1,12 +1,8 @@
 import PackagesModel from '../../model/packageModel';
 import { IPackage } from '../../interfaces/package';
+import { IUpdatePackageResponse } from '../../interfaces/package';
 
-interface updatePackageResponse {
-    success: boolean;
-    responseAfterUpdate?: any;
-}
-
-const updatePackageByAdmin = async (id: string, detailsToUpdate: IPackage): Promise<updatePackageResponse> => {
+const updatePackageByAdmin = async (id: string, detailsToUpdate: IPackage): Promise<IUpdatePackageResponse> => {
     try {
         const result = await PackagesModel.updateOne({ _id: id }, { ...detailsToUpdate });
         if (result) {

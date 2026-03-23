@@ -3,7 +3,7 @@ import updateCourseTaskService from '../../services/contentwriter/updateCourseTa
 import { COURSE_TASK_ERRORS_MESSAGES } from '../../constants/contentwriter/coursetaskMessages';
 import isValidStatus from '../../util/validateCourseStatusTypesUtil';
 
-const updateCourseTaskController = async (req: Request, res: Response) => {
+const updateCourseTask = async (req: Request, res: Response) => {
     try {
         const { id, taskName, taskDescription, thumbnail, status } = req.body;
 
@@ -31,4 +31,4 @@ const updateCourseTaskController = async (req: Request, res: Response) => {
     }
 };
 
-export default { updateCourseTaskController };
+export default { updateCourseTask };

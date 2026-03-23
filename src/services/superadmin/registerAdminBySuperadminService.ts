@@ -1,5 +1,5 @@
 import UserModel from "../../model/userModel";
-import IUser from "../../interfaces/user";
+import { IUser } from "../../interfaces/user";
 
 const isAccountPresent = async (email: string) => {
     const emailExists = await UserModel.findOne({ email: email }).then((user: any) => !!user);

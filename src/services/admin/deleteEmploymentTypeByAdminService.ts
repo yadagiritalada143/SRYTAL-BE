@@ -1,11 +1,7 @@
 import Employmenttype from '../../model/employmentTypeModel';
+import { IDeleteEmploymentTypeResponse } from '../../interfaces/employmenttype';
 
-interface deleteEmploymentTypeResponse {
-    success: boolean;
-    responseAfterDelete?: any;
-}
-
-const deleteEmploymentTypeByAdmin = async (id: any): Promise<deleteEmploymentTypeResponse> => {
+const deleteEmploymentTypeByAdmin = async (id: any): Promise<IDeleteEmploymentTypeResponse> => {
     try {
         const result = await Employmenttype.findByIdAndDelete({ _id: id });
         if (!result) {

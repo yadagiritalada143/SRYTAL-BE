@@ -1,11 +1,7 @@
 import Employmentrole from '../../model/employeeRole';
+import { IDeleteEmployeeRoleResponse } from '../../interfaces/employeerole';
 
-interface deleteEmployeeRoleResponse {
-    success: boolean;
-    responseAfterDelete?: any;
-}
-
-const deleteEmployeeRoleByAdmin = async (id: any): Promise<deleteEmployeeRoleResponse> => {
+const deleteEmployeeRoleByAdmin = async (id: any): Promise<IDeleteEmployeeRoleResponse> => {
     try {
         const result = await Employmentrole.findByIdAndDelete({ _id: id });
         if (!result) {

@@ -1,11 +1,7 @@
 import TalentPoolCandidatesModel from '../../model/talentPoolCandidatesModel';
+import { IFetchTalentPoolCandidateDetailsResponse } from '../../interfaces/talentpoolcandidates';
 
-interface FetchTalentPoolCandidateDetailsResponse {
-    success: boolean;
-    talentPoolCandidateDetails?: any;
-}
-
-const getTalentPoolCandidateDetails = (talentPoolCandidateId: string): Promise<FetchTalentPoolCandidateDetailsResponse> => {
+const getTalentPoolCandidateDetails = (talentPoolCandidateId: string): Promise<IFetchTalentPoolCandidateDetailsResponse> => {
     return new Promise((resolve, reject) => {
         TalentPoolCandidatesModel
             .findById({ _id: talentPoolCandidateId })

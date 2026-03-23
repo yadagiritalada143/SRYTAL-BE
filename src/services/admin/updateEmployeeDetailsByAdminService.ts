@@ -1,4 +1,4 @@
-import IUser from '../../interfaces/user';
+import { IUser } from '../../interfaces/user';
 import UserModel from '../../model/userModel';
 import { UpdateProfileResponse } from '../../interfaces/user';
 

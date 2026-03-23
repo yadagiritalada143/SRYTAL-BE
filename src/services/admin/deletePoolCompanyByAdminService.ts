@@ -1,10 +1,7 @@
 import PoolCompaniesModel from '../../model/poolCompanies';
+import { IDeletePoolCompanyResponse } from '../../interfaces/poolcompanies';
 
-interface deletePoolCompanyResponse {
-    success: boolean;
-}
-
-const hardDeletePoolCompanyByAdmin = async (poolCompanyIdToDelete: any): Promise<deletePoolCompanyResponse> => {
+const hardDeletePoolCompanyByAdmin = async (poolCompanyIdToDelete: any): Promise<IDeletePoolCompanyResponse> => {
     return new Promise(async (resolve, reject) => {
         await PoolCompaniesModel.deleteOne(
             { _id: poolCompanyIdToDelete })
@@ -18,7 +15,7 @@ const hardDeletePoolCompanyByAdmin = async (poolCompanyIdToDelete: any): Promise
     });
 }
 
-const softDeletePoolCompanyByAdmin = async (poolCompanyIdToDelete: string): Promise<deletePoolCompanyResponse> => {
+const softDeletePoolCompanyByAdmin = async (poolCompanyIdToDelete: string): Promise<IDeletePoolCompanyResponse> => {
     return new Promise(async (resolve, reject) => {
         await PoolCompaniesModel.updateOne(
             { _id: poolCompanyIdToDelete },
