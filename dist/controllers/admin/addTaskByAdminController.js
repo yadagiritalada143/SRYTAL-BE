@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const addTaskByAdminService_1 = __importDefault(require("../../services/admin/addTaskByAdminService"));
 const taskMessages_1 = require("../../constants/admin/taskMessages");
-const addTaskByAdminController = (req, res) => {
+const addTaskByAdmin = (req, res) => {
     var _a;
     let taskDetails = req.body;
     taskDetails.createdAt = new Date();
@@ -22,4 +22,4 @@ const addTaskByAdminController = (req, res) => {
         res.status(500).json({ success: false, message: taskMessages_1.TASK_ERROR_MESSAGES.TASK_ADD_ERROR_MESSAGE });
     });
 };
-exports.default = { addTaskByAdminController };
+exports.default = { addTaskByAdmin };

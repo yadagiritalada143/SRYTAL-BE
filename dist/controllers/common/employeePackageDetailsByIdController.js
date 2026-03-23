@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const packageMessages_1 = require("../../constants/admin/packageMessages");
 const employeePackageDetailsByIdService_1 = __importDefault(require("../../services/common/employeePackageDetailsByIdService"));
-const employeePackageDetailsByIdController = (req, res) => {
+const employeePackageDetailsById = (req, res) => {
     const { userId, startDate, endDate } = req.body;
     let employeeIdToFetchTimeSheet = '';
     if (req.body && req.body.employeeId) {
@@ -29,4 +29,4 @@ const employeePackageDetailsByIdController = (req, res) => {
         res.status(500).json({ success: false, message: packageMessages_1.PACKAGE_ERROR_MESSAGES.PACKAGE_DETAILS_FETCH_ERROR_MESSAGE });
     });
 };
-exports.default = { employeePackageDetailsByIdController };
+exports.default = { employeePackageDetailsById };

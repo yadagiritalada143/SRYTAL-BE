@@ -10,7 +10,7 @@ const userSchema = joi_1.default.object({
     lastName: joi_1.default.string().min(3).max(30).optional().allow(''),
     email: joi_1.default.string().email().required(),
     mobileNumber: joi_1.default.number().integer().min(0).optional().allow(''),
-    bloodGroup: joi_1.default.string().optional().allow(''),
+    bloodGroup: joi_1.default.string().optional().allow(null),
     bankDetailsInfo: {
         bankName: joi_1.default.string().optional().allow(''),
         accountHolderName: joi_1.default.string().optional().allow(''),
@@ -24,7 +24,7 @@ const userSchema = joi_1.default.object({
     panCardNumber: joi_1.default.string().optional().allow(''),
     aadharNumber: joi_1.default.string().optional().allow(''),
     uanNumber: joi_1.default.string().optional().allow(''),
-    department: joi_1.default.string().optional().allow(''),
+    department: joi_1.default.string().optional().allow(null),
     dateOfJoining: joi_1.default.date().optional().allow(''),
     presentAddress: joi_1.default.string().optional().allow(''),
     permanentAddress: joi_1.default.string().optional().allow('')

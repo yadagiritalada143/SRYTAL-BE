@@ -49,11 +49,127 @@ const getFeedbackAttributeByAdminController_1 = __importDefault(require("../cont
 const getAllFeedbackAttributeByAdminController_1 = __importDefault(require("../controllers/admin/getAllFeedbackAttributeByAdminController"));
 const deleteFeedbackAttributeByAdminController_1 = __importDefault(require("../controllers/admin/deleteFeedbackAttributeByAdminController"));
 const addDepartmentByAdminController_1 = __importDefault(require("../controllers/admin/addDepartmentByAdminController"));
-const getAllDepartmentByAdminController_1 = __importDefault(require("../controllers/admin/getAllDepartmentByAdminController"));
+const getAllDepartmentsByAdminController_1 = __importDefault(require("../controllers/admin/getAllDepartmentsByAdminController"));
 const getDepartmentByAdminController_1 = __importDefault(require("../controllers/admin/getDepartmentByAdminController"));
+const deleteDepartmentByAdminController_1 = __importDefault(require("../controllers/admin/deleteDepartmentByAdminController"));
+const updateDepartmentByAdminController_1 = __importDefault(require("../controllers/admin/updateDepartmentByAdminController"));
 const adminRouter = express_1.default.Router();
 adminRouter.post('/login', commonController_1.default.login);
+/**
+ * @swagger
+ * /refreshToken:
+ *   get:
+ *     summary: Refresh access token
+ *     description: Generates a new access token using a valid refresh token passed in request headers.
+ *     tags:
+ *       - Common
+ *     parameters:
+ *       - in: header
+ *         name: refresh_token
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Valid refresh token
+ *     responses:
+ *       200:
+ *         description: New access token generated successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 token:
+ *                   type: string
+ *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       401:
+ *         description: Refresh token missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: No refresh token. Please log in again.
+ *       403:
+ *         description: Invalid or expired refresh token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid user token
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Something went wrong
+ */
 adminRouter.get('/refreshToken', commonController_1.default.refreshToken);
+/**
+ * @swagger
+ * /logout:
+ *   get:
+ *     summary: Logout user
+ *     description: Clears the refresh token of the authenticated user and logs them out.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully logged out
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: logged out Successfully !!
+ *       401:
+ *         description: Unauthorized - JWT token missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Something went wrong
+ */
 adminRouter.get('/logout', validateJWT_1.default, commonController_1.default.logout);
 /**
  * @swagger
@@ -203,6 +319,9 @@ adminRouter.post('/registerEmployeeByAdmin', validateJWT_1.default, (0, validate
  *                     organization:
  *                       type: object
  *                       description: Organization details (populated)
+ *                     department:
+ *                       type: object
+ *                       description: Department details (populated)
  *                     bankDetailsInfo:
  *                       type: object
  *                       description: Employee bank details
@@ -524,19 +643,780 @@ adminRouter.post('/employeePasswordResetByAdmin', employeePasswordResetByAdminCo
  *                   example: Error in fetching blood group details
  */
 adminRouter.get('/getAllBloodGroupsByAdmin', validateJWT_1.default, getAllBloodGroupsByAdminController_1.default.getAllBloodGroupsDetails);
+/**
+ * @swagger
+ * /admin/addBloodGroupByAdmin:
+ *   post:
+ *     summary: Add a new blood group by admin
+ *     description: This API allows an admin to add a new blood group type.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - type
+ *             properties:
+ *               type:
+ *                 type: string
+ *                 example: "A+"
+ *     responses:
+ *       201:
+ *         description: Blood group added successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Blood group added successfully
+ *       400:
+ *         description: Blood group add failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add blood group
+ *       401:
+ *         description: Unauthorized (Invalid or missing JWT)
+ *       500:
+ *         description: Unexpected server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Unexpected error occurred
+ */
 adminRouter.post('/addBloodGroupByAdmin', validateJWT_1.default, addBloodGroupByAdminController_1.default.addNewBloodgroupByAdmin);
 adminRouter.post('/deleteEmployeeByAdmin', validateJWT_1.default, deleteEmployeeDetailsByAdminController_1.default.deleteProfile);
+/**
+ * @swagger
+ * /admin/deleteBloodGroupByAdmin/{id}:
+ *   delete:
+ *     summary: Delete a blood group by Admin
+ *     description: Deletes a blood group record from the database using its ID.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: MongoDB ID of the blood group to delete
+ *         schema:
+ *           type: string
+ *           example: "64f1a2b3c4d5e6f7890abcd1"
+ *     responses:
+ *       200:
+ *         description: Blood group deleted successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterDelete:
+ *                   type: object
+ *                   description: Deleted blood group data
+ *       400:
+ *         description: Invalid ID supplied
+ *       401:
+ *         description: Unauthorized - JWT token missing or invalid
+ *       404:
+ *         description: Blood group not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting blood group
+ */
 adminRouter.delete('/deleteBloodGroupByAdmin/:id', validateJWT_1.default, deleteBloodGroupByAdminController_1.default.deleteBloodGroup);
+/**
+ * @swagger
+ * /admin/updateBloodGroupByAdmin:
+ *   put:
+ *     summary: Update a blood group by Admin
+ *     description: Updates the blood group type using its ID.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - type
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: MongoDB ID of the blood group
+ *                 example: "64f1a2b3c4d5e6f7890abcd1"
+ *               type:
+ *                 type: string
+ *                 description: Blood group type
+ *                 example: "A+"
+ *     responses:
+ *       200:
+ *         description: Blood group updated successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterupdate:
+ *                   type: object
+ *                   description: MongoDB update result
+ *       400:
+ *         description: Bad request (missing or invalid fields)
+ *       401:
+ *         description: Unauthorized - JWT token missing or invalid
+ *       404:
+ *         description: Blood group not found
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error updating blood group details
+ */
 adminRouter.put('/updateBloodGroupByAdmin', validateJWT_1.default, updateBloodGroupByAdminController_1.default.updateBloodGroup);
+/**
+ * @swagger
+ * /admin/addEmploymentTypeByAdmin:
+ *   post:
+ *     summary: Add Employment Type by Admin
+ *     description: This API allows admin to add a new employment type.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - employmentType
+ *             properties:
+ *               employmentType:
+ *                 type: string
+ *                 example: Full-Time
+ *     responses:
+ *       201:
+ *         description: Employment type added successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Employment type added successfully
+ *       400:
+ *         description: Failed to add employment type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error while adding employment type
+ *       500:
+ *         description: Unexpected server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Something went wrong
+ */
 adminRouter.post('/addEmploymentTypeByAdmin', validateJWT_1.default, addEmploymentTypeByAdminController_1.default.addEmploymentTypeByAdmin);
+/**
+ * @swagger
+ * /admin/getallEmploymentTypesByAdmin:
+ *   get:
+ *     summary: Get all Employment Types by Admin
+ *     description: This API fetches all available employment types.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description:  fetched employment types Successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 employmentTypesList:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: 65f1a2b3c4d5e6f7890abcd1
+ *                       employmentType:
+ *                         type: string
+ *                         example: Full-Time
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: 2026-03-19T10:00:00.000Z
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: 2026-03-19T10:00:00.000Z
+ *       500:
+ *         description: Failed to fetch employment types
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while fetching employment types
+ */
 adminRouter.get('/getallEmploymentTypesByAdmin', validateJWT_1.default, getAllEmploymentTypesByAdminController_1.default.getAllEmploymentTypesByAdmin);
+/**
+ * @swagger
+ * /admin/updateEmploymentTypeByAdmin:
+ *   put:
+ *     summary: Update Employment Type by Admin
+ *     description: This API updates an existing employment type using its ID.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - employmentType
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the employment type
+ *                 example: 65f1a2b3c4d5e6f7890abcd1
+ *               employmentType:
+ *                 type: string
+ *                 description: Updated employment type value
+ *                 example: Contract
+ *     responses:
+ *       200:
+ *         description: Employment type updated successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterUpdate:
+ *                   type: object
+ *                   properties:
+ *                     acknowledged:
+ *                       type: boolean
+ *                       example: true
+ *                     matchedCount:
+ *                       type: number
+ *                       example: 1
+ *                     modifiedCount:
+ *                       type: number
+ *                       example: 1
+ *       500:
+ *         description: Error while updating employment type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while updating employment type
+ */
 adminRouter.put('/updateEmploymentTypeByAdmin', validateJWT_1.default, updateEmploymentTypeByAdminController_1.default.updateEmploymentType);
+/**
+ * @swagger
+ * /admin/deleteEmploymentTypeByAdmin/{id}:
+ *   delete:
+ *     summary: Delete Employment Type by Admin
+ *     description: This API deletes an employment type using its ID.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: MongoDB ObjectId of the employment type to delete
+ *         schema:
+ *           type: string
+ *           example: 65f1a2b3c4d5e6f7890abcd1
+ *     responses:
+ *       200:
+ *         description: Employment type deleted successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterDelete:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 65f1a2b3c4d5e6f7890abcd1
+ *                     employmentType:
+ *                       type: string
+ *                       example: Full-Time
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2026-03-19T10:00:00.000Z
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2026-03-19T10:00:00.000Z
+ *       500:
+ *         description: Error while deleting employment type
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while deleting employment type
+ */
 adminRouter.delete('/deleteEmploymentTypeByAdmin/:id', validateJWT_1.default, deleteEmploymentTypeByAdminController_1.default.deleteEmploymentType);
+/**
+ * @swagger
+ * /admin/addEmployeeRoleByAdmin:
+ *   post:
+ *     summary: Add Employee Role by Admin
+ *     description: This API allows admin to add a new employee role (designation).
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - designation
+ *             properties:
+ *               designation:
+ *                 type: string
+ *                 description: Name of the employee role/designation
+ *                 example: Software Engineer
+ *     responses:
+ *       201:
+ *         description: Employee role added successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Employee role added successfully
+ *       400:
+ *         description: Failed to add employee role
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Error while adding employee role
+ *       500:
+ *         description: Unexpected server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Something went wrong
+ */
 adminRouter.post('/addEmployeeRoleByAdmin', validateJWT_1.default, addEmployeeRoleByAdminController_1.default.addEmployeeRoleByAdmin);
+/**
+ * @swagger
+ * /admin/getAllEmployeeRoleByAdmin:
+ *   get:
+ *     summary: Get All Employee Roles by Admin
+ *     description: This API fetches all employee roles (designations).
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: fetched employee roles Successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 employeeRoles:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: 65f1a2b3c4d5e6f7890abcd1
+ *                       designation:
+ *                         type: string
+ *                         example: Software Engineer
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: 2026-03-19T10:00:00.000Z
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         example: 2026-03-19T10:00:00.000Z
+ *       500:
+ *         description: Error while fetching employee roles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while fetching employee roles
+ */
 adminRouter.get('/getAllEmployeeRoleByAdmin', validateJWT_1.default, getAllEmployeeRoleByAdminController_1.default.getAllEmployeeRolesByAdmin);
+/**
+ * @swagger
+ * /admin/updateEmployeeRoleByAdmin:
+ *   put:
+ *     summary: Update Employee Role by Admin
+ *     description: This API allows admin to update an existing employee role (designation).
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - designation
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the employee role
+ *                 example: 65f1a2b3c4d5e6f7890abcd1
+ *               designation:
+ *                 type: string
+ *                 description: Updated designation name
+ *                 example: Senior Software Engineer
+ *     responses:
+ *       200:
+ *         description: Employee role updated successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterUpdate:
+ *                   type: object
+ *                   properties:
+ *                     acknowledged:
+ *                       type: boolean
+ *                       example: true
+ *                     matchedCount:
+ *                       type: number
+ *                       example: 1
+ *                     modifiedCount:
+ *                       type: number
+ *                       example: 1
+ *       500:
+ *         description: Error while updating employee role
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while updating employee role
+ */
 adminRouter.put('/updateEmployeeRoleByAdmin', validateJWT_1.default, updateEmployeeRoleByAdminController_1.default.updateEmployeeRole);
+/**
+ * @swagger
+ * /admin/deleteEmployeeRoleByAdmin/{id}:
+ *   delete:
+ *     summary: Delete Employee Role by Admin
+ *     description: This API deletes an employee role (designation) using its ID.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: MongoDB ObjectId of the employee role to delete
+ *         schema:
+ *           type: string
+ *           example: 65f1a2b3c4d5e6f7890abcd1
+ *     responses:
+ *       200:
+ *         description: Employee role deleted successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterDelete:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 65f1a2b3c4d5e6f7890abcd1
+ *                     designation:
+ *                       type: string
+ *                       example: Software Engineer
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2026-03-19T10:00:00.000Z
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2026-03-19T10:00:00.000Z
+ *       500:
+ *         description: Error while deleting employee role
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while deleting employee role
+ */
 adminRouter.delete('/deleteEmployeeRoleByAdmin/:id', validateJWT_1.default, deleteEmployeeRoleByAdminController_1.default.deleteEmployeeRole);
+/**
+ * @swagger
+ * /admin/deletePoolCandidatesByAdmin/{id}:
+ *   delete:
+ *     summary: Delete Pool Candidate by Admin (Soft/Hard Delete)
+ *     description: |
+ *       This API deletes a pool candidate.
+ *       - If `confirmDelete` is true → performs **hard delete** (permanent removal)
+ *       - If `confirmDelete` is false → performs **soft delete** (marks as deleted)
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: MongoDB ObjectId of the pool candidate
+ *         schema:
+ *           type: string
+ *           example: 65f1a2b3c4d5e6f7890abcd1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - confirmDelete
+ *             properties:
+ *               confirmDelete:
+ *                 type: boolean
+ *                 description: |
+ *                   Set to true for permanent deletion (hard delete),
+ *                   false for soft delete.
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Pool candidate deleted successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Candidate deleted successfully
+ *                 responseAfterDelete:
+ *                   type: object
+ *                   nullable: true
+ *       500:
+ *         description: Error while deleting pool candidate
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error while deleting pool candidate
+ */
 adminRouter.delete('/deletePoolCandidatesByAdmin/:id', validateJWT_1.default, deletePoolCandidatesByAdminController_1.default.deletePoolCandidateByAdmin);
+/**
+ * @swagger
+ * /admin/deletePoolCompanyByAdmin/{id}:
+ *   delete:
+ *     summary: Delete Pool Company by Admin (Soft / Hard Delete)
+ *     description: |
+ *       This API allows admin to delete a pool company.
+ *       - If `confirmDelete = false` → Soft delete (marks isDeleted = true)
+ *       - If `confirmDelete = true` → Hard delete (removes record permanently)
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         description: Pool Company ID
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               confirmDelete:
+ *                 type: boolean
+ *                 example: true
+ *                 description: Set to true for permanent deletion, false for soft delete
+ *     responses:
+ *       200:
+ *         description: Pool company deleted successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *       500:
+ *         description: Server error while deleting pool company
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting pool company
+ */
 adminRouter.delete('/deletePoolCompanyByAdmin/:id', validateJWT_1.default, deletePoolCompanyByAdminController_1.default.deletePoolCompanyByAdmin);
 /**
  * @swagger
@@ -607,7 +1487,7 @@ adminRouter.delete('/deletePoolCompanyByAdmin/:id', validateJWT_1.default, delet
  *                   type: string
  *                   example: Failed to add package
  */
-adminRouter.post('/addPackageByAdmin', validateJWT_1.default, addPackageByAdminController_1.default.addPackageByAdminController);
+adminRouter.post('/addPackageByAdmin', validateJWT_1.default, addPackageByAdminController_1.default.addPackageByAdmin);
 /**
  * @swagger
  * /admin/getAllPackagesByAdmin:
@@ -933,7 +1813,7 @@ adminRouter.delete('/deletePackageByAdmin/:id', validateJWT_1.default, deletePac
  *                   type: string
  *                   example: Package updating failed
  */
-adminRouter.put('/updatePackageByAdmin', validateJWT_1.default, updatePackageByAdminController_1.default.updatePackageByAdminController);
+adminRouter.put('/updatePackageByAdmin', validateJWT_1.default, updatePackageByAdminController_1.default.updatePackageByAdmin);
 /**
  * @swagger
  * /admin/addTaskByAdmin:
@@ -1011,7 +1891,7 @@ adminRouter.put('/updatePackageByAdmin', validateJWT_1.default, updatePackageByA
  *                   type: string
  *                   example: Task adding failed
  */
-adminRouter.post('/addTaskByAdmin', validateJWT_1.default, addTaskByAdminController_1.default.addTaskByAdminController);
+adminRouter.post('/addTaskByAdmin', validateJWT_1.default, addTaskByAdminController_1.default.addTaskByAdmin);
 /**
  * @swagger
  * /admin/updateTaskByAdmin:
@@ -1071,7 +1951,7 @@ adminRouter.post('/addTaskByAdmin', validateJWT_1.default, addTaskByAdminControl
  *                   type: string
  *                   example: Task updating failed
  */
-adminRouter.put('/updateTaskByAdmin', validateJWT_1.default, updateTaskByAdminController_1.default.updateTaskByAdminController);
+adminRouter.put('/updateTaskByAdmin', validateJWT_1.default, updateTaskByAdminController_1.default.updateTaskByAdmin);
 /**
  * @swagger
  * /admin/deleteTaskByAdmin/{id}:
@@ -1638,7 +2518,7 @@ adminRouter.delete('/deleteEmployeeTaskByAdmin', validateJWT_1.default, deleteEm
  *                   type: string
  *                   example: An unexpected error occurred while generating salary slip
  */
-adminRouter.post('/generateSalarySlip', generateSalarySlipByAdminController_1.default.generateSalarySlip);
+adminRouter.post('/generateSalarySlip', validateJWT_1.default, generateSalarySlipByAdminController_1.default.generateSalarySlip);
 /**
  * @swagger
  * /admin/previewSalarySlip:
@@ -1964,7 +2844,7 @@ adminRouter.post('/previewSalarySlip', validateJWT_1.default, generateSalarySlip
  *                   type: string
  *                   example: Failed to add feedback.
  */
-adminRouter.post('/addfeedbackattributebyadmin', addFeedbackAttributeByAdminController_1.default.addFeedbackAttributeByAdminController);
+adminRouter.post('/addfeedbackattributebyadmin', addFeedbackAttributeByAdminController_1.default.addFeedbackAttributeByAdmin);
 /**
  * @swagger
  * /admin/updatefeedbackattributebyadmin:
@@ -2012,7 +2892,7 @@ adminRouter.post('/addfeedbackattributebyadmin', addFeedbackAttributeByAdminCont
  *       500:
  *         description: Internal Server Error
  */
-adminRouter.put('/updatefeedbackattributebyadmin', validateJWT_1.default, updateFeedbackAttributeByAdminController_1.default.updateFeedbackAttributeByAdminController);
+adminRouter.put('/updatefeedbackattributebyadmin', validateJWT_1.default, updateFeedbackAttributeByAdminController_1.default.updateFeedbackAttributeByAdmin);
 /**
  * @swagger
  * /admin/getfeedbackattributebyadmin/{id}:
@@ -2083,7 +2963,7 @@ adminRouter.put('/updatefeedbackattributebyadmin', validateJWT_1.default, update
  *                   type: string
  *                   example: Error fetching feedback attribute
  */
-adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT_1.default, getFeedbackAttributeByAdminController_1.default.getFeedbackAttributeByAdminController);
+adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT_1.default, getFeedbackAttributeByAdminController_1.default.getFeedbackAttributeByAdmin);
 /**
  * @swagger
  * /admin/getallfeedbackattributesbyadmin:
@@ -2141,7 +3021,7 @@ adminRouter.get('/getfeedbackattributebyadmin/:id', validateJWT_1.default, getFe
  *                   type: string
  *                   example: Error fetching feedback attributes
  */
-adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT_1.default, getAllFeedbackAttributeByAdminController_1.default.getAllFeedbackAttributesByAdminController);
+adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT_1.default, getAllFeedbackAttributeByAdminController_1.default.getAllFeedbackAttributesByAdmin);
 /**
  * @swagger
  * /admin/deletefeedbackattributebyadmin/{id}:
@@ -2218,7 +3098,7 @@ adminRouter.get('/getallfeedbackattributesbyadmin', validateJWT_1.default, getAl
  *                   type: string
  *                   example: Error deleting feedback attribute
  */
-adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT_1.default, deleteFeedbackAttributeByAdminController_1.default.deleteFeedbackAttributeByAdminController);
+adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT_1.default, deleteFeedbackAttributeByAdminController_1.default.deleteFeedbackAttributeByAdmin);
 /**
  * @swagger
  * /admin/adddepartmentbyadmin:
@@ -2269,7 +3149,7 @@ adminRouter.delete('/deletefeedbackattributebyadmin/:id', validateJWT_1.default,
  *                   type: string
  *                   example: Error while adding department
  */
-adminRouter.post('/adddepartmentbyadmin', validateJWT_1.default, addDepartmentByAdminController_1.default.addDepartmentByAdminController);
+adminRouter.post('/adddepartmentbyadmin', validateJWT_1.default, addDepartmentByAdminController_1.default.addDepartmentByAdmin);
 /**
  * @swagger
  * /admin/getalldepartmentsbyadmin:
@@ -2316,7 +3196,7 @@ adminRouter.post('/adddepartmentbyadmin', validateJWT_1.default, addDepartmentBy
  *       500:
  *         description: Internal server error
  */
-adminRouter.get('/getalldepartmentsbyadmin', validateJWT_1.default, getAllDepartmentByAdminController_1.default.getAllDepartmentByAdminController);
+adminRouter.get('/getalldepartmentsbyadmin', validateJWT_1.default, getAllDepartmentsByAdminController_1.default.getAllDepartmentsByAdmin);
 /**
  * @swagger
  * /admin/getdepartmentbyadmin/{_id}:
@@ -2371,4 +3251,109 @@ adminRouter.get('/getalldepartmentsbyadmin', validateJWT_1.default, getAllDepart
  *         description: Internal server error
  */
 adminRouter.get('/getdepartmentbyadmin/:_id', validateJWT_1.default, getDepartmentByAdminController_1.default.getDepartmentByAdmin);
+/**
+ * @swagger
+ * /admin/deletedepartmentbyadmin/{_id}:
+ *   delete:
+ *     summary: Delete a department by admin
+ *     description: This API allows an admin to delete a department using its ID.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: _id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Department ID
+ *     responses:
+ *       200:
+ *         description: Department deleted successfully !!
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Department deleted successfully !!
+ *       404:
+ *         description: Department not found
+ *       500:
+ *         description: Error deleting department
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error deleting department
+ */
+adminRouter.delete('/deletedepartmentbyadmin/:_id', validateJWT_1.default, deleteDepartmentByAdminController_1.default.deleteDepartmentByAdmin);
+/**
+ * @swagger
+ * /admin/updatedepartmentbyadmin:
+ *   put:
+ *     summary: Update department by admin
+ *     description: Admin can update an existing department name using department ID.
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - _id
+ *               - departmentName
+ *             properties:
+ *               _id:
+ *                 type: string
+ *                 example: "64f1c2a9b9c123456789abcd"
+ *               departmentName:
+ *                 type: string
+ *                 example: "Human Resources"
+ *     responses:
+ *       200:
+ *         description: Department updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Department updated successfully !!
+ *       400:
+ *         description: Bad Request - Missing required fields or invalid data
+ *       500:
+ *         description: Error updating department
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to update department
+ */
+adminRouter.put('/updatedepartmentbyadmin', validateJWT_1.default, updateDepartmentByAdminController_1.default.updateDepartmentByAdmin);
 exports.default = adminRouter;

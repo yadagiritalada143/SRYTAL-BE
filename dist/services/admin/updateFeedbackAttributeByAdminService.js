@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const feedbackAttributesModel_1 = __importDefault(require("../../model/feedbackAttributesModel"));
-const updateFeedbackAttributeByAdminService = async (id, name) => {
+const updateFeedbackAttributeByAdmin = async (id, name) => {
     try {
         const result = await feedbackAttributesModel_1.default.updateOne({ _id: id }, { name });
         if (result) {
@@ -19,4 +19,4 @@ const updateFeedbackAttributeByAdminService = async (id, name) => {
         throw error;
     }
 };
-exports.default = { updateFeedbackAttributeByAdminService };
+exports.default = { updateFeedbackAttributeByAdmin };

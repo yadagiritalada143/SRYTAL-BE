@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const departmentModel_1 = __importDefault(require("../../model/departmentModel"));
-const addDepartmentByAdminService = async (departmentName) => {
+const addDepartmentByAdmin = async (departmentName) => {
     try {
         const department = new departmentModel_1.default({ departmentName });
         const result = await department.save();
@@ -15,4 +15,4 @@ const addDepartmentByAdminService = async (departmentName) => {
         throw new Error('An error occurred while adding department.');
     }
 };
-exports.default = { addDepartmentByAdminService };
+exports.default = { addDepartmentByAdmin };

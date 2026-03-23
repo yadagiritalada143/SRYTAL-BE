@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const addPackageByAdminService_1 = __importDefault(require("../../services/admin/addPackageByAdminService"));
 const packageMessages_1 = require("../../constants/admin/packageMessages");
-const addPackageByAdminController = async (req, res) => {
+const addPackageByAdmin = async (req, res) => {
     try {
         const addPackageDetails = req.body;
         addPackageDetails.isDeleted = false;
@@ -17,4 +17,4 @@ const addPackageByAdminController = async (req, res) => {
         res.status(packageMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: packageMessages_1.PACKAGE_ERROR_MESSAGES.PACKAGE_ADD_ERROR_MESSAGE, });
     }
 };
-exports.default = { addPackageByAdminController };
+exports.default = { addPackageByAdmin };

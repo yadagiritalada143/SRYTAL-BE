@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const feedbackAttributesModel_1 = __importDefault(require("../../model/feedbackAttributesModel"));
-const deleteFeedbackAttributeByAdminService = async (id) => {
+const deleteFeedbackAttributeByAdmin = async (id) => {
     try {
         const result = await feedbackAttributesModel_1.default.findByIdAndDelete(id);
         if (result) {
@@ -19,4 +19,4 @@ const deleteFeedbackAttributeByAdminService = async (id) => {
         return { success: false };
     }
 };
-exports.default = { deleteFeedbackAttributeByAdminService };
+exports.default = { deleteFeedbackAttributeByAdmin };

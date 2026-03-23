@@ -10,7 +10,7 @@ const addTaskToModule = (req, res) => {
     const status = 'ACTIVE';
     const type = 'TEXT';
     addCourseTaskService_1.default
-        .addCourseTaskService(moduleId, taskName, taskDescription, thumbnail, status, type)
+        .addCourseTask(moduleId, taskName, taskDescription, thumbnail, status, type)
         .then((responseAfteraddingCourseTask) => {
         if (responseAfteraddingCourseTask.id) {
             return res

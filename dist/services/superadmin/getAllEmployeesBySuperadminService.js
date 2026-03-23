@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const userModel_1 = __importDefault(require("../../model/userModel"));
-const getAllEmployeesBySuperadminService = (organizationId) => {
+const getAllEmployeesBySuperadmin = (organizationId) => {
     return new Promise((resolve, reject) => {
         userModel_1.default.find({ organization: organizationId })
             .then((users) => {
@@ -24,4 +24,4 @@ const getAllEmployeesBySuperadminService = (organizationId) => {
         });
     });
 };
-exports.default = { getAllEmployeesBySuperadminService };
+exports.default = { getAllEmployeesBySuperadmin };

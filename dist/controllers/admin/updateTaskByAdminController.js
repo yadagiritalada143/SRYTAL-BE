@@ -5,7 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const updateTaskByAdminService_1 = __importDefault(require("../../services/admin/updateTaskByAdminService"));
 const taskMessages_1 = require("../../constants/admin/taskMessages");
-const updateTaskByAdminController = (req, res) => {
+const updateTaskByAdmin = (req, res) => {
     const taskDetails = req.body;
     taskDetails.lastUpdatedBy = new Date();
     updateTaskByAdminService_1.default
@@ -18,4 +18,4 @@ const updateTaskByAdminController = (req, res) => {
         res.status(500).json({ success: false, message: taskMessages_1.TASK_ERROR_MESSAGES.TASK_UPDATING_ERROR_MESSAGE });
     });
 };
-exports.default = { updateTaskByAdminController };
+exports.default = { updateTaskByAdmin };

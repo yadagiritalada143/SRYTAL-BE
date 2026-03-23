@@ -1,4 +1,4 @@
-import IDepartment from '../../interfaces/department';
+import { IDepartment } from '../../interfaces/department';
 import DepartmentModel from '../../model/departmentModel';
 
 const getDepartmentByAdmin = async (_id: string): Promise<IDepartment | null> => {
