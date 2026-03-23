@@ -5,10 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const deleteFeedbackAttributeByAdminService_1 = __importDefault(require("../../services/admin/deleteFeedbackAttributeByAdminService"));
 const feedbackAttributeMessages_1 = require("../../constants/admin/feedbackAttributeMessages");
-const deleteFeedbackAttributeByAdminController = async (req, res) => {
+const deleteFeedbackAttributeByAdmin = async (req, res) => {
     try {
         const id = req.params.id;
-        const deleteResult = await deleteFeedbackAttributeByAdminService_1.default.deleteFeedbackAttributeByAdminService(id);
+        const deleteResult = await deleteFeedbackAttributeByAdminService_1.default.deleteFeedbackAttributeByAdmin(id);
         if (deleteResult.success) {
             return res.status(feedbackAttributeMessages_1.HTTP_STATUS.OK).json({ success: true, message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FEEDBACK_ATTRIBUTE_DELETE_SUCCESS_MESSAGE, data: deleteResult });
         }
@@ -21,4 +21,4 @@ const deleteFeedbackAttributeByAdminController = async (req, res) => {
         return res.status(feedbackAttributeMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FEEDBACK_ATTRIBUTE_DELETE_ERROR_MESSAGE });
     }
 };
-exports.default = { deleteFeedbackAttributeByAdminController };
+exports.default = { deleteFeedbackAttributeByAdmin };

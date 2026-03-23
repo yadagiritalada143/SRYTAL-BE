@@ -23,6 +23,7 @@ const getEmployeeDetails = (id) => {
             .populate('employeeRole')
             .populate('employmentType')
             .populate('organization')
+            .populate('department')
             .then((employee) => {
             if (!employee) {
                 reject({ success: false });

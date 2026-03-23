@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const coursemoduleModel_1 = __importDefault(require("../../model/coursemoduleModel"));
-const addNewCourseModuleService = async (courseId, moduleName, moduleDescription, thumbnail, status) => {
+const addNewCourseModule = async (courseId, moduleName, moduleDescription, thumbnail, status) => {
     try {
         const CoursesModuleToSave = new coursemoduleModel_1.default({ courseId, moduleName, moduleDescription, thumbnail, status });
         const result = await CoursesModuleToSave.save();
@@ -15,4 +15,4 @@ const addNewCourseModuleService = async (courseId, moduleName, moduleDescription
         return { success: false };
     }
 };
-exports.default = { addNewCourseModuleService };
+exports.default = { addNewCourseModule };

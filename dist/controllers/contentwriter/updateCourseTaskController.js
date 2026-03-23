@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const updateCourseTaskService_1 = __importDefault(require("../../services/contentwriter/updateCourseTaskService"));
 const coursetaskMessages_1 = require("../../constants/contentwriter/coursetaskMessages");
 const validateCourseStatusTypesUtil_1 = __importDefault(require("../../util/validateCourseStatusTypesUtil"));
-const updateCourseTaskController = async (req, res) => {
+const updateCourseTask = async (req, res) => {
     try {
         const { id, taskName, taskDescription, thumbnail, status } = req.body;
         if (!(0, validateCourseStatusTypesUtil_1.default)(status)) {
@@ -26,4 +26,4 @@ const updateCourseTaskController = async (req, res) => {
         });
     }
 };
-exports.default = { updateCourseTaskController };
+exports.default = { updateCourseTask };

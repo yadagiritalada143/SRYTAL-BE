@@ -695,7 +695,7 @@ commonRouter.post('/forgotPassword', forgotPasswordController_1.default.forgotPa
  *                 success: false
  *                 message: "Error while fetching employee package details"
  */
-commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT_1.default, employeePackageDetailsByIdController_1.default.employeePackageDetailsByIdController);
+commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT_1.default, employeePackageDetailsByIdController_1.default.employeePackageDetailsById);
 /**
  * @swagger
  * /updateEmployeeTimesheet:
@@ -796,7 +796,7 @@ commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT_1.default, emp
  *                 success: false
  *                 message: "Error while updating employee timesheet"
  */
-commonRouter.put('/updateEmployeeTimesheet', validateJWT_1.default, updateEmployeeTimesheetController_1.default.updateEmployeeTimesheetController);
+commonRouter.put('/updateEmployeeTimesheet', validateJWT_1.default, updateEmployeeTimesheetController_1.default.updateEmployeeTimesheet);
 /**
  * @swagger
  * /downloadSalarySlip:
@@ -926,5 +926,5 @@ commonRouter.put('/updateEmployeeTimesheet', validateJWT_1.default, updateEmploy
  *                   type: string
  *                   example: Error occurred while fetching salary slip download URL
  */
-commonRouter.post('/downloadSalarySlip', validateJWT_1.default, downloadSalarySlipController_1.default.downloadSalarySlipController);
+commonRouter.post('/downloadSalarySlip', validateJWT_1.default, downloadSalarySlipController_1.default.downloadSalarySlip);
 exports.default = commonRouter;

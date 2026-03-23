@@ -7,7 +7,7 @@ const downloadSalarySlipService_1 = __importDefault(require("../../services/comm
 const employeeSalarySlipMessage_1 = require("../../constants/common/employeeSalarySlipMessage");
 const userModel_1 = __importDefault(require("../../model/userModel"));
 const ADMIN_ROLES = ['admin', 'SuperAdmin'];
-const downloadSalarySlipController = async (req, res) => {
+const downloadSalarySlip = async (req, res) => {
     var _a;
     try {
         const { mongoId, fullName, month, year } = req.body;
@@ -31,7 +31,7 @@ const downloadSalarySlipController = async (req, res) => {
                 });
             }
         }
-        const result = await downloadSalarySlipService_1.default.downloadSalarySlipService({ mongoId, fullName, month, year });
+        const result = await downloadSalarySlipService_1.default.downloadSalarySlip({ mongoId, fullName, month, year });
         if (!result.success) {
             if (result.error === 'SALARY_SLIP_NOT_FOUND') {
                 return res.status(employeeSalarySlipMessage_1.HTTP_STATUS.NOT_FOUND).json({
@@ -61,4 +61,4 @@ const downloadSalarySlipController = async (req, res) => {
         });
     }
 };
-exports.default = { downloadSalarySlipController };
+exports.default = { downloadSalarySlip };

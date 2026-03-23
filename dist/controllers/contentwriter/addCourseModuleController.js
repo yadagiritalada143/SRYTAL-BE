@@ -26,7 +26,7 @@ const addModuleToCourse = async (req, res) => {
                 res.status(500).json({ success: false, message: 'Error updating the thumbnail' });
             });
         }
-        const responseAfteraddingCourseModule = await addCourseModuleService_1.default.addNewCourseModuleService(courseId, moduleName, moduleDescription, uniqueThumbnailKey, 'ACTIVE');
+        const responseAfteraddingCourseModule = await addCourseModuleService_1.default.addNewCourseModule(courseId, moduleName, moduleDescription, uniqueThumbnailKey, 'ACTIVE');
         if (responseAfteraddingCourseModule) {
             return res.status(201).json({ message: coursemoduleMessages_1.COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE });
         }

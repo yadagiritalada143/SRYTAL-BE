@@ -6,8 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const addCommentToPoolCandidateByRecruiterService_1 = __importDefault(require("../../services/recruiter/addCommentToPoolCandidateByRecruiterService"));
 const recruiterErrorMessages_1 = require("../../constants/recruiterErrorMessages");
 const addCommentToPoolCandidateByRecruiter = (req, res) => {
+    var _a;
+    const userId = (_a = req.user) === null || _a === void 0 ? void 0 : _a.userId;
     addCommentToPoolCandidateByRecruiterService_1.default
-        .addCommentToPoolCandidateByRecruiter(req.body)
+        .addCommentToPoolCandidateByRecruiter(Object.assign(Object.assign({}, req.body), { userId }))
         .then((responseAfterCommentAdded) => {
         if (responseAfterCommentAdded && responseAfterCommentAdded.comments) {
             responseAfterCommentAdded.comments.sort((a, b) => b.updateAt - a.updateAt);

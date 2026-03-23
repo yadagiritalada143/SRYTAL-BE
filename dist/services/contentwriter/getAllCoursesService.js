@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const coursesModel_1 = __importDefault(require("../../model/coursesModel"));
-const AllCoursesService = () => {
+const AllCourses = () => {
     return new Promise((resolve, reject) => {
         coursesModel_1.default.find({})
             .populate({
@@ -31,4 +31,4 @@ const AllCoursesService = () => {
         });
     });
 };
-exports.default = { AllCoursesService };
+exports.default = { AllCourses };

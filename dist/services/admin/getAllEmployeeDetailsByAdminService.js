@@ -26,7 +26,8 @@ const getAllEmployeeDetailsByAdmin = async (organizationId, userId) => {
             .populate('bloodGroup')
             .populate('employmentType')
             .populate('employeeRole')
-            .populate('organization');
+            .populate('organization')
+            .populate('department');
         if (!users) {
             return { success: false };
         }

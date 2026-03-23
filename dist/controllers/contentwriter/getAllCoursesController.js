@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const getAllCoursesService_1 = __importDefault(require("../../services/contentwriter/getAllCoursesService"));
 const courseMessages_1 = require("../../constants/contentwriter/courseMessages");
 const getAllCourses = (req, res) => {
-    getAllCoursesService_1.default.AllCoursesService()
+    getAllCoursesService_1.default.AllCourses()
         .then((FetchAllCoursesResponse) => {
         res.status(200).json(FetchAllCoursesResponse);
     })
