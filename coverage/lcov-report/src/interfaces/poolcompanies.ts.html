@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/45</span>
+                <span class='fraction'>0/44</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/45</span>
+                <span class='fraction'>0/44</span>
             </div>
         
             
@@ -151,58 +151,58 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import mongoose, { Document } from "mongoose";</span></span></span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import mongoose, { Document } from 'mongoose';</span></span></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IPoolcompanies extends Document {</span>
-<span class="cstat-no" title="statement not covered" >    id: Object;</span>
-<span class="cstat-no" title="statement not covered" >    companyName: string;</span>
-<span class="cstat-no" title="statement not covered" >    primaryContact: {</span>
-<span class="cstat-no" title="statement not covered" >        name?: string;</span>
-<span class="cstat-no" title="statement not covered" >        email?: string;</span>
-<span class="cstat-no" title="statement not covered" >        phone?: string;</span>
-<span class="cstat-no" title="statement not covered" >    };</span>
-<span class="cstat-no" title="statement not covered" >    secondaryContact_1: {</span>
-<span class="cstat-no" title="statement not covered" >        name?: string;</span>
-<span class="cstat-no" title="statement not covered" >        email?: string;</span>
-<span class="cstat-no" title="statement not covered" >        phone?: string;</span>
-<span class="cstat-no" title="statement not covered" >    };</span>
-<span class="cstat-no" title="statement not covered" >    secondaryContact_2: {</span>
-<span class="cstat-no" title="statement not covered" >        name?: string;</span>
-<span class="cstat-no" title="statement not covered" >        email?: string;</span>
-<span class="cstat-no" title="statement not covered" >        phone?: string;</span>
-<span class="cstat-no" title="statement not covered" >    },</span>
-<span class="cstat-no" title="statement not covered" >    status?: string,</span>
-<span class="cstat-no" title="statement not covered" >    comments?: {</span>
-<span class="cstat-no" title="statement not covered" >        sort(arg0: (a: any, b: any) =&gt; number): unknown;</span>
-<span class="cstat-no" title="statement not covered" >        comment?: string;</span>
-<span class="cstat-no" title="statement not covered" >        userId?: mongoose.Schema.Types.ObjectId;</span>
-<span class="cstat-no" title="statement not covered" >        updateAt?: Date;</span>
-<span class="cstat-no" title="statement not covered" >    },</span>
-<span class="cstat-no" title="statement not covered" >    createdAt: Date;</span>
-<span class="cstat-no" title="statement not covered" >    lastUpdatedAt: Date;</span>
+<span class="cstat-no" title="statement not covered" >  id: Object;</span>
+<span class="cstat-no" title="statement not covered" >  companyName: string;</span>
+<span class="cstat-no" title="statement not covered" >  primaryContact: {</span>
+<span class="cstat-no" title="statement not covered" >    name?: string;</span>
+<span class="cstat-no" title="statement not covered" >    email?: string;</span>
+<span class="cstat-no" title="statement not covered" >    phone?: string;</span>
+<span class="cstat-no" title="statement not covered" >  };</span>
+<span class="cstat-no" title="statement not covered" >  secondaryContact_1: {</span>
+<span class="cstat-no" title="statement not covered" >    name?: string;</span>
+<span class="cstat-no" title="statement not covered" >    email?: string;</span>
+<span class="cstat-no" title="statement not covered" >    phone?: string;</span>
+<span class="cstat-no" title="statement not covered" >  };</span>
+<span class="cstat-no" title="statement not covered" >  secondaryContact_2: {</span>
+<span class="cstat-no" title="statement not covered" >    name?: string;</span>
+<span class="cstat-no" title="statement not covered" >    email?: string;</span>
+<span class="cstat-no" title="statement not covered" >    phone?: string;</span>
+<span class="cstat-no" title="statement not covered" >  };</span>
+<span class="cstat-no" title="statement not covered" >  status?: string;</span>
+<span class="cstat-no" title="statement not covered" >  comments?: {</span>
+<span class="cstat-no" title="statement not covered" >    sort(arg0: (a: any, b: any) =&gt; number): unknown;</span>
+<span class="cstat-no" title="statement not covered" >    comment?: string;</span>
+<span class="cstat-no" title="statement not covered" >    userId?: mongoose.Schema.Types.ObjectId;</span>
+<span class="cstat-no" title="statement not covered" >    updateAt?: Date;</span>
+<span class="cstat-no" title="statement not covered" >  };</span>
+<span class="cstat-no" title="statement not covered" >  createdAt: Date;</span>
+<span class="cstat-no" title="statement not covered" >  lastUpdatedAt: Date;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IPoolCompaniesResponse extends IPoolcompanies {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean,</span>
-<span class="cstat-no" title="statement not covered" >    poolCompaniesResponse?: Array&lt;IPoolcompanies&gt;;</span>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  poolCompaniesResponse?: Array&lt;IPoolcompanies&gt;;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IPoolCompanyResponse extends IPoolcompanies {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean,</span>
-<span class="cstat-no" title="statement not covered" >    poolCompanyResponse?: IPoolcompanies</span>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  poolCompanyResponse?: IPoolcompanies;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IDeletePoolCompanyResponse {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean;</span>
-<span class="cstat-no" title="statement not covered" >}</span></pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >}</span>
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

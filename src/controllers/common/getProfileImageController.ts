@@ -43,12 +43,10 @@ const getProfileImage = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error occured while fetching the Profile Image: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_GETTING_ERROR,
-        });
+      res.status(500).json({
+        success: false,
+        message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_GETTING_ERROR,
+      });
     });
 };
 

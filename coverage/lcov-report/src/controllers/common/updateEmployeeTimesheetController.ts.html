@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/28</span>
+                <span class='fraction'>0/34</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/28</span>
+                <span class='fraction'>0/34</span>
             </div>
         
             
@@ -91,7 +91,19 @@
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
 <a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L29'></a><a href='#L29'>29</a>
+<a name='L30'></a><a href='#L30'>30</a>
+<a name='L31'></a><a href='#L31'>31</a>
+<a name='L32'></a><a href='#L32'>32</a>
+<a name='L33'></a><a href='#L33'>33</a>
+<a name='L34'></a><a href='#L34'>34</a>
+<a name='L35'></a><a href='#L35'>35</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -124,29 +136,35 @@
 <span class="cstat-no" title="statement not covered" >import { UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES } from '../../constants/common/employeeTimesheetErrorMessage';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const updateEmployeeTimesheet = (req: Request, res: Response) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    const { userId } = req.body;</span>
-<span class="cstat-no" title="statement not covered" >    let updateEmployeeTimeSheetPayload: any = {};</span>
-<span class="cstat-no" title="statement not covered" >    let employeeIdToUpdateTimeSheet = '';</span>
-<span class="cstat-no" title="statement not covered" >    if (req.body &amp;&amp; req.body.employeeId) {</span>
-<span class="cstat-no" title="statement not covered" >        employeeIdToUpdateTimeSheet = req.body.employeeId;</span>
-<span class="cstat-no" title="statement not covered" >    } else {</span>
-<span class="cstat-no" title="statement not covered" >        employeeIdToUpdateTimeSheet = userId;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >  const { userId } = req.body;</span>
+<span class="cstat-no" title="statement not covered" >  let updateEmployeeTimeSheetPayload: any = {};</span>
+<span class="cstat-no" title="statement not covered" >  let employeeIdToUpdateTimeSheet = '';</span>
+<span class="cstat-no" title="statement not covered" >  if (req.body &amp;&amp; req.body.employeeId) {</span>
+<span class="cstat-no" title="statement not covered" >    employeeIdToUpdateTimeSheet = req.body.employeeId;</span>
+<span class="cstat-no" title="statement not covered" >  } else {</span>
+<span class="cstat-no" title="statement not covered" >    employeeIdToUpdateTimeSheet = userId;</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    updateEmployeeTimeSheetPayload.packages = req.body.packages;</span>
-<span class="cstat-no" title="statement not covered" >    updateEmployeeTimeSheetPayload.employeeId = employeeIdToUpdateTimeSheet;</span>
-<span class="cstat-no" title="statement not covered" >    updateEmployeeTimesheetService</span>
-<span class="cstat-no" title="statement not covered" >        .updateEmployeeTimesheet(updateEmployeeTimeSheetPayload)</span>
-<span class="cstat-no" title="statement not covered" >        .then((updateEmployeeTimesheetResponse: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            res.status(200).json(updateEmployeeTimesheetResponse);</span>
-<span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" >        .catch((error: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            console.error(`Error in updating employee timesheet: ${error}`);</span>
-<span class="cstat-no" title="statement not covered" >            res.status(500).json({ success: false, message: UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES.EMPLOYEE_TIMESHEET_UPDATING_ERROR_MESSAGE });</span>
+<span class="cstat-no" title="statement not covered" >  updateEmployeeTimeSheetPayload.packages = req.body.packages;</span>
+<span class="cstat-no" title="statement not covered" >  updateEmployeeTimeSheetPayload.employeeId = employeeIdToUpdateTimeSheet;</span>
+<span class="cstat-no" title="statement not covered" >  updateEmployeeTimesheetService</span>
+<span class="cstat-no" title="statement not covered" >    .updateEmployeeTimesheet(updateEmployeeTimeSheetPayload)</span>
+<span class="cstat-no" title="statement not covered" >    .then((updateEmployeeTimesheetResponse: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      res.status(200).json(updateEmployeeTimesheetResponse);</span>
+<span class="cstat-no" title="statement not covered" >    })</span>
+<span class="cstat-no" title="statement not covered" >    .catch((error: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      console.error(`Error in updating employee timesheet: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >      res</span>
+<span class="cstat-no" title="statement not covered" >        .status(500)</span>
+<span class="cstat-no" title="statement not covered" >        .json({</span>
+<span class="cstat-no" title="statement not covered" >          success: false,</span>
+<span class="cstat-no" title="statement not covered" >          message:</span>
+<span class="cstat-no" title="statement not covered" >            UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES.EMPLOYEE_TIMESHEET_UPDATING_ERROR_MESSAGE,</span>
 <span class="cstat-no" title="statement not covered" >        });</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >export default { updateEmployeeTimesheet }</span>
+<span class="cstat-no" title="statement not covered" >export default { updateEmployeeTimesheet };</span>
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -154,7 +172,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

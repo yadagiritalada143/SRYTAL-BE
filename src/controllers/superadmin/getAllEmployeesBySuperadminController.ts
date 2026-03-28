@@ -13,12 +13,10 @@ const getAllEmployeesBySuperadmin = (req: Request, res: Response) => {
       console.error(
         `Error in fetching all superadmin employee details:${error} `
       );
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: SUPERADMIN_ERROR.FETCHING_ALL_EMPLOYEE_DETAILS_ERROR,
-        });
+      res.status(500).json({
+        success: false,
+        message: SUPERADMIN_ERROR.FETCHING_ALL_EMPLOYEE_DETAILS_ERROR,
+      });
     });
 };
 

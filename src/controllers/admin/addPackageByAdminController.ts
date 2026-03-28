@@ -11,20 +11,16 @@ const addPackageByAdmin = async (req: Request, res: Response) => {
     const addPackageDetails = req.body;
     addPackageDetails.isDeleted = false;
     await addPackageByAdminService.addPackageByAdmin(addPackageDetails);
-    res
-      .status(HTTP_STATUS.OK)
-      .json({
-        success: true,
-        message: PACKAGE_SUCCESS_MESSAGES.PACKAGE_ADD_SUCCESS_MESSAGE,
-      });
+    res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: PACKAGE_SUCCESS_MESSAGES.PACKAGE_ADD_SUCCESS_MESSAGE,
+    });
   } catch (error) {
     console.error(`Error while adding packages: ${error}`);
-    res
-      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .json({
-        success: false,
-        message: PACKAGE_ERROR_MESSAGES.PACKAGE_ADD_ERROR_MESSAGE,
-      });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: PACKAGE_ERROR_MESSAGES.PACKAGE_ADD_ERROR_MESSAGE,
+    });
   }
 };
 

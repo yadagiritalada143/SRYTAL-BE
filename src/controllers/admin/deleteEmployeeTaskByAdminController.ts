@@ -11,13 +11,10 @@ const deleteEmployeeTaskByAdmin = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in deleting employee packages: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message:
-            EMPLOYEE_TASK_ERROR_MESSAGE.EMPLOYEE_TASK_DELETE_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message: EMPLOYEE_TASK_ERROR_MESSAGE.EMPLOYEE_TASK_DELETE_ERROR_MESSAGE,
+      });
     });
 };
 

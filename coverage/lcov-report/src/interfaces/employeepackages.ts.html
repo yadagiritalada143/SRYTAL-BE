@@ -200,69 +200,69 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import mongoose, { Document } from 'mongoose';</span></span></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface ITimesheet {</span>
-<span class="cstat-no" title="statement not covered" >    date: Date;</span>
-<span class="cstat-no" title="statement not covered" >    isHoliday: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    isVacation: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    isWeekOff: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    hours: number;</span>
-<span class="cstat-no" title="statement not covered" >    comments: string;</span>
-<span class="cstat-no" title="statement not covered" >    leaveReason: string;</span>
+<span class="cstat-no" title="statement not covered" >  date: Date;</span>
+<span class="cstat-no" title="statement not covered" >  isHoliday: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  isVacation: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  isWeekOff: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  hours: number;</span>
+<span class="cstat-no" title="statement not covered" >  comments: string;</span>
+<span class="cstat-no" title="statement not covered" >  leaveReason: string;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface ITask {</span>
-<span class="cstat-no" title="statement not covered" >    taskId: mongoose.Schema.Types.ObjectId;</span>
-<span class="cstat-no" title="statement not covered" >    startDate: Date;</span>
-<span class="cstat-no" title="statement not covered" >    timesheet: ITimesheet[];</span>
+<span class="cstat-no" title="statement not covered" >  taskId: mongoose.Schema.Types.ObjectId;</span>
+<span class="cstat-no" title="statement not covered" >  startDate: Date;</span>
+<span class="cstat-no" title="statement not covered" >  timesheet: ITimesheet[];</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IPackage {</span>
-<span class="cstat-no" title="statement not covered" >    packageId: mongoose.Schema.Types.ObjectId;</span>
-<span class="cstat-no" title="statement not covered" >    tasks: ITask[];</span>
+<span class="cstat-no" title="statement not covered" >  packageId: mongoose.Schema.Types.ObjectId;</span>
+<span class="cstat-no" title="statement not covered" >  tasks: ITask[];</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IEmployeePackage extends Document {</span>
-<span class="cstat-no" title="statement not covered" >    employeeId: mongoose.Schema.Types.ObjectId;</span>
-<span class="cstat-no" title="statement not covered" >    packages: IPackage[];</span>
+<span class="cstat-no" title="statement not covered" >  employeeId: mongoose.Schema.Types.ObjectId;</span>
+<span class="cstat-no" title="statement not covered" >  packages: IPackage[];</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface UpdateEmployeeTimesheetResponse {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    responseAfterUpdateTimesheet?: any;</span>
-<span class="cstat-no" title="statement not covered" >    message?: string;</span>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  responseAfterUpdateTimesheet?: any;</span>
+<span class="cstat-no" title="statement not covered" >  message?: string;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface TimesheetUpdate extends Partial&lt;ITimesheet&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    date: Date;</span>
-<span class="cstat-no" title="statement not covered" >    _id?: mongoose.Types.ObjectId;</span>
+<span class="cstat-no" title="statement not covered" >  date: Date;</span>
+<span class="cstat-no" title="statement not covered" >  _id?: mongoose.Types.ObjectId;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface TaskUpdate {</span>
-<span class="cstat-no" title="statement not covered" >    taskId: string | mongoose.Types.ObjectId;</span>
-<span class="cstat-no" title="statement not covered" >    timesheet: TimesheetUpdate[];</span>
+<span class="cstat-no" title="statement not covered" >  taskId: string | mongoose.Types.ObjectId;</span>
+<span class="cstat-no" title="statement not covered" >  timesheet: TimesheetUpdate[];</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface PackageUpdate {</span>
-<span class="cstat-no" title="statement not covered" >    packageId: string | mongoose.Types.ObjectId;</span>
-<span class="cstat-no" title="statement not covered" >    tasks: TaskUpdate[];</span>
+<span class="cstat-no" title="statement not covered" >  packageId: string | mongoose.Types.ObjectId;</span>
+<span class="cstat-no" title="statement not covered" >  tasks: TaskUpdate[];</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface UpdateTimesheetPayload {</span>
-<span class="cstat-no" title="statement not covered" >    employeeId: string | mongoose.Types.ObjectId;</span>
-<span class="cstat-no" title="statement not covered" >    packages: PackageUpdate[];</span>
+<span class="cstat-no" title="statement not covered" >  employeeId: string | mongoose.Types.ObjectId;</span>
+<span class="cstat-no" title="statement not covered" >  packages: PackageUpdate[];</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IDeletePackageResponse {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IFetchEmployeePackagesDetailsResponse {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    employeePackageDetails?: any;</span>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  employeePackageDetails?: any;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IFetchEmployeePackagesDetailsResponse {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    employeePackageDetails?: any;</span>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  employeePackageDetails?: any;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 &nbsp;</pre></td></tr></table></pre>
 
@@ -271,7 +271,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

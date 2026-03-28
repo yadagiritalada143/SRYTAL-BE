@@ -20,12 +20,10 @@ const addTalentPoolCandidateByRecruiter = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in adding talent pool to tracker: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: RECRUITER_ERROR_MESSAGES.ERROR_ADDING_POOL_CANDIDATE_DETAILS,
-        });
+      res.status(500).json({
+        success: false,
+        message: RECRUITER_ERROR_MESSAGES.ERROR_ADDING_POOL_CANDIDATE_DETAILS,
+      });
     });
 };
 

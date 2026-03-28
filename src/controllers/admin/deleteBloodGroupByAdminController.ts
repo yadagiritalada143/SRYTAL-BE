@@ -11,13 +11,10 @@ const deleteBloodGroup = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in deleting blood group: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message:
-            DELETE_ERROR_MESSAGES.DELETE_BLOOD_GROUP_DELETE_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message: DELETE_ERROR_MESSAGES.DELETE_BLOOD_GROUP_DELETE_ERROR_MESSAGE,
+      });
     });
 };
 

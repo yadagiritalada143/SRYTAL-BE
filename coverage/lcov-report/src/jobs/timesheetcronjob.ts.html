@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/77</span>
+                <span class='fraction'>0/85</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/77</span>
+                <span class='fraction'>0/85</span>
             </div>
         
             
@@ -140,7 +140,23 @@
 <a name='L75'></a><a href='#L75'>75</a>
 <a name='L76'></a><a href='#L76'>76</a>
 <a name='L77'></a><a href='#L77'>77</a>
-<a name='L78'></a><a href='#L78'>78</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -219,7 +235,12 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import cron from 'node-cron';</span></span></span>
 <span class="cstat-no" title="statement not covered" >import EmployeePackageModel from '../model/employeePackageModel';</span>
-<span class="cstat-no" title="statement not covered" >import { ITimesheet, ITask, IPackage, IEmployeePackage } from '../interfaces/employeepackages';</span>
+<span class="cstat-no" title="statement not covered" >import {</span>
+<span class="cstat-no" title="statement not covered" >  ITimesheet,</span>
+<span class="cstat-no" title="statement not covered" >  ITask,</span>
+<span class="cstat-no" title="statement not covered" >  IPackage,</span>
+<span class="cstat-no" title="statement not covered" >  IEmployeePackage,</span>
+<span class="cstat-no" title="statement not covered" >} from '../interfaces/employeepackages';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const updateNextMonthTimeSheet = async () =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
@@ -241,7 +262,8 @@
 <span class="cstat-no" title="statement not covered" >        nextMonthFirstDay.getMonth(),</span>
 <span class="cstat-no" title="statement not covered" >        index + 1</span>
 <span class="cstat-no" title="statement not covered" >      );</span>
-<span class="cstat-no" title="statement not covered" >      const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6;</span>
+<span class="cstat-no" title="statement not covered" >      const isWeekend =</span>
+<span class="cstat-no" title="statement not covered" >        currentDate.getDay() === 0 || currentDate.getDay() === 6;</span>
 <span class="cstat-no" title="statement not covered" >      return {</span>
 <span class="cstat-no" title="statement not covered" >        date: currentDate,</span>
 <span class="cstat-no" title="statement not covered" >        isHoliday: false,</span>
@@ -250,7 +272,7 @@
 <span class="cstat-no" title="statement not covered" >        hours: 0,</span>
 <span class="cstat-no" title="statement not covered" >        comments: '',</span>
 <span class="cstat-no" title="statement not covered" >        leaveReason: '',</span>
-<span class="cstat-no" title="statement not covered" >        status: 'NOT SUBMITTED'</span>
+<span class="cstat-no" title="statement not covered" >        status: 'NOT SUBMITTED',</span>
 <span class="cstat-no" title="statement not covered" >      };</span>
 <span class="cstat-no" title="statement not covered" >    });</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -261,12 +283,15 @@
 <span class="cstat-no" title="statement not covered" >      .lean()</span>
 <span class="cstat-no" title="statement not covered" >      .exec();</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const employeePackagesTyped = employeePackages as unknown as IEmployeePackage[];</span>
-<span class="cstat-no" title="statement not covered" >    const updates = employeePackagesTyped.map(empPack =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >      empPack.packages.map(packageItem =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        packageItem.tasks.map(task =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >          const existingDates = new Set(task.timesheet.map(entry =&gt; entry.date.toISOString()));</span>
-<span class="cstat-no" title="statement not covered" >          timesheet.map(newEntry =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    const employeePackagesTyped =</span>
+<span class="cstat-no" title="statement not covered" >      employeePackages as unknown as IEmployeePackage[];</span>
+<span class="cstat-no" title="statement not covered" >    const updates = employeePackagesTyped.map((empPack) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      empPack.packages.map((packageItem) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        packageItem.tasks.map((task) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          const existingDates = new Set(</span>
+<span class="cstat-no" title="statement not covered" >            task.timesheet.map((entry) =&gt; entry.date.toISOString())</span>
+<span class="cstat-no" title="statement not covered" >          );</span>
+<span class="cstat-no" title="statement not covered" >          timesheet.map((newEntry) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >            if (!existingDates.has(newEntry.date.toISOString())) {</span>
 <span class="cstat-no" title="statement not covered" >              task.timesheet.push(newEntry);</span>
 <span class="cstat-no" title="statement not covered" >            }</span>
@@ -281,15 +306,14 @@
 <span class="cstat-no" title="statement not covered" >    });</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >    await Promise.all(updates);</span>
-<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >    console.error("Failed to update timesheets:", error);</span>
+<span class="cstat-no" title="statement not covered" >    console.error('Failed to update timesheets:', error);</span>
 <span class="cstat-no" title="statement not covered" >    throw error;</span>
 <span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >cron.schedule('0 0 25 * *', () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  console.warn("Cron triggered! Running on the 25th of each month...");</span>
+<span class="cstat-no" title="statement not covered" >  console.warn('Cron triggered! Running on the 25th of each month...');</span>
 <span class="cstat-no" title="statement not covered" >  updateNextMonthTimeSheet();</span>
 <span class="cstat-no" title="statement not covered" >});</span>
 <span class="cstat-no" title="statement not covered" ></span>
@@ -301,7 +325,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

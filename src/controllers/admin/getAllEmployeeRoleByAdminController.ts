@@ -10,13 +10,11 @@ const getAllEmployeeRolesByAdmin = (req: Request, res: Response) => {
     })
     .catch((error) => {
       console.error(`Error in fetching employee roles: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message:
-            EMPLOYEE_ROLE_ERRORS_MESSAGES.EMPLOYEE_ROLE_FETCH_ERROR_MESSAGES,
-        });
+      res.status(500).json({
+        success: false,
+        message:
+          EMPLOYEE_ROLE_ERRORS_MESSAGES.EMPLOYEE_ROLE_FETCH_ERROR_MESSAGES,
+      });
     });
 };
 

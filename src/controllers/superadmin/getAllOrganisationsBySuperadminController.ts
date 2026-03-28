@@ -8,11 +8,9 @@ const getAllOrganizationsBySuperadmin = (req: Request, res: Response) => {
       return res.status(200).json({ organizations });
     })
     .catch(() => {
-      return res
-        .status(500)
-        .json({
-          message: 'Error in fetching get organisations by super admin !',
-        });
+      return res.status(500).json({
+        message: 'Error in fetching get organisations by super admin !',
+      });
     });
 };
 

@@ -116,10 +116,7 @@
 <a name='L51'></a><a href='#L51'>51</a>
 <a name='L52'></a><a href='#L52'>52</a>
 <a name='L53'></a><a href='#L53'>53</a>
-<a name='L54'></a><a href='#L54'>54</a>
-<a name='L55'></a><a href='#L55'>55</a>
-<a name='L56'></a><a href='#L56'>56</a>
-<a name='L57'></a><a href='#L57'>57</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L54'></a><a href='#L54'>54</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -172,65 +169,59 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import nodemailer from 'nodemailer';</span></span></span>
 <span class="cstat-no" title="statement not covered" >import dotenv from 'dotenv';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >dotenv.config();</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const emailConfiguration: any = {</span>
-<span class="cstat-no" title="statement not covered" >    service: process.env.EMAIL_CONFIG_SERVICE,</span>
-<span class="cstat-no" title="statement not covered" >    host: process.env.EMAIL_CONFIG_HOST,</span>
-<span class="cstat-no" title="statement not covered" >    port: Number(process.env.EMAIL_CONFIG_PORT),</span>
-<span class="cstat-no" title="statement not covered" >    secure: Boolean(process.env.EMAIL_CONFIG_SECURE),</span>
-<span class="cstat-no" title="statement not covered" >    auth: {</span>
-<span class="cstat-no" title="statement not covered" >        user: process.env.EMAIL_CONFIG_AUTH_USER,</span>
-<span class="cstat-no" title="statement not covered" >        pass: process.env.EMAIL_CONFIG_AUTH_PASS,</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >  service: process.env.EMAIL_CONFIG_SERVICE,</span>
+<span class="cstat-no" title="statement not covered" >  host: process.env.EMAIL_CONFIG_HOST,</span>
+<span class="cstat-no" title="statement not covered" >  port: Number(process.env.EMAIL_CONFIG_PORT),</span>
+<span class="cstat-no" title="statement not covered" >  secure: Boolean(process.env.EMAIL_CONFIG_SECURE),</span>
+<span class="cstat-no" title="statement not covered" >  auth: {</span>
+<span class="cstat-no" title="statement not covered" >    user: process.env.EMAIL_CONFIG_AUTH_USER,</span>
+<span class="cstat-no" title="statement not covered" >    pass: process.env.EMAIL_CONFIG_AUTH_PASS,</span>
+<span class="cstat-no" title="statement not covered" >  },</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const sendContactUsMail = async (mailDetailsToFire: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        const transporter = nodemailer.createTransport(emailConfiguration);</span>
-<span class="cstat-no" title="statement not covered" >        const mailBody = `Hi baalu, </span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const transporter = nodemailer.createTransport(emailConfiguration);</span>
+<span class="cstat-no" title="statement not covered" >    const mailBody = `Hi baalu, </span>
 <span class="cstat-no" title="statement not covered" >                            &lt;br /&gt;We are from &lt;b&gt;${mailDetailsToFire.companyName}&lt;/b&gt;.</span>
 <span class="cstat-no" title="statement not covered" >                            &lt;br /&gt;Please reach out to us at &lt;b&gt;${mailDetailsToFire.customerEmail}&lt;/b&gt; to discuss more about ${mailDetailsToFire.subject}&lt;br /&gt;</span>
 <span class="cstat-no" title="statement not covered" >                            &lt;br /&gt;Here is the glimpse of discussion:&lt;p&gt;${mailDetailsToFire.message}&lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >                            &lt;br /&gt;</span>
 <span class="cstat-no" title="statement not covered" >                            &lt;b&gt;Thanks and Regards&lt;/b&gt;</span>
 <span class="cstat-no" title="statement not covered" >                            &lt;br /&gt;</span>
-<span class="cstat-no" title="statement not covered" >                            &lt;b&gt;${mailDetailsToFire.companyName}&lt;/b&gt;`</span>
+<span class="cstat-no" title="statement not covered" >                            &lt;b&gt;${mailDetailsToFire.companyName}&lt;/b&gt;`;</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const mailOptions = {</span>
-<span class="cstat-no" title="statement not covered" >            from: process.env.EMAIL_FROM,</span>
-<span class="cstat-no" title="statement not covered" >            to: process.env.ADMIN_EMAIL_ABOUT_CUSTOMER,</span>
-<span class="cstat-no" title="statement not covered" >            subject: mailDetailsToFire.subject,</span>
-<span class="cstat-no" title="statement not covered" >            html: mailBody,</span>
-<span class="cstat-no" title="statement not covered" >        };</span>
+<span class="cstat-no" title="statement not covered" >    const mailOptions = {</span>
+<span class="cstat-no" title="statement not covered" >      from: process.env.EMAIL_FROM,</span>
+<span class="cstat-no" title="statement not covered" >      to: process.env.ADMIN_EMAIL_ABOUT_CUSTOMER,</span>
+<span class="cstat-no" title="statement not covered" >      subject: mailDetailsToFire.subject,</span>
+<span class="cstat-no" title="statement not covered" >      html: mailBody,</span>
+<span class="cstat-no" title="statement not covered" >    };</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const result = await transporter.sendMail(mailOptions, (error, info) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            if (error) {</span>
-<span class="cstat-no" title="statement not covered" >                return error;</span>
-<span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >            console.warn(`info after sent:', ${info.response}`)</span>
-<span class="cstat-no" title="statement not covered" >            return info.response;</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        console.warn(`Result after mail sent: ${result}`)</span>
-<span class="cstat-no" title="statement not covered" >        return result;</span>
-<span class="cstat-no" title="statement not covered" >    } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >        console.error(`Error in sending Email at services: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >    const result = await transporter.sendMail(mailOptions, (error, info) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (error) {</span>
 <span class="cstat-no" title="statement not covered" >        return error;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >      console.warn(`info after sent:', ${info.response}`);</span>
+<span class="cstat-no" title="statement not covered" >      return info.response;</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    console.warn(`Result after mail sent: ${result}`);</span>
+<span class="cstat-no" title="statement not covered" >    return result;</span>
+<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error(`Error in sending Email at services: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >    return error;</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default { sendContactUsMail };</span>
-&nbsp;
-&nbsp;
-&nbsp;
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -238,7 +229,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

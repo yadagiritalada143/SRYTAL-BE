@@ -286,115 +286,115 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >export interface ISalarySlipRequest {</span></span></span>
-<span class="cstat-no" title="statement not covered" >    _id: string;</span>
-<span class="cstat-no" title="statement not covered" >    employeeId: string;</span>
-<span class="cstat-no" title="statement not covered" >    employeeName: string;</span>
-<span class="cstat-no" title="statement not covered" >    employeeEmail: string;</span>
-<span class="cstat-no" title="statement not covered" >    designation: string;</span>
-<span class="cstat-no" title="statement not covered" >    department: string;</span>
-<span class="cstat-no" title="statement not covered" >    dateOfJoining: string;</span>
-<span class="cstat-no" title="statement not covered" >    payPeriod: string;</span>
-<span class="cstat-no" title="statement not covered" >    payDate: string;</span>
-<span class="cstat-no" title="statement not covered" >    bankName: string;</span>
-<span class="cstat-no" title="statement not covered" >    IFSCCODE: string;</span>
-<span class="cstat-no" title="statement not covered" >    bankAccountNumber: string;</span>
-<span class="cstat-no" title="statement not covered" >    transactionType: string;</span>
-<span class="cstat-no" title="statement not covered" >    transactionId?: string;</span>
-<span class="cstat-no" title="statement not covered" >    panNumber: string;</span>
-<span class="cstat-no" title="statement not covered" >    uanNumber?: string;</span>
-<span class="cstat-no" title="statement not covered" >    totalWorkingDays: number;</span>
-<span class="cstat-no" title="statement not covered" >    daysWorked: number;</span>
-<span class="cstat-no" title="statement not covered" >    lossOfPayDays?: number;</span>
-<span class="cstat-no" title="statement not covered" >    basicSalary: number;</span>
-<span class="cstat-no" title="statement not covered" >    hraPercentage?: number;</span>
-<span class="cstat-no" title="statement not covered" >    specialAllowance?: number;</span>
-<span class="cstat-no" title="statement not covered" >    conveyanceAllowance?: number;</span>
-<span class="cstat-no" title="statement not covered" >    medicalAllowance?: number;</span>
-<span class="cstat-no" title="statement not covered" >    otherAllowances?: number;</span>
-<span class="cstat-no" title="statement not covered" >    pfPercentage?: number;</span>
-<span class="cstat-no" title="statement not covered" >    professionalTax?: number;</span>
-<span class="cstat-no" title="statement not covered" >    incomeTax?: number;</span>
-<span class="cstat-no" title="statement not covered" >    otherDeductions?: number;</span>
+<span class="cstat-no" title="statement not covered" >  _id: string;</span>
+<span class="cstat-no" title="statement not covered" >  employeeId: string;</span>
+<span class="cstat-no" title="statement not covered" >  employeeName: string;</span>
+<span class="cstat-no" title="statement not covered" >  employeeEmail: string;</span>
+<span class="cstat-no" title="statement not covered" >  designation: string;</span>
+<span class="cstat-no" title="statement not covered" >  department: string;</span>
+<span class="cstat-no" title="statement not covered" >  dateOfJoining: string;</span>
+<span class="cstat-no" title="statement not covered" >  payPeriod: string;</span>
+<span class="cstat-no" title="statement not covered" >  payDate: string;</span>
+<span class="cstat-no" title="statement not covered" >  bankName: string;</span>
+<span class="cstat-no" title="statement not covered" >  IFSCCODE: string;</span>
+<span class="cstat-no" title="statement not covered" >  bankAccountNumber: string;</span>
+<span class="cstat-no" title="statement not covered" >  transactionType: string;</span>
+<span class="cstat-no" title="statement not covered" >  transactionId?: string;</span>
+<span class="cstat-no" title="statement not covered" >  panNumber: string;</span>
+<span class="cstat-no" title="statement not covered" >  uanNumber?: string;</span>
+<span class="cstat-no" title="statement not covered" >  totalWorkingDays: number;</span>
+<span class="cstat-no" title="statement not covered" >  daysWorked: number;</span>
+<span class="cstat-no" title="statement not covered" >  lossOfPayDays?: number;</span>
+<span class="cstat-no" title="statement not covered" >  basicSalary: number;</span>
+<span class="cstat-no" title="statement not covered" >  hraPercentage?: number;</span>
+<span class="cstat-no" title="statement not covered" >  specialAllowance?: number;</span>
+<span class="cstat-no" title="statement not covered" >  conveyanceAllowance?: number;</span>
+<span class="cstat-no" title="statement not covered" >  medicalAllowance?: number;</span>
+<span class="cstat-no" title="statement not covered" >  otherAllowances?: number;</span>
+<span class="cstat-no" title="statement not covered" >  pfPercentage?: number;</span>
+<span class="cstat-no" title="statement not covered" >  professionalTax?: number;</span>
+<span class="cstat-no" title="statement not covered" >  incomeTax?: number;</span>
+<span class="cstat-no" title="statement not covered" >  otherDeductions?: number;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface ISalaryCalculations {</span>
-<span class="cstat-no" title="statement not covered" >    basicSalary: number;</span>
-<span class="cstat-no" title="statement not covered" >    hra: number;</span>
-<span class="cstat-no" title="statement not covered" >    specialAllowance: number;</span>
-<span class="cstat-no" title="statement not covered" >    conveyanceAllowance: number;</span>
-<span class="cstat-no" title="statement not covered" >    medicalAllowance: number;</span>
-<span class="cstat-no" title="statement not covered" >    otherAllowances: number;</span>
-<span class="cstat-no" title="statement not covered" >    grossEarnings: number;</span>
-<span class="cstat-no" title="statement not covered" >    lossOfPayAmount: number;</span>
-<span class="cstat-no" title="statement not covered" >    providentFund: number;</span>
-<span class="cstat-no" title="statement not covered" >    professionalTax: number;</span>
-<span class="cstat-no" title="statement not covered" >    incomeTax: number;</span>
-<span class="cstat-no" title="statement not covered" >    otherDeductions: number;</span>
-<span class="cstat-no" title="statement not covered" >    totalDeductions: number;</span>
-<span class="cstat-no" title="statement not covered" >    netPay: number;</span>
-<span class="cstat-no" title="statement not covered" >    netPayInWords: string;</span>
+<span class="cstat-no" title="statement not covered" >  basicSalary: number;</span>
+<span class="cstat-no" title="statement not covered" >  hra: number;</span>
+<span class="cstat-no" title="statement not covered" >  specialAllowance: number;</span>
+<span class="cstat-no" title="statement not covered" >  conveyanceAllowance: number;</span>
+<span class="cstat-no" title="statement not covered" >  medicalAllowance: number;</span>
+<span class="cstat-no" title="statement not covered" >  otherAllowances: number;</span>
+<span class="cstat-no" title="statement not covered" >  grossEarnings: number;</span>
+<span class="cstat-no" title="statement not covered" >  lossOfPayAmount: number;</span>
+<span class="cstat-no" title="statement not covered" >  providentFund: number;</span>
+<span class="cstat-no" title="statement not covered" >  professionalTax: number;</span>
+<span class="cstat-no" title="statement not covered" >  incomeTax: number;</span>
+<span class="cstat-no" title="statement not covered" >  otherDeductions: number;</span>
+<span class="cstat-no" title="statement not covered" >  totalDeductions: number;</span>
+<span class="cstat-no" title="statement not covered" >  netPay: number;</span>
+<span class="cstat-no" title="statement not covered" >  netPayInWords: string;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface ISalarySlipData {</span>
-<span class="cstat-no" title="statement not covered" >    companyName: string;</span>
-<span class="cstat-no" title="statement not covered" >    companyAddress: string;</span>
-<span class="cstat-no" title="statement not covered" >    companyLogo?: string;</span>
-<span class="cstat-no" title="statement not covered" >    backgroundImage?: string;</span>
-<span class="cstat-no" title="statement not covered" >    employeeId: string;</span>
-<span class="cstat-no" title="statement not covered" >    employeeName: string;</span>
-<span class="cstat-no" title="statement not covered" >    designation: string;</span>
-<span class="cstat-no" title="statement not covered" >    department: string;</span>
-<span class="cstat-no" title="statement not covered" >    dateOfJoining: string;</span>
-<span class="cstat-no" title="statement not covered" >    payPeriod: string;</span>
-<span class="cstat-no" title="statement not covered" >    payPeriodRange: string;</span>
-<span class="cstat-no" title="statement not covered" >    payslipMonth: string;</span>
-<span class="cstat-no" title="statement not covered" >    payDate: string;</span>
-<span class="cstat-no" title="statement not covered" >    bankName: string;</span>
-<span class="cstat-no" title="statement not covered" >    IFSCCODE: string;</span>
-<span class="cstat-no" title="statement not covered" >    bankAccountNumber: string;</span>
-<span class="cstat-no" title="statement not covered" >    transactionType: string;</span>
-<span class="cstat-no" title="statement not covered" >    transactionId?: string;</span>
-<span class="cstat-no" title="statement not covered" >    panNumber: string;</span>
-<span class="cstat-no" title="statement not covered" >    uanNumber: string;</span>
-<span class="cstat-no" title="statement not covered" >    totalWorkingDays: number;</span>
-<span class="cstat-no" title="statement not covered" >    daysWorked: number;</span>
-<span class="cstat-no" title="statement not covered" >    lossOfPayDays: number;</span>
-<span class="cstat-no" title="statement not covered" >    calculations: ISalaryCalculations;</span>
+<span class="cstat-no" title="statement not covered" >  companyName: string;</span>
+<span class="cstat-no" title="statement not covered" >  companyAddress: string;</span>
+<span class="cstat-no" title="statement not covered" >  companyLogo?: string;</span>
+<span class="cstat-no" title="statement not covered" >  backgroundImage?: string;</span>
+<span class="cstat-no" title="statement not covered" >  employeeId: string;</span>
+<span class="cstat-no" title="statement not covered" >  employeeName: string;</span>
+<span class="cstat-no" title="statement not covered" >  designation: string;</span>
+<span class="cstat-no" title="statement not covered" >  department: string;</span>
+<span class="cstat-no" title="statement not covered" >  dateOfJoining: string;</span>
+<span class="cstat-no" title="statement not covered" >  payPeriod: string;</span>
+<span class="cstat-no" title="statement not covered" >  payPeriodRange: string;</span>
+<span class="cstat-no" title="statement not covered" >  payslipMonth: string;</span>
+<span class="cstat-no" title="statement not covered" >  payDate: string;</span>
+<span class="cstat-no" title="statement not covered" >  bankName: string;</span>
+<span class="cstat-no" title="statement not covered" >  IFSCCODE: string;</span>
+<span class="cstat-no" title="statement not covered" >  bankAccountNumber: string;</span>
+<span class="cstat-no" title="statement not covered" >  transactionType: string;</span>
+<span class="cstat-no" title="statement not covered" >  transactionId?: string;</span>
+<span class="cstat-no" title="statement not covered" >  panNumber: string;</span>
+<span class="cstat-no" title="statement not covered" >  uanNumber: string;</span>
+<span class="cstat-no" title="statement not covered" >  totalWorkingDays: number;</span>
+<span class="cstat-no" title="statement not covered" >  daysWorked: number;</span>
+<span class="cstat-no" title="statement not covered" >  lossOfPayDays: number;</span>
+<span class="cstat-no" title="statement not covered" >  calculations: ISalaryCalculations;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface ISalarySlipEmailDetails {</span>
-<span class="cstat-no" title="statement not covered" >    employeeName: string;</span>
-<span class="cstat-no" title="statement not covered" >    employeeEmail: string;</span>
-<span class="cstat-no" title="statement not covered" >    payPeriod: string;</span>
-<span class="cstat-no" title="statement not covered" >    payDate: string;</span>
+<span class="cstat-no" title="statement not covered" >  employeeName: string;</span>
+<span class="cstat-no" title="statement not covered" >  employeeEmail: string;</span>
+<span class="cstat-no" title="statement not covered" >  payPeriod: string;</span>
+<span class="cstat-no" title="statement not covered" >  payDate: string;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IUploadSalarySlipParams {</span>
-<span class="cstat-no" title="statement not covered" >    mongoId: string;</span>
-<span class="cstat-no" title="statement not covered" >    employeeName: string;</span>
-<span class="cstat-no" title="statement not covered" >    payPeriod: string;</span>
-<span class="cstat-no" title="statement not covered" >    pdfBuffer: Buffer;</span>
+<span class="cstat-no" title="statement not covered" >  mongoId: string;</span>
+<span class="cstat-no" title="statement not covered" >  employeeName: string;</span>
+<span class="cstat-no" title="statement not covered" >  payPeriod: string;</span>
+<span class="cstat-no" title="statement not covered" >  pdfBuffer: Buffer;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface ISalarySlipResult {</span>
-<span class="cstat-no" title="statement not covered" >    mongoId: string;</span>
-<span class="cstat-no" title="statement not covered" >    fileName: string;</span>
-<span class="cstat-no" title="statement not covered" >    key: string;</span>
-<span class="cstat-no" title="statement not covered" >    downloadUrl: string;</span>
+<span class="cstat-no" title="statement not covered" >  mongoId: string;</span>
+<span class="cstat-no" title="statement not covered" >  fileName: string;</span>
+<span class="cstat-no" title="statement not covered" >  key: string;</span>
+<span class="cstat-no" title="statement not covered" >  downloadUrl: string;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IDownloadSalarySlipRequest {</span>
-<span class="cstat-no" title="statement not covered" >    mongoId: string;</span>
-<span class="cstat-no" title="statement not covered" >    fullName: string;</span>
-<span class="cstat-no" title="statement not covered" >    month: string; // 3-letter month (e.g., "Jan", "Feb")</span>
-<span class="cstat-no" title="statement not covered" >    year: string;  // 4-digit year (e.g., "2026")</span>
+<span class="cstat-no" title="statement not covered" >  mongoId: string;</span>
+<span class="cstat-no" title="statement not covered" >  fullName: string;</span>
+<span class="cstat-no" title="statement not covered" >  month: string; // 3-letter month (e.g., "Jan", "Feb")</span>
+<span class="cstat-no" title="statement not covered" >  year: string; // 4-digit year (e.g., "2026")</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IDownloadSalarySlipResult {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    downloadUrl?: string;</span>
-<span class="cstat-no" title="statement not covered" >    fileName?: string;</span>
-<span class="cstat-no" title="statement not covered" >    error?: string;</span>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  downloadUrl?: string;</span>
+<span class="cstat-no" title="statement not covered" >  fileName?: string;</span>
+<span class="cstat-no" title="statement not covered" >  error?: string;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 &nbsp;</pre></td></tr></table></pre>
 
@@ -403,7 +403,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

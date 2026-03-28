@@ -145,46 +145,46 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import mongoose, { Document } from "mongoose";</span></span></span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import mongoose, { Document } from 'mongoose';</span></span></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface ITalentPoolCandidates extends Document {</span>
-<span class="cstat-no" title="statement not covered" >    id: Object;</span>
-<span class="cstat-no" title="statement not covered" >    candidateName: string;</span>
-<span class="cstat-no" title="statement not covered" >    contact: {</span>
-<span class="cstat-no" title="statement not covered" >        email: string;</span>
-<span class="cstat-no" title="statement not covered" >        phone: string;</span>
-<span class="cstat-no" title="statement not covered" >    };</span>
-<span class="cstat-no" title="statement not covered" >    totalYearsOfExperience?: number;</span>
-<span class="cstat-no" title="statement not covered" >    relaventYearsOfExperience?: number;</span>
-<span class="cstat-no" title="statement not covered" >    evaluatedSkills?: string;</span>
-<span class="cstat-no" title="statement not covered" >    isDeleted?: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    comments?: {</span>
-<span class="cstat-no" title="statement not covered" >        sort(arg0: (a: any, b: any) =&gt; number): unknown;</span>
-<span class="cstat-no" title="statement not covered" >        comment?: string;</span>
-<span class="cstat-no" title="statement not covered" >        callStartsAt?: Date;</span>
-<span class="cstat-no" title="statement not covered" >        callEndsAt?: Date;</span>
-<span class="cstat-no" title="statement not covered" >        userId?: mongoose.Schema.Types.ObjectId;</span>
-<span class="cstat-no" title="statement not covered" >        updateAt?: Date;</span>
-<span class="cstat-no" title="statement not covered" >    },</span>
-<span class="cstat-no" title="statement not covered" >    isResumeWithDetailsUpload?: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    isResumeWithoutDetailsUpload?: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    createdBy: mongoose.Schema.Types.ObjectId;</span>
-<span class="cstat-no" title="statement not covered" >    createdAt: Date;</span>
-<span class="cstat-no" title="statement not covered" >    lastUpdatedAt: Date;</span>
+<span class="cstat-no" title="statement not covered" >  id: Object;</span>
+<span class="cstat-no" title="statement not covered" >  candidateName: string;</span>
+<span class="cstat-no" title="statement not covered" >  contact: {</span>
+<span class="cstat-no" title="statement not covered" >    email: string;</span>
+<span class="cstat-no" title="statement not covered" >    phone: string;</span>
+<span class="cstat-no" title="statement not covered" >  };</span>
+<span class="cstat-no" title="statement not covered" >  totalYearsOfExperience?: number;</span>
+<span class="cstat-no" title="statement not covered" >  relaventYearsOfExperience?: number;</span>
+<span class="cstat-no" title="statement not covered" >  evaluatedSkills?: string;</span>
+<span class="cstat-no" title="statement not covered" >  isDeleted?: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  comments?: {</span>
+<span class="cstat-no" title="statement not covered" >    sort(arg0: (a: any, b: any) =&gt; number): unknown;</span>
+<span class="cstat-no" title="statement not covered" >    comment?: string;</span>
+<span class="cstat-no" title="statement not covered" >    callStartsAt?: Date;</span>
+<span class="cstat-no" title="statement not covered" >    callEndsAt?: Date;</span>
+<span class="cstat-no" title="statement not covered" >    userId?: mongoose.Schema.Types.ObjectId;</span>
+<span class="cstat-no" title="statement not covered" >    updateAt?: Date;</span>
+<span class="cstat-no" title="statement not covered" >  };</span>
+<span class="cstat-no" title="statement not covered" >  isResumeWithDetailsUpload?: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  isResumeWithoutDetailsUpload?: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  createdBy: mongoose.Schema.Types.ObjectId;</span>
+<span class="cstat-no" title="statement not covered" >  createdAt: Date;</span>
+<span class="cstat-no" title="statement not covered" >  lastUpdatedAt: Date;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IDeletePoolCandidateResponse {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IFetchTalentPoolCandidatesListResponse {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    talentPoolCandidatesList?: any;</span>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  talentPoolCandidatesList?: any;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export interface IFetchTalentPoolCandidateDetailsResponse {</span>
-<span class="cstat-no" title="statement not covered" >    success: boolean;</span>
-<span class="cstat-no" title="statement not covered" >    talentPoolCandidateDetails?: any;</span>
+<span class="cstat-no" title="statement not covered" >  success: boolean;</span>
+<span class="cstat-no" title="statement not covered" >  talentPoolCandidateDetails?: any;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 &nbsp;</pre></td></tr></table></pre>
 
@@ -193,7 +193,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

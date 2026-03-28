@@ -11,13 +11,11 @@ const deleteEmploymentType = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in deleting employment type: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message:
-            EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_DELETE_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message:
+          EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_DELETE_ERROR_MESSAGE,
+      });
     });
 };
 

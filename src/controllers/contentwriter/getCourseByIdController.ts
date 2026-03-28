@@ -11,12 +11,10 @@ const getCourseDetailsById = (req: Request, res: Response) => {
     })
     .catch((error) => {
       console.error(`Error in fetching course by Id: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message: COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE,
+      });
     });
 };
 

@@ -16,12 +16,10 @@ const getPoolCompanyDetails = (req: Request, res: Response) => {
       console.error(
         `Error while fetching pool company details at controller level: ${error}`
       );
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_COMPANY_DETAILS,
-        });
+      res.status(500).json({
+        success: false,
+        message: RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_COMPANY_DETAILS,
+      });
     });
 };
 
@@ -38,12 +36,10 @@ const getPoolCompanyDetailsById = (req: Request, res: Response) => {
       console.error(
         `Error while fetching pool company details at controller level: ${error}`
       );
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_COMPANY_DETAILS,
-        });
+      res.status(500).json({
+        success: false,
+        message: RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_COMPANY_DETAILS,
+      });
     });
 };
 
@@ -57,12 +53,10 @@ const addPoolCompany = (req: Request, res: Response) => {
       console.error(
         `Error while adding pool company details at controller level: ${error}`
       );
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: RECRUITER_ERROR_MESSAGES.ERROR_ADDING_POOL_COMPANY_DETAILS,
-        });
+      res.status(500).json({
+        success: false,
+        message: RECRUITER_ERROR_MESSAGES.ERROR_ADDING_POOL_COMPANY_DETAILS,
+      });
     });
 };
 

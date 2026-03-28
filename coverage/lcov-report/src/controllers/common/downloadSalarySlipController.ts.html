@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/69</span>
+                <span class='fraction'>0/85</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/69</span>
+                <span class='fraction'>0/85</span>
             </div>
         
             
@@ -132,7 +132,39 @@
 <a name='L67'></a><a href='#L67'>67</a>
 <a name='L68'></a><a href='#L68'>68</a>
 <a name='L69'></a><a href='#L69'>69</a>
-<a name='L70'></a><a href='#L70'>70</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a>
+<a name='L76'></a><a href='#L76'>76</a>
+<a name='L77'></a><a href='#L77'>77</a>
+<a name='L78'></a><a href='#L78'>78</a>
+<a name='L79'></a><a href='#L79'>79</a>
+<a name='L80'></a><a href='#L80'>80</a>
+<a name='L81'></a><a href='#L81'>81</a>
+<a name='L82'></a><a href='#L82'>82</a>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -203,70 +235,86 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import { Request, Response } from 'express';</span></span></span>
 <span class="cstat-no" title="statement not covered" >import downloadSalarySlipService from '../../services/common/downloadSalarySlipService';</span>
-<span class="cstat-no" title="statement not covered" >import { EMPLOYEE_SALARY_SLIP_SUCCESS_MESSAGES, EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES, HTTP_STATUS } from '../../constants/common/employeeSalarySlipMessage';</span>
+<span class="cstat-no" title="statement not covered" >import {</span>
+<span class="cstat-no" title="statement not covered" >  EMPLOYEE_SALARY_SLIP_SUCCESS_MESSAGES,</span>
+<span class="cstat-no" title="statement not covered" >  EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES,</span>
+<span class="cstat-no" title="statement not covered" >  HTTP_STATUS,</span>
+<span class="cstat-no" title="statement not covered" >} from '../../constants/common/employeeSalarySlipMessage';</span>
 <span class="cstat-no" title="statement not covered" >import UserModel from '../../model/userModel';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const ADMIN_ROLES = ['admin', 'SuperAdmin'];</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >const downloadSalarySlip = async (req: Request, res: Response): Promise&lt;any&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        const { mongoId, fullName, month, year } = req.body;</span>
-<span class="cstat-no" title="statement not covered" >        const authenticatedUserId = req.user?.userId;</span>
+<span class="cstat-no" title="statement not covered" >const downloadSalarySlip = async (</span>
+<span class="cstat-no" title="statement not covered" >  req: Request,</span>
+<span class="cstat-no" title="statement not covered" >  res: Response</span>
+<span class="cstat-no" title="statement not covered" >): Promise&lt;any&gt; =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const { mongoId, fullName, month, year } = req.body;</span>
+<span class="cstat-no" title="statement not covered" >    const authenticatedUserId = req.user?.userId;</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        // Validate required fields</span>
-<span class="cstat-no" title="statement not covered" >        if (!mongoId || !fullName || !month || !year) {</span>
-<span class="cstat-no" title="statement not covered" >            return res.status(HTTP_STATUS.BAD_REQUEST).json({</span>
-<span class="cstat-no" title="statement not covered" >                success: false,</span>
-<span class="cstat-no" title="statement not covered" >                message: EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.INVALID_REQUEST_PARAMS</span>
-<span class="cstat-no" title="statement not covered" >            });</span>
-<span class="cstat-no" title="statement not covered" >        }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        // Security check: Allow Admin/SuperAdmin to access any employee's salary slips</span>
-<span class="cstat-no" title="statement not covered" >        // Regular employees can only access their own salary slips</span>
-<span class="cstat-no" title="statement not covered" >        if (mongoId !== authenticatedUserId) {</span>
-<span class="cstat-no" title="statement not covered" >            const currentUser = await UserModel.findById(authenticatedUserId).select('userRole');</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >            const isAdmin = currentUser &amp;&amp; ADMIN_ROLES.includes(currentUser.userRole || '');</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >            if (!isAdmin) {</span>
-<span class="cstat-no" title="statement not covered" >                return res.status(HTTP_STATUS.FORBIDDEN).json({</span>
-<span class="cstat-no" title="statement not covered" >                    success: false,</span>
-<span class="cstat-no" title="statement not covered" >                    message: EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.UNAUTHORIZED_ACCESS</span>
-<span class="cstat-no" title="statement not covered" >                });</span>
-<span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" >        }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const result = await downloadSalarySlipService.downloadSalarySlip({ mongoId, fullName, month, year });</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        if (!result.success) {</span>
-<span class="cstat-no" title="statement not covered" >            if (result.error === 'SALARY_SLIP_NOT_FOUND') {</span>
-<span class="cstat-no" title="statement not covered" >                return res.status(HTTP_STATUS.NOT_FOUND).json({</span>
-<span class="cstat-no" title="statement not covered" >                    success: false,</span>
-<span class="cstat-no" title="statement not covered" >                    message: EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_NOT_FOUND</span>
-<span class="cstat-no" title="statement not covered" >                });</span>
-<span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" >            return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({</span>
-<span class="cstat-no" title="statement not covered" >                success: false,</span>
-<span class="cstat-no" title="statement not covered" >                message: EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED_ERROR</span>
-<span class="cstat-no" title="statement not covered" >            });</span>
-<span class="cstat-no" title="statement not covered" >        }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        res.status(HTTP_STATUS.OK).json({</span>
-<span class="cstat-no" title="statement not covered" >            success: true,</span>
-<span class="cstat-no" title="statement not covered" >            message: EMPLOYEE_SALARY_SLIP_SUCCESS_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED,</span>
-<span class="cstat-no" title="statement not covered" >            data: {</span>
-<span class="cstat-no" title="statement not covered" >                downloadUrl: result.downloadUrl,</span>
-<span class="cstat-no" title="statement not covered" >                fileName: result.fileName</span>
-<span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    } catch (error: any) {</span>
-<span class="cstat-no" title="statement not covered" >        console.error(`Error in downloadSalarySlipController: ${error}`);</span>
-<span class="cstat-no" title="statement not covered" >        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({</span>
-<span class="cstat-no" title="statement not covered" >            success: false,</span>
-<span class="cstat-no" title="statement not covered" >            message: EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED_ERROR</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >    // Validate required fields</span>
+<span class="cstat-no" title="statement not covered" >    if (!mongoId || !fullName || !month || !year) {</span>
+<span class="cstat-no" title="statement not covered" >      return res.status(HTTP_STATUS.BAD_REQUEST).json({</span>
+<span class="cstat-no" title="statement not covered" >        success: false,</span>
+<span class="cstat-no" title="statement not covered" >        message: EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.INVALID_REQUEST_PARAMS,</span>
+<span class="cstat-no" title="statement not covered" >      });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    // Security check: Allow Admin/SuperAdmin to access any employee's salary slips</span>
+<span class="cstat-no" title="statement not covered" >    // Regular employees can only access their own salary slips</span>
+<span class="cstat-no" title="statement not covered" >    if (mongoId !== authenticatedUserId) {</span>
+<span class="cstat-no" title="statement not covered" >      const currentUser =</span>
+<span class="cstat-no" title="statement not covered" >        await UserModel.findById(authenticatedUserId).select('userRole');</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >      const isAdmin =</span>
+<span class="cstat-no" title="statement not covered" >        currentUser &amp;&amp; ADMIN_ROLES.includes(currentUser.userRole || '');</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >      if (!isAdmin) {</span>
+<span class="cstat-no" title="statement not covered" >        return res.status(HTTP_STATUS.FORBIDDEN).json({</span>
+<span class="cstat-no" title="statement not covered" >          success: false,</span>
+<span class="cstat-no" title="statement not covered" >          message: EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.UNAUTHORIZED_ACCESS,</span>
+<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const result = await downloadSalarySlipService.downloadSalarySlip({</span>
+<span class="cstat-no" title="statement not covered" >      mongoId,</span>
+<span class="cstat-no" title="statement not covered" >      fullName,</span>
+<span class="cstat-no" title="statement not covered" >      month,</span>
+<span class="cstat-no" title="statement not covered" >      year,</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    if (!result.success) {</span>
+<span class="cstat-no" title="statement not covered" >      if (result.error === 'SALARY_SLIP_NOT_FOUND') {</span>
+<span class="cstat-no" title="statement not covered" >        return res.status(HTTP_STATUS.NOT_FOUND).json({</span>
+<span class="cstat-no" title="statement not covered" >          success: false,</span>
+<span class="cstat-no" title="statement not covered" >          message: EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_NOT_FOUND,</span>
+<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
+<span class="cstat-no" title="statement not covered" >      return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({</span>
+<span class="cstat-no" title="statement not covered" >        success: false,</span>
+<span class="cstat-no" title="statement not covered" >        message:</span>
+<span class="cstat-no" title="statement not covered" >          EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED_ERROR,</span>
+<span class="cstat-no" title="statement not covered" >      });</span>
+<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    res.status(HTTP_STATUS.OK).json({</span>
+<span class="cstat-no" title="statement not covered" >      success: true,</span>
+<span class="cstat-no" title="statement not covered" >      message:</span>
+<span class="cstat-no" title="statement not covered" >        EMPLOYEE_SALARY_SLIP_SUCCESS_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED,</span>
+<span class="cstat-no" title="statement not covered" >      data: {</span>
+<span class="cstat-no" title="statement not covered" >        downloadUrl: result.downloadUrl,</span>
+<span class="cstat-no" title="statement not covered" >        fileName: result.fileName,</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >  } catch (error: any) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error(`Error in downloadSalarySlipController: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({</span>
+<span class="cstat-no" title="statement not covered" >      success: false,</span>
+<span class="cstat-no" title="statement not covered" >      message:</span>
+<span class="cstat-no" title="statement not covered" >        EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED_ERROR,</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default { downloadSalarySlip };</span>
@@ -277,7 +325,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

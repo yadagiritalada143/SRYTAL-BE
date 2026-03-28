@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/47</span>
+                <span class='fraction'>0/54</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/47</span>
+                <span class='fraction'>0/54</span>
             </div>
         
             
@@ -110,7 +110,21 @@
 <a name='L45'></a><a href='#L45'>45</a>
 <a name='L46'></a><a href='#L46'>46</a>
 <a name='L47'></a><a href='#L47'>47</a>
-<a name='L48'></a><a href='#L48'>48</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a>
+<a name='L50'></a><a href='#L50'>50</a>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -164,43 +178,50 @@
 <span class="cstat-no" title="statement not covered" >import hashPasswordUtility from '../../util/hashPassword';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const randomPasswordGenerate = () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    return (Math.floor(Math.random() * 90000000) + 10000000) + '';</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >  return Math.floor(Math.random() * 90000000) + 10000000 + '';</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const register = (req: Request, res: Response) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    const { organizationId } = req.user || {};</span>
-<span class="cstat-no" title="statement not covered" >    const newRegistrationData = req.body;</span>
-<span class="cstat-no" title="statement not covered" >    const randomPassword = randomPasswordGenerate();</span>
-<span class="cstat-no" title="statement not covered" >    newRegistrationData.password = randomPassword;</span>
-<span class="cstat-no" title="statement not covered" >    newRegistrationData.passwordResetRequired = true;</span>
-<span class="cstat-no" title="statement not covered" >    newRegistrationData.organization = organizationId;</span>
-<span class="cstat-no" title="statement not covered" >    newRegistrationData.applicationWalkThrough = 1;</span>
-<span class="cstat-no" title="statement not covered" >    newRegistrationData.isDeleted = false;</span>
-<span class="cstat-no" title="statement not covered" >    adminSignUpService</span>
-<span class="cstat-no" title="statement not covered" >        .isAccountPresent(newRegistrationData.email)</span>
-<span class="cstat-no" title="statement not covered" >        .then((emailExists) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            if (emailExists) {</span>
-<span class="cstat-no" title="statement not covered" >                throw new Error(ERRORS.EMAIL_EXISTS);</span>
-<span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" >            return hashPasswordUtility.hashPassword(newRegistrationData.password);</span>
-<span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" >        .then(hashedPassword =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            newRegistrationData.password = hashedPassword;</span>
-<span class="cstat-no" title="statement not covered" >            return adminSignUpService.saveAccount(newRegistrationData);</span>
-<span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" >        .then(responseAfterRegistration =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            if (responseAfterRegistration.id) {</span>
-<span class="cstat-no" title="statement not covered" >                utilService.sendOTPEmail(newRegistrationData.firstName, newRegistrationData.lastName, newRegistrationData.email, randomPassword);</span>
-<span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" >            return res.status(201).json({ message: ACCOUNT_MESSAGES.REGISTRATION_SUCCESS });</span>
-<span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" >        .catch(error =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            if (error.message === ERRORS.EMAIL_EXISTS) {</span>
-<span class="cstat-no" title="statement not covered" >                return res.status(409).json({ message: error.message });</span>
-<span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" >            console.error(error);</span>
-<span class="cstat-no" title="statement not covered" >            return res.status(500).json({ message: ERRORS.USER_CREATION_ERROR });</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >  const { organizationId } = req.user || {};</span>
+<span class="cstat-no" title="statement not covered" >  const newRegistrationData = req.body;</span>
+<span class="cstat-no" title="statement not covered" >  const randomPassword = randomPasswordGenerate();</span>
+<span class="cstat-no" title="statement not covered" >  newRegistrationData.password = randomPassword;</span>
+<span class="cstat-no" title="statement not covered" >  newRegistrationData.passwordResetRequired = true;</span>
+<span class="cstat-no" title="statement not covered" >  newRegistrationData.organization = organizationId;</span>
+<span class="cstat-no" title="statement not covered" >  newRegistrationData.applicationWalkThrough = 1;</span>
+<span class="cstat-no" title="statement not covered" >  newRegistrationData.isDeleted = false;</span>
+<span class="cstat-no" title="statement not covered" >  adminSignUpService</span>
+<span class="cstat-no" title="statement not covered" >    .isAccountPresent(newRegistrationData.email)</span>
+<span class="cstat-no" title="statement not covered" >    .then((emailExists) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (emailExists) {</span>
+<span class="cstat-no" title="statement not covered" >        throw new Error(ERRORS.EMAIL_EXISTS);</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
+<span class="cstat-no" title="statement not covered" >      return hashPasswordUtility.hashPassword(newRegistrationData.password);</span>
+<span class="cstat-no" title="statement not covered" >    })</span>
+<span class="cstat-no" title="statement not covered" >    .then((hashedPassword) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      newRegistrationData.password = hashedPassword;</span>
+<span class="cstat-no" title="statement not covered" >      return adminSignUpService.saveAccount(newRegistrationData);</span>
+<span class="cstat-no" title="statement not covered" >    })</span>
+<span class="cstat-no" title="statement not covered" >    .then((responseAfterRegistration) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (responseAfterRegistration.id) {</span>
+<span class="cstat-no" title="statement not covered" >        utilService.sendOTPEmail(</span>
+<span class="cstat-no" title="statement not covered" >          newRegistrationData.firstName,</span>
+<span class="cstat-no" title="statement not covered" >          newRegistrationData.lastName,</span>
+<span class="cstat-no" title="statement not covered" >          newRegistrationData.email,</span>
+<span class="cstat-no" title="statement not covered" >          randomPassword</span>
+<span class="cstat-no" title="statement not covered" >        );</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
+<span class="cstat-no" title="statement not covered" >      return res</span>
+<span class="cstat-no" title="statement not covered" >        .status(201)</span>
+<span class="cstat-no" title="statement not covered" >        .json({ message: ACCOUNT_MESSAGES.REGISTRATION_SUCCESS });</span>
+<span class="cstat-no" title="statement not covered" >    })</span>
+<span class="cstat-no" title="statement not covered" >    .catch((error) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (error.message === ERRORS.EMAIL_EXISTS) {</span>
+<span class="cstat-no" title="statement not covered" >        return res.status(409).json({ message: error.message });</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
+<span class="cstat-no" title="statement not covered" >      console.error(error);</span>
+<span class="cstat-no" title="statement not covered" >      return res.status(500).json({ message: ERRORS.USER_CREATION_ERROR });</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default { register };</span>
@@ -211,7 +232,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

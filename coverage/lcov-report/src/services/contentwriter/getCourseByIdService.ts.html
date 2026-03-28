@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/30</span>
+                <span class='fraction'>0/28</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/30</span>
+                <span class='fraction'>0/28</span>
             </div>
         
             
@@ -91,11 +91,7 @@
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a>
 <a name='L28'></a><a href='#L28'>28</a>
-<a name='L29'></a><a href='#L29'>29</a>
-<a name='L30'></a><a href='#L30'>30</a>
-<a name='L31'></a><a href='#L31'>31</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L29'></a><a href='#L29'>29</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -127,29 +123,27 @@
 <span class="cstat-no" title="statement not covered" >import { IFetchCourseByIdResponse } from '../../interfaces/courses';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const getCourseById = async (id: string): Promise&lt;IFetchCourseByIdResponse&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        const course = await CourseModel.findById(id)</span>
-<span class="cstat-no" title="statement not covered" >            .populate({</span>
-<span class="cstat-no" title="statement not covered" >                path: 'modules',</span>
-<span class="cstat-no" title="statement not covered" >                populate: {</span>
-<span class="cstat-no" title="statement not covered" >                    path: 'tasks',</span>
-<span class="cstat-no" title="statement not covered" >                    model: 'CourseTaskModel'</span>
-<span class="cstat-no" title="statement not covered" >                }</span>
-<span class="cstat-no" title="statement not covered" >            })</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const course = await CourseModel.findById(id).populate({</span>
+<span class="cstat-no" title="statement not covered" >      path: 'modules',</span>
+<span class="cstat-no" title="statement not covered" >      populate: {</span>
+<span class="cstat-no" title="statement not covered" >        path: 'tasks',</span>
+<span class="cstat-no" title="statement not covered" >        model: 'CourseTaskModel',</span>
+<span class="cstat-no" title="statement not covered" >      },</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        if (!course) {</span>
-<span class="cstat-no" title="statement not covered" >            return { success: false };</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        return {</span>
-<span class="cstat-no" title="statement not covered" >            success: true,</span>
-<span class="cstat-no" title="statement not covered" >            coursedata: course</span>
-<span class="cstat-no" title="statement not covered" >        };</span>
-<span class="cstat-no" title="statement not covered" >    } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >        console.error(`Error in fetching course By id: ${error}`);</span>
-<span class="cstat-no" title="statement not covered" >        return { success: false };</span>
+<span class="cstat-no" title="statement not covered" >    if (!course) {</span>
+<span class="cstat-no" title="statement not covered" >      return { success: false };</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    return {</span>
+<span class="cstat-no" title="statement not covered" >      success: true,</span>
+<span class="cstat-no" title="statement not covered" >      coursedata: course,</span>
+<span class="cstat-no" title="statement not covered" >    };</span>
+<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error(`Error in fetching course By id: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >    return { success: false };</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default { getCourseById };</span>
@@ -160,7 +154,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

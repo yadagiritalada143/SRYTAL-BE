@@ -10,13 +10,11 @@ const updateApplicationWalkThrough = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error occured in Controller layer: ${error}`);
-      res
-        .status(401)
-        .json({
-          success: false,
-          message:
-            APPLICATION_WALK_THROUGH_ERROR_MESSAGE.UPDATE_APP_WALK_THROUGH_ERROR,
-        });
+      res.status(401).json({
+        success: false,
+        message:
+          APPLICATION_WALK_THROUGH_ERROR_MESSAGE.UPDATE_APP_WALK_THROUGH_ERROR,
+      });
     });
 };
 

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/56</span>
+                <span class='fraction'>0/66</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/56</span>
+                <span class='fraction'>0/66</span>
             </div>
         
             
@@ -119,7 +119,17 @@
 <a name='L54'></a><a href='#L54'>54</a>
 <a name='L55'></a><a href='#L55'>55</a>
 <a name='L56'></a><a href='#L56'>56</a>
-<a name='L57'></a><a href='#L57'>57</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L57'></a><a href='#L57'>57</a>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -175,62 +185,82 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import { IPoolcompanies } from "../../interfaces/poolcompanies";</span></span></span>
-<span class="cstat-no" title="statement not covered" >import PoolCompaniesModel from "../../model/poolCompanies";</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import { IPoolcompanies } from '../../interfaces/poolcompanies';</span></span></span>
+<span class="cstat-no" title="statement not covered" >import PoolCompaniesModel from '../../model/poolCompanies';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const getPoolCompanyDetails = (): Promise&lt;any&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    return new Promise((resolve, reject) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        PoolCompaniesModel</span>
-<span class="cstat-no" title="statement not covered" >            .find()</span>
-<span class="cstat-no" title="statement not covered" >            .then((poolCompaniesResponse: Array&lt;IPoolcompanies&gt;) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                if (!poolCompaniesResponse) {</span>
-<span class="cstat-no" title="statement not covered" >                    reject({ success: false });</span>
-<span class="cstat-no" title="statement not covered" >                }</span>
+<span class="cstat-no" title="statement not covered" >  return new Promise((resolve, reject) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    PoolCompaniesModel.find()</span>
+<span class="cstat-no" title="statement not covered" >      .then((poolCompaniesResponse: Array&lt;IPoolcompanies&gt;) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        if (!poolCompaniesResponse) {</span>
+<span class="cstat-no" title="statement not covered" >          reject({ success: false });</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                const responseToSendBack = poolCompaniesResponse.map((eachCompanyDetails) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                    return {</span>
-<span class="cstat-no" title="statement not covered" >                        id: eachCompanyDetails._id,</span>
-<span class="cstat-no" title="statement not covered" >                        companyName: eachCompanyDetails.companyName,</span>
-<span class="cstat-no" title="statement not covered" >                        primaryContact: eachCompanyDetails.primaryContact,</span>
-<span class="cstat-no" title="statement not covered" >                        secondaryContact_1: eachCompanyDetails.secondaryContact_1,</span>
-<span class="cstat-no" title="statement not covered" >                        secondaryContact_2: eachCompanyDetails.secondaryContact_2,</span>
-<span class="cstat-no" title="statement not covered" >                        status: eachCompanyDetails.status,</span>
-<span class="cstat-no" title="statement not covered" >                        createdAt: eachCompanyDetails.createdAt,</span>
-<span class="cstat-no" title="statement not covered" >                        lastUpdatedAt: eachCompanyDetails.lastUpdatedAt</span>
-<span class="cstat-no" title="statement not covered" >                    }</span>
-<span class="cstat-no" title="statement not covered" >                });</span>
-<span class="cstat-no" title="statement not covered" >                resolve({ success: true, poolCompaniesResponse: responseToSendBack })</span>
-<span class="cstat-no" title="statement not covered" >            })</span>
-<span class="cstat-no" title="statement not covered" >            .catch((error: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                console.error(`Error in fetching pool companies list at service level: ${error}`)</span>
-<span class="cstat-no" title="statement not covered" >                reject({ success: false });</span>
-<span class="cstat-no" title="statement not covered" >            })</span>
-<span class="cstat-no" title="statement not covered" >    })</span>
-<span class="cstat-no" title="statement not covered" >}</span>
-<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >        const responseToSendBack = poolCompaniesResponse.map(</span>
+<span class="cstat-no" title="statement not covered" >          (eachCompanyDetails) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            return {</span>
+<span class="cstat-no" title="statement not covered" >              id: eachCompanyDetails._id,</span>
+<span class="cstat-no" title="statement not covered" >              companyName: eachCompanyDetails.companyName,</span>
+<span class="cstat-no" title="statement not covered" >              primaryContact: eachCompanyDetails.primaryContact,</span>
+<span class="cstat-no" title="statement not covered" >              secondaryContact_1: eachCompanyDetails.secondaryContact_1,</span>
+<span class="cstat-no" title="statement not covered" >              secondaryContact_2: eachCompanyDetails.secondaryContact_2,</span>
+<span class="cstat-no" title="statement not covered" >              status: eachCompanyDetails.status,</span>
+<span class="cstat-no" title="statement not covered" >              createdAt: eachCompanyDetails.createdAt,</span>
+<span class="cstat-no" title="statement not covered" >              lastUpdatedAt: eachCompanyDetails.lastUpdatedAt,</span>
+<span class="cstat-no" title="statement not covered" >            };</span>
+<span class="cstat-no" title="statement not covered" >          }</span>
+<span class="cstat-no" title="statement not covered" >        );</span>
+<span class="cstat-no" title="statement not covered" >        resolve({ success: true, poolCompaniesResponse: responseToSendBack });</span>
+<span class="cstat-no" title="statement not covered" >      })</span>
+<span class="cstat-no" title="statement not covered" >      .catch((error: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        console.error(</span>
+<span class="cstat-no" title="statement not covered" >          `Error in fetching pool companies list at service level: ${error}`</span>
+<span class="cstat-no" title="statement not covered" >        );</span>
+<span class="cstat-no" title="statement not covered" >        reject({ success: false });</span>
+<span class="cstat-no" title="statement not covered" >      });</span>
+<span class="cstat-no" title="statement not covered" >  });</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const getPoolCompanyDetailsById = async (id: string) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    let poolCompanyDetails = await PoolCompaniesModel</span>
-<span class="cstat-no" title="statement not covered" >        .findOne({ _id: id })</span>
-<span class="cstat-no" title="statement not covered" >        .populate('comments.userId', 'firstName lastName');</span>
+<span class="cstat-no" title="statement not covered" >  let poolCompanyDetails = await PoolCompaniesModel.findOne({</span>
+<span class="cstat-no" title="statement not covered" >    _id: id,</span>
+<span class="cstat-no" title="statement not covered" >  }).populate('comments.userId', 'firstName lastName');</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (poolCompanyDetails &amp;&amp; poolCompanyDetails.comments) {</span>
-<span class="cstat-no" title="statement not covered" >        poolCompanyDetails.comments.sort((a, b) =&gt; b.updateAt - a.updateAt);</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >  if (poolCompanyDetails &amp;&amp; poolCompanyDetails.comments) {</span>
+<span class="cstat-no" title="statement not covered" >    poolCompanyDetails.comments.sort((a, b) =&gt; b.updateAt - a.updateAt);</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    return poolCompanyDetails;</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >  return poolCompanyDetails;</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >const addPoolCompany = async (companyDetailsToAdd: IPoolcompanies): Promise&lt;any&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    companyDetailsToAdd.createdAt = new Date();</span>
-<span class="cstat-no" title="statement not covered" >    companyDetailsToAdd.lastUpdatedAt = new Date();</span>
-<span class="cstat-no" title="statement not covered" >    const poolCompanyDataToSave: any = new PoolCompaniesModel({ ...companyDetailsToAdd });</span>
+<span class="cstat-no" title="statement not covered" >const addPoolCompany = async (</span>
+<span class="cstat-no" title="statement not covered" >  companyDetailsToAdd: IPoolcompanies</span>
+<span class="cstat-no" title="statement not covered" >): Promise&lt;any&gt; =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  companyDetailsToAdd.createdAt = new Date();</span>
+<span class="cstat-no" title="statement not covered" >  companyDetailsToAdd.lastUpdatedAt = new Date();</span>
+<span class="cstat-no" title="statement not covered" >  const poolCompanyDataToSave: any = new PoolCompaniesModel({</span>
+<span class="cstat-no" title="statement not covered" >    ...companyDetailsToAdd,</span>
+<span class="cstat-no" title="statement not covered" >  });</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const result = await poolCompanyDataToSave.save();</span>
-<span class="cstat-no" title="statement not covered" >    return result;</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >  const result = await poolCompanyDataToSave.save();</span>
+<span class="cstat-no" title="statement not covered" >  return result;</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >export default { getPoolCompanyDetails, getPoolCompanyDetailsById, addPoolCompany };</span>
+<span class="cstat-no" title="statement not covered" >export default {</span>
+<span class="cstat-no" title="statement not covered" >  getPoolCompanyDetails,</span>
+<span class="cstat-no" title="statement not covered" >  getPoolCompanyDetailsById,</span>
+<span class="cstat-no" title="statement not covered" >  addPoolCompany,</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -238,7 +268,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

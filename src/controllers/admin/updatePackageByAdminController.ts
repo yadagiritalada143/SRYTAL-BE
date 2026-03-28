@@ -11,12 +11,10 @@ const updatePackageByAdmin = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in  updating packages: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: PACKAGE_ERROR_MESSAGES.PACKAGE_UPDATING_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message: PACKAGE_ERROR_MESSAGES.PACKAGE_UPDATING_ERROR_MESSAGE,
+      });
     });
 };
 

@@ -13,22 +13,18 @@ const getAllDepartmentsByAdmin = async (
   try {
     const departments =
       await getAllDepartmentsByAdminService.getAllDepartmentsByAdmin();
-    return res
-      .status(HTTP_STATUS.OK)
-      .json({
-        success: true,
-        message:
-          DEPARTMENT_SUCCESS_MESSAGES.FETCH_ALL_DEPARTMENTS_SUCCESS_MESSAGE,
-        data: departments,
-      });
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message:
+        DEPARTMENT_SUCCESS_MESSAGES.FETCH_ALL_DEPARTMENTS_SUCCESS_MESSAGE,
+      data: departments,
+    });
   } catch (error: any) {
     console.error(`Error fetching all departments: ${error}`);
-    return res
-      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .json({
-        success: false,
-        message: DEPARTMENT_ERROR_MESSAGES.FETCH_ALL_DEPARTMENTS_ERROR_MESSAGE,
-      });
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: DEPARTMENT_ERROR_MESSAGES.FETCH_ALL_DEPARTMENTS_ERROR_MESSAGE,
+    });
   }
 };
 

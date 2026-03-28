@@ -13,18 +13,13 @@ const addTaskToModule = (req: Request, res: Response) => {
     .addCourseTask(moduleId, taskName, taskDescription, thumbnail, status, type)
     .then((responseAfteraddingCourseTask: any) => {
       if (responseAfteraddingCourseTask.id) {
-        return res
-          .status(201)
-          .json({
-            message:
-              COURSE_TASK_SUCCESS_MESSAGES.COURSE_TASK_ADD_SUCCESS_MESSAGE,
-          });
+        return res.status(201).json({
+          message: COURSE_TASK_SUCCESS_MESSAGES.COURSE_TASK_ADD_SUCCESS_MESSAGE,
+        });
       } else {
-        return res
-          .status(400)
-          .json({
-            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ADD_ERROR_MESSAGE,
-          });
+        return res.status(400).json({
+          message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ADD_ERROR_MESSAGE,
+        });
       }
     })
     .catch((error) => {

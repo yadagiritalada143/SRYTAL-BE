@@ -11,12 +11,10 @@ const getOrganizationThemes = (req: Request, res: Response): any => {
     })
     .catch((error: any) => {
       console.error(error);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: ORGANIZATION_THEMES_ERROR_MESSAGES.THEMES_FETCHING_ERROR,
-        });
+      res.status(500).json({
+        success: false,
+        message: ORGANIZATION_THEMES_ERROR_MESSAGES.THEMES_FETCHING_ERROR,
+      });
     });
 };
 

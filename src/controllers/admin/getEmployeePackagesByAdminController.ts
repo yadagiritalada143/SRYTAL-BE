@@ -11,12 +11,10 @@ const getEmployeePackageDetailsByAdmin = (req: Request, res: Response) => {
     })
     .catch((error) => {
       console.error(`Error in fetching Employee Package details: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: PACKAGE_ERROR_MESSAGES.PACKAGE_DETAILS_FETCH_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message: PACKAGE_ERROR_MESSAGES.PACKAGE_DETAILS_FETCH_ERROR_MESSAGE,
+      });
     });
 };
 

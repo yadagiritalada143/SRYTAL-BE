@@ -10,12 +10,10 @@ const getAllCourses = (req: Request, res: Response) => {
     })
     .catch((error) => {
       console.error(`Error in fetching courses: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: COURSE_ERROR_MESSAGES.COURSE_FETCH_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message: COURSE_ERROR_MESSAGES.COURSE_FETCH_ERROR_MESSAGE,
+      });
     });
 };
 

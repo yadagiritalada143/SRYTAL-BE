@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/67</span>
+                <span class='fraction'>0/66</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/67</span>
+                <span class='fraction'>0/66</span>
             </div>
         
             
@@ -129,9 +129,7 @@
 <a name='L64'></a><a href='#L64'>64</a>
 <a name='L65'></a><a href='#L65'>65</a>
 <a name='L66'></a><a href='#L66'>66</a>
-<a name='L67'></a><a href='#L67'>67</a>
-<a name='L68'></a><a href='#L68'>68</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L67'></a><a href='#L67'>67</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -205,62 +203,61 @@
 <span class="cstat-no" title="statement not covered" >const db_connection_string = process.env.DB_CONNECTION_STRING || '';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const db_options = {</span>
-<span class="cstat-no" title="statement not covered" >    dbName: process.env.DB_NAME || '',</span>
-<span class="cstat-no" title="statement not covered" >    maxPoolSize: 10,</span>
-<span class="cstat-no" title="statement not covered" >    minPoolSize: 2,</span>
-<span class="cstat-no" title="statement not covered" >    serverSelectionTimeoutMS: 5000,</span>
-<span class="cstat-no" title="statement not covered" >    socketTimeoutMS: 45000,</span>
-<span class="cstat-no" title="statement not covered" >    connectTimeoutMS: 10000,</span>
-<span class="cstat-no" title="statement not covered" >    retryWrites: true,</span>
-<span class="cstat-no" title="statement not covered" >    w: 'majority' as const,</span>
-<span class="cstat-no" title="statement not covered" >    heartbeatFrequencyMS: 10000,</span>
+<span class="cstat-no" title="statement not covered" >  dbName: process.env.DB_NAME || '',</span>
+<span class="cstat-no" title="statement not covered" >  maxPoolSize: 10,</span>
+<span class="cstat-no" title="statement not covered" >  minPoolSize: 2,</span>
+<span class="cstat-no" title="statement not covered" >  serverSelectionTimeoutMS: 5000,</span>
+<span class="cstat-no" title="statement not covered" >  socketTimeoutMS: 45000,</span>
+<span class="cstat-no" title="statement not covered" >  connectTimeoutMS: 10000,</span>
+<span class="cstat-no" title="statement not covered" >  retryWrites: true,</span>
+<span class="cstat-no" title="statement not covered" >  w: 'majority' as const,</span>
+<span class="cstat-no" title="statement not covered" >  heartbeatFrequencyMS: 10000,</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >let isConnected = false;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const connectToDb = async (): Promise&lt;void&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    if (isConnected) {</span>
-<span class="cstat-no" title="statement not covered" >        console.warn('[MongoDB] Using existing connection');</span>
-<span class="cstat-no" title="statement not covered" >        return;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >  if (isConnected) {</span>
+<span class="cstat-no" title="statement not covered" >    console.warn('[MongoDB] Using existing connection');</span>
+<span class="cstat-no" title="statement not covered" >    return;</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (mongoose.connection.readyState === 1) {</span>
-<span class="cstat-no" title="statement not covered" >        isConnected = true;</span>
-<span class="cstat-no" title="statement not covered" >        console.warn('[MongoDB] Already connected');</span>
-<span class="cstat-no" title="statement not covered" >        return;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >  if (mongoose.connection.readyState === 1) {</span>
+<span class="cstat-no" title="statement not covered" >    isConnected = true;</span>
+<span class="cstat-no" title="statement not covered" >    console.warn('[MongoDB] Already connected');</span>
+<span class="cstat-no" title="statement not covered" >    return;</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        const startTime = Date.now();</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const startTime = Date.now();</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        await mongoose.connect(db_connection_string, db_options);</span>
+<span class="cstat-no" title="statement not covered" >    await mongoose.connect(db_connection_string, db_options);</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        isConnected = true;</span>
-<span class="cstat-no" title="statement not covered" >        const connectionTime = Date.now() - startTime;</span>
-<span class="cstat-no" title="statement not covered" >        console.warn(`[MongoDB] Connected successfully in ${connectionTime}ms`);</span>
+<span class="cstat-no" title="statement not covered" >    isConnected = true;</span>
+<span class="cstat-no" title="statement not covered" >    const connectionTime = Date.now() - startTime;</span>
+<span class="cstat-no" title="statement not covered" >    console.warn(`[MongoDB] Connected successfully in ${connectionTime}ms`);</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const db = mongoose.connection;</span>
+<span class="cstat-no" title="statement not covered" >    const db = mongoose.connection;</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        db.on('error', (error) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            console.error('[MongoDB] Connection error:', error);</span>
-<span class="cstat-no" title="statement not covered" >            isConnected = false;</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >    db.on('error', (error) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      console.error('[MongoDB] Connection error:', error);</span>
+<span class="cstat-no" title="statement not covered" >      isConnected = false;</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        db.on('disconnected', () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            console.warn('[MongoDB] Disconnected');</span>
-<span class="cstat-no" title="statement not covered" >            isConnected = false;</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >    db.on('disconnected', () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      console.warn('[MongoDB] Disconnected');</span>
+<span class="cstat-no" title="statement not covered" >      isConnected = false;</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        db.on('reconnected', () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            console.warn('[MongoDB] Reconnected');</span>
-<span class="cstat-no" title="statement not covered" >            isConnected = true;</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    } catch (err) {</span>
-<span class="cstat-no" title="statement not covered" >        console.error('[MongoDB] Failed to connect:', err);</span>
-<span class="cstat-no" title="statement not covered" >        isConnected = false;</span>
-<span class="cstat-no" title="statement not covered" >        throw err;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    db.on('reconnected', () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      console.warn('[MongoDB] Reconnected');</span>
+<span class="cstat-no" title="statement not covered" >      isConnected = true;</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >  } catch (err) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error('[MongoDB] Failed to connect:', err);</span>
+<span class="cstat-no" title="statement not covered" >    isConnected = false;</span>
+<span class="cstat-no" title="statement not covered" >    throw err;</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default connectToDb;</span>
@@ -271,7 +268,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

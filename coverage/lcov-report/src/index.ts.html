@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/62</span>
+                <span class='fraction'>0/65</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/62</span>
+                <span class='fraction'>0/65</span>
             </div>
         
             
@@ -125,7 +125,13 @@
 <a name='L60'></a><a href='#L60'>60</a>
 <a name='L61'></a><a href='#L61'>61</a>
 <a name='L62'></a><a href='#L62'>62</a>
-<a name='L63'></a><a href='#L63'>63</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -203,7 +209,6 @@
 <span class="cstat-no" title="statement not covered" >import schedularService from './jobs/timesheetcronjob';</span>
 <span class="cstat-no" title="statement not covered" >import contentwriterRouter from './routes/contentwriterRoutes';</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >dotenv.config();</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const app: Express = express();</span>
@@ -216,36 +221,40 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >app.use(express.json());</span>
 <span class="cstat-no" title="statement not covered" >app.use(</span>
-<span class="cstat-no" title="statement not covered" >    session({</span>
-<span class="cstat-no" title="statement not covered" >        secret: SECRET_KEY,</span>
-<span class="cstat-no" title="statement not covered" >        resave: false,</span>
-<span class="cstat-no" title="statement not covered" >        saveUninitialized: false,</span>
-<span class="cstat-no" title="statement not covered" >    }),</span>
+<span class="cstat-no" title="statement not covered" >  session({</span>
+<span class="cstat-no" title="statement not covered" >    secret: SECRET_KEY,</span>
+<span class="cstat-no" title="statement not covered" >    resave: false,</span>
+<span class="cstat-no" title="statement not covered" >    saveUninitialized: false,</span>
+<span class="cstat-no" title="statement not covered" >  })</span>
 <span class="cstat-no" title="statement not covered" >);</span>
 <span class="cstat-no" title="statement not covered" >app.use(morgan('dev'));</span>
-<span class="cstat-no" title="statement not covered" >app.use(cors({</span>
-<span class="cstat-no" title="statement not covered" >    exposedHeaders: ["*"]</span>
-<span class="cstat-no" title="statement not covered" >}));</span>
+<span class="cstat-no" title="statement not covered" >app.use(</span>
+<span class="cstat-no" title="statement not covered" >  cors({</span>
+<span class="cstat-no" title="statement not covered" >    exposedHeaders: ['*'],</span>
+<span class="cstat-no" title="statement not covered" >  })</span>
+<span class="cstat-no" title="statement not covered" >);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >app.use('/', commonRouter);</span>
 <span class="cstat-no" title="statement not covered" >app.use('/admin', adminRouter);</span>
 <span class="cstat-no" title="statement not covered" >app.use('/superadmin', superadminRouter);</span>
 <span class="cstat-no" title="statement not covered" >app.use('/recruiter', recruiterRouter);</span>
-<span class="cstat-no" title="statement not covered" >app.use('/contentwriter', contentwriterRouter)</span>
+<span class="cstat-no" title="statement not covered" >app.use('/contentwriter', contentwriterRouter);</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const startServer = async () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        await connectToDb();</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    await connectToDb();</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        schedularService.updateNextMonthTimeSheet();</span>
+<span class="cstat-no" title="statement not covered" >    schedularService.updateNextMonthTimeSheet();</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        app.listen(port, () =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            console.log(`Server is running on port ${port} [${process.env.NODE_ENV || 'development'}]`);</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
-<span class="cstat-no" title="statement not covered" >    } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >        console.error('Failed to start server:', error);</span>
-<span class="cstat-no" title="statement not covered" >        process.exit(1);</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >    app.listen(port, () =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      console.log(</span>
+<span class="cstat-no" title="statement not covered" >        `Server is running on port ${port} [${process.env.NODE_ENV || 'development'}]`</span>
+<span class="cstat-no" title="statement not covered" >      );</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error('Failed to start server:', error);</span>
+<span class="cstat-no" title="statement not covered" >    process.exit(1);</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >startServer();</span>
@@ -256,7 +265,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../prettify.js"></script>
         <script>

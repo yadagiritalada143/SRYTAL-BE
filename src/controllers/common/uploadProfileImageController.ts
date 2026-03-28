@@ -44,41 +44,33 @@ const uploadProfileImage = async (req: Request, res: Response) => {
               console.error(
                 `Error occured while updating the Profile Image: ${error}`
               );
-              res
-                .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-                .json({
-                  success: false,
-                  message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR,
-                });
+              res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR,
+              });
             });
         } else {
-          res
-            .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-            .json({
-              success: false,
-              message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR,
-            });
+          res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR,
+          });
         }
       })
       .catch((error: any) => {
         console.error(`Error occured while Profile Image upload: ${error}`);
-        res
-          .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-          .json({
-            success: false,
-            message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR,
-          });
+        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+          success: false,
+          message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR,
+        });
       });
   } catch (error: any) {
     console.error(
       `Error occured while updating the Profile Image to S3: ${error}`
     );
-    res
-      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .json({
-        success: false,
-        message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR,
-      });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR,
+    });
   }
 };
 

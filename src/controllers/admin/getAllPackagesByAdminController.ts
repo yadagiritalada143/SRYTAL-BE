@@ -12,12 +12,10 @@ const getAllPackagesDetails = async (req: Request, res: Response) => {
     res.status(HTTP_STATUS.OK).json(fetchAllPackagesByAdminResponse);
   } catch (error) {
     console.error(`Error in fetching Packages details: ${error}`);
-    res
-      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .json({
-        success: false,
-        message: PACKAGE_ERROR_MESSAGES.PACKAGE_FETCH_ERROR_MESSAGE,
-      });
+    res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: PACKAGE_ERROR_MESSAGES.PACKAGE_FETCH_ERROR_MESSAGE,
+    });
   }
 };
 

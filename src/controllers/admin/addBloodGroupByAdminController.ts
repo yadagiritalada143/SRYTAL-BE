@@ -10,28 +10,21 @@ const addNewBloodgroupByAdmin = (req: Request, res: Response) => {
     .addBloodgroupByAdmin(req.body.type)
     .then((responseAfterBloodGroupAdded) => {
       if (responseAfterBloodGroupAdded.id) {
-        return res
-          .status(201)
-          .json({
-            message:
-              BLOOD_GROUP_SUCCESS_MESSAGES.BLOOD_GROUP_ADD_SUCCESS_MESSAGE,
-          });
+        return res.status(201).json({
+          message: BLOOD_GROUP_SUCCESS_MESSAGES.BLOOD_GROUP_ADD_SUCCESS_MESSAGE,
+        });
       } else {
-        return res
-          .status(400)
-          .json({
-            message: BLOOD_GROUP_ERROR_MESSAGES.BLOOD_GROUP_ADD_ERROR_MESSAGE,
-          });
+        return res.status(400).json({
+          message: BLOOD_GROUP_ERROR_MESSAGES.BLOOD_GROUP_ADD_ERROR_MESSAGE,
+        });
       }
     })
     .catch((error) => {
       console.error(error);
-      return res
-        .status(500)
-        .json({
-          message:
-            BLOOD_GROUP_ERROR_MESSAGES.BLOOD_GROUP_UNEXPECTED_ERROR_MESSAGE,
-        });
+      return res.status(500).json({
+        message:
+          BLOOD_GROUP_ERROR_MESSAGES.BLOOD_GROUP_UNEXPECTED_ERROR_MESSAGE,
+      });
     });
 };
 

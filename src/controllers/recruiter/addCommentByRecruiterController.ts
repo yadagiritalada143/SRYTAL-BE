@@ -17,12 +17,10 @@ const addCommentByRecruiter = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in updating profile details: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: RECRUITER_ERROR_MESSAGES.ERROR_ADDING_COMMENT,
-        });
+      res.status(500).json({
+        success: false,
+        message: RECRUITER_ERROR_MESSAGES.ERROR_ADDING_COMMENT,
+      });
     });
 };
 

@@ -10,13 +10,11 @@ const getAllEmploymentTypesByAdmin = (req: Request, res: Response) => {
     })
     .catch((error) => {
       console.error(`Error in fetching employment type details: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message:
-            EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_FETCH_ERROR_MESSAGES,
-        });
+      res.status(500).json({
+        success: false,
+        message:
+          EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_FETCH_ERROR_MESSAGES,
+      });
     });
 };
 

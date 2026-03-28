@@ -13,22 +13,18 @@ const addFeedbackAttributeByAdmin = async (
   try {
     const { name } = req.body;
     await addFeedbackAttributes.addFeedbackAttributeByAdmin(name);
-    return res
-      .status(HTTP_STATUS.OK)
-      .json({
-        success: true,
-        message:
-          FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FEEDBACK_ATTRIBUTE_ADD_SUCCESS_MESSAGE,
-      });
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message:
+        FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FEEDBACK_ATTRIBUTE_ADD_SUCCESS_MESSAGE,
+    });
   } catch (error: any) {
     console.error(`Error while adding feedback attribute: ${error}`);
-    return res
-      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .json({
-        success: false,
-        message:
-          FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FEEDBACK_ATTRIBUTE_ADD_ERROR_MESSAGE,
-      });
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message:
+        FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FEEDBACK_ATTRIBUTE_ADD_ERROR_MESSAGE,
+    });
   }
 };
 

@@ -15,12 +15,10 @@ const addTaskByAdmin = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error while adding Tasks: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: TASK_ERROR_MESSAGES.TASK_ADD_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message: TASK_ERROR_MESSAGES.TASK_ADD_ERROR_MESSAGE,
+      });
     });
 };
 

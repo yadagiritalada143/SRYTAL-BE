@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/57</span>
+                <span class='fraction'>0/61</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/57</span>
+                <span class='fraction'>0/61</span>
             </div>
         
             
@@ -120,7 +120,15 @@
 <a name='L55'></a><a href='#L55'>55</a>
 <a name='L56'></a><a href='#L56'>56</a>
 <a name='L57'></a><a href='#L57'>57</a>
-<a name='L58'></a><a href='#L58'>58</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L58'></a><a href='#L58'>58</a>
+<a name='L59'></a><a href='#L59'>59</a>
+<a name='L60'></a><a href='#L60'>60</a>
+<a name='L61'></a><a href='#L61'>61</a>
+<a name='L62'></a><a href='#L62'>62</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -180,60 +188,64 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import EmployeePackageModel from '../../model/employeePackageModel';</span></span></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const addPackagetoEmployeeByAdmin = async (data: any): Promise&lt;any&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    const currentDay = new Date();</span>
-<span class="cstat-no" title="statement not covered" >    const lastDayOfMonth = getLastDateOfMonth(currentDay);</span>
-<span class="cstat-no" title="statement not covered" >    let timesheet = [];</span>
-<span class="cstat-no" title="statement not covered" >    const startDay = currentDay.getDate();</span>
-<span class="cstat-no" title="statement not covered" >    const endDay = lastDayOfMonth.getDate();</span>
-<span class="cstat-no" title="statement not covered" >    const year = currentDay.getFullYear();</span>
-<span class="cstat-no" title="statement not covered" >    const month = currentDay.getMonth();</span>
+<span class="cstat-no" title="statement not covered" >  const currentDay = new Date();</span>
+<span class="cstat-no" title="statement not covered" >  const lastDayOfMonth = getLastDateOfMonth(currentDay);</span>
+<span class="cstat-no" title="statement not covered" >  let timesheet = [];</span>
+<span class="cstat-no" title="statement not covered" >  const startDay = currentDay.getDate();</span>
+<span class="cstat-no" title="statement not covered" >  const endDay = lastDayOfMonth.getDate();</span>
+<span class="cstat-no" title="statement not covered" >  const year = currentDay.getFullYear();</span>
+<span class="cstat-no" title="statement not covered" >  const month = currentDay.getMonth();</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    for (let day = startDay; day &lt;= endDay; day++) {</span>
-<span class="cstat-no" title="statement not covered" >        const currentDate = new Date(year, month, day);</span>
-<span class="cstat-no" title="statement not covered" >        const dayOfWeek = currentDate.getDay();</span>
-<span class="cstat-no" title="statement not covered" >        let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);</span>
+<span class="cstat-no" title="statement not covered" >  for (let day = startDay; day &lt;= endDay; day++) {</span>
+<span class="cstat-no" title="statement not covered" >    const currentDate = new Date(year, month, day);</span>
+<span class="cstat-no" title="statement not covered" >    const dayOfWeek = currentDate.getDay();</span>
+<span class="cstat-no" title="statement not covered" >    let isWeekend = dayOfWeek === 0 || dayOfWeek === 6;</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        timesheet.push({</span>
-<span class="cstat-no" title="statement not covered" >            date: currentDate,</span>
-<span class="cstat-no" title="statement not covered" >            isHoliday: false,</span>
-<span class="cstat-no" title="statement not covered" >            isVacation: false,</span>
-<span class="cstat-no" title="statement not covered" >            isWeekOff: isWeekend,</span>
-<span class="cstat-no" title="statement not covered" >            hours: 0,</span>
-<span class="cstat-no" title="statement not covered" >            comments: '',</span>
-<span class="cstat-no" title="statement not covered" >            leaveReason: '',</span>
-<span class="cstat-no" title="statement not covered" >            status: 'NOT SUBMITTED'</span>
+<span class="cstat-no" title="statement not covered" >    timesheet.push({</span>
+<span class="cstat-no" title="statement not covered" >      date: currentDate,</span>
+<span class="cstat-no" title="statement not covered" >      isHoliday: false,</span>
+<span class="cstat-no" title="statement not covered" >      isVacation: false,</span>
+<span class="cstat-no" title="statement not covered" >      isWeekOff: isWeekend,</span>
+<span class="cstat-no" title="statement not covered" >      hours: 0,</span>
+<span class="cstat-no" title="statement not covered" >      comments: '',</span>
+<span class="cstat-no" title="statement not covered" >      leaveReason: '',</span>
+<span class="cstat-no" title="statement not covered" >      status: 'NOT SUBMITTED',</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >  if (data.packages &amp;&amp; Array.isArray(data.packages)) {</span>
+<span class="cstat-no" title="statement not covered" >    data.packages.forEach((pkg: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (pkg.tasks &amp;&amp; Array.isArray(pkg.tasks)) {</span>
+<span class="cstat-no" title="statement not covered" >        pkg.tasks.forEach((task: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          task.timesheet = timesheet;</span>
 <span class="cstat-no" title="statement not covered" >        });</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (data.packages &amp;&amp; Array.isArray(data.packages)) {</span>
-<span class="cstat-no" title="statement not covered" >        data.packages.forEach((pkg: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            if (pkg.tasks &amp;&amp; Array.isArray(pkg.tasks)) {</span>
-<span class="cstat-no" title="statement not covered" >                pkg.tasks.forEach((task: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                    task.timesheet = timesheet;</span>
-<span class="cstat-no" title="statement not covered" >                });</span>
-<span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" >  const { employeeId, packageId } = data;</span>
+<span class="cstat-no" title="statement not covered" >  const existingPackage = await EmployeePackageModel.findOne({</span>
+<span class="cstat-no" title="statement not covered" >    employeeId,</span>
+<span class="cstat-no" title="statement not covered" >    packageId,</span>
+<span class="cstat-no" title="statement not covered" >  });</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    const { employeeId, packageId } = data;</span>
-<span class="cstat-no" title="statement not covered" >    const existingPackage = await EmployeePackageModel.findOne({ employeeId, packageId });</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    if (existingPackage) {</span>
-<span class="cstat-no" title="statement not covered" >        return await EmployeePackageModel.findOneAndUpdate(</span>
-<span class="cstat-no" title="statement not covered" >            { employeeId, packageId }, data,</span>
-<span class="cstat-no" title="statement not covered" >            { new: true }</span>
-<span class="cstat-no" title="statement not covered" >        );</span>
-<span class="cstat-no" title="statement not covered" >    } else {</span>
-<span class="cstat-no" title="statement not covered" >        const packagetoEmployeTData = new EmployeePackageModel(data);</span>
-<span class="cstat-no" title="statement not covered" >        return await packagetoEmployeTData.save();</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >  if (existingPackage) {</span>
+<span class="cstat-no" title="statement not covered" >    return await EmployeePackageModel.findOneAndUpdate(</span>
+<span class="cstat-no" title="statement not covered" >      { employeeId, packageId },</span>
+<span class="cstat-no" title="statement not covered" >      data,</span>
+<span class="cstat-no" title="statement not covered" >      { new: true }</span>
+<span class="cstat-no" title="statement not covered" >    );</span>
+<span class="cstat-no" title="statement not covered" >  } else {</span>
+<span class="cstat-no" title="statement not covered" >    const packagetoEmployeTData = new EmployeePackageModel(data);</span>
+<span class="cstat-no" title="statement not covered" >    return await packagetoEmployeTData.save();</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >function getLastDateOfMonth(date: Date): Date {</span>
-<span class="cstat-no" title="statement not covered" >    return new Date(date.getFullYear(), date.getMonth() + 1, 0);</span>
+<span class="cstat-no" title="statement not covered" >  return new Date(date.getFullYear(), date.getMonth() + 1, 0);</span>
 <span class="cstat-no" title="statement not covered" >}</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >export default { addPackagetoEmployeeByAdmin }</span>
+<span class="cstat-no" title="statement not covered" >export default { addPackagetoEmployeeByAdmin };</span>
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -241,7 +253,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -21,13 +21,11 @@ const updateEmployeeTimesheet = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in updating employee timesheet: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message:
-            UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES.EMPLOYEE_TIMESHEET_UPDATING_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message:
+          UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES.EMPLOYEE_TIMESHEET_UPDATING_ERROR_MESSAGE,
+      });
     });
 };
 

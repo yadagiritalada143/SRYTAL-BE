@@ -14,13 +14,10 @@ const getTalentPoolCandidateDetailsByRecruiter = (
     })
     .catch((error) => {
       console.error(`Error in fetching talent pool candidate details:${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message:
-            RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_CANDIDATE_DETAILS,
-        });
+      res.status(500).json({
+        success: false,
+        message: RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_CANDIDATE_DETAILS,
+      });
     });
 };
 

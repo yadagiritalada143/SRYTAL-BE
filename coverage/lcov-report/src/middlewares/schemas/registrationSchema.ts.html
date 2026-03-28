@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/63</span>
+                <span class='fraction'>0/59</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/63</span>
+                <span class='fraction'>0/59</span>
             </div>
         
             
@@ -122,15 +122,7 @@
 <a name='L57'></a><a href='#L57'>57</a>
 <a name='L58'></a><a href='#L58'>58</a>
 <a name='L59'></a><a href='#L59'>59</a>
-<a name='L60'></a><a href='#L60'>60</a>
-<a name='L61'></a><a href='#L61'>61</a>
-<a name='L62'></a><a href='#L62'>62</a>
-<a name='L63'></a><a href='#L63'>63</a>
-<a name='L64'></a><a href='#L64'>64</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L60'></a><a href='#L60'>60</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -192,63 +184,59 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import Joi from 'joi';</span></span></span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const registrationSchema = Joi.object({</span>
-<span class="cstat-no" title="statement not covered" >    firstName: Joi.string()</span>
-<span class="cstat-no" title="statement not covered" >        .min(3)</span>
-<span class="cstat-no" title="statement not covered" >        .max(30)</span>
-<span class="cstat-no" title="statement not covered" >        .pattern(/^[A-Za-z\s]+$/)</span>
-<span class="cstat-no" title="statement not covered" >        .trim()</span>
-<span class="cstat-no" title="statement not covered" >        .required()</span>
-<span class="cstat-no" title="statement not covered" >        .messages({</span>
-<span class="cstat-no" title="statement not covered" >            'string.base': 'First name should be a string',</span>
-<span class="cstat-no" title="statement not covered" >            'string.empty': 'First name is required',</span>
-<span class="cstat-no" title="statement not covered" >            'string.min': 'First name must be at least 3 characters',</span>
-<span class="cstat-no" title="statement not covered" >            'string.max': 'First name must be at most 30 characters',</span>
-<span class="cstat-no" title="statement not covered" >            'string.pattern.base': 'First name must contain only letters',</span>
-<span class="cstat-no" title="statement not covered" >            'any.required': 'First name is required',</span>
-<span class="cstat-no" title="statement not covered" >        }),</span>
+<span class="cstat-no" title="statement not covered" >  firstName: Joi.string()</span>
+<span class="cstat-no" title="statement not covered" >    .min(3)</span>
+<span class="cstat-no" title="statement not covered" >    .max(30)</span>
+<span class="cstat-no" title="statement not covered" >    .pattern(/^[A-Za-z\s]+$/)</span>
+<span class="cstat-no" title="statement not covered" >    .trim()</span>
+<span class="cstat-no" title="statement not covered" >    .required()</span>
+<span class="cstat-no" title="statement not covered" >    .messages({</span>
+<span class="cstat-no" title="statement not covered" >      'string.base': 'First name should be a string',</span>
+<span class="cstat-no" title="statement not covered" >      'string.empty': 'First name is required',</span>
+<span class="cstat-no" title="statement not covered" >      'string.min': 'First name must be at least 3 characters',</span>
+<span class="cstat-no" title="statement not covered" >      'string.max': 'First name must be at most 30 characters',</span>
+<span class="cstat-no" title="statement not covered" >      'string.pattern.base': 'First name must contain only letters',</span>
+<span class="cstat-no" title="statement not covered" >      'any.required': 'First name is required',</span>
+<span class="cstat-no" title="statement not covered" >    }),</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    lastName: Joi.string()</span>
-<span class="cstat-no" title="statement not covered" >        .min(3)</span>
-<span class="cstat-no" title="statement not covered" >        .max(30)</span>
-<span class="cstat-no" title="statement not covered" >        .pattern(/^[A-Za-z\s]+$/)</span>
-<span class="cstat-no" title="statement not covered" >        .trim()</span>
-<span class="cstat-no" title="statement not covered" >        .required()</span>
-<span class="cstat-no" title="statement not covered" >        .messages({</span>
-<span class="cstat-no" title="statement not covered" >            'string.base': 'Last name should be a string',</span>
-<span class="cstat-no" title="statement not covered" >            'string.empty': 'Last name is required',</span>
-<span class="cstat-no" title="statement not covered" >            'string.min': 'Last name must be at least 3 characters',</span>
-<span class="cstat-no" title="statement not covered" >            'string.max': 'Last name must be at most 30 characters',</span>
-<span class="cstat-no" title="statement not covered" >            'string.pattern.base': 'Last name must contain only letters',</span>
-<span class="cstat-no" title="statement not covered" >            'any.required': 'Last name is required',</span>
-<span class="cstat-no" title="statement not covered" >        }),</span>
+<span class="cstat-no" title="statement not covered" >  lastName: Joi.string()</span>
+<span class="cstat-no" title="statement not covered" >    .min(3)</span>
+<span class="cstat-no" title="statement not covered" >    .max(30)</span>
+<span class="cstat-no" title="statement not covered" >    .pattern(/^[A-Za-z\s]+$/)</span>
+<span class="cstat-no" title="statement not covered" >    .trim()</span>
+<span class="cstat-no" title="statement not covered" >    .required()</span>
+<span class="cstat-no" title="statement not covered" >    .messages({</span>
+<span class="cstat-no" title="statement not covered" >      'string.base': 'Last name should be a string',</span>
+<span class="cstat-no" title="statement not covered" >      'string.empty': 'Last name is required',</span>
+<span class="cstat-no" title="statement not covered" >      'string.min': 'Last name must be at least 3 characters',</span>
+<span class="cstat-no" title="statement not covered" >      'string.max': 'Last name must be at most 30 characters',</span>
+<span class="cstat-no" title="statement not covered" >      'string.pattern.base': 'Last name must contain only letters',</span>
+<span class="cstat-no" title="statement not covered" >      'any.required': 'Last name is required',</span>
+<span class="cstat-no" title="statement not covered" >    }),</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    email: Joi.string()</span>
-<span class="cstat-no" title="statement not covered" >        .email()</span>
-<span class="cstat-no" title="statement not covered" >        .lowercase()</span>
-<span class="cstat-no" title="statement not covered" >        .trim()</span>
-<span class="cstat-no" title="statement not covered" >        .required()</span>
-<span class="cstat-no" title="statement not covered" >        .messages({</span>
-<span class="cstat-no" title="statement not covered" >            'string.empty': 'Email is required',</span>
-<span class="cstat-no" title="statement not covered" >            'string.email': 'Email must be a valid email address',</span>
-<span class="cstat-no" title="statement not covered" >            'any.required': 'Email is required',</span>
-<span class="cstat-no" title="statement not covered" >        }),</span>
+<span class="cstat-no" title="statement not covered" >  email: Joi.string().email().lowercase().trim().required().messages({</span>
+<span class="cstat-no" title="statement not covered" >    'string.empty': 'Email is required',</span>
+<span class="cstat-no" title="statement not covered" >    'string.email': 'Email must be a valid email address',</span>
+<span class="cstat-no" title="statement not covered" >    'any.required': 'Email is required',</span>
+<span class="cstat-no" title="statement not covered" >  }),</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    mobileNumber: Joi.string()</span>
-<span class="cstat-no" title="statement not covered" >        .pattern(/^\d{10}$/)</span>
-<span class="cstat-no" title="statement not covered" >        .required()</span>
-<span class="cstat-no" title="statement not covered" >        .messages({</span>
-<span class="cstat-no" title="statement not covered" >            'string.pattern.base': 'Mobile number must be exactly 10 digits',</span>
-<span class="cstat-no" title="statement not covered" >        }),</span>
+<span class="cstat-no" title="statement not covered" >  mobileNumber: Joi.string()</span>
+<span class="cstat-no" title="statement not covered" >    .pattern(/^\d{10}$/)</span>
+<span class="cstat-no" title="statement not covered" >    .required()</span>
+<span class="cstat-no" title="statement not covered" >    .messages({</span>
+<span class="cstat-no" title="statement not covered" >      'string.pattern.base': 'Mobile number must be exactly 10 digits',</span>
+<span class="cstat-no" title="statement not covered" >    }),</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    userRole: Joi.string()</span>
-<span class="cstat-no" title="statement not covered" >        .valid('Employee', 'Recruiter', 'ContentWriter')</span>
-<span class="cstat-no" title="statement not covered" >        .required()</span>
-<span class="cstat-no" title="statement not covered" >        .messages({</span>
-<span class="cstat-no" title="statement not covered" >            'string.base': 'User role should be a string',</span>
-<span class="cstat-no" title="statement not covered" >            'string.empty': 'User role is required',</span>
-<span class="cstat-no" title="statement not covered" >            'any.only': 'User role must be one of: Employee, Recruiter, ContentWriter',</span>
-<span class="cstat-no" title="statement not covered" >            'any.required': 'User role is required',</span>
-<span class="cstat-no" title="statement not covered" >        }),</span>
+<span class="cstat-no" title="statement not covered" >  userRole: Joi.string()</span>
+<span class="cstat-no" title="statement not covered" >    .valid('Employee', 'Recruiter', 'ContentWriter')</span>
+<span class="cstat-no" title="statement not covered" >    .required()</span>
+<span class="cstat-no" title="statement not covered" >    .messages({</span>
+<span class="cstat-no" title="statement not covered" >      'string.base': 'User role should be a string',</span>
+<span class="cstat-no" title="statement not covered" >      'string.empty': 'User role is required',</span>
+<span class="cstat-no" title="statement not covered" >      'any.only':</span>
+<span class="cstat-no" title="statement not covered" >        'User role must be one of: Employee, Recruiter, ContentWriter',</span>
+<span class="cstat-no" title="statement not covered" >      'any.required': 'User role is required',</span>
+<span class="cstat-no" title="statement not covered" >    }),</span>
 <span class="cstat-no" title="statement not covered" >});</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default registrationSchema;</span>
@@ -259,7 +247,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

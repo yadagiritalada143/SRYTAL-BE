@@ -12,12 +12,10 @@ const updateTaskByAdmin = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in  updating task: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: TASK_ERROR_MESSAGES.TASK_UPDATING_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message: TASK_ERROR_MESSAGES.TASK_UPDATING_ERROR_MESSAGE,
+      });
     });
 };
 

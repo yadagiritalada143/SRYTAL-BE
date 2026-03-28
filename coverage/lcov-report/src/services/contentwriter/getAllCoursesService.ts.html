@@ -129,30 +129,30 @@
 <span class="cstat-no" title="statement not covered" >import { IFetchAllCoursesResponse } from '../../interfaces/courses';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const AllCourses = (): Promise&lt;IFetchAllCoursesResponse&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    return new Promise((resolve, reject) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        CourseModel.find({})</span>
-<span class="cstat-no" title="statement not covered" >            .populate({</span>
-<span class="cstat-no" title="statement not covered" >                path: 'modules',</span>
-<span class="cstat-no" title="statement not covered" >                populate: {</span>
-<span class="cstat-no" title="statement not covered" >                    path: 'tasks',</span>
-<span class="cstat-no" title="statement not covered" >                    model: 'CourseTaskModel'</span>
-<span class="cstat-no" title="statement not covered" >                }</span>
-<span class="cstat-no" title="statement not covered" >            })</span>
-<span class="cstat-no" title="statement not covered" >            .then((courses: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                if (!courses) {</span>
-<span class="cstat-no" title="statement not covered" >                    reject({ success: false });</span>
-<span class="cstat-no" title="statement not covered" >                } else {</span>
-<span class="cstat-no" title="statement not covered" >                    resolve({</span>
-<span class="cstat-no" title="statement not covered" >                        success: true,</span>
-<span class="cstat-no" title="statement not covered" >                        courses: courses</span>
-<span class="cstat-no" title="statement not covered" >                    });</span>
-<span class="cstat-no" title="statement not covered" >                }</span>
-<span class="cstat-no" title="statement not covered" >            })</span>
-<span class="cstat-no" title="statement not covered" >            .catch((error: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                console.error(`Error in fetching Courses: ${error}`);</span>
-<span class="cstat-no" title="statement not covered" >                reject({ success: false });</span>
-<span class="cstat-no" title="statement not covered" >            });</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >  return new Promise((resolve, reject) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    CourseModel.find({})</span>
+<span class="cstat-no" title="statement not covered" >      .populate({</span>
+<span class="cstat-no" title="statement not covered" >        path: 'modules',</span>
+<span class="cstat-no" title="statement not covered" >        populate: {</span>
+<span class="cstat-no" title="statement not covered" >          path: 'tasks',</span>
+<span class="cstat-no" title="statement not covered" >          model: 'CourseTaskModel',</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >      })</span>
+<span class="cstat-no" title="statement not covered" >      .then((courses: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        if (!courses) {</span>
+<span class="cstat-no" title="statement not covered" >          reject({ success: false });</span>
+<span class="cstat-no" title="statement not covered" >        } else {</span>
+<span class="cstat-no" title="statement not covered" >          resolve({</span>
+<span class="cstat-no" title="statement not covered" >            success: true,</span>
+<span class="cstat-no" title="statement not covered" >            courses: courses,</span>
+<span class="cstat-no" title="statement not covered" >          });</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >      })</span>
+<span class="cstat-no" title="statement not covered" >      .catch((error: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        console.error(`Error in fetching Courses: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >        reject({ success: false });</span>
+<span class="cstat-no" title="statement not covered" >      });</span>
+<span class="cstat-no" title="statement not covered" >  });</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default { AllCourses };</span>
@@ -163,7 +163,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

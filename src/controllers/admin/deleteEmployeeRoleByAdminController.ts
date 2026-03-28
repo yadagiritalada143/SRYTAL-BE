@@ -11,13 +11,11 @@ const deleteEmployeeRole = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in deleting employee role: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message:
-            EMPLOYEE_ROLE_ERRORS_MESSAGES.EMPLOYEE_ROLE_DELETE_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message:
+          EMPLOYEE_ROLE_ERRORS_MESSAGES.EMPLOYEE_ROLE_DELETE_ERROR_MESSAGE,
+      });
     });
 };
 

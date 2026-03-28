@@ -12,12 +12,10 @@ const sendContactUsMail = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error while sending email at controller lever: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: EMAIL_ERROR_MESSAGE.SEND_NOTIFICATION_ERROR,
-        });
+      res.status(500).json({
+        success: false,
+        message: EMAIL_ERROR_MESSAGE.SEND_NOTIFICATION_ERROR,
+      });
     });
 };
 

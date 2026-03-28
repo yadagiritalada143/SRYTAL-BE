@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/94</span>
+                <span class='fraction'>0/99</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/94</span>
+                <span class='fraction'>0/99</span>
             </div>
         
             
@@ -156,7 +156,13 @@
 <a name='L91'></a><a href='#L91'>91</a>
 <a name='L92'></a><a href='#L92'>92</a>
 <a name='L93'></a><a href='#L93'>93</a>
-<a name='L94'></a><a href='#L94'>94</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a>
+<a name='L99'></a><a href='#L99'>99</a>
+<a name='L100'></a><a href='#L100'>100</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -249,26 +255,37 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import nodemailer from 'nodemailer';</span></span></span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import nodemailer from 'nodemailer';</span></span></span>
 <span class="cstat-no" title="statement not covered" >import dotenv from 'dotenv';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >dotenv.config();</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const emailConfiguration: any = {</span>
-<span class="cstat-no" title="statement not covered" >    service: process.env.EMAIL_CONFIG_SERVICE,</span>
-<span class="cstat-no" title="statement not covered" >    host: process.env.EMAIL_CONFIG_HOST,</span>
-<span class="cstat-no" title="statement not covered" >    port: Number(process.env.EMAIL_CONFIG_PORT),</span>
-<span class="cstat-no" title="statement not covered" >    secure: Boolean(process.env.EMAIL_CONFIG_SECURE),</span>
-<span class="cstat-no" title="statement not covered" >    auth: {</span>
-<span class="cstat-no" title="statement not covered" >        user: process.env.EMAIL_CONFIG_AUTH_USER,</span>
-<span class="cstat-no" title="statement not covered" >        pass: process.env.EMAIL_CONFIG_AUTH_PASS,</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >  service: process.env.EMAIL_CONFIG_SERVICE,</span>
+<span class="cstat-no" title="statement not covered" >  host: process.env.EMAIL_CONFIG_HOST,</span>
+<span class="cstat-no" title="statement not covered" >  port: Number(process.env.EMAIL_CONFIG_PORT),</span>
+<span class="cstat-no" title="statement not covered" >  secure: Boolean(process.env.EMAIL_CONFIG_SECURE),</span>
+<span class="cstat-no" title="statement not covered" >  auth: {</span>
+<span class="cstat-no" title="statement not covered" >    user: process.env.EMAIL_CONFIG_AUTH_USER,</span>
+<span class="cstat-no" title="statement not covered" >    pass: process.env.EMAIL_CONFIG_AUTH_PASS,</span>
+<span class="cstat-no" title="statement not covered" >  },</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >const sendOTPEmail = async (firstName: string, lastName: string, userName: string, tempPassword: string) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        const transporter = nodemailer.createTransport(emailConfiguration);</span>
-<span class="cstat-no" title="statement not covered" >        const mailBody = `     </span>
+<span class="cstat-no" title="statement not covered" >const sendOTPEmail = async (</span>
+<span class="cstat-no" title="statement not covered" >  firstName: string,</span>
+<span class="cstat-no" title="statement not covered" >  lastName: string,</span>
+<span class="cstat-no" title="statement not covered" >  userName: string,</span>
+<span class="cstat-no" title="statement not covered" >  tempPassword: string</span>
+<span class="cstat-no" title="statement not covered" >) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const transporter = nodemailer.createTransport(emailConfiguration);</span>
+<span class="cstat-no" title="statement not covered" >    const mailBody = `     </span>
 <span class="cstat-no" title="statement not covered" >&lt;html&gt;</span>
 <span class="cstat-no" title="statement not covered" >  &lt;body style="font-family: serif; background-color: #f4f4f9; padding: 20px;"&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;div style="max-width: 750px; height:auto; margin: 0 auto; border: 1px solid #f7f1f4 ; border-radius: 5px;"&gt;</span>
@@ -320,36 +337,37 @@
 <span class="cstat-no" title="statement not covered" >  &lt;/body&gt;</span>
 <span class="cstat-no" title="statement not covered" >&lt;/html&gt; `;</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const mailOptions = {</span>
-<span class="cstat-no" title="statement not covered" >            from: process.env.EMAIL_FROM,</span>
-<span class="cstat-no" title="statement not covered" >            to: userName,</span>
-<span class="cstat-no" title="statement not covered" >            subject: 'Login Details !',</span>
-<span class="cstat-no" title="statement not covered" >            html: mailBody,</span>
-<span class="cstat-no" title="statement not covered" >        };</span>
+<span class="cstat-no" title="statement not covered" >    const mailOptions = {</span>
+<span class="cstat-no" title="statement not covered" >      from: process.env.EMAIL_FROM,</span>
+<span class="cstat-no" title="statement not covered" >      to: userName,</span>
+<span class="cstat-no" title="statement not covered" >      subject: 'Login Details !',</span>
+<span class="cstat-no" title="statement not covered" >      html: mailBody,</span>
+<span class="cstat-no" title="statement not covered" >    };</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const result = await transporter.sendMail(mailOptions, (error, info) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            if (error) {</span>
-<span class="cstat-no" title="statement not covered" >                return error;</span>
-<span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >            console.warn(`Info after sent: ${info.response}`)</span>
-<span class="cstat-no" title="statement not covered" >            return info.response;</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
-<span class="cstat-no" title="statement not covered" >        return result;</span>
-<span class="cstat-no" title="statement not covered" >    } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >        console.error(`Error in sending Email at services: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >    const result = await transporter.sendMail(mailOptions, (error, info) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (error) {</span>
 <span class="cstat-no" title="statement not covered" >        return error;</span>
-<span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >export default { sendOTPEmail }</span></pre></td></tr></table></pre>
+<span class="cstat-no" title="statement not covered" >      console.warn(`Info after sent: ${info.response}`);</span>
+<span class="cstat-no" title="statement not covered" >      return info.response;</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >    return result;</span>
+<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error(`Error in sending Email at services: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >    return error;</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
+<span class="cstat-no" title="statement not covered" >};</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export default { sendOTPEmail };</span>
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../prettify.js"></script>
         <script>

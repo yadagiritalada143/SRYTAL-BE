@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/18</span>
+                <span class='fraction'>0/24</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/18</span>
+                <span class='fraction'>0/24</span>
             </div>
         
             
@@ -81,7 +81,19 @@
 <a name='L16'></a><a href='#L16'>16</a>
 <a name='L17'></a><a href='#L17'>17</a>
 <a name='L18'></a><a href='#L18'>18</a>
-<a name='L19'></a><a href='#L19'>19</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L19'></a><a href='#L19'>19</a>
+<a name='L20'></a><a href='#L20'>20</a>
+<a name='L21'></a><a href='#L21'>21</a>
+<a name='L22'></a><a href='#L22'>22</a>
+<a name='L23'></a><a href='#L23'>23</a>
+<a name='L24'></a><a href='#L24'>24</a>
+<a name='L25'></a><a href='#L25'>25</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -104,17 +116,23 @@
 <span class="cstat-no" title="statement not covered" >import { EMPLOYEE_PACKAGE_ERROR_MESSAGES } from '../../constants/admin/employeePackageMessages';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const deleteEmployeePackageByAdmin = (req: Request, res: Response) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    const { employeeId, packageId } = req.body;</span>
-<span class="cstat-no" title="statement not covered" >    deleteEmployeePackageService</span>
-<span class="cstat-no" title="statement not covered" >        .deleteEmployeePackageServiceByAdmin(employeeId, packageId)</span>
-<span class="cstat-no" title="statement not covered" >        .then((deleteEmployeePackageResponse: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            res.status(200).json(deleteEmployeePackageResponse);</span>
-<span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" >        .catch((error: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            console.error(`Error in deleting employee packages: ${error}`);</span>
-<span class="cstat-no" title="statement not covered" >            res.status(500).json({ success: false, message: EMPLOYEE_PACKAGE_ERROR_MESSAGES.EMPLOYEE_PACKAGE_DELETE_ERROR_MESSAGE });</span>
+<span class="cstat-no" title="statement not covered" >  const { employeeId, packageId } = req.body;</span>
+<span class="cstat-no" title="statement not covered" >  deleteEmployeePackageService</span>
+<span class="cstat-no" title="statement not covered" >    .deleteEmployeePackageServiceByAdmin(employeeId, packageId)</span>
+<span class="cstat-no" title="statement not covered" >    .then((deleteEmployeePackageResponse: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      res.status(200).json(deleteEmployeePackageResponse);</span>
+<span class="cstat-no" title="statement not covered" >    })</span>
+<span class="cstat-no" title="statement not covered" >    .catch((error: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      console.error(`Error in deleting employee packages: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >      res</span>
+<span class="cstat-no" title="statement not covered" >        .status(500)</span>
+<span class="cstat-no" title="statement not covered" >        .json({</span>
+<span class="cstat-no" title="statement not covered" >          success: false,</span>
+<span class="cstat-no" title="statement not covered" >          message:</span>
+<span class="cstat-no" title="statement not covered" >            EMPLOYEE_PACKAGE_ERROR_MESSAGES.EMPLOYEE_PACKAGE_DELETE_ERROR_MESSAGE,</span>
 <span class="cstat-no" title="statement not covered" >        });</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default { deleteEmployeePackageByAdmin };</span>
 &nbsp;</pre></td></tr></table></pre>
@@ -124,7 +142,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

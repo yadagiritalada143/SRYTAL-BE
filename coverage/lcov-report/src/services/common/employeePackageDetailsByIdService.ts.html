@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/46</span>
+                <span class='fraction'>0/48</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/46</span>
+                <span class='fraction'>0/48</span>
             </div>
         
             
@@ -109,7 +109,11 @@
 <a name='L44'></a><a href='#L44'>44</a>
 <a name='L45'></a><a href='#L45'>45</a>
 <a name='L46'></a><a href='#L46'>46</a>
-<a name='L47'></a><a href='#L47'>47</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L47'></a><a href='#L47'>47</a>
+<a name='L48'></a><a href='#L48'>48</a>
+<a name='L49'></a><a href='#L49'>49</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -159,45 +163,47 @@
 <span class="cstat-no" title="statement not covered" >import { IFetchEmployeePackagesDetailsResponse } from '../../interfaces/employeepackages';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const employeePackageDetailsById = async (</span>
-<span class="cstat-no" title="statement not covered" >    employeeId: string,</span>
-<span class="cstat-no" title="statement not covered" >    startDate: string,</span>
-<span class="cstat-no" title="statement not covered" >    endDate: string</span>
+<span class="cstat-no" title="statement not covered" >  employeeId: string,</span>
+<span class="cstat-no" title="statement not covered" >  startDate: string,</span>
+<span class="cstat-no" title="statement not covered" >  endDate: string</span>
 <span class="cstat-no" title="statement not covered" >): Promise&lt;IFetchEmployeePackagesDetailsResponse&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        const employeePackageDetails = await EmployeePackageModel.find({ employeeId })</span>
-<span class="cstat-no" title="statement not covered" >            .populate('packages.packageId')</span>
-<span class="cstat-no" title="statement not covered" >            .populate('packages.tasks.taskId')</span>
-<span class="cstat-no" title="statement not covered" >            .lean();</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const employeePackageDetails = await EmployeePackageModel.find({</span>
+<span class="cstat-no" title="statement not covered" >      employeeId,</span>
+<span class="cstat-no" title="statement not covered" >    })</span>
+<span class="cstat-no" title="statement not covered" >      .populate('packages.packageId')</span>
+<span class="cstat-no" title="statement not covered" >      .populate('packages.tasks.taskId')</span>
+<span class="cstat-no" title="statement not covered" >      .lean();</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        if (!employeePackageDetails) {</span>
-<span class="cstat-no" title="statement not covered" >            return { success: false };</span>
-<span class="cstat-no" title="statement not covered" >        }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const filteredData = employeePackageDetails.map(empPkg =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            const filteredPackages = empPkg.packages.map(pkg =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                const filteredTasks = pkg.tasks.map(task =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                    const startDateObj = new Date(startDate);</span>
-<span class="cstat-no" title="statement not covered" >                    const endDateObj = new Date(endDate);</span>
-<span class="cstat-no" title="statement not covered" >                    endDateObj.setDate(endDateObj.getDate() + 1);</span>
-<span class="cstat-no" title="statement not covered" >                    const filteredTimesheet = task.timesheet.filter((ts: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                        const tsDate = new Date(ts.date);</span>
-<span class="cstat-no" title="statement not covered" >                        return tsDate &gt;= startDateObj &amp;&amp; tsDate &lt; endDateObj;</span>
-<span class="cstat-no" title="statement not covered" >                    });</span>
-<span class="cstat-no" title="statement not covered" >                    return { ...task, timesheet: filteredTimesheet };</span>
-<span class="cstat-no" title="statement not covered" >                });</span>
-<span class="cstat-no" title="statement not covered" >                return { ...pkg, tasks: filteredTasks };</span>
-<span class="cstat-no" title="statement not covered" >            });</span>
-<span class="cstat-no" title="statement not covered" >            return { ...empPkg, packages: filteredPackages };</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        return {</span>
-<span class="cstat-no" title="statement not covered" >            success: true,</span>
-<span class="cstat-no" title="statement not covered" >            employeePackageDetails: filteredData</span>
-<span class="cstat-no" title="statement not covered" >        };</span>
-<span class="cstat-no" title="statement not covered" >    } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >        console.error(`Error in fetching Employee Package details by ID: ${error}`);</span>
-<span class="cstat-no" title="statement not covered" >        return { success: false };</span>
+<span class="cstat-no" title="statement not covered" >    if (!employeePackageDetails) {</span>
+<span class="cstat-no" title="statement not covered" >      return { success: false };</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const filteredData = employeePackageDetails.map((empPkg) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      const filteredPackages = empPkg.packages.map((pkg) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        const filteredTasks = pkg.tasks.map((task) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          const startDateObj = new Date(startDate);</span>
+<span class="cstat-no" title="statement not covered" >          const endDateObj = new Date(endDate);</span>
+<span class="cstat-no" title="statement not covered" >          endDateObj.setDate(endDateObj.getDate() + 1);</span>
+<span class="cstat-no" title="statement not covered" >          const filteredTimesheet = task.timesheet.filter((ts: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            const tsDate = new Date(ts.date);</span>
+<span class="cstat-no" title="statement not covered" >            return tsDate &gt;= startDateObj &amp;&amp; tsDate &lt; endDateObj;</span>
+<span class="cstat-no" title="statement not covered" >          });</span>
+<span class="cstat-no" title="statement not covered" >          return { ...task, timesheet: filteredTimesheet };</span>
+<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >        return { ...pkg, tasks: filteredTasks };</span>
+<span class="cstat-no" title="statement not covered" >      });</span>
+<span class="cstat-no" title="statement not covered" >      return { ...empPkg, packages: filteredPackages };</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    return {</span>
+<span class="cstat-no" title="statement not covered" >      success: true,</span>
+<span class="cstat-no" title="statement not covered" >      employeePackageDetails: filteredData,</span>
+<span class="cstat-no" title="statement not covered" >    };</span>
+<span class="cstat-no" title="statement not covered" >  } catch (error) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error(`Error in fetching Employee Package details by ID: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >    return { success: false };</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default { employeePackageDetailsById };</span>
@@ -208,7 +214,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

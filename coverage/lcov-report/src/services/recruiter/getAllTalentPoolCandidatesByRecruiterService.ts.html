@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/53</span>
+                <span class='fraction'>0/56</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/53</span>
+                <span class='fraction'>0/56</span>
             </div>
         
             
@@ -116,7 +116,13 @@
 <a name='L51'></a><a href='#L51'>51</a>
 <a name='L52'></a><a href='#L52'>52</a>
 <a name='L53'></a><a href='#L53'>53</a>
-<a name='L54'></a><a href='#L54'>54</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a>
+<a name='L56'></a><a href='#L56'>56</a>
+<a name='L57'></a><a href='#L57'>57</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -172,56 +178,59 @@
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js"><span class="cstat-no" title="statement not covered" ><span class="fstat-no" title="function not covered" ><span class="branch-0 cbranch-no" title="branch not covered" >import TalentPoolCandidatesModel from '../../model/talentPoolCandidatesModel';</span></span></span>
 <span class="cstat-no" title="statement not covered" >import { IFetchTalentPoolCandidatesListResponse } from '../../interfaces/talentpoolcandidates';</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >const getAllTalentPoolCandidates = (): Promise&lt;IFetchTalentPoolCandidatesListResponse&gt; =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >const getAllTalentPoolCandidates =</span>
+<span class="cstat-no" title="statement not covered" >  (): Promise&lt;IFetchTalentPoolCandidatesListResponse&gt; =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    return new Promise((resolve, reject) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        TalentPoolCandidatesModel</span>
-<span class="cstat-no" title="statement not covered" >            .find({})</span>
-<span class="cstat-no" title="statement not covered" >            .populate('comments.userId', 'firstName lastName')</span>
-<span class="cstat-no" title="statement not covered" >            .populate('createdBy', 'firstName lastName')</span>
-<span class="cstat-no" title="statement not covered" >            .then((talentPoolCandidates: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                if (!talentPoolCandidates) {</span>
-<span class="cstat-no" title="statement not covered" >                    return reject({ success: false });</span>
-<span class="cstat-no" title="statement not covered" >                }</span>
+<span class="cstat-no" title="statement not covered" >      TalentPoolCandidatesModel.find({})</span>
+<span class="cstat-no" title="statement not covered" >        .populate('comments.userId', 'firstName lastName')</span>
+<span class="cstat-no" title="statement not covered" >        .populate('createdBy', 'firstName lastName')</span>
+<span class="cstat-no" title="statement not covered" >        .then((talentPoolCandidates: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          if (!talentPoolCandidates) {</span>
+<span class="cstat-no" title="statement not covered" >            return reject({ success: false });</span>
+<span class="cstat-no" title="statement not covered" >          }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                if (talentPoolCandidates.length === 0) {</span>
-<span class="cstat-no" title="statement not covered" >                    return resolve({</span>
-<span class="cstat-no" title="statement not covered" >                        success: true,</span>
-<span class="cstat-no" title="statement not covered" >                        talentPoolCandidatesList: [],</span>
-<span class="cstat-no" title="statement not covered" >                    });</span>
-<span class="cstat-no" title="statement not covered" >                }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                talentPoolCandidates = talentPoolCandidates.map((candidate: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                    if (Array.isArray(candidate.comments)) {</span>
-<span class="cstat-no" title="statement not covered" >                        candidate.comments = candidate.comments</span>
-<span class="cstat-no" title="statement not covered" >                            .map((comment: any) =&gt; ({</span>
-<span class="cstat-no" title="statement not covered" >                                ...comment,</span>
-<span class="cstat-no" title="statement not covered" >                                updateAt: new Date(comment.updateAt).getTime() || 0, // Ensure updateAt is a valid timestamp</span>
-<span class="cstat-no" title="statement not covered" >                            }))</span>
-<span class="cstat-no" title="statement not covered" >                            .sort((a: any, b: any) =&gt; b.updateAt - a.updateAt);</span>
-<span class="cstat-no" title="statement not covered" >                    }</span>
-<span class="cstat-no" title="statement not covered" >                    return candidate;</span>
-<span class="cstat-no" title="statement not covered" >                });</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                talentPoolCandidates.sort((a: any, b: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                    const latestCommentA = a.comments?.[0]?.updateAt || 0;</span>
-<span class="cstat-no" title="statement not covered" >                    const latestCommentB = b.comments?.[0]?.updateAt || 0;</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                    return latestCommentB - latestCommentA;</span>
-<span class="cstat-no" title="statement not covered" >                });</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >                resolve({</span>
-<span class="cstat-no" title="statement not covered" >                    success: true,</span>
-<span class="cstat-no" title="statement not covered" >                    talentPoolCandidatesList: talentPoolCandidates,</span>
-<span class="cstat-no" title="statement not covered" >                });</span>
-<span class="cstat-no" title="statement not covered" >            })</span>
-<span class="cstat-no" title="statement not covered" >            .catch((error: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                console.error('Error in fetching talent pool candidates details:', error);</span>
-<span class="cstat-no" title="statement not covered" >                reject({ success: false });</span>
+<span class="cstat-no" title="statement not covered" >          if (talentPoolCandidates.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >            return resolve({</span>
+<span class="cstat-no" title="statement not covered" >              success: true,</span>
+<span class="cstat-no" title="statement not covered" >              talentPoolCandidatesList: [],</span>
 <span class="cstat-no" title="statement not covered" >            });</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >};</span>
+<span class="cstat-no" title="statement not covered" >          }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >export default { getAllTalentPoolCandidates }</span>
+<span class="cstat-no" title="statement not covered" >          talentPoolCandidates = talentPoolCandidates.map((candidate: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            if (Array.isArray(candidate.comments)) {</span>
+<span class="cstat-no" title="statement not covered" >              candidate.comments = candidate.comments</span>
+<span class="cstat-no" title="statement not covered" >                .map((comment: any) =&gt; ({</span>
+<span class="cstat-no" title="statement not covered" >                  ...comment,</span>
+<span class="cstat-no" title="statement not covered" >                  updateAt: new Date(comment.updateAt).getTime() || 0, // Ensure updateAt is a valid timestamp</span>
+<span class="cstat-no" title="statement not covered" >                }))</span>
+<span class="cstat-no" title="statement not covered" >                .sort((a: any, b: any) =&gt; b.updateAt - a.updateAt);</span>
+<span class="cstat-no" title="statement not covered" >            }</span>
+<span class="cstat-no" title="statement not covered" >            return candidate;</span>
+<span class="cstat-no" title="statement not covered" >          });</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >          talentPoolCandidates.sort((a: any, b: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >            const latestCommentA = a.comments?.[0]?.updateAt || 0;</span>
+<span class="cstat-no" title="statement not covered" >            const latestCommentB = b.comments?.[0]?.updateAt || 0;</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >            return latestCommentB - latestCommentA;</span>
+<span class="cstat-no" title="statement not covered" >          });</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >          resolve({</span>
+<span class="cstat-no" title="statement not covered" >            success: true,</span>
+<span class="cstat-no" title="statement not covered" >            talentPoolCandidatesList: talentPoolCandidates,</span>
+<span class="cstat-no" title="statement not covered" >          });</span>
+<span class="cstat-no" title="statement not covered" >        })</span>
+<span class="cstat-no" title="statement not covered" >        .catch((error: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          console.error(</span>
+<span class="cstat-no" title="statement not covered" >            'Error in fetching talent pool candidates details:',</span>
+<span class="cstat-no" title="statement not covered" >            error</span>
+<span class="cstat-no" title="statement not covered" >          );</span>
+<span class="cstat-no" title="statement not covered" >          reject({ success: false });</span>
+<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >  };</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >export default { getAllTalentPoolCandidates };</span>
 &nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
@@ -229,7 +238,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

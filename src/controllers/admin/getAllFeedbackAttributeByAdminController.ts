@@ -13,23 +13,19 @@ const getAllFeedbackAttributesByAdmin = async (
   try {
     const feedbackAttributes =
       await getAllFeedbackAttributeByAdminService.getAllFeedbackAttributeByAdmin();
-    return res
-      .status(HTTP_STATUS.OK)
-      .json({
-        success: true,
-        message:
-          FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FETCH_ALL_FEEDBACK_ATTRIBUTES_SUCCESS_MESSAGE,
-        data: feedbackAttributes,
-      });
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message:
+        FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FETCH_ALL_FEEDBACK_ATTRIBUTES_SUCCESS_MESSAGE,
+      data: feedbackAttributes,
+    });
   } catch (error: any) {
     console.error(`Error fetching feedback attributes: ${error}`);
-    return res
-      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .json({
-        success: false,
-        message:
-          FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FETCH_ALL_FEEDBACK_ATTRIBUTES_ERROR_MESSAGE,
-      });
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message:
+        FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FETCH_ALL_FEEDBACK_ATTRIBUTES_ERROR_MESSAGE,
+    });
   }
 };
 

@@ -11,19 +11,15 @@ const addEmployeeRoleByAdmin = (req: Request, res: Response) => {
     .addEmployeeRoleByAdmin(designation)
     .then((responseAfteraddingEmployeeRole) => {
       if (responseAfteraddingEmployeeRole.id) {
-        return res
-          .status(201)
-          .json({
-            message:
-              EMPLOYEE_ROLE_SUCCESS_MESSAGES.EMPLOYEE_ROLE_ADD_SUCCESS_MESSAGE,
-          });
+        return res.status(201).json({
+          message:
+            EMPLOYEE_ROLE_SUCCESS_MESSAGES.EMPLOYEE_ROLE_ADD_SUCCESS_MESSAGE,
+        });
       } else {
-        return res
-          .status(400)
-          .json({
-            message:
-              EMPLOYEE_ROLE_ERRORS_MESSAGES.EMPLOYEE_ROLE_ADD_ERROR_MESSAGE,
-          });
+        return res.status(400).json({
+          message:
+            EMPLOYEE_ROLE_ERRORS_MESSAGES.EMPLOYEE_ROLE_ADD_ERROR_MESSAGE,
+        });
       }
     })
     .catch((error) => {

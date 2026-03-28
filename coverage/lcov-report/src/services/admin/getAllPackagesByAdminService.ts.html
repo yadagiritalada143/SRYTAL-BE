@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/50</span>
+                <span class='fraction'>0/54</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/50</span>
+                <span class='fraction'>0/54</span>
             </div>
         
             
@@ -113,7 +113,15 @@
 <a name='L48'></a><a href='#L48'>48</a>
 <a name='L49'></a><a href='#L49'>49</a>
 <a name='L50'></a><a href='#L50'>50</a>
-<a name='L51'></a><a href='#L51'>51</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L51'></a><a href='#L51'>51</a>
+<a name='L52'></a><a href='#L52'>52</a>
+<a name='L53'></a><a href='#L53'>53</a>
+<a name='L54'></a><a href='#L54'>54</a>
+<a name='L55'></a><a href='#L55'>55</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -167,50 +175,54 @@
 <span class="cstat-no" title="statement not covered" >import TaskModel from '../../model/taskModel';</span>
 <span class="cstat-no" title="statement not covered" >import { IFetchPackagesAndTasksResponse } from '../../interfaces/package';</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >const getAllPackagesWithTasksByAdmin = async (): Promise&lt;IFetchPackagesAndTasksResponse&gt; =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >const getAllPackagesWithTasksByAdmin =</span>
+<span class="cstat-no" title="statement not covered" >  async (): Promise&lt;IFetchPackagesAndTasksResponse&gt; =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        const packagesList = await PackagesModel.find({ isDeleted: false })</span>
-<span class="cstat-no" title="statement not covered" >            .populate('approvers', 'firstName lastName')</span>
-<span class="cstat-no" title="statement not covered" >            .lean();</span>
+<span class="cstat-no" title="statement not covered" >      const packagesList = await PackagesModel.find({ isDeleted: false })</span>
+<span class="cstat-no" title="statement not covered" >        .populate('approvers', 'firstName lastName')</span>
+<span class="cstat-no" title="statement not covered" >        .lean();</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        if (!packagesList || packagesList.length === 0) {</span>
-<span class="cstat-no" title="statement not covered" >            return { success: false, packagesList: [] };</span>
-<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >      if (!packagesList || packagesList.length === 0) {</span>
+<span class="cstat-no" title="statement not covered" >        return { success: false, packagesList: [] };</span>
+<span class="cstat-no" title="statement not covered" >      }</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const packageIds = packagesList.map((pkg) =&gt; pkg._id);</span>
+<span class="cstat-no" title="statement not covered" >      const packageIds = packagesList.map((pkg) =&gt; pkg._id);</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const taskDetails = await TaskModel.find({</span>
-<span class="cstat-no" title="statement not covered" >            packageId: { $in: packageIds },</span>
-<span class="cstat-no" title="statement not covered" >            isDeleted: false</span>
-<span class="cstat-no" title="statement not covered" >        })</span>
-<span class="cstat-no" title="statement not covered" >            .populate('createdBy', 'firstName lastName')</span>
-<span class="cstat-no" title="statement not covered" >            .lean();</span>
+<span class="cstat-no" title="statement not covered" >      const taskDetails = await TaskModel.find({</span>
+<span class="cstat-no" title="statement not covered" >        packageId: { $in: packageIds },</span>
+<span class="cstat-no" title="statement not covered" >        isDeleted: false,</span>
+<span class="cstat-no" title="statement not covered" >      })</span>
+<span class="cstat-no" title="statement not covered" >        .populate('createdBy', 'firstName lastName')</span>
+<span class="cstat-no" title="statement not covered" >        .lean();</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const tasksGroupedByPackage = taskDetails.reduce((acc, task) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            const packageIdKey = task.packageId?.toString();</span>
-<span class="cstat-no" title="statement not covered" >            if (packageIdKey) {</span>
-<span class="cstat-no" title="statement not covered" >                if (!acc[packageIdKey]) {</span>
-<span class="cstat-no" title="statement not covered" >                    acc[packageIdKey] = [];</span>
-<span class="cstat-no" title="statement not covered" >                }</span>
-<span class="cstat-no" title="statement not covered" >                acc[packageIdKey].push(task);</span>
+<span class="cstat-no" title="statement not covered" >      const tasksGroupedByPackage = taskDetails.reduce(</span>
+<span class="cstat-no" title="statement not covered" >        (acc, task) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >          const packageIdKey = task.packageId?.toString();</span>
+<span class="cstat-no" title="statement not covered" >          if (packageIdKey) {</span>
+<span class="cstat-no" title="statement not covered" >            if (!acc[packageIdKey]) {</span>
+<span class="cstat-no" title="statement not covered" >              acc[packageIdKey] = [];</span>
 <span class="cstat-no" title="statement not covered" >            }</span>
-<span class="cstat-no" title="statement not covered" >            return acc;</span>
-<span class="cstat-no" title="statement not covered" >        }, {} as Record&lt;string, any[]&gt;);</span>
+<span class="cstat-no" title="statement not covered" >            acc[packageIdKey].push(task);</span>
+<span class="cstat-no" title="statement not covered" >          }</span>
+<span class="cstat-no" title="statement not covered" >          return acc;</span>
+<span class="cstat-no" title="statement not covered" >        },</span>
+<span class="cstat-no" title="statement not covered" >        {} as Record&lt;string, any[]&gt;</span>
+<span class="cstat-no" title="statement not covered" >      );</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const packagesWithTasks = packagesList.map((pkg) =&gt; ({</span>
-<span class="cstat-no" title="statement not covered" >            ...pkg,</span>
-<span class="cstat-no" title="statement not covered" >            tasks: tasksGroupedByPackage[pkg._id.toString()] || []</span>
-<span class="cstat-no" title="statement not covered" >        }));</span>
+<span class="cstat-no" title="statement not covered" >      const packagesWithTasks = packagesList.map((pkg) =&gt; ({</span>
+<span class="cstat-no" title="statement not covered" >        ...pkg,</span>
+<span class="cstat-no" title="statement not covered" >        tasks: tasksGroupedByPackage[pkg._id.toString()] || [],</span>
+<span class="cstat-no" title="statement not covered" >      }));</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        return {</span>
-<span class="cstat-no" title="statement not covered" >            success: true,</span>
-<span class="cstat-no" title="statement not covered" >            packagesList: packagesWithTasks</span>
-<span class="cstat-no" title="statement not covered" >        };</span>
+<span class="cstat-no" title="statement not covered" >      return {</span>
+<span class="cstat-no" title="statement not covered" >        success: true,</span>
+<span class="cstat-no" title="statement not covered" >        packagesList: packagesWithTasks,</span>
+<span class="cstat-no" title="statement not covered" >      };</span>
 <span class="cstat-no" title="statement not covered" >    } catch (error) {</span>
-<span class="cstat-no" title="statement not covered" >        console.error(`Error in fetching all packages with tasks: ${error}`);</span>
-<span class="cstat-no" title="statement not covered" >        return { success: false };</span>
+<span class="cstat-no" title="statement not covered" >      console.error(`Error in fetching all packages with tasks: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >      return { success: false };</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
-<span class="cstat-no" title="statement not covered" >};</span>
+<span class="cstat-no" title="statement not covered" >  };</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default { getAllPackagesWithTasksByAdmin };</span>
 &nbsp;</pre></td></tr></table></pre>
@@ -220,7 +232,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/61</span>
+                <span class='fraction'>0/74</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/61</span>
+                <span class='fraction'>0/74</span>
             </div>
         
             
@@ -124,7 +124,33 @@
 <a name='L59'></a><a href='#L59'>59</a>
 <a name='L60'></a><a href='#L60'>60</a>
 <a name='L61'></a><a href='#L61'>61</a>
-<a name='L62'></a><a href='#L62'>62</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L62'></a><a href='#L62'>62</a>
+<a name='L63'></a><a href='#L63'>63</a>
+<a name='L64'></a><a href='#L64'>64</a>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a>
+<a name='L70'></a><a href='#L70'>70</a>
+<a name='L71'></a><a href='#L71'>71</a>
+<a name='L72'></a><a href='#L72'>72</a>
+<a name='L73'></a><a href='#L73'>73</a>
+<a name='L74'></a><a href='#L74'>74</a>
+<a name='L75'></a><a href='#L75'>75</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -189,61 +215,74 @@
 <span class="cstat-no" title="statement not covered" >import { IFetchUserResponse } from '../../interfaces/user';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const formatDate = (date?: Date): string | null =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    if (!date) return null;</span>
-<span class="cstat-no" title="statement not covered" >    const d = new Date(date);</span>
-<span class="cstat-no" title="statement not covered" >    if (isNaN(d.getTime())) return null;</span>
-<span class="cstat-no" title="statement not covered" >    const day = String(d.getDate()).padStart(2, '0');</span>
-<span class="cstat-no" title="statement not covered" >    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];</span>
-<span class="cstat-no" title="statement not covered" >    const month = months[d.getMonth()];</span>
-<span class="cstat-no" title="statement not covered" >    const year = d.getFullYear();</span>
+<span class="cstat-no" title="statement not covered" >  if (!date) return null;</span>
+<span class="cstat-no" title="statement not covered" >  const d = new Date(date);</span>
+<span class="cstat-no" title="statement not covered" >  if (isNaN(d.getTime())) return null;</span>
+<span class="cstat-no" title="statement not covered" >  const day = String(d.getDate()).padStart(2, '0');</span>
+<span class="cstat-no" title="statement not covered" >  const months = [</span>
+<span class="cstat-no" title="statement not covered" >    'Jan',</span>
+<span class="cstat-no" title="statement not covered" >    'Feb',</span>
+<span class="cstat-no" title="statement not covered" >    'Mar',</span>
+<span class="cstat-no" title="statement not covered" >    'Apr',</span>
+<span class="cstat-no" title="statement not covered" >    'May',</span>
+<span class="cstat-no" title="statement not covered" >    'Jun',</span>
+<span class="cstat-no" title="statement not covered" >    'Jul',</span>
+<span class="cstat-no" title="statement not covered" >    'Aug',</span>
+<span class="cstat-no" title="statement not covered" >    'Sep',</span>
+<span class="cstat-no" title="statement not covered" >    'Oct',</span>
+<span class="cstat-no" title="statement not covered" >    'Nov',</span>
+<span class="cstat-no" title="statement not covered" >    'Dec',</span>
+<span class="cstat-no" title="statement not covered" >  ];</span>
+<span class="cstat-no" title="statement not covered" >  const month = months[d.getMonth()];</span>
+<span class="cstat-no" title="statement not covered" >  const year = d.getFullYear();</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >    return `${day}-${month}-${year}`;</span>
+<span class="cstat-no" title="statement not covered" >  return `${day}-${month}-${year}`;</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const getEmployeeDetailsByAdmin = (id: string): Promise&lt;IFetchUserResponse&gt; =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    return new Promise((resolve, reject) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        UserModel.findOne({ _id: id })</span>
-<span class="cstat-no" title="statement not covered" >            .populate('bloodGroup')</span>
-<span class="cstat-no" title="statement not covered" >            .populate('employmentType')</span>
-<span class="cstat-no" title="statement not covered" >            .populate('employeeRole')</span>
-<span class="cstat-no" title="statement not covered" >            .populate('organization')</span>
-<span class="cstat-no" title="statement not covered" >            .populate('department')</span>
-<span class="cstat-no" title="statement not covered" >            .then((user: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                if (!user) {</span>
-<span class="cstat-no" title="statement not covered" >                    reject({ success: false });</span>
-<span class="cstat-no" title="statement not covered" >                } else {</span>
-<span class="cstat-no" title="statement not covered" >                    resolve({</span>
-<span class="cstat-no" title="statement not covered" >                        success: true,</span>
-<span class="cstat-no" title="statement not covered" >                        userDetails: {</span>
-<span class="cstat-no" title="statement not covered" >                            id: user.id,</span>
-<span class="cstat-no" title="statement not covered" >                            firstName: user.firstName,</span>
-<span class="cstat-no" title="statement not covered" >                            lastName: user.lastName,</span>
-<span class="cstat-no" title="statement not covered" >                            email: user.email,</span>
-<span class="cstat-no" title="statement not covered" >                            mobileNumber: user.mobileNumber,</span>
-<span class="cstat-no" title="statement not covered" >                            bloodGroup: user.bloodGroup,</span>
-<span class="cstat-no" title="statement not covered" >                            bankDetailsInfo: user.bankDetailsInfo,</span>
-<span class="cstat-no" title="statement not covered" >                            employmentType: user.employmentType,</span>
-<span class="cstat-no" title="statement not covered" >                            employeeRole: user.employeeRole,</span>
-<span class="cstat-no" title="statement not covered" >                            organization: user.organization,</span>
-<span class="cstat-no" title="statement not covered" >                            employeeId: user.employeeId,</span>
-<span class="cstat-no" title="statement not covered" >                            dateOfBirth: formatDate(user.dateOfBirth),</span>
-<span class="cstat-no" title="statement not covered" >                            aadharNumber: user.aadharNumber,</span>
-<span class="cstat-no" title="statement not covered" >                            panCardNumber: user.panCardNumber,</span>
-<span class="cstat-no" title="statement not covered" >                            dateOfJoining: formatDate(user.dateOfJoining),</span>
-<span class="cstat-no" title="statement not covered" >                            uanNumber: user.uanNumber,</span>
-<span class="cstat-no" title="statement not covered" >                            department: user.department,</span>
-<span class="cstat-no" title="statement not covered" >                            presentAddress: user.presentAddress,</span>
-<span class="cstat-no" title="statement not covered" >                            permanentAddress: user.permanentAddress</span>
-<span class="cstat-no" title="statement not covered" >                        }</span>
-<span class="cstat-no" title="statement not covered" >                    });</span>
-<span class="cstat-no" title="statement not covered" >                }</span>
-<span class="cstat-no" title="statement not covered" >            })</span>
-<span class="cstat-no" title="statement not covered" >            .catch((error: any) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >                console.error(`Error in fetching details: ${error}`);</span>
-<span class="cstat-no" title="statement not covered" >                reject({ success: false });</span>
-<span class="cstat-no" title="statement not covered" >            });</span>
-<span class="cstat-no" title="statement not covered" >    });</span>
-<span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" >  return new Promise((resolve, reject) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    UserModel.findOne({ _id: id })</span>
+<span class="cstat-no" title="statement not covered" >      .populate('bloodGroup')</span>
+<span class="cstat-no" title="statement not covered" >      .populate('employmentType')</span>
+<span class="cstat-no" title="statement not covered" >      .populate('employeeRole')</span>
+<span class="cstat-no" title="statement not covered" >      .populate('organization')</span>
+<span class="cstat-no" title="statement not covered" >      .populate('department')</span>
+<span class="cstat-no" title="statement not covered" >      .then((user: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        if (!user) {</span>
+<span class="cstat-no" title="statement not covered" >          reject({ success: false });</span>
+<span class="cstat-no" title="statement not covered" >        } else {</span>
+<span class="cstat-no" title="statement not covered" >          resolve({</span>
+<span class="cstat-no" title="statement not covered" >            success: true,</span>
+<span class="cstat-no" title="statement not covered" >            userDetails: {</span>
+<span class="cstat-no" title="statement not covered" >              id: user.id,</span>
+<span class="cstat-no" title="statement not covered" >              firstName: user.firstName,</span>
+<span class="cstat-no" title="statement not covered" >              lastName: user.lastName,</span>
+<span class="cstat-no" title="statement not covered" >              email: user.email,</span>
+<span class="cstat-no" title="statement not covered" >              mobileNumber: user.mobileNumber,</span>
+<span class="cstat-no" title="statement not covered" >              bloodGroup: user.bloodGroup,</span>
+<span class="cstat-no" title="statement not covered" >              bankDetailsInfo: user.bankDetailsInfo,</span>
+<span class="cstat-no" title="statement not covered" >              employmentType: user.employmentType,</span>
+<span class="cstat-no" title="statement not covered" >              employeeRole: user.employeeRole,</span>
+<span class="cstat-no" title="statement not covered" >              organization: user.organization,</span>
+<span class="cstat-no" title="statement not covered" >              employeeId: user.employeeId,</span>
+<span class="cstat-no" title="statement not covered" >              dateOfBirth: formatDate(user.dateOfBirth),</span>
+<span class="cstat-no" title="statement not covered" >              aadharNumber: user.aadharNumber,</span>
+<span class="cstat-no" title="statement not covered" >              panCardNumber: user.panCardNumber,</span>
+<span class="cstat-no" title="statement not covered" >              dateOfJoining: formatDate(user.dateOfJoining),</span>
+<span class="cstat-no" title="statement not covered" >              uanNumber: user.uanNumber,</span>
+<span class="cstat-no" title="statement not covered" >              department: user.department,</span>
+<span class="cstat-no" title="statement not covered" >              presentAddress: user.presentAddress,</span>
+<span class="cstat-no" title="statement not covered" >              permanentAddress: user.permanentAddress,</span>
+<span class="cstat-no" title="statement not covered" >            },</span>
+<span class="cstat-no" title="statement not covered" >          });</span>
+<span class="cstat-no" title="statement not covered" >        }</span>
+<span class="cstat-no" title="statement not covered" >      })</span>
+<span class="cstat-no" title="statement not covered" >      .catch((error: any) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >        console.error(`Error in fetching details: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >        reject({ success: false });</span>
+<span class="cstat-no" title="statement not covered" >      });</span>
+<span class="cstat-no" title="statement not covered" >  });</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default { getEmployeeDetailsByAdmin };</span>
 &nbsp;</pre></td></tr></table></pre>
@@ -253,7 +292,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -48,21 +48,17 @@ const addNewCourse = async (req: Request, res: Response) => {
         .status(201)
         .json({ message: COURSE_SUCCESS_MESSAGES.COURSE_ADD_SUCCESS_MESSAGE });
     } else {
-      res
-        .status(500)
-        .json({
-          success: false,
-          message: COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE,
-        });
-    }
-  } catch (error: any) {
-    console.log(`Error in adding new Course: ${error}`);
-    res
-      .status(500)
-      .json({
+      res.status(500).json({
         success: false,
         message: COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE,
       });
+    }
+  } catch (error: any) {
+    console.log(`Error in adding new Course: ${error}`);
+    res.status(500).json({
+      success: false,
+      message: COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE,
+    });
   }
 };
 

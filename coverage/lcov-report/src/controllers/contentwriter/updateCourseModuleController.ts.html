@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/34</span>
+                <span class='fraction'>0/36</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/34</span>
+                <span class='fraction'>0/36</span>
             </div>
         
             
@@ -97,7 +97,11 @@
 <a name='L32'></a><a href='#L32'>32</a>
 <a name='L33'></a><a href='#L33'>33</a>
 <a name='L34'></a><a href='#L34'>34</a>
-<a name='L35'></a><a href='#L35'>35</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<a name='L35'></a><a href='#L35'>35</a>
+<a name='L36'></a><a href='#L36'>36</a>
+<a name='L37'></a><a href='#L37'>37</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -137,31 +141,33 @@
 <span class="cstat-no" title="statement not covered" >import isValidStatus from '../../util/validateCourseStatusTypesUtil';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >const updateCourseModule = async (req: Request, res: Response) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-<span class="cstat-no" title="statement not covered" >        const { id, moduleName, moduleDescription, thumbnail, status } = req.body;</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    const { id, moduleName, moduleDescription, thumbnail, status } = req.body;</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        if (!isValidStatus(status)) {</span>
-<span class="cstat-no" title="statement not covered" >            return res.status(400).json({</span>
-<span class="cstat-no" title="statement not covered" >                success: false,</span>
-<span class="cstat-no" title="statement not covered" >                message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_INVALID_STATUS_MESSAGE,</span>
-<span class="cstat-no" title="statement not covered" >            });</span>
-<span class="cstat-no" title="statement not covered" >        }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >        const updateCourseModuleResponse = await updateCourseModuleService.updateCourseModule(</span>
-<span class="cstat-no" title="statement not covered" >            id,</span>
-<span class="cstat-no" title="statement not covered" >            moduleName,</span>
-<span class="cstat-no" title="statement not covered" >            moduleDescription,</span>
-<span class="cstat-no" title="statement not covered" >            thumbnail,</span>
-<span class="cstat-no" title="statement not covered" >            status.toUpperCase(),</span>
-<span class="cstat-no" title="statement not covered" >        );</span>
-<span class="cstat-no" title="statement not covered" >        res.status(200).json(updateCourseModuleResponse);</span>
-<span class="cstat-no" title="statement not covered" >    } catch (error: any) {</span>
-<span class="cstat-no" title="statement not covered" >        console.error(`Error in updating module: ${error}`);</span>
-<span class="cstat-no" title="statement not covered" >        res.status(500).json({</span>
-<span class="cstat-no" title="statement not covered" >            success: false,</span>
-<span class="cstat-no" title="statement not covered" >            message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_UPDATE_ERROR_MESSAGE,</span>
-<span class="cstat-no" title="statement not covered" >        });</span>
+<span class="cstat-no" title="statement not covered" >    if (!isValidStatus(status)) {</span>
+<span class="cstat-no" title="statement not covered" >      return res.status(400).json({</span>
+<span class="cstat-no" title="statement not covered" >        success: false,</span>
+<span class="cstat-no" title="statement not covered" >        message:</span>
+<span class="cstat-no" title="statement not covered" >          COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_INVALID_STATUS_MESSAGE,</span>
+<span class="cstat-no" title="statement not covered" >      });</span>
 <span class="cstat-no" title="statement not covered" >    }</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >    const updateCourseModuleResponse =</span>
+<span class="cstat-no" title="statement not covered" >      await updateCourseModuleService.updateCourseModule(</span>
+<span class="cstat-no" title="statement not covered" >        id,</span>
+<span class="cstat-no" title="statement not covered" >        moduleName,</span>
+<span class="cstat-no" title="statement not covered" >        moduleDescription,</span>
+<span class="cstat-no" title="statement not covered" >        thumbnail,</span>
+<span class="cstat-no" title="statement not covered" >        status.toUpperCase()</span>
+<span class="cstat-no" title="statement not covered" >      );</span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json(updateCourseModuleResponse);</span>
+<span class="cstat-no" title="statement not covered" >  } catch (error: any) {</span>
+<span class="cstat-no" title="statement not covered" >    console.error(`Error in updating module: ${error}`);</span>
+<span class="cstat-no" title="statement not covered" >    res.status(500).json({</span>
+<span class="cstat-no" title="statement not covered" >      success: false,</span>
+<span class="cstat-no" title="statement not covered" >      message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_UPDATE_ERROR_MESSAGE,</span>
+<span class="cstat-no" title="statement not covered" >    });</span>
+<span class="cstat-no" title="statement not covered" >  }</span>
 <span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export default { updateCourseModule };</span>
@@ -172,7 +178,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-03-28T15:59:51.807Z
+                at 2026-03-28T16:34:16.814Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -15,28 +15,22 @@ const getDepartmentByAdmin = async (
     const departmentDetails =
       await getDepartmentByAdminService.getDepartmentByAdmin(_id);
     if (!departmentDetails) {
-      return res
-        .status(HTTP_STATUS.NOT_FOUND)
-        .json({
-          success: false,
-          message: DEPARTMENT_ERROR_MESSAGES.DEPARTMENT_NOT_FOUND_ERROR_MESSAGE,
-        });
-    }
-    return res
-      .status(HTTP_STATUS.OK)
-      .json({
-        success: true,
-        message: DEPARTMENT_SUCCESS_MESSAGES.FETCH_DEPARTMENT_SUCCESS_MESSAGE,
-        data: departmentDetails,
+      return res.status(HTTP_STATUS.NOT_FOUND).json({
+        success: false,
+        message: DEPARTMENT_ERROR_MESSAGES.DEPARTMENT_NOT_FOUND_ERROR_MESSAGE,
       });
+    }
+    return res.status(HTTP_STATUS.OK).json({
+      success: true,
+      message: DEPARTMENT_SUCCESS_MESSAGES.FETCH_DEPARTMENT_SUCCESS_MESSAGE,
+      data: departmentDetails,
+    });
   } catch (error: any) {
     console.error(`Error in fetching department details: ${error}`);
-    return res
-      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-      .json({
-        success: false,
-        message: DEPARTMENT_ERROR_MESSAGES.FETCH_DEPARTMENT_ERROR_MESSAGE,
-      });
+    return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: DEPARTMENT_ERROR_MESSAGES.FETCH_DEPARTMENT_ERROR_MESSAGE,
+    });
   }
 };
 

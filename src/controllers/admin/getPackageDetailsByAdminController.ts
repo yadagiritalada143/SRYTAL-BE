@@ -13,12 +13,10 @@ const getPackageDetailsByAdmin = async (req: Request, res: Response) => {
     res.status(HTTP_STATUS.OK).json(packageDetailsByAdminResponse);
   } catch (error) {
     console.log(`Error in fetching Package details: ${error}`);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: PACKAGE_ERROR_MESSAGES.PACKAGE_DETAILS_FETCH_ERROR_MESSAGE,
-      });
+    res.status(500).json({
+      success: false,
+      message: PACKAGE_ERROR_MESSAGES.PACKAGE_DETAILS_FETCH_ERROR_MESSAGE,
+    });
   }
 };
 

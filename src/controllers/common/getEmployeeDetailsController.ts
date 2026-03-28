@@ -13,12 +13,10 @@ const getEmployeeDetails = (req: Request, res: Response) => {
     })
     .catch((error) => {
       console.error(`Error in fetching employee details: ${error}`);
-      res
-        .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
-        .json({
-          success: false,
-          message: EMPLOYEE_ERRORS.EMPLOYEE_DETAILS_FETCHING_ERROR,
-        });
+      res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message: EMPLOYEE_ERRORS.EMPLOYEE_DETAILS_FETCHING_ERROR,
+      });
     });
 };
 

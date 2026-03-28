@@ -46,28 +46,21 @@ const addModuleToCourse = async (req: Request, res: Response) => {
       );
 
     if (responseAfteraddingCourseModule) {
-      return res
-        .status(201)
-        .json({
-          message:
-            COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE,
-        });
+      return res.status(201).json({
+        message:
+          COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE,
+      });
     } else {
-      return res
-        .status(500)
-        .json({
-          message:
-            COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_ADD_ERROR_MESSAGE,
-        });
+      return res.status(500).json({
+        message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_ADD_ERROR_MESSAGE,
+      });
     }
   } catch (error: any) {
     console.error(`Error in adding Module to Course: ${error}`);
-    res
-      .status(500)
-      .json({
-        success: false,
-        message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_ADD_ERROR_MESSAGE,
-      });
+    res.status(500).json({
+      success: false,
+      message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_ADD_ERROR_MESSAGE,
+    });
   }
 };
 

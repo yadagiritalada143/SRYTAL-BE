@@ -11,13 +11,11 @@ const updateEmploymentType = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in updating employment type: ${error}`);
-      res
-        .status(500)
-        .json({
-          success: false,
-          message:
-            EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_UPDATING_ERROR_MESSAGE,
-        });
+      res.status(500).json({
+        success: false,
+        message:
+          EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_UPDATING_ERROR_MESSAGE,
+      });
     });
 };
 
