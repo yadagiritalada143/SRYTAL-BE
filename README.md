@@ -11,4 +11,4 @@ Make sure you have placed .env file before running the application.
 
 Below is the documentation for the application work flow
 
-Testing husky setup
+Husky final test
