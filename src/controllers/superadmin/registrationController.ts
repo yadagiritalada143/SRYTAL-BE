@@ -1,11 +1,11 @@
-import { Request, Response } from "express";
-import registerAdminBySuperAdminService from "../../services/superadmin/registerAdminBySuperadminService";
-import { ERRORS, ACCOUNT_MESSAGES } from "../../constants/registrationMessages";
-import utilService from "../../util/sendRegistrationOTPEmail";
-import hashPasswordUtility from "../../util/hashPassword";
+import { Request, Response } from 'express';
+import registerAdminBySuperAdminService from '../../services/superadmin/registerAdminBySuperadminService';
+import { ERRORS, ACCOUNT_MESSAGES } from '../../constants/registrationMessages';
+import utilService from '../../util/sendRegistrationOTPEmail';
+import hashPasswordUtility from '../../util/hashPassword';
 
 const randomPasswordGenerate = () => {
-  return Math.floor(Math.random() * 90000000) + 10000000 + "";
+  return Math.floor(Math.random() * 90000000) + 10000000 + '';
 };
 
 const register = (req: Request, res: Response) => {

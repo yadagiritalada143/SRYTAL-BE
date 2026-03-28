@@ -1,101 +1,108 @@
-import EmployeePackageModel from "../../model/employeePackageModel";
+import EmployeePackageModel from '../../model/employeePackageModel';
 import {
-    IPackage,
-    ITask,
-    ITimesheet,
-    UpdateEmployeeTimesheetResponse,
-    TimesheetUpdate,
-    TaskUpdate,
-    PackageUpdate,
-    UpdateTimesheetPayload
+  IPackage,
+  ITask,
+  ITimesheet,
+  UpdateEmployeeTimesheetResponse,
+  TimesheetUpdate,
+  TaskUpdate,
+  PackageUpdate,
+  UpdateTimesheetPayload,
 } from '../../interfaces/employeepackages';
 
-const updateEmployeeTimesheet = async (updateEmployeeTimesheetPayload: UpdateTimesheetPayload): Promise<UpdateEmployeeTimesheetResponse> => {
-    try {
-        const { employeeId, packages } = updateEmployeeTimesheetPayload;
+const updateEmployeeTimesheet = async (
+  updateEmployeeTimesheetPayload: UpdateTimesheetPayload
+): Promise<UpdateEmployeeTimesheetResponse> => {
+  try {
+    const { employeeId, packages } = updateEmployeeTimesheetPayload;
 
-        const employeePackage = await EmployeePackageModel.findOne({
-            employeeId: employeeId
-        });
+    const employeePackage = await EmployeePackageModel.findOne({
+      employeeId: employeeId,
+    });
 
-        if (!employeePackage) {
-            return {
-                success: false,
-                message: "Employee timesheet not found"
-            };
-        }
+    if (!employeePackage) {
+      return {
+        success: false,
+        message: 'Employee timesheet not found',
+      };
+    }
 
-        const updateOperations: Record<string, any> = {};
-        let hasUpdates = false;
+    const updateOperations: Record<string, any> = {};
+    let hasUpdates = false;
 
-        packages.forEach((payloadPackage: PackageUpdate) => {
-            const packageIndex = employeePackage.packages.findIndex(
-                (dbPackage: IPackage) => dbPackage.packageId.toString() === payloadPackage.packageId.toString()
-            );
+    packages.forEach((payloadPackage: PackageUpdate) => {
+      const packageIndex = employeePackage.packages.findIndex(
+        (dbPackage: IPackage) =>
+          dbPackage.packageId.toString() === payloadPackage.packageId.toString()
+      );
 
-            if (packageIndex === -1) return;
+      if (packageIndex === -1) return;
 
-            payloadPackage.tasks.forEach((payloadTask: TaskUpdate) => {
-                const taskIndex = employeePackage.packages[packageIndex].tasks.findIndex(
-                    (dbTask: ITask) => dbTask.taskId.toString() === payloadTask.taskId.toString()
-                );
+      payloadPackage.tasks.forEach((payloadTask: TaskUpdate) => {
+        const taskIndex = employeePackage.packages[
+          packageIndex
+        ].tasks.findIndex(
+          (dbTask: ITask) =>
+            dbTask.taskId.toString() === payloadTask.taskId.toString()
+        );
 
-                if (taskIndex === -1) return;
+        if (taskIndex === -1) return;
 
-                payloadTask.timesheet.forEach((payloadTimesheet: TimesheetUpdate) => {
-                    const timesheetIndex = employeePackage.packages[packageIndex].tasks[taskIndex].timesheet.findIndex(
-                        (dbTimesheet: ITimesheet) => areDatesEqual(dbTimesheet.date, payloadTimesheet.date)
-                    );
+        payloadTask.timesheet.forEach((payloadTimesheet: TimesheetUpdate) => {
+          const timesheetIndex = employeePackage.packages[packageIndex].tasks[
+            taskIndex
+          ].timesheet.findIndex((dbTimesheet: ITimesheet) =>
+            areDatesEqual(dbTimesheet.date, payloadTimesheet.date)
+          );
 
-                    if (timesheetIndex === -1) return;
+          if (timesheetIndex === -1) return;
 
-                    const basePath = `packages.${packageIndex}.tasks.${taskIndex}.timesheet.${timesheetIndex}`;
+          const basePath = `packages.${packageIndex}.tasks.${taskIndex}.timesheet.${timesheetIndex}`;
 
-                    Object.entries(payloadTimesheet)
-                        .filter(([key]) => key !== '_id' && key !== 'date')
-                        .forEach(([key, value]) => {
-                            updateOperations[`${basePath}.${key}`] = value;
-                            hasUpdates = true;
-                        });
-                });
+          Object.entries(payloadTimesheet)
+            .filter(([key]) => key !== '_id' && key !== 'date')
+            .forEach(([key, value]) => {
+              updateOperations[`${basePath}.${key}`] = value;
+              hasUpdates = true;
             });
         });
+      });
+    });
 
-        if (hasUpdates) {
-            const result = await EmployeePackageModel.updateOne(
-                { employeeId: employeeId },
-                { $set: updateOperations }
-            );
+    if (hasUpdates) {
+      const result = await EmployeePackageModel.updateOne(
+        { employeeId: employeeId },
+        { $set: updateOperations }
+      );
 
-            return {
-                success: true,
-                responseAfterUpdateTimesheet: result
-            };
-        } else {
-            return {
-                success: false,
-                message: "No valid updates found in payload"
-            };
-        }
-    } catch (error: any) {
-        console.error(`Error in updating employee timesheet: ${error}`);
-        return {
-            success: false,
-            responseAfterUpdateTimesheet: error,
-            message: error.message
-        };
+      return {
+        success: true,
+        responseAfterUpdateTimesheet: result,
+      };
+    } else {
+      return {
+        success: false,
+        message: 'No valid updates found in payload',
+      };
     }
+  } catch (error: any) {
+    console.error(`Error in updating employee timesheet: ${error}`);
+    return {
+      success: false,
+      responseAfterUpdateTimesheet: error,
+      message: error.message,
+    };
+  }
 };
 
 const areDatesEqual = (date1: Date, date2: Date) => {
-    const d1 = new Date(date1);
-    const d2 = new Date(date2);
-    const returnVal = (
-        d1.getUTCFullYear() === d2.getUTCFullYear() &&
-        d1.getUTCMonth() === d2.getUTCMonth() &&
-        d1.getUTCDate() === d2.getUTCDate()
-    );
-    return returnVal;
+  const d1 = new Date(date1);
+  const d2 = new Date(date2);
+  const returnVal =
+    d1.getUTCFullYear() === d2.getUTCFullYear() &&
+    d1.getUTCMonth() === d2.getUTCMonth() &&
+    d1.getUTCDate() === d2.getUTCDate();
+  return returnVal;
 };
 
 export default { updateEmployeeTimesheet };

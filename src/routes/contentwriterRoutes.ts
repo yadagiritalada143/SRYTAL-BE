@@ -42,7 +42,11 @@ const contentwriterRouter: Router = express.Router();
  *       500:
  *         description: Server error
  */
-contentwriterRouter.get('/getAllCourses', validateJWT, getAllCoursesController.getAllCourses);
+contentwriterRouter.get(
+  '/getAllCourses',
+  validateJWT,
+  getAllCoursesController.getAllCourses
+);
 
 /**
  * @swagger
@@ -89,7 +93,11 @@ contentwriterRouter.get('/getAllCourses', validateJWT, getAllCoursesController.g
  *       500:
  *         description: Server error
  */
-contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseDetailsByIdController.getCourseDetailsById);
+contentwriterRouter.get(
+  '/getCourseById/:id',
+  validateJWT,
+  getCourseDetailsByIdController.getCourseDetailsById
+);
 
 /**
  * @swagger
@@ -125,7 +133,11 @@ contentwriterRouter.get('/getCourseById/:id', validateJWT, getCourseDetailsByIdC
  *       500:
  *         description: Server error
  */
-contentwriterRouter.post('/addCourse', upload.single('coursethumbnail'), addCourseController.addNewCourse);
+contentwriterRouter.post(
+  '/addCourse',
+  upload.single('coursethumbnail'),
+  addCourseController.addNewCourse
+);
 
 /**
  * @swagger
@@ -147,7 +159,7 @@ contentwriterRouter.post('/addCourse', upload.single('coursethumbnail'), addCour
  *               courseId:
  *                 type: string
  *               moduleName:
- *                 type: 
+ *                 type:
  *               moduleDescription:
  *                 type: string
  *               coursemodulethumbnail:
@@ -164,7 +176,11 @@ contentwriterRouter.post('/addCourse', upload.single('coursethumbnail'), addCour
  *       500:
  *         description: Server error
  */
-contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnail'), addCourseModuleController.addModuleToCourse);
+contentwriterRouter.post(
+  '/addCourseModule',
+  upload.single('coursemodulethumbnail'),
+  addCourseModuleController.addModuleToCourse
+);
 
 /**
  * @swagger
@@ -219,7 +235,11 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *       500:
  *         description: Server error
  */
-contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.addTaskToModule);
+contentwriterRouter.post(
+  '/addCourseTask',
+  validateJWT,
+  addCourseTaskController.addTaskToModule
+);
 
 /**
  * @swagger
@@ -276,14 +296,18 @@ contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.
  *       500:
  *         description: Internal server error
  */
-contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskController.updateCourseTask);
+contentwriterRouter.put(
+  '/updatecoursetask',
+  validateJWT,
+  updateCourseTaskController.updateCourseTask
+);
 
 /**
  * @swagger
  * /contentwriter/updatecoursemodule:
  *   put:
  *     summary: Update a course module by content writer
- *     tags: 
+ *     tags:
  *       - ContentWriter
  *     security:
  *       - bearerAuth: [] # JWT Bearer token required
@@ -305,7 +329,7 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *                 description: ID of the course module
  *               courseId:
  *                 type: string
- *                 description: ID of the course 
+ *                 description: ID of the course
  *               moduleName:
  *                 type: string
  *                 description: Updated module name
@@ -335,13 +359,17 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *       500:
  *         description: Internal server error
  */
-contentwriterRouter.put('/updatecoursemodule', validateJWT, updateCourseModuleController.updateCourseModule);
+contentwriterRouter.put(
+  '/updatecoursemodule',
+  validateJWT,
+  updateCourseModuleController.updateCourseModule
+);
 
 /**
  * @swagger
  * /contentwriter/updatecourse:
  *   put:
- *     summary: Update course details (name, description, and status) 
+ *     summary: Update course details (name, description, and status)
  *     description: Allows a content writer to update a course by providing its ID along with new values for name, description, and status.
  *     tags:
  *       - ContentWriter
@@ -391,6 +419,10 @@ contentwriterRouter.put('/updatecoursemodule', validateJWT, updateCourseModuleCo
  *       500:
  *         description: Internal server error
  */
-contentwriterRouter.put('/updatecourse', validateJWT, updateCourseController.updateCourse)
+contentwriterRouter.put(
+  '/updatecourse',
+  validateJWT,
+  updateCourseController.updateCourse
+);
 
 export default contentwriterRouter;

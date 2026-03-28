@@ -2,18 +2,33 @@ import UserModel from '../../model/userModel';
 import { IGetEmployeeDetailsResponse } from '../../interfaces/user';
 
 const formatDate = (date?: Date): string | null => {
-    if (!date) return null;
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return null;
-    const day = String(d.getDate()).padStart(2, '0');
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const month = months[d.getMonth()];
-    const year = d.getFullYear();
+  if (!date) return null;
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return null;
+  const day = String(d.getDate()).padStart(2, '0');
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  const month = months[d.getMonth()];
+  const year = d.getFullYear();
 
-    return `${day}-${month}-${year}`;
+  return `${day}-${month}-${year}`;
 };
 
-const getEmployeeDetails = (id: string): Promise<IGetEmployeeDetailsResponse> => {
+const getEmployeeDetails = (
+  id: string
+): Promise<IGetEmployeeDetailsResponse> => {
   return new Promise((resolve, reject) => {
     UserModel.findOne({ _id: id })
       .populate('bloodGroup')
@@ -48,8 +63,8 @@ const getEmployeeDetails = (id: string): Promise<IGetEmployeeDetailsResponse> =>
               panCardNumber: employee.panCardNumber,
               uanNumber: employee.uanNumber,
               department: employee.department,
-              dateOfJoining: formatDate(employee.dateOfJoining)
-            }
+              dateOfJoining: formatDate(employee.dateOfJoining),
+            },
           });
         }
       })
@@ -58,6 +73,6 @@ const getEmployeeDetails = (id: string): Promise<IGetEmployeeDetailsResponse> =>
         reject({ success: false });
       });
   });
-}
+};
 
-export default { getEmployeeDetails }
+export default { getEmployeeDetails };

@@ -86,7 +86,10 @@ recruiterRouter.post('/login', commonController.login);
  *       500:
  *         description: Internal server error
  */
-recruiterRouter.get('/getCompanyDetails', recruiterController.getPoolCompanyDetails);
+recruiterRouter.get(
+  '/getCompanyDetails',
+  recruiterController.getPoolCompanyDetails
+);
 
 /**
  * @swagger
@@ -113,7 +116,10 @@ recruiterRouter.get('/getCompanyDetails', recruiterController.getPoolCompanyDeta
  *       500:
  *         description: Internal server error
  */
-recruiterRouter.get('/getCompanyDetailsByIdByRecruiter/:id', recruiterController.getPoolCompanyDetailsById);
+recruiterRouter.get(
+  '/getCompanyDetailsByIdByRecruiter/:id',
+  recruiterController.getPoolCompanyDetailsById
+);
 
 /**
  * @swagger
@@ -172,7 +178,10 @@ recruiterRouter.get('/getCompanyDetailsByIdByRecruiter/:id', recruiterController
  *       500:
  *         description: Internal Server Error
  */
-recruiterRouter.post('/addCompanyByRecruiter', recruiterController.addPoolCompany);
+recruiterRouter.post(
+  '/addCompanyByRecruiter',
+  recruiterController.addPoolCompany
+);
 
 /**
  * @swagger
@@ -213,7 +222,11 @@ recruiterRouter.post('/addCompanyByRecruiter', recruiterController.addPoolCompan
  *       500:
  *         description: Internal Server Error
  */
-recruiterRouter.post('/addCommentByRecruiter', validateJWT, addCommentByRecruiterController.addCommentByRecruiter);
+recruiterRouter.post(
+  '/addCommentByRecruiter',
+  validateJWT,
+  addCommentByRecruiterController.addCommentByRecruiter
+);
 
 /**
  * @swagger
@@ -240,7 +253,7 @@ recruiterRouter.post('/addCommentByRecruiter', validateJWT, addCommentByRecruite
  *                 description: Id of the company
  *               companyName:
  *                 type: string
- *                 description: Name of the company 
+ *                 description: Name of the company
  *               primaryContact:
  *                 type: object
  *                 properties:
@@ -288,7 +301,10 @@ recruiterRouter.post('/addCommentByRecruiter', validateJWT, addCommentByRecruite
  *       500:
  *         description: Internal server error
  */
-recruiterRouter.post('/updateCompanyByRecruiter', updateCompanyByRecruiterController.updateCompanyByRecruiter);
+recruiterRouter.post(
+  '/updateCompanyByRecruiter',
+  updateCompanyByRecruiterController.updateCompanyByRecruiter
+);
 
 /**
  * @swagger
@@ -361,7 +377,7 @@ recruiterRouter.post('/updateCompanyByRecruiter', updateCompanyByRecruiterContro
  *                     isResumeWithDetailsUpload:
  *                       type: boolean
  *                       example: true
- *                     isResumeWithoutDetailsUpload:    
+ *                     isResumeWithoutDetailsUpload:
  *                      type: boolean
  *                      example: false
  *     responses:
@@ -388,7 +404,11 @@ recruiterRouter.post('/updateCompanyByRecruiter', updateCompanyByRecruiterContro
  *                   type: string
  *                   example: Error adding pool candidate details
  */
-recruiterRouter.post('/addTalentPoolCandidateToTracker', validateJWT, addTalentPoolCandidatesByRecruiterController.addTalentPoolCandidateByRecruiter);
+recruiterRouter.post(
+  '/addTalentPoolCandidateToTracker',
+  validateJWT,
+  addTalentPoolCandidatesByRecruiterController.addTalentPoolCandidateByRecruiter
+);
 
 /**
  * @swagger
@@ -408,7 +428,11 @@ recruiterRouter.post('/addTalentPoolCandidateToTracker', validateJWT, addTalentP
  *       500:
  *         description: Internal server error - Unable to fetch candidate details
  */
-recruiterRouter.get('/getAllTalentPoolCandidates', validateJWT, getAllTalentPoolCandidatesByRecruiterController.getAllTalentPoolCandidatesByRecruiter);
+recruiterRouter.get(
+  '/getAllTalentPoolCandidates',
+  validateJWT,
+  getAllTalentPoolCandidatesByRecruiterController.getAllTalentPoolCandidatesByRecruiter
+);
 
 /**
  * @swagger
@@ -517,7 +541,11 @@ recruiterRouter.get('/getAllTalentPoolCandidates', validateJWT, getAllTalentPool
  *                   type: string
  *                   example: Error fetching pool candidate details
  */
-recruiterRouter.get('/getTalentPoolCandidateById/:id', validateJWT, getTalentPoolCandidateDetailsController.getTalentPoolCandidateDetailsByRecruiter);
+recruiterRouter.get(
+  '/getTalentPoolCandidateById/:id',
+  validateJWT,
+  getTalentPoolCandidateDetailsController.getTalentPoolCandidateDetailsByRecruiter
+);
 
 /**
  * @swagger
@@ -616,7 +644,11 @@ recruiterRouter.get('/getTalentPoolCandidateById/:id', validateJWT, getTalentPoo
  *                   type: string
  *                   example: Error adding comment to pool candidate
  */
-recruiterRouter.post('/addCommentToTalentPoolCandidate', validateJWT, addCommentToPoolCandidateController.addCommentToPoolCandidateByRecruiter);
+recruiterRouter.post(
+  '/addCommentToTalentPoolCandidate',
+  validateJWT,
+  addCommentToPoolCandidateController.addCommentToPoolCandidateByRecruiter
+);
 
 /**
  * @swagger
@@ -627,7 +659,7 @@ recruiterRouter.post('/addCommentToTalentPoolCandidate', validateJWT, addComment
  *     summary: Update a pool candidate's details by recruiter
  *     description: This endpoint allows a recruiter to update the details of a talent pool candidate.
  *     security:
- *       - BearerAuth: [] 
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -712,6 +744,10 @@ recruiterRouter.post('/addCommentToTalentPoolCandidate', validateJWT, addComment
  *                   type: string
  *                   example: "Error updating pool candidate details"
  */
-recruiterRouter.post('/updatePoolCandidateByRecruiter', validateJWT, updatePoolCandidateController.updatePoolCandidateByRecruiter);
+recruiterRouter.post(
+  '/updatePoolCandidateByRecruiter',
+  validateJWT,
+  updatePoolCandidateController.updatePoolCandidateByRecruiter
+);
 
 export default recruiterRouter;

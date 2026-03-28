@@ -11,10 +11,15 @@ const emailConfiguration: any = {
   auth: {
     user: process.env.EMAIL_CONFIG_AUTH_USER,
     pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-  }
-}
+  },
+};
 
-const sendOTPEmail = async (firstName: string, lastName: string, userName: string, tempPassword: string) => {
+const sendOTPEmail = async (
+  firstName: string,
+  lastName: string,
+  userName: string,
+  tempPassword: string
+) => {
   try {
     const transporter = nodemailer.createTransport(emailConfiguration);
     const mailBody = `     
@@ -68,7 +73,7 @@ const sendOTPEmail = async (firstName: string, lastName: string, userName: strin
         return error;
       }
 
-      console.warn(`Info after sent: ${info.response}`)
+      console.warn(`Info after sent: ${info.response}`);
       return info.response;
     });
     return result;
@@ -76,6 +81,6 @@ const sendOTPEmail = async (firstName: string, lastName: string, userName: strin
     console.error(`Error in sending Email at services: ${error}`);
     return error;
   }
-}
+};
 
-export default { sendOTPEmail }
+export default { sendOTPEmail };

@@ -1,33 +1,40 @@
 import TalentPoolCandidatesModel from '../../model/talentPoolCandidatesModel';
 import { IDeletePoolCandidateResponse } from '../../interfaces/talentpoolcandidates';
 
-const hardDeletePoolCandidateByAdmin = async (poolCandidateIdToDelete: any): Promise<IDeletePoolCandidateResponse> => {
-    return new Promise(async (resolve, reject) => {
-        await TalentPoolCandidatesModel.deleteOne(
-            { _id: poolCandidateIdToDelete })
-            .then((responseAfterPoolCandidateHardDelete: any) => {
-                resolve({ success: true });
-            })
-            .catch((error: any) => {
-                console.error(`Error in hard deleting pool candidate: ${error}`);
-                reject({ success: false });
-            });
-    });
-}
+const hardDeletePoolCandidateByAdmin = async (
+  poolCandidateIdToDelete: any
+): Promise<IDeletePoolCandidateResponse> => {
+  return new Promise(async (resolve, reject) => {
+    await TalentPoolCandidatesModel.deleteOne({ _id: poolCandidateIdToDelete })
+      .then((responseAfterPoolCandidateHardDelete: any) => {
+        resolve({ success: true });
+      })
+      .catch((error: any) => {
+        console.error(`Error in hard deleting pool candidate: ${error}`);
+        reject({ success: false });
+      });
+  });
+};
 
-const softDeletePoolCandidateByAdmin = async (poolCandidateIdToDelete: string): Promise<IDeletePoolCandidateResponse> => {
-    return new Promise(async (resolve, reject) => {
-        await TalentPoolCandidatesModel.updateOne(
-            { _id: poolCandidateIdToDelete },
-            { isDeleted: true })
-            .then((responseAfterPoolCandidateSoftDelete: any) => {
-                resolve({ success: true });
-            })
-            .catch((error: any) => {
-                console.error(`Error in soft deleting pool candidate: ${error}`);
-                reject({ success: false });
-            });
-    });
-}
+const softDeletePoolCandidateByAdmin = async (
+  poolCandidateIdToDelete: string
+): Promise<IDeletePoolCandidateResponse> => {
+  return new Promise(async (resolve, reject) => {
+    await TalentPoolCandidatesModel.updateOne(
+      { _id: poolCandidateIdToDelete },
+      { isDeleted: true }
+    )
+      .then((responseAfterPoolCandidateSoftDelete: any) => {
+        resolve({ success: true });
+      })
+      .catch((error: any) => {
+        console.error(`Error in soft deleting pool candidate: ${error}`);
+        reject({ success: false });
+      });
+  });
+};
 
-export default { hardDeletePoolCandidateByAdmin, softDeletePoolCandidateByAdmin };
+export default {
+  hardDeletePoolCandidateByAdmin,
+  softDeletePoolCandidateByAdmin,
+};

@@ -1,6 +1,11 @@
 import cron from 'node-cron';
 import EmployeePackageModel from '../model/employeePackageModel';
-import { ITimesheet, ITask, IPackage, IEmployeePackage } from '../interfaces/employeepackages';
+import {
+  ITimesheet,
+  ITask,
+  IPackage,
+  IEmployeePackage,
+} from '../interfaces/employeepackages';
 
 const updateNextMonthTimeSheet = async () => {
   try {
@@ -22,7 +27,8 @@ const updateNextMonthTimeSheet = async () => {
         nextMonthFirstDay.getMonth(),
         index + 1
       );
-      const isWeekend = currentDate.getDay() === 0 || currentDate.getDay() === 6;
+      const isWeekend =
+        currentDate.getDay() === 0 || currentDate.getDay() === 6;
       return {
         date: currentDate,
         isHoliday: false,
@@ -31,7 +37,7 @@ const updateNextMonthTimeSheet = async () => {
         hours: 0,
         comments: '',
         leaveReason: '',
-        status: 'NOT SUBMITTED'
+        status: 'NOT SUBMITTED',
       };
     });
 
@@ -42,12 +48,15 @@ const updateNextMonthTimeSheet = async () => {
       .lean()
       .exec();
 
-    const employeePackagesTyped = employeePackages as unknown as IEmployeePackage[];
-    const updates = employeePackagesTyped.map(empPack => {
-      empPack.packages.map(packageItem => {
-        packageItem.tasks.map(task => {
-          const existingDates = new Set(task.timesheet.map(entry => entry.date.toISOString()));
-          timesheet.map(newEntry => {
+    const employeePackagesTyped =
+      employeePackages as unknown as IEmployeePackage[];
+    const updates = employeePackagesTyped.map((empPack) => {
+      empPack.packages.map((packageItem) => {
+        packageItem.tasks.map((task) => {
+          const existingDates = new Set(
+            task.timesheet.map((entry) => entry.date.toISOString())
+          );
+          timesheet.map((newEntry) => {
             if (!existingDates.has(newEntry.date.toISOString())) {
               task.timesheet.push(newEntry);
             }
@@ -62,15 +71,14 @@ const updateNextMonthTimeSheet = async () => {
     });
 
     await Promise.all(updates);
-
   } catch (error) {
-    console.error("Failed to update timesheets:", error);
+    console.error('Failed to update timesheets:', error);
     throw error;
   }
 };
 
 cron.schedule('0 0 25 * *', () => {
-  console.warn("Cron triggered! Running on the 25th of each month...");
+  console.warn('Cron triggered! Running on the 25th of each month...');
   updateNextMonthTimeSheet();
 });
 

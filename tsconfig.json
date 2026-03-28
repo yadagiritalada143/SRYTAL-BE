@@ -6,9 +6,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "*": [
-        "src/*"
-      ]
+      "*": ["src/*"]
     },
     "target": "es2017",
     "module": "commonjs",
@@ -21,10 +19,7 @@
     "strict": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
-    "types": [
-      "jest",
-      "node"
-    ]
+    "types": ["jest", "node"]
   },
   "exclude": [
     "node_modules",
@@ -36,8 +31,5 @@
     "__tests__",
     "jest.config.js"
   ],
-  "include": [
-    "src/**/*.ts",
-    "custom.d.ts"
-  ]
+  "include": ["src/**/*.ts", "custom.d.ts"]
 }

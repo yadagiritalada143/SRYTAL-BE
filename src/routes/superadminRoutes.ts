@@ -62,7 +62,10 @@ const superadminRouter: Router = express.Router();
  *                   type: string
  *                   example: Error fetching employee details
  */
-superadminRouter.get('/getAllEmployeesBySuperadmin/:organizationId', getAllEmployeesBySuperadminController.getAllEmployeesBySuperadmin);
+superadminRouter.get(
+  '/getAllEmployeesBySuperadmin/:organizationId',
+  getAllEmployeesBySuperadminController.getAllEmployeesBySuperadmin
+);
 
 /**
  * @swagger
@@ -109,6 +112,12 @@ superadminRouter.get('/getAllEmployeesBySuperadmin/:organizationId', getAllEmplo
  *                   type: string
  *                   example: Error in fetching get organisations by super admin !
  */
-superadminRouter.get('/getAllOrganisationsBySuperadmin', getAllOrganisationsBySuperadminController.getAllOrganizationsBySuperadmin);
-superadminRouter.post('/generateofferletter', generateOfferLetterBySuperadminController.generateOfferLetterBySuperadmin);
+superadminRouter.get(
+  '/getAllOrganisationsBySuperadmin',
+  getAllOrganisationsBySuperadminController.getAllOrganizationsBySuperadmin
+);
+superadminRouter.post(
+  '/generateofferletter',
+  generateOfferLetterBySuperadminController.generateOfferLetterBySuperadmin
+);
 export default superadminRouter;

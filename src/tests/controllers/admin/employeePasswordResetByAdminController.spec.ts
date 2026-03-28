@@ -75,7 +75,7 @@
 // });
 
 describe('test for testing', () => {
-    it('Just for testing purpose', () => {
-        expect(1 + 2).toBe(3);
-    });
+  it('Just for testing purpose', () => {
+    expect(1 + 2).toBe(3);
+  });
 });

@@ -1,14 +1,28 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 
-const addCourseTask = async ( moduleId: string, taskName: string, taskDescription: string, thumbnail: string, status: string, type: string) => {
-    try {
-        const CoursesTaskToSave: any = new CourseTaskModel({moduleId, taskName, taskDescription, thumbnail, status, type});
-        const result = await CoursesTaskToSave.save();
-        return result;
-    } catch (error: any) {
-        console.error('Error in adding course task:', error);
-        return { success: false };
-    }
+const addCourseTask = async (
+  moduleId: string,
+  taskName: string,
+  taskDescription: string,
+  thumbnail: string,
+  status: string,
+  type: string
+) => {
+  try {
+    const CoursesTaskToSave: any = new CourseTaskModel({
+      moduleId,
+      taskName,
+      taskDescription,
+      thumbnail,
+      status,
+      type,
+    });
+    const result = await CoursesTaskToSave.save();
+    return result;
+  } catch (error: any) {
+    console.error('Error in adding course task:', error);
+    return { success: false };
+  }
 };
 
 export default { addCourseTask };

@@ -3,16 +3,23 @@ import { SUPERADMIN_ERROR } from '../../constants/superadmin/superadminErrorMess
 import allEmployeesBySuperadminServices from '../../services/superadmin/getAllEmployeesBySuperadminService';
 
 const getAllEmployeesBySuperadmin = (req: Request, res: Response) => {
-    const { organizationId } = req.params;
-    allEmployeesBySuperadminServices
-        .getAllEmployeesBySuperadmin(organizationId)
-        .then(fetchAllEmployeesBySuperadminResponse => {
-            res.status(200).json(fetchAllEmployeesBySuperadminResponse);
-        })
-        .catch(error => {
-            console.error(`Error in fetching all superadmin employee details:${error} `);
-            res.status(500).json({ success: false, message: SUPERADMIN_ERROR.FETCHING_ALL_EMPLOYEE_DETAILS_ERROR });
+  const { organizationId } = req.params;
+  allEmployeesBySuperadminServices
+    .getAllEmployeesBySuperadmin(organizationId)
+    .then((fetchAllEmployeesBySuperadminResponse) => {
+      res.status(200).json(fetchAllEmployeesBySuperadminResponse);
+    })
+    .catch((error) => {
+      console.error(
+        `Error in fetching all superadmin employee details:${error} `
+      );
+      res
+        .status(500)
+        .json({
+          success: false,
+          message: SUPERADMIN_ERROR.FETCHING_ALL_EMPLOYEE_DETAILS_ERROR,
         });
+    });
 };
 
 export default { getAllEmployeesBySuperadmin };

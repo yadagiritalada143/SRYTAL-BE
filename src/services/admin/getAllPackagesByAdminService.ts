@@ -2,49 +2,53 @@ import PackagesModel from '../../model/packageModel';
 import TaskModel from '../../model/taskModel';
 import { IFetchPackagesAndTasksResponse } from '../../interfaces/package';
 
-const getAllPackagesWithTasksByAdmin = async (): Promise<IFetchPackagesAndTasksResponse> => {
+const getAllPackagesWithTasksByAdmin =
+  async (): Promise<IFetchPackagesAndTasksResponse> => {
     try {
-        const packagesList = await PackagesModel.find({ isDeleted: false })
-            .populate('approvers', 'firstName lastName')
-            .lean();
+      const packagesList = await PackagesModel.find({ isDeleted: false })
+        .populate('approvers', 'firstName lastName')
+        .lean();
 
-        if (!packagesList || packagesList.length === 0) {
-            return { success: false, packagesList: [] };
-        }
+      if (!packagesList || packagesList.length === 0) {
+        return { success: false, packagesList: [] };
+      }
 
-        const packageIds = packagesList.map((pkg) => pkg._id);
+      const packageIds = packagesList.map((pkg) => pkg._id);
 
-        const taskDetails = await TaskModel.find({
-            packageId: { $in: packageIds },
-            isDeleted: false
-        })
-            .populate('createdBy', 'firstName lastName')
-            .lean();
+      const taskDetails = await TaskModel.find({
+        packageId: { $in: packageIds },
+        isDeleted: false,
+      })
+        .populate('createdBy', 'firstName lastName')
+        .lean();
 
-        const tasksGroupedByPackage = taskDetails.reduce((acc, task) => {
-            const packageIdKey = task.packageId?.toString();
-            if (packageIdKey) {
-                if (!acc[packageIdKey]) {
-                    acc[packageIdKey] = [];
-                }
-                acc[packageIdKey].push(task);
+      const tasksGroupedByPackage = taskDetails.reduce(
+        (acc, task) => {
+          const packageIdKey = task.packageId?.toString();
+          if (packageIdKey) {
+            if (!acc[packageIdKey]) {
+              acc[packageIdKey] = [];
             }
-            return acc;
-        }, {} as Record<string, any[]>);
+            acc[packageIdKey].push(task);
+          }
+          return acc;
+        },
+        {} as Record<string, any[]>
+      );
 
-        const packagesWithTasks = packagesList.map((pkg) => ({
-            ...pkg,
-            tasks: tasksGroupedByPackage[pkg._id.toString()] || []
-        }));
+      const packagesWithTasks = packagesList.map((pkg) => ({
+        ...pkg,
+        tasks: tasksGroupedByPackage[pkg._id.toString()] || [],
+      }));
 
-        return {
-            success: true,
-            packagesList: packagesWithTasks
-        };
+      return {
+        success: true,
+        packagesList: packagesWithTasks,
+      };
     } catch (error) {
-        console.error(`Error in fetching all packages with tasks: ${error}`);
-        return { success: false };
+      console.error(`Error in fetching all packages with tasks: ${error}`);
+      return { success: false };
     }
-};
+  };
 
 export default { getAllPackagesWithTasksByAdmin };

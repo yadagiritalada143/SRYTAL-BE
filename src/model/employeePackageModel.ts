@@ -5,33 +5,44 @@ import UserModel from './userModel';
 import PackagesModel from './packageModel';
 import TaskModel from './taskModel';
 
-const EmployeePackagesSchema = new mongoose.Schema({
+const EmployeePackagesSchema = new mongoose.Schema(
+  {
     employeeId: { type: mongoose.Schema.Types.ObjectId, ref: UserModel },
-    packages: [{
+    packages: [
+      {
         packageId: { type: mongoose.Schema.Types.ObjectId, ref: PackagesModel },
-        tasks: [{
+        tasks: [
+          {
             taskId: { type: mongoose.Schema.Types.ObjectId, ref: TaskModel },
-            timesheet: [{
-                date: {type: mongoose.Schema.Types.Date },
-                isHoliday: { type:mongoose.Schema.Types.Boolean},
-                isVacation: {type:mongoose.Schema.Types.Boolean},
-                isWeekOff: {type:mongoose.Schema.Types.Boolean},
-                hours: { type:mongoose.Schema.Types.Number},    
-                comments: { type:mongoose.Schema.Types.String},
-                leaveReason: { type:mongoose.Schema.Types.String},
-                status: { type:mongoose.Schema.Types.String}
-            }]
-        }]
-    }]
-
-}, {
+            timesheet: [
+              {
+                date: { type: mongoose.Schema.Types.Date },
+                isHoliday: { type: mongoose.Schema.Types.Boolean },
+                isVacation: { type: mongoose.Schema.Types.Boolean },
+                isWeekOff: { type: mongoose.Schema.Types.Boolean },
+                hours: { type: mongoose.Schema.Types.Number },
+                comments: { type: mongoose.Schema.Types.String },
+                leaveReason: { type: mongoose.Schema.Types.String },
+                status: { type: mongoose.Schema.Types.String },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  },
+  {
     collection: 'employee-packages',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
-});
+    toJSON: { virtuals: true },
+  }
+);
 
 EmployeePackagesSchema.plugin(uniqueValidator);
 
-const EmployeePackageModel = mongoose.model<IEmployeePackage>('EmployeePackageModel', EmployeePackagesSchema);
+const EmployeePackageModel = mongoose.model<IEmployeePackage>(
+  'EmployeePackageModel',
+  EmployeePackagesSchema
+);
 
 export default EmployeePackageModel;

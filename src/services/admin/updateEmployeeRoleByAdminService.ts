@@ -1,19 +1,21 @@
 import Employeerole from '../../model/employeeRole';
 import { IUpdateEmployeeRoleResponse } from '../../interfaces/employeerole';
 
-
-const updateEmployeeRoleByAdmin = async (id: string, designation: string): Promise<IUpdateEmployeeRoleResponse> => {
-    try {
-        const result = await Employeerole.updateMany({ _id: id }, { designation });
-        if (!result) {
-            return { success: false };
-        }
-
-        return { success: true, responseAfterUpdate: result };
-    } catch (error: any) {
-        console.error(`Error in updating employee role: ${error}`);
-        return { success: false, responseAfterUpdate: error }
+const updateEmployeeRoleByAdmin = async (
+  id: string,
+  designation: string
+): Promise<IUpdateEmployeeRoleResponse> => {
+  try {
+    const result = await Employeerole.updateMany({ _id: id }, { designation });
+    if (!result) {
+      return { success: false };
     }
-}
 
-export default { updateEmployeeRoleByAdmin }
+    return { success: true, responseAfterUpdate: result };
+  } catch (error: any) {
+    console.error(`Error in updating employee role: ${error}`);
+    return { success: false, responseAfterUpdate: error };
+  }
+};
+
+export default { updateEmployeeRoleByAdmin };

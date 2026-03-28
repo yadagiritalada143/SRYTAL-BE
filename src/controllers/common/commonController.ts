@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import commonService from '../../services/common/manageCommonService';
-import { COMMON_ERRORS, LOGIN_ERROR_MESSAGE } from '../../constants/commonErrorMessages';
+import {
+  COMMON_ERRORS,
+  LOGIN_ERROR_MESSAGE,
+} from '../../constants/commonErrorMessages';
 import commonServices from '../../services/common/manageCommonService';
 
 const login = (req: Request, res: Response): any => {

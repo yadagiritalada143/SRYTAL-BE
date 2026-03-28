@@ -2,60 +2,73 @@ import UserModel from '../../model/userModel';
 import { IFetchUserResponse } from '../../interfaces/user';
 
 const formatDate = (date?: Date): string | null => {
-    if (!date) return null;
-    const d = new Date(date);
-    if (isNaN(d.getTime())) return null;
-    const day = String(d.getDate()).padStart(2, '0');
-    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-    const month = months[d.getMonth()];
-    const year = d.getFullYear();
+  if (!date) return null;
+  const d = new Date(date);
+  if (isNaN(d.getTime())) return null;
+  const day = String(d.getDate()).padStart(2, '0');
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ];
+  const month = months[d.getMonth()];
+  const year = d.getFullYear();
 
-    return `${day}-${month}-${year}`;
+  return `${day}-${month}-${year}`;
 };
 
 const getEmployeeDetailsByAdmin = (id: string): Promise<IFetchUserResponse> => {
-    return new Promise((resolve, reject) => {
-        UserModel.findOne({ _id: id })
-            .populate('bloodGroup')
-            .populate('employmentType')
-            .populate('employeeRole')
-            .populate('organization')
-            .populate('department')
-            .then((user: any) => {
-                if (!user) {
-                    reject({ success: false });
-                } else {
-                    resolve({
-                        success: true,
-                        userDetails: {
-                            id: user.id,
-                            firstName: user.firstName,
-                            lastName: user.lastName,
-                            email: user.email,
-                            mobileNumber: user.mobileNumber,
-                            bloodGroup: user.bloodGroup,
-                            bankDetailsInfo: user.bankDetailsInfo,
-                            employmentType: user.employmentType,
-                            employeeRole: user.employeeRole,
-                            organization: user.organization,
-                            employeeId: user.employeeId,
-                            dateOfBirth: formatDate(user.dateOfBirth),
-                            aadharNumber: user.aadharNumber,
-                            panCardNumber: user.panCardNumber,
-                            dateOfJoining: formatDate(user.dateOfJoining),
-                            uanNumber: user.uanNumber,
-                            department: user.department,
-                            presentAddress: user.presentAddress,
-                            permanentAddress: user.permanentAddress
-                        }
-                    });
-                }
-            })
-            .catch((error: any) => {
-                console.error(`Error in fetching details: ${error}`);
-                reject({ success: false });
-            });
-    });
-}
+  return new Promise((resolve, reject) => {
+    UserModel.findOne({ _id: id })
+      .populate('bloodGroup')
+      .populate('employmentType')
+      .populate('employeeRole')
+      .populate('organization')
+      .populate('department')
+      .then((user: any) => {
+        if (!user) {
+          reject({ success: false });
+        } else {
+          resolve({
+            success: true,
+            userDetails: {
+              id: user.id,
+              firstName: user.firstName,
+              lastName: user.lastName,
+              email: user.email,
+              mobileNumber: user.mobileNumber,
+              bloodGroup: user.bloodGroup,
+              bankDetailsInfo: user.bankDetailsInfo,
+              employmentType: user.employmentType,
+              employeeRole: user.employeeRole,
+              organization: user.organization,
+              employeeId: user.employeeId,
+              dateOfBirth: formatDate(user.dateOfBirth),
+              aadharNumber: user.aadharNumber,
+              panCardNumber: user.panCardNumber,
+              dateOfJoining: formatDate(user.dateOfJoining),
+              uanNumber: user.uanNumber,
+              department: user.department,
+              presentAddress: user.presentAddress,
+              permanentAddress: user.permanentAddress,
+            },
+          });
+        }
+      })
+      .catch((error: any) => {
+        console.error(`Error in fetching details: ${error}`);
+        reject({ success: false });
+      });
+  });
+};
 
 export default { getEmployeeDetailsByAdmin };

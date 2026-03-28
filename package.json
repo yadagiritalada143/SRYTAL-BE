@@ -11,7 +11,8 @@
     "coverage": "jest --coverage",
     "executeInsertScript": "ts-node -r dotenv/config src/script-executors/executeInsertScripts.ts",
     "executeUpdateScript": "ts-node -r dotenv/config src/script-executors/executeUpdateScripts.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "format": "prettier --write ."
   },
   "keywords": [
     "srytal"
@@ -82,6 +83,7 @@
     "mongodb-memory-server": "^10.1.2",
     "morgan": "^1.10.0",
     "nodemon": "^3.1.4",
+    "prettier": "^3.8.1",
     "supertest": "^6.3.4",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",

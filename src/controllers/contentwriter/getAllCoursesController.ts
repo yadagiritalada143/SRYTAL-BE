@@ -3,14 +3,20 @@ import getAllCoursesService from '../../services/contentwriter/getAllCoursesServ
 import { COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessages';
 
 const getAllCourses = (req: Request, res: Response) => {
-    getAllCoursesService.AllCourses()
-        .then((FetchAllCoursesResponse: any) => {
-            res.status(200).json(FetchAllCoursesResponse);
-        })
-        .catch(error => {
-            console.error(`Error in fetching courses: ${error}`);
-            res.status(500).json({ success: false, message: COURSE_ERROR_MESSAGES.COURSE_FETCH_ERROR_MESSAGE });
+  getAllCoursesService
+    .AllCourses()
+    .then((FetchAllCoursesResponse: any) => {
+      res.status(200).json(FetchAllCoursesResponse);
+    })
+    .catch((error) => {
+      console.error(`Error in fetching courses: ${error}`);
+      res
+        .status(500)
+        .json({
+          success: false,
+          message: COURSE_ERROR_MESSAGES.COURSE_FETCH_ERROR_MESSAGE,
         });
+    });
 };
 
-export default { getAllCourses }
+export default { getAllCourses };

@@ -1,18 +1,20 @@
 import FeedbackAttributesModel from '../../model/feedbackAttributesModel';
 import { DeleteFeedbackAttributeByAdminResponse } from '../../interfaces/feedbackattributes';
 
-const deleteFeedbackAttributeByAdmin = async (id: string): Promise<DeleteFeedbackAttributeByAdminResponse> => {
-    try {
-        const result = await FeedbackAttributesModel.findByIdAndDelete(id);
-        if(result) {
-             return { success: true, responseAfterDelete: result };
-        } else {
-            return { success: false };
-        }
-    } catch ( error: any) {
-        console.error(`Error in deleting feedback attribute: ${error}`);
-        return { success: false };
+const deleteFeedbackAttributeByAdmin = async (
+  id: string
+): Promise<DeleteFeedbackAttributeByAdminResponse> => {
+  try {
+    const result = await FeedbackAttributesModel.findByIdAndDelete(id);
+    if (result) {
+      return { success: true, responseAfterDelete: result };
+    } else {
+      return { success: false };
     }
+  } catch (error: any) {
+    console.error(`Error in deleting feedback attribute: ${error}`);
+    return { success: false };
+  }
 };
 
 export default { deleteFeedbackAttributeByAdmin };

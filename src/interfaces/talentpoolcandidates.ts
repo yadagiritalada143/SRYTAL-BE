@@ -1,41 +1,41 @@
-import mongoose, { Document } from "mongoose";
+import mongoose, { Document } from 'mongoose';
 
 export interface ITalentPoolCandidates extends Document {
-    id: Object;
-    candidateName: string;
-    contact: {
-        email: string;
-        phone: string;
-    };
-    totalYearsOfExperience?: number;
-    relaventYearsOfExperience?: number;
-    evaluatedSkills?: string;
-    isDeleted?: boolean;
-    comments?: {
-        sort(arg0: (a: any, b: any) => number): unknown;
-        comment?: string;
-        callStartsAt?: Date;
-        callEndsAt?: Date;
-        userId?: mongoose.Schema.Types.ObjectId;
-        updateAt?: Date;
-    },
-    isResumeWithDetailsUpload?: boolean;
-    isResumeWithoutDetailsUpload?: boolean;
-    createdBy: mongoose.Schema.Types.ObjectId;
-    createdAt: Date;
-    lastUpdatedAt: Date;
+  id: Object;
+  candidateName: string;
+  contact: {
+    email: string;
+    phone: string;
+  };
+  totalYearsOfExperience?: number;
+  relaventYearsOfExperience?: number;
+  evaluatedSkills?: string;
+  isDeleted?: boolean;
+  comments?: {
+    sort(arg0: (a: any, b: any) => number): unknown;
+    comment?: string;
+    callStartsAt?: Date;
+    callEndsAt?: Date;
+    userId?: mongoose.Schema.Types.ObjectId;
+    updateAt?: Date;
+  };
+  isResumeWithDetailsUpload?: boolean;
+  isResumeWithoutDetailsUpload?: boolean;
+  createdBy: mongoose.Schema.Types.ObjectId;
+  createdAt: Date;
+  lastUpdatedAt: Date;
 }
 
 export interface IDeletePoolCandidateResponse {
-    success: boolean;
+  success: boolean;
 }
 
 export interface IFetchTalentPoolCandidatesListResponse {
-    success: boolean;
-    talentPoolCandidatesList?: any;
+  success: boolean;
+  talentPoolCandidatesList?: any;
 }
 
 export interface IFetchTalentPoolCandidateDetailsResponse {
-    success: boolean;
-    talentPoolCandidateDetails?: any;
+  success: boolean;
+  talentPoolCandidateDetails?: any;
 }

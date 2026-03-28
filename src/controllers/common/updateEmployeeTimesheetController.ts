@@ -3,26 +3,32 @@ import updateEmployeeTimesheetService from '../../services/common/updateEmployee
 import { UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES } from '../../constants/common/employeeTimesheetErrorMessage';
 
 const updateEmployeeTimesheet = (req: Request, res: Response) => {
-    const { userId } = req.body;
-    let updateEmployeeTimeSheetPayload: any = {};
-    let employeeIdToUpdateTimeSheet = '';
-    if (req.body && req.body.employeeId) {
-        employeeIdToUpdateTimeSheet = req.body.employeeId;
-    } else {
-        employeeIdToUpdateTimeSheet = userId;
-    }
+  const { userId } = req.body;
+  let updateEmployeeTimeSheetPayload: any = {};
+  let employeeIdToUpdateTimeSheet = '';
+  if (req.body && req.body.employeeId) {
+    employeeIdToUpdateTimeSheet = req.body.employeeId;
+  } else {
+    employeeIdToUpdateTimeSheet = userId;
+  }
 
-    updateEmployeeTimeSheetPayload.packages = req.body.packages;
-    updateEmployeeTimeSheetPayload.employeeId = employeeIdToUpdateTimeSheet;
-    updateEmployeeTimesheetService
-        .updateEmployeeTimesheet(updateEmployeeTimeSheetPayload)
-        .then((updateEmployeeTimesheetResponse: any) => {
-            res.status(200).json(updateEmployeeTimesheetResponse);
-        })
-        .catch((error: any) => {
-            console.error(`Error in updating employee timesheet: ${error}`);
-            res.status(500).json({ success: false, message: UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES.EMPLOYEE_TIMESHEET_UPDATING_ERROR_MESSAGE });
+  updateEmployeeTimeSheetPayload.packages = req.body.packages;
+  updateEmployeeTimeSheetPayload.employeeId = employeeIdToUpdateTimeSheet;
+  updateEmployeeTimesheetService
+    .updateEmployeeTimesheet(updateEmployeeTimeSheetPayload)
+    .then((updateEmployeeTimesheetResponse: any) => {
+      res.status(200).json(updateEmployeeTimesheetResponse);
+    })
+    .catch((error: any) => {
+      console.error(`Error in updating employee timesheet: ${error}`);
+      res
+        .status(500)
+        .json({
+          success: false,
+          message:
+            UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES.EMPLOYEE_TIMESHEET_UPDATING_ERROR_MESSAGE,
         });
-}
+    });
+};
 
-export default { updateEmployeeTimesheet }
+export default { updateEmployeeTimesheet };

@@ -28,20 +28,20 @@ export interface IUser extends Document {
   presentAddress?: string;
   permanentAddress?: string;
   refreshToken?: string;
-};
+}
 
 export interface FetchEmployeeDetailsResponse {
   success: boolean;
   usersList?: any;
-};
+}
 
 export interface UpdateProfileResponse {
   success: boolean;
-};
+}
 
 export interface IFetchUserResponse {
-    success: boolean;
-    userDetails?: any;
+  success: boolean;
+  userDetails?: any;
 }
 
 export interface IGetEmployeeDetailsResponse {
@@ -50,6 +50,6 @@ export interface IGetEmployeeDetailsResponse {
 }
 
 export interface IFetchSuperadminEmployeeListResponse {
-    success: boolean;
-    superadminEmployeeList?: any;
+  success: boolean;
+  superadminEmployeeList?: any;
 }

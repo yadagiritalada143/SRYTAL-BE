@@ -14,7 +14,6 @@ import recruiterRouter from './routes/recruiterRoutes';
 import schedularService from './jobs/timesheetcronjob';
 import contentwriterRouter from './routes/contentwriterRoutes';
 
-
 dotenv.config();
 
 const app: Express = express();
@@ -27,36 +26,40 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 
 app.use(express.json());
 app.use(
-    session({
-        secret: SECRET_KEY,
-        resave: false,
-        saveUninitialized: false,
-    }),
+  session({
+    secret: SECRET_KEY,
+    resave: false,
+    saveUninitialized: false,
+  })
 );
 app.use(morgan('dev'));
-app.use(cors({
-    exposedHeaders: ["*"]
-}));
+app.use(
+  cors({
+    exposedHeaders: ['*'],
+  })
+);
 
 app.use('/', commonRouter);
 app.use('/admin', adminRouter);
 app.use('/superadmin', superadminRouter);
 app.use('/recruiter', recruiterRouter);
-app.use('/contentwriter', contentwriterRouter)
+app.use('/contentwriter', contentwriterRouter);
 
 const startServer = async () => {
-    try {
-        await connectToDb();
+  try {
+    await connectToDb();
 
-        schedularService.updateNextMonthTimeSheet();
+    schedularService.updateNextMonthTimeSheet();
 
-        app.listen(port, () => {
-            console.log(`Server is running on port ${port} [${process.env.NODE_ENV || 'development'}]`);
-        });
-    } catch (error) {
-        console.error('Failed to start server:', error);
-        process.exit(1);
-    }
+    app.listen(port, () => {
+      console.log(
+        `Server is running on port ${port} [${process.env.NODE_ENV || 'development'}]`
+      );
+    });
+  } catch (error) {
+    console.error('Failed to start server:', error);
+    process.exit(1);
+  }
 };
 
 startServer();

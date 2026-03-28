@@ -4,33 +4,50 @@ import hashPasswordUtility from '../../util/hashPassword';
 import Usermodel from '../../model/userModel';
 
 const randomPasswordGenerate = () => {
-    return (Math.floor(Math.random() * 90000000) + 10000000) + '';
-}
+  return Math.floor(Math.random() * 90000000) + 10000000 + '';
+};
 
 const forgotPassword = async (email: string) => {
-    return new Promise(async (resolve, reject) => {
-        await UserModel.findOne({ email })
-            .then((user: any) => {
-                if (!user) {
-                    resolve({ success: false, message: 'User not Exists !' });
-                } else {
-                    const randomPassword = randomPasswordGenerate();
-                    hashPasswordUtility.hashPassword(randomPassword).then(async (hashedPassword) => {
-                        utilService.sendOTPEmail(user.firstName, user.lastName, user.email, randomPassword);
+  return new Promise(async (resolve, reject) => {
+    await UserModel.findOne({ email })
+      .then((user: any) => {
+        if (!user) {
+          resolve({ success: false, message: 'User not Exists !' });
+        } else {
+          const randomPassword = randomPasswordGenerate();
+          hashPasswordUtility
+            .hashPassword(randomPassword)
+            .then(async (hashedPassword) => {
+              utilService.sendOTPEmail(
+                user.firstName,
+                user.lastName,
+                user.email,
+                randomPassword
+              );
 
-                        const result = await Usermodel.findOneAndUpdate({ email }, { password: hashedPassword, passwordResetRequired: 'true' });
-                        if (!result) {
-                            reject({ success: false, message: 'Error in sending OTP to user !' });
-                        }
-                        resolve({ success: true, message: 'Email Sent successfully to you. Please check your Inbox and come back to Login page and then login with your temporary password !' });
-                    })
-                }
-            })
-            .catch((error: any) => {
-                console.error(`Error in forget password flow:  ${error}`);
-                reject({ success: false, message: 'Error in forget password flow !' });
-            })
-    });
-}
+              const result = await Usermodel.findOneAndUpdate(
+                { email },
+                { password: hashedPassword, passwordResetRequired: 'true' }
+              );
+              if (!result) {
+                reject({
+                  success: false,
+                  message: 'Error in sending OTP to user !',
+                });
+              }
+              resolve({
+                success: true,
+                message:
+                  'Email Sent successfully to you. Please check your Inbox and come back to Login page and then login with your temporary password !',
+              });
+            });
+        }
+      })
+      .catch((error: any) => {
+        console.error(`Error in forget password flow:  ${error}`);
+        reject({ success: false, message: 'Error in forget password flow !' });
+      });
+  });
+};
 
-export default { forgotPassword }
+export default { forgotPassword };

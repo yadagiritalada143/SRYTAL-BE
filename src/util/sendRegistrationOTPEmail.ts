@@ -4,20 +4,25 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const emailConfiguration: any = {
-    service: process.env.EMAIL_CONFIG_SERVICE,
-    host: process.env.EMAIL_CONFIG_HOST,
-    port: Number(process.env.EMAIL_CONFIG_PORT),
-    secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
-    auth: {
-        user: process.env.EMAIL_CONFIG_AUTH_USER,
-        pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-    }
-}
+  service: process.env.EMAIL_CONFIG_SERVICE,
+  host: process.env.EMAIL_CONFIG_HOST,
+  port: Number(process.env.EMAIL_CONFIG_PORT),
+  secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
+  auth: {
+    user: process.env.EMAIL_CONFIG_AUTH_USER,
+    pass: process.env.EMAIL_CONFIG_AUTH_PASS,
+  },
+};
 
-const sendOTPEmail = async (firstName: string, lastName: string, userName: string, tempPassword: string) => {
-    try {
-        const transporter = nodemailer.createTransport(emailConfiguration);
-        const mailBody = `     
+const sendOTPEmail = async (
+  firstName: string,
+  lastName: string,
+  userName: string,
+  tempPassword: string
+) => {
+  try {
+    const transporter = nodemailer.createTransport(emailConfiguration);
+    const mailBody = `     
 <html>
   <body style="font-family: serif; background-color: #f4f4f9; padding: 20px;">
     <div style="max-width: 750px; height:auto; margin: 0 auto; border: 1px solid #f7f1f4 ; border-radius: 5px;">
@@ -69,26 +74,26 @@ const sendOTPEmail = async (firstName: string, lastName: string, userName: strin
   </body>
 </html> `;
 
-        const mailOptions = {
-            from: process.env.EMAIL_FROM,
-            to: userName,
-            subject: 'Login Details !',
-            html: mailBody,
-        };
+    const mailOptions = {
+      from: process.env.EMAIL_FROM,
+      to: userName,
+      subject: 'Login Details !',
+      html: mailBody,
+    };
 
-        const result = await transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                return error;
-            }
-
-            console.warn(`Info after sent: ${info.response}`)
-            return info.response;
-        });
-        return result;
-    } catch (error) {
-        console.error(`Error in sending Email at services: ${error}`);
+    const result = await transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
         return error;
-    }
-}
+      }
 
-export default { sendOTPEmail }
+      console.warn(`Info after sent: ${info.response}`);
+      return info.response;
+    });
+    return result;
+  } catch (error) {
+    console.error(`Error in sending Email at services: ${error}`);
+    return error;
+  }
+};
+
+export default { sendOTPEmail };

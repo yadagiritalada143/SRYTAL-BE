@@ -18,7 +18,7 @@ const upload = multer({ storage: multer.memoryStorage() });
 const commonRouter: Router = express.Router();
 
 commonRouter.get('/', (req, res) => {
-    res.status(200).json({ message: 'Successfully server up and running !' });
+  res.status(200).json({ message: 'Successfully server up and running !' });
 });
 
 /**
@@ -103,7 +103,7 @@ commonRouter.get('/getVisitorCount', commonController.updateVisitorCount);
  *   post:
  *     summary: Send Contact Us Email
  *     description: Sends a contact email to the admin with customer details.
- *     tags: 
+ *     tags:
  *      - Common
  *     requestBody:
  *       required: true
@@ -158,7 +158,10 @@ commonRouter.get('/getVisitorCount', commonController.updateVisitorCount);
  *                   type: string
  *                   example: Failed to send notification email.
  */
-commonRouter.post('/sendContactUsMail', sendContactUsMailController.sendContactUsMail);
+commonRouter.post(
+  '/sendContactUsMail',
+  sendContactUsMailController.sendContactUsMail
+);
 
 /**
  * @swagger
@@ -211,14 +214,17 @@ commonRouter.post('/sendContactUsMail', sendContactUsMailController.sendContactU
  *                   type: string
  *                   example: "Error occurred while updating application walkthrough"
  */
-commonRouter.post('/updateApplicationWalkThrough', updateApplicationWalkThroughController.updateApplicationWalkThrough);
+commonRouter.post(
+  '/updateApplicationWalkThrough',
+  updateApplicationWalkThroughController.updateApplicationWalkThrough
+);
 
 /**
  * @swagger
  * /updatePassword:
  *   post:
  *     summary: Update user password
- *     tags: 
+ *     tags:
  *       - Common
  *     security:
  *       - BearerAuth: []
@@ -283,14 +289,18 @@ commonRouter.post('/updateApplicationWalkThrough', updateApplicationWalkThroughC
  *                   type: string
  *                   example: Error occured while updating the password !
  */
-commonRouter.post('/updatePassword', validateJWT, updatePasswordController.updatePassword);
+commonRouter.post(
+  '/updatePassword',
+  validateJWT,
+  updatePasswordController.updatePassword
+);
 
 /**
  * @swagger
  * /getOrganizationThemes/{organization_name}:
  *   get:
  *     summary: Get themes by organization name
- *     tags: 
+ *     tags:
  *       - Common
  *     parameters:
  *       - in: path
@@ -334,14 +344,17 @@ commonRouter.post('/updatePassword', validateJWT, updatePasswordController.updat
  *                   type: string
  *                   example: Error occured while fetching the themes !
  */
-commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThemesController.getOrganizationThemes);
+commonRouter.get(
+  '/getOrganizationThemes/:organization_name',
+  getOrganizationThemesController.getOrganizationThemes
+);
 
 /**
  * @swagger
  * /getEmployeeDetails:
  *   get:
  *     summary: Get employee details by user ID
- *     tags: 
+ *     tags:
  *      - Common
  *     security:
  *       - BearerAuth: []
@@ -384,19 +397,19 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
  *                       example: "9876543210"
  *                     bloodGroup:
  *                       type: object
- *                       description: Blood group details 
+ *                       description: Blood group details
  *                     bankDetailsInfo:
  *                       type: object
  *                       description: Bank details of employee
  *                     employeeRole:
  *                       type: object
- *                       description: Employee role details 
+ *                       description: Employee role details
  *                     employmentType:
  *                       type: object
  *                       description: Employment type details
  *                     organization:
  *                       type: object
- *                       description: Organization details 
+ *                       description: Organization details
  *                     userRole:
  *                       type: string
  *                       example: EMPLOYEE
@@ -443,14 +456,18 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
  *                   type: string
  *                   example: Error in fetching employee details
  */
-commonRouter.get('/getEmployeeDetails', validateJWT, getEmployeeDetailsController.getEmployeeDetails);
+commonRouter.get(
+  '/getEmployeeDetails',
+  validateJWT,
+  getEmployeeDetailsController.getEmployeeDetails
+);
 
 /**
  * @swagger
  * /uploadProfileImage:
  *   post:
  *     summary: Upload employee profile image
- *     tags: 
+ *     tags:
  *      - Common
  *     security:
  *       - BearerAuth: []
@@ -513,14 +530,19 @@ commonRouter.get('/getEmployeeDetails', validateJWT, getEmployeeDetailsControlle
  *                   type: string
  *                   example: Error occured while updating the Profile Image
  */
-commonRouter.post('/uploadProfileImage', upload.single('profileImage'), validateJWT, uploadProfileImageController.uploadProfileImage);
+commonRouter.post(
+  '/uploadProfileImage',
+  upload.single('profileImage'),
+  validateJWT,
+  uploadProfileImageController.uploadProfileImage
+);
 
 /**
  * @swagger
  * /getProfileImage:
  *   get:
  *     summary: Get employee profile image
- *     tags: 
+ *     tags:
  *     - Common
  *     security:
  *       - BearerAuth: []
@@ -568,14 +590,18 @@ commonRouter.post('/uploadProfileImage', upload.single('profileImage'), validate
  *                   type: string
  *                   example: Error occured while fetching the Profile Image
  */
-commonRouter.get('/getProfileImage', validateJWT, getProfileImageController.getProfileImage);
+commonRouter.get(
+  '/getProfileImage',
+  validateJWT,
+  getProfileImageController.getProfileImage
+);
 
 /**
  * @swagger
  * /forgotPassword:
  *   post:
  *     summary: Generate temporary password and send to registered email
- *     tags: 
+ *     tags:
  *     - Common
  *     requestBody:
  *       required: true
@@ -702,7 +728,11 @@ commonRouter.post('/forgotPassword', forgotPasswordController.forgotPassword);
  *                 success: false
  *                 message: "Error while fetching employee package details"
  */
-commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT, employeePackageDetailsByIdController.employeePackageDetailsById);
+commonRouter.post(
+  '/fetchEmployeePackageDetailsById',
+  validateJWT,
+  employeePackageDetailsByIdController.employeePackageDetailsById
+);
 
 /**
  * @swagger
@@ -804,7 +834,11 @@ commonRouter.post('/fetchEmployeePackageDetailsById', validateJWT, employeePacka
  *                 success: false
  *                 message: "Error while updating employee timesheet"
  */
-commonRouter.put('/updateEmployeeTimesheet', validateJWT, updateEmployeeTimesheetController.updateEmployeeTimesheet);
+commonRouter.put(
+  '/updateEmployeeTimesheet',
+  validateJWT,
+  updateEmployeeTimesheetController.updateEmployeeTimesheet
+);
 
 /**
  * @swagger
@@ -935,6 +969,10 @@ commonRouter.put('/updateEmployeeTimesheet', validateJWT, updateEmployeeTimeshee
  *                   type: string
  *                   example: Error occurred while fetching salary slip download URL
  */
-commonRouter.post('/downloadSalarySlip', validateJWT, downloadSalarySlipController.downloadSalarySlip);
+commonRouter.post(
+  '/downloadSalarySlip',
+  validateJWT,
+  downloadSalarySlipController.downloadSalarySlip
+);
 
 export default commonRouter;

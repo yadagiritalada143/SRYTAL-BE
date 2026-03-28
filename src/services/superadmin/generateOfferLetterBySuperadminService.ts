@@ -1,7 +1,6 @@
 import PDFDocument from 'pdfkit';
 import { Response } from 'express';
 
-
 const generateOfferLetterBySuperadmin = async (
   res: Response,
   nameOfTheCandidate: string,
@@ -13,7 +12,10 @@ const generateOfferLetterBySuperadmin = async (
 ) => {
   const doc = new PDFDocument();
   res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', `attachment; filename=${nameOfTheCandidate}_OfferLetter.pdf`);
+  res.setHeader(
+    'Content-Disposition',
+    `attachment; filename=${nameOfTheCandidate}_OfferLetter.pdf`
+  );
   doc.pipe(res);
   doc.fontSize(20).text('Offer Letter', { align: 'center' }).moveDown();
   doc

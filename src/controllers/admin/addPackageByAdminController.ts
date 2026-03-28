@@ -1,18 +1,31 @@
-import { Request, Response } from "express";
-import addPackageByAdminService from "../../services/admin/addPackageByAdminService";
-import { PACKAGE_ERROR_MESSAGES, PACKAGE_SUCCESS_MESSAGES, HTTP_STATUS } from "../../constants/admin/packageMessages";
+import { Request, Response } from 'express';
+import addPackageByAdminService from '../../services/admin/addPackageByAdminService';
+import {
+  PACKAGE_ERROR_MESSAGES,
+  PACKAGE_SUCCESS_MESSAGES,
+  HTTP_STATUS,
+} from '../../constants/admin/packageMessages';
 
 const addPackageByAdmin = async (req: Request, res: Response) => {
-    try{
-        const addPackageDetails = req.body;
-         addPackageDetails.isDeleted = false;
-         await addPackageByAdminService.addPackageByAdmin(addPackageDetails);
-         res.status(HTTP_STATUS.OK).json({ success: true, message:PACKAGE_SUCCESS_MESSAGES.PACKAGE_ADD_SUCCESS_MESSAGE });
-
-    } catch(error) {
-        console.error(`Error while adding packages: ${error}`);
-        res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({success: false,  message: PACKAGE_ERROR_MESSAGES.PACKAGE_ADD_ERROR_MESSAGE,})
-    }
-}
+  try {
+    const addPackageDetails = req.body;
+    addPackageDetails.isDeleted = false;
+    await addPackageByAdminService.addPackageByAdmin(addPackageDetails);
+    res
+      .status(HTTP_STATUS.OK)
+      .json({
+        success: true,
+        message: PACKAGE_SUCCESS_MESSAGES.PACKAGE_ADD_SUCCESS_MESSAGE,
+      });
+  } catch (error) {
+    console.error(`Error while adding packages: ${error}`);
+    res
+      .status(HTTP_STATUS.INTERNAL_SERVER_ERROR)
+      .json({
+        success: false,
+        message: PACKAGE_ERROR_MESSAGES.PACKAGE_ADD_ERROR_MESSAGE,
+      });
+  }
+};
 
 export default { addPackageByAdmin };

@@ -11,10 +11,15 @@ const emailConfiguration: any = {
   auth: {
     user: process.env.EMAIL_CONFIG_AUTH_USER,
     pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-  }
-}
+  },
+};
 
-const sendResetPasswordMail = async (firstName: string, lastName: string, userName: string, tempPassword: string) => {
+const sendResetPasswordMail = async (
+  firstName: string,
+  lastName: string,
+  userName: string,
+  tempPassword: string
+) => {
   try {
     const transporter = nodemailer.createTransport(emailConfiguration);
     const mailBody = `     
@@ -79,7 +84,7 @@ const sendResetPasswordMail = async (firstName: string, lastName: string, userNa
         return error;
       }
 
-      console.warn(`Info after sent: ${info.response}`)
+      console.warn(`Info after sent: ${info.response}`);
       return info.response;
     });
     return result;
@@ -87,6 +92,6 @@ const sendResetPasswordMail = async (firstName: string, lastName: string, userNa
     console.error(`Error in sending Email at services: ${error}`);
     return error;
   }
-}
+};
 
-export default { sendResetPasswordMail }
+export default { sendResetPasswordMail };

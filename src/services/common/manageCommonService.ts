@@ -4,7 +4,10 @@ import dotenv from 'dotenv';
 import csrf from 'csrf-token';
 import UserModel from '../../model/userModel';
 import VisitorsCountModel from '../../model/visitorsCountModel';
-import { IAuthResponse, ILoginCredentials } from '../../interfaces/logincredentials';
+import {
+  IAuthResponse,
+  ILoginCredentials,
+} from '../../interfaces/logincredentials';
 
 dotenv.config();
 

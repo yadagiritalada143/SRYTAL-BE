@@ -1,29 +1,36 @@
 import PackagesModel from '../../model/packageModel';
 import TaskModel from '../../model/taskModel';
-import {FetchPackagesDetailsResponse} from '../../interfaces/package';
+import { FetchPackagesDetailsResponse } from '../../interfaces/package';
 
-const getPackageDetailsByAdmin = async (id: string): Promise<FetchPackagesDetailsResponse> => {
-    try {
-        const packageDoc = await PackagesModel.findById(id)
-            .populate('approvers', 'firstName lastName');
+const getPackageDetailsByAdmin = async (
+  id: string
+): Promise<FetchPackagesDetailsResponse> => {
+  try {
+    const packageDoc = await PackagesModel.findById(id).populate(
+      'approvers',
+      'firstName lastName'
+    );
 
-        if (!packageDoc) {
-            return { success: false };
-        }
-
-        const taskDetails = await TaskModel.find({ packageId: id, isDeleted: false }).populate('createdBy', 'firstName lastName');
-
-        const packageDetails = packageDoc.toObject() as any;
-        packageDetails.tasks = taskDetails;
-
-        return {
-            success: true,
-            packageDetails
-        };
-    } catch (error) {
-        console.error(`Error in fetching Package details: ${error}`);
-        return { success: false };
+    if (!packageDoc) {
+      return { success: false };
     }
+
+    const taskDetails = await TaskModel.find({
+      packageId: id,
+      isDeleted: false,
+    }).populate('createdBy', 'firstName lastName');
+
+    const packageDetails = packageDoc.toObject() as any;
+    packageDetails.tasks = taskDetails;
+
+    return {
+      success: true,
+      packageDetails,
+    };
+  } catch (error) {
+    console.error(`Error in fetching Package details: ${error}`);
+    return { success: false };
+  }
 };
 
 export default { getPackageDetailsByAdmin };
