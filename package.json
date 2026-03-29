@@ -7,7 +7,7 @@
     "build": "npx tsc",
     "start": "nodemon dist/index.js",
     "dev": "nodemon src/index.ts",
-    "test": "jest",
+    "test": "jest --coverage=false",
     "coverage": "jest --coverage",
     "executeInsertScript": "ts-node -r dotenv/config src/script-executors/executeInsertScripts.ts",
     "executeUpdateScript": "ts-node -r dotenv/config src/script-executors/executeUpdateScripts.ts",
