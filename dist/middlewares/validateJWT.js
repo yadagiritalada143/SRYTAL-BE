@@ -13,17 +13,17 @@ const validateJWT = (req, res, next) => {
     if (authToken) {
         jsonwebtoken_1.default.verify(authToken, SECRET_KEY, (error, decoded) => {
             if (error) {
-                return res.status(403).json({ message: "Invalid token !" });
+                return res.status(403).json({ message: 'Invalid token !' });
             }
             req.user = {
                 userId: decoded.userId || '',
-                organizationId: decoded.organizationId || ''
+                organizationId: decoded.organizationId || '',
             };
             next();
         });
     }
     else {
-        res.status(401).json({ message: "No token provided !" });
+        res.status(401).json({ message: 'No token provided !' });
     }
 };
 exports.default = validateJWT;

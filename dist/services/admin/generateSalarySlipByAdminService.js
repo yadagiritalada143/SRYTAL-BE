@@ -56,15 +56,25 @@ const SALARY_CALCULATION_DEFAULTS = {
 };
 const getPayslipMonth = (payPeriod) => {
     const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
     ];
     const parts = payPeriod.trim().split(' ');
     if (parts.length !== 2)
         return payPeriod;
     const monthName = parts[0];
     const year = parseInt(parts[1], 10);
-    const monthIndex = months.findIndex(m => m.toLowerCase() === monthName.toLowerCase());
+    const monthIndex = months.findIndex((m) => m.toLowerCase() === monthName.toLowerCase());
     if (monthIndex === -1 || isNaN(year))
         return payPeriod;
     const nextMonthIndex = (monthIndex + 1) % 12;
@@ -73,19 +83,39 @@ const getPayslipMonth = (payPeriod) => {
 };
 const getPayPeriodDateRange = (payPeriod) => {
     const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
     ];
     const monthsShort = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
     ];
     const parts = payPeriod.trim().split(' ');
     if (parts.length !== 2)
         return payPeriod;
     const monthName = parts[0];
     const year = parseInt(parts[1], 10);
-    const monthIndex = months.findIndex(m => m.toLowerCase() === monthName.toLowerCase());
+    const monthIndex = months.findIndex((m) => m.toLowerCase() === monthName.toLowerCase());
     if (monthIndex === -1 || isNaN(year))
         return payPeriod;
     const lastDay = new Date(year, monthIndex + 1, 0).getDate();
@@ -102,7 +132,12 @@ const calculateSalaryComponents = (request) => {
     const medicalAllowance = (_c = request.medicalAllowance) !== null && _c !== void 0 ? _c : SALARY_CALCULATION_DEFAULTS.MEDICAL_ALLOWANCE;
     const specialAllowance = (_d = request.specialAllowance) !== null && _d !== void 0 ? _d : 0;
     const otherAllowances = (_e = request.otherAllowances) !== null && _e !== void 0 ? _e : 0;
-    const grossEarnings = basicSalary + hra + specialAllowance + conveyanceAllowance + medicalAllowance + otherAllowances;
+    const grossEarnings = basicSalary +
+        hra +
+        specialAllowance +
+        conveyanceAllowance +
+        medicalAllowance +
+        otherAllowances;
     const lopDays = (_f = request.lossOfPayDays) !== null && _f !== void 0 ? _f : 0;
     const perDaySalary = grossEarnings / request.totalWorkingDays;
     const lopDeduction = Math.round(perDaySalary * lopDays);
@@ -112,7 +147,11 @@ const calculateSalaryComponents = (request) => {
     const professionalTax = (_h = request.professionalTax) !== null && _h !== void 0 ? _h : SALARY_CALCULATION_DEFAULTS.PROFESSIONAL_TAX;
     const incomeTax = (_j = request.incomeTax) !== null && _j !== void 0 ? _j : 0;
     const otherDeductions = (_k = request.otherDeductions) !== null && _k !== void 0 ? _k : 0;
-    const totalDeductions = providentFund + professionalTax + incomeTax + otherDeductions + lopDeduction;
+    const totalDeductions = providentFund +
+        professionalTax +
+        incomeTax +
+        otherDeductions +
+        lopDeduction;
     const netPay = grossEarnings - totalDeductions;
     const netPayInWords = (0, numberToWords_1.convertAmountToWords)(netPay);
     return {
@@ -138,7 +177,20 @@ const formattedDate = (dateInput, format = 'DD-MMM-YYYY') => {
     const day = String(date.getDate()).padStart(2, '0');
     const monthIndex = date.getMonth();
     const year = date.getFullYear();
-    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthsShort = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+    ];
     const monthName = monthsShort[monthIndex];
     if (format === 'DD/MM/YYYY') {
         return `${day}/${date.getMonth() + 1}/${year}`;
@@ -176,7 +228,7 @@ const prepareSalarySlipData = (request) => {
 const validateRequest = (request) => {
     const errors = [];
     if (!request.payDate) {
-        errors.push("Pay date is required");
+        errors.push('Pay date is required');
     }
     else {
         const date = new Date(request.payDate);
@@ -251,7 +303,7 @@ const generateSalarySlipPDF = async (request) => {
         console.warn('[SalarySlipService] PDF generation result:', JSON.stringify({
             success: pdfResult.success,
             pdfBufferSize: pdfResult.pdfBuffer ? pdfResult.pdfBuffer.length : 0,
-            error: pdfResult.error
+            error: pdfResult.error,
         }));
         if (pdfResult.success) {
             const fileName = `${request.payPeriod.replace(/\s+/g, '-')}-${request.employeeName.replace(/\s+/g, '-')}_Salary-Slip.pdf`;
@@ -272,4 +324,9 @@ const generateSalarySlipPDF = async (request) => {
         };
     }
 };
-exports.default = { generateSalarySlipPDF, calculateSalaryComponents, prepareSalarySlipData, validateRequest };
+exports.default = {
+    generateSalarySlipPDF,
+    calculateSalaryComponents,
+    prepareSalarySlipData,
+    validateRequest,
+};

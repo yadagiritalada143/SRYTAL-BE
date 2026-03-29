@@ -9,7 +9,7 @@ const BloodgroupSchema = new mongoose_1.default.Schema({
 }, {
     collection: 'blood-group',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
 });
 const BloodgroupModel = mongoose_1.default.model('BloodgroupSchema', BloodgroupSchema);
 exports.default = BloodgroupModel;

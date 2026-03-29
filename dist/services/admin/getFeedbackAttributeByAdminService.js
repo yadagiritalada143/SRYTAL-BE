@@ -6,7 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const feedbackAttributesModel_1 = __importDefault(require("../../model/feedbackAttributesModel"));
 const getFeedbackAttributeByAdmin = async (id) => {
     try {
-        const feedbackAttributeDetails = await feedbackAttributesModel_1.default.findOne({ _id: id });
+        const feedbackAttributeDetails = await feedbackAttributesModel_1.default.findOne({
+            _id: id,
+        });
         return feedbackAttributeDetails;
     }
     catch (error) {

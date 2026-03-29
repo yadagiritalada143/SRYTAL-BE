@@ -14,7 +14,7 @@ const emailConfiguration = {
     auth: {
         user: process.env.EMAIL_CONFIG_AUTH_USER,
         pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-    }
+    },
 };
 const sendOTPEmail = async (firstName, lastName, userName, tempPassword) => {
     try {

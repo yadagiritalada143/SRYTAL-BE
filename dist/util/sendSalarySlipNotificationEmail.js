@@ -7,7 +7,20 @@ const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
 console.warn('[SalarySlipEmail] Module loaded');
 const formatPayDate = (dateString) => {
-    const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const monthsShort = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+    ];
     const parts = dateString.split('-');
     if (parts.length !== 3)
         return dateString;
@@ -27,7 +40,7 @@ const emailConfiguration = {
     auth: {
         user: process.env.EMAIL_CONFIG_AUTH_USER,
         pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-    }
+    },
 };
 // Log email configuration status for debugging
 console.warn('[SalarySlipEmail] Email Configuration Check:');
@@ -36,7 +49,9 @@ console.warn('[SalarySlipEmail] EMAIL_CONFIG_HOST:', process.env.EMAIL_CONFIG_HO
 console.warn('[SalarySlipEmail] EMAIL_CONFIG_PORT:', process.env.EMAIL_CONFIG_PORT || 'NOT SET');
 console.warn('[SalarySlipEmail] EMAIL_CONFIG_SECURE:', process.env.EMAIL_CONFIG_SECURE || 'NOT SET');
 console.warn('[SalarySlipEmail] EMAIL_CONFIG_AUTH_USER:', process.env.EMAIL_CONFIG_AUTH_USER ? 'SET' : 'NOT SET');
-console.warn('[SalarySlipEmail] EMAIL_CONFIG_AUTH_PASS:', process.env.EMAIL_CONFIG_AUTH_PASS ? 'SET (length: ' + process.env.EMAIL_CONFIG_AUTH_PASS.length + ')' : 'NOT SET');
+console.warn('[SalarySlipEmail] EMAIL_CONFIG_AUTH_PASS:', process.env.EMAIL_CONFIG_AUTH_PASS
+    ? 'SET (length: ' + process.env.EMAIL_CONFIG_AUTH_PASS.length + ')'
+    : 'NOT SET');
 console.warn('[SalarySlipEmail] EMAIL_FROM:', process.env.EMAIL_FROM || 'NOT SET');
 const sendSalarySlipNotificationEmail = async (details) => {
     console.warn('[SalarySlipEmail] sendSalarySlipNotificationEmail called');
@@ -119,7 +134,7 @@ const sendSalarySlipNotificationEmail = async (details) => {
             from: mailOptions.from,
             to: mailOptions.to,
             subject: mailOptions.subject,
-            htmlLength: mailBody.length
+            htmlLength: mailBody.length,
         }));
         console.warn('[SalarySlipEmail] Sending email...');
         const result = await transporter.sendMail(mailOptions);

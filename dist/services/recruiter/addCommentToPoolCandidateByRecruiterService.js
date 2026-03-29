@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const talentPoolCandidatesModel_1 = __importDefault(require("../../model/talentPoolCandidatesModel"));
-const addCommentToPoolCandidateByRecruiter = async ({ id, comment, callStartsAt, callEndsAt, userId }) => {
-    let result = await talentPoolCandidatesModel_1.default.findByIdAndUpdate(id, {
+const addCommentToPoolCandidateByRecruiter = async ({ id, comment, callStartsAt, callEndsAt, userId, }) => {
+    const result = await talentPoolCandidatesModel_1.default.findByIdAndUpdate(id, {
         lastUpdatedAt: new Date(),
         $push: {
             comments: {
@@ -13,14 +13,15 @@ const addCommentToPoolCandidateByRecruiter = async ({ id, comment, callStartsAt,
                 userId,
                 callStartsAt,
                 callEndsAt,
-                updateAt: new Date()
-            }
-        }
+                updateAt: new Date(),
+            },
+        },
     }, {
-        new: true, populate: {
+        new: true,
+        populate: {
             path: 'comments.userId',
-            select: 'firstName lastName'
-        }
+            select: 'firstName lastName',
+        },
     });
     return result;
 };

@@ -10,7 +10,7 @@ const FeedbackAttributesSchema = new mongoose_1.default.Schema({
 }, {
     collection: 'feedback-attributes',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
 });
 FeedbackAttributesSchema.plugin(mongoose_unique_validator_1.default);
 const FeedbackAttributesModel = mongoose_1.default.model('FeedbackAttributesModel', FeedbackAttributesSchema);

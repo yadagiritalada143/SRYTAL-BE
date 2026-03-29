@@ -17,11 +17,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const employeePackageModel_1 = __importDefault(require("../../model/employeePackageModel"));
 const getEmployeePackageDetailsByAdmin = async (employeeId) => {
     try {
-        const employeePackageDetails = await employeePackageModel_1.default.find({ employeeId })
+        const employeePackageDetails = await employeePackageModel_1.default.find({
+            employeeId,
+        })
             .populate('packages.packageId')
             .populate({
             path: 'packages.tasks.taskId',
-            select: '-timesheet'
+            select: '-timesheet',
         });
         if (!employeePackageDetails) {
             return { success: false };
@@ -41,7 +43,7 @@ const getEmployeePackageDetailsByAdmin = async (employeeId) => {
         });
         return {
             success: true,
-            employeePackageDetails: filtered
+            employeePackageDetails: filtered,
         };
     }
     catch (error) {

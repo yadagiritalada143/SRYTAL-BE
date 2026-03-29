@@ -10,11 +10,17 @@ const addPackageByAdmin = async (req, res) => {
         const addPackageDetails = req.body;
         addPackageDetails.isDeleted = false;
         await addPackageByAdminService_1.default.addPackageByAdmin(addPackageDetails);
-        res.status(packageMessages_1.HTTP_STATUS.OK).json({ success: true, message: packageMessages_1.PACKAGE_SUCCESS_MESSAGES.PACKAGE_ADD_SUCCESS_MESSAGE });
+        res.status(packageMessages_1.HTTP_STATUS.OK).json({
+            success: true,
+            message: packageMessages_1.PACKAGE_SUCCESS_MESSAGES.PACKAGE_ADD_SUCCESS_MESSAGE,
+        });
     }
     catch (error) {
         console.error(`Error while adding packages: ${error}`);
-        res.status(packageMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: packageMessages_1.PACKAGE_ERROR_MESSAGES.PACKAGE_ADD_ERROR_MESSAGE, });
+        res.status(packageMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: packageMessages_1.PACKAGE_ERROR_MESSAGES.PACKAGE_ADD_ERROR_MESSAGE,
+        });
     }
 };
 exports.default = { addPackageByAdmin };

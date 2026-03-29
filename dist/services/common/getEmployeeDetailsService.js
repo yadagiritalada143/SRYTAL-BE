@@ -11,7 +11,20 @@ const formatDate = (date) => {
     if (isNaN(d.getTime()))
         return null;
     const day = String(d.getDate()).padStart(2, '0');
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+    ];
     const month = months[d.getMonth()];
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
@@ -52,8 +65,8 @@ const getEmployeeDetails = (id) => {
                         panCardNumber: employee.panCardNumber,
                         uanNumber: employee.uanNumber,
                         department: employee.department,
-                        dateOfJoining: formatDate(employee.dateOfJoining)
-                    }
+                        dateOfJoining: formatDate(employee.dateOfJoining),
+                    },
                 });
             }
         })

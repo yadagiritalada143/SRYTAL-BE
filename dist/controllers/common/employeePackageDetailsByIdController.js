@@ -17,16 +17,20 @@ const employeePackageDetailsById = (req, res) => {
     if (!startDate || !endDate) {
         return res.status(400).json({
             success: false,
-            message: 'FROM date and TO date are required !!'
+            message: 'FROM date and TO date are required !!',
         });
     }
-    employeePackageDetailsByIdService_1.default.employeePackageDetailsById(employeeIdToFetchTimeSheet, startDate, endDate)
-        .then(employeePackageDetailsByIdResponse => {
+    employeePackageDetailsByIdService_1.default
+        .employeePackageDetailsById(employeeIdToFetchTimeSheet, startDate, endDate)
+        .then((employeePackageDetailsByIdResponse) => {
         res.status(200).json(employeePackageDetailsByIdResponse);
     })
-        .catch(error => {
+        .catch((error) => {
         console.error(`Error in fetching Employee Package details: ${error}`);
-        res.status(500).json({ success: false, message: packageMessages_1.PACKAGE_ERROR_MESSAGES.PACKAGE_DETAILS_FETCH_ERROR_MESSAGE });
+        res.status(500).json({
+            success: false,
+            message: packageMessages_1.PACKAGE_ERROR_MESSAGES.PACKAGE_DETAILS_FETCH_ERROR_MESSAGE,
+        });
     });
 };
 exports.default = { employeePackageDetailsById };

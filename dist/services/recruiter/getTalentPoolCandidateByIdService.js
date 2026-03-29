@@ -6,8 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const talentPoolCandidatesModel_1 = __importDefault(require("../../model/talentPoolCandidatesModel"));
 const getTalentPoolCandidateDetails = (talentPoolCandidateId) => {
     return new Promise((resolve, reject) => {
-        talentPoolCandidatesModel_1.default
-            .findById({ _id: talentPoolCandidateId })
+        talentPoolCandidatesModel_1.default.findById({ _id: talentPoolCandidateId })
             .populate('comments.userId', 'firstName lastName')
             .then((talentPoolCandidateDetails) => {
             if (!talentPoolCandidateDetails) {
@@ -15,9 +14,10 @@ const getTalentPoolCandidateDetails = (talentPoolCandidateId) => {
             }
             else {
                 if (Array.isArray(talentPoolCandidateDetails.comments)) {
-                    talentPoolCandidateDetails.comments = talentPoolCandidateDetails.comments
-                        .map((comment) => (Object.assign(Object.assign({}, comment), { updateAt: new Date(comment.updateAt).getTime() || 0 })))
-                        .sort((a, b) => b.updateAt - a.updateAt);
+                    talentPoolCandidateDetails.comments =
+                        talentPoolCandidateDetails.comments
+                            .map((comment) => (Object.assign(Object.assign({}, comment), { updateAt: new Date(comment.updateAt).getTime() || 0 })))
+                            .sort((a, b) => b.updateAt - a.updateAt);
                 }
                 resolve({
                     success: true,

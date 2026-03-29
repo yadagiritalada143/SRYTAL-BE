@@ -7,17 +7,19 @@ const packageModel_1 = __importDefault(require("../../model/packageModel"));
 const taskModel_1 = __importDefault(require("../../model/taskModel"));
 const getPackageDetailsByAdmin = async (id) => {
     try {
-        const packageDoc = await packageModel_1.default.findById(id)
-            .populate('approvers', 'firstName lastName');
+        const packageDoc = await packageModel_1.default.findById(id).populate('approvers', 'firstName lastName');
         if (!packageDoc) {
             return { success: false };
         }
-        const taskDetails = await taskModel_1.default.find({ packageId: id, isDeleted: false }).populate('createdBy', 'firstName lastName');
+        const taskDetails = await taskModel_1.default.find({
+            packageId: id,
+            isDeleted: false,
+        }).populate('createdBy', 'firstName lastName');
         const packageDetails = packageDoc.toObject();
         packageDetails.tasks = taskDetails;
         return {
             success: true,
-            packageDetails
+            packageDetails,
         };
     }
     catch (error) {

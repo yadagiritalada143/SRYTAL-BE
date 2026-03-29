@@ -15,7 +15,10 @@ const deleteProfile = (req, res) => {
         })
             .catch((error) => {
             console.error(`Error in (soft) deleting profile details: ${error}`);
-            res.status(500).json({ success: false, message: manageUserMessages_1.DELETE_ERROR_MESSAGES.DELETE_USER_HARD_DELETE_ERROR_MESSAGE });
+            res.status(500).json({
+                success: false,
+                message: manageUserMessages_1.DELETE_ERROR_MESSAGES.DELETE_USER_HARD_DELETE_ERROR_MESSAGE,
+            });
         });
     }
     else {
@@ -26,7 +29,10 @@ const deleteProfile = (req, res) => {
         })
             .catch((error) => {
             console.error(`Error in (hard) profile details: ${error}`);
-            res.status(500).json({ success: false, message: manageUserMessages_1.DELETE_ERROR_MESSAGES.DELETE_USER_SOFT_DELETE_ERROR_MESSAGE });
+            res.status(500).json({
+                success: false,
+                message: manageUserMessages_1.DELETE_ERROR_MESSAGES.DELETE_USER_SOFT_DELETE_ERROR_MESSAGE,
+            });
         });
     }
 };

@@ -28,4 +28,7 @@ const softDeleteEmployeeProfileByAdmin = async (userIdToDelete) => {
         });
     });
 };
-exports.default = { hardDeleteEmployeeProfileByAdmin, softDeleteEmployeeProfileByAdmin };
+exports.default = {
+    hardDeleteEmployeeProfileByAdmin,
+    softDeleteEmployeeProfileByAdmin,
+};

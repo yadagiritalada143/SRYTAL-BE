@@ -9,12 +9,15 @@ const getEmployeeDetails = (req, res) => {
     var _a;
     getEmployeeDetailsService_1.default
         .getEmployeeDetails((_a = req.user) === null || _a === void 0 ? void 0 : _a.userId)
-        .then(getEmployeeDetailsResponse => {
+        .then((getEmployeeDetailsResponse) => {
         res.status(commonErrorMessages_1.HTTP_STATUS.OK).json(getEmployeeDetailsResponse);
     })
-        .catch(error => {
+        .catch((error) => {
         console.error(`Error in fetching employee details: ${error}`);
-        res.status(commonErrorMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: commonErrorMessages_1.EMPLOYEE_ERRORS.EMPLOYEE_DETAILS_FETCHING_ERROR });
+        res.status(commonErrorMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: commonErrorMessages_1.EMPLOYEE_ERRORS.EMPLOYEE_DETAILS_FETCHING_ERROR,
+        });
     });
 };
 exports.default = { getEmployeeDetails };

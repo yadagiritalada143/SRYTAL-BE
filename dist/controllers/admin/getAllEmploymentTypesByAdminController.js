@@ -6,13 +6,17 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const employementTypesMessages_1 = require("../../constants/admin/employementTypesMessages");
 const getAllEmploymentTypeByAdminService_1 = __importDefault(require("../../services/admin/getAllEmploymentTypeByAdminService"));
 const getAllEmploymentTypesByAdmin = (req, res) => {
-    getAllEmploymentTypeByAdminService_1.default.getAllEmploymentTypesByAdmin()
-        .then(fetchAllEmploymentTypesResponse => {
+    getAllEmploymentTypeByAdminService_1.default
+        .getAllEmploymentTypesByAdmin()
+        .then((fetchAllEmploymentTypesResponse) => {
         res.status(200).json(fetchAllEmploymentTypesResponse);
     })
-        .catch(error => {
+        .catch((error) => {
         console.error(`Error in fetching employment type details: ${error}`);
-        res.status(500).json({ success: false, message: employementTypesMessages_1.EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_FETCH_ERROR_MESSAGES });
+        res.status(500).json({
+            success: false,
+            message: employementTypesMessages_1.EMPLOYMENT_TYPE_ERRORS_MESSAGES.EMPLOYMENT_TYPE_FETCH_ERROR_MESSAGES,
+        });
     });
 };
 exports.default = { getAllEmploymentTypesByAdmin };

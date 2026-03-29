@@ -7,7 +7,7 @@ const userModel_1 = __importDefault(require("../../model/userModel"));
 const sendResetPasswordMail_1 = __importDefault(require("../../util/sendResetPasswordMail"));
 const hashPassword_1 = __importDefault(require("../../util/hashPassword"));
 const randomPasswordGenerate = () => {
-    return (Math.floor(Math.random() * 90000000) + 10000000) + '';
+    return Math.floor(Math.random() * 90000000) + 10000000 + '';
 };
 const employeePasswordResetByAdmin = async (employeeId) => {
     try {
@@ -22,7 +22,10 @@ const employeePasswordResetByAdmin = async (employeeId) => {
         if (!result) {
             return { success: false, message: 'Error in updating password!' };
         }
-        return { success: true, message: 'Email sent successfully. Please login with temporary password.' };
+        return {
+            success: true,
+            message: 'Email sent successfully. Please login with temporary password.',
+        };
     }
     catch (error) {
         console.error(`Error occurred while resetting password: ${error}`);

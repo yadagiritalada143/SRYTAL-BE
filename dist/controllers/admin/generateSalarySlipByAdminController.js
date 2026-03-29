@@ -19,9 +19,12 @@ const generateSalarySlip = async (req, res) => {
             employeeEmail: salarySlipRequest.employeeEmail,
             payPeriod: salarySlipRequest.payPeriod,
             payDate: salarySlipRequest.payDate,
-            basicSalary: salarySlipRequest.basicSalary
+            basicSalary: salarySlipRequest.basicSalary,
         }));
-        if (!salarySlipRequest.employeeId || !salarySlipRequest.employeeName || !salarySlipRequest.basicSalary || !salarySlipRequest.employeeEmail) {
+        if (!salarySlipRequest.employeeId ||
+            !salarySlipRequest.employeeName ||
+            !salarySlipRequest.basicSalary ||
+            !salarySlipRequest.employeeEmail) {
             return res.status(salarySlipMessages_1.HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: salarySlipMessages_1.SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_MISSING_REQUIRED_FIELDS,
@@ -33,7 +36,7 @@ const generateSalarySlip = async (req, res) => {
             success: result.success,
             fileName: result.fileName,
             pdfBufferSize: result.pdfBuffer ? result.pdfBuffer.length : 0,
-            error: result.error
+            error: result.error,
         }));
         if (result.success && result.pdfBuffer) {
             console.warn('[SalarySlipController] PDF generated successfully, sending response...');
@@ -43,27 +46,33 @@ const generateSalarySlip = async (req, res) => {
             res.send(result.pdfBuffer);
             // Send salary slip notification email asynchronously (fire and forget)
             console.warn('[SalarySlipController] Initiating email notification (async)...');
-            sendSalarySlipNotificationEmail_1.default.sendSalarySlipNotificationEmail({
+            sendSalarySlipNotificationEmail_1.default
+                .sendSalarySlipNotificationEmail({
                 employeeName: salarySlipRequest.employeeName,
                 employeeEmail: salarySlipRequest.employeeEmail,
                 payPeriod: salarySlipRequest.payPeriod,
                 payDate: salarySlipRequest.payDate,
-            }).then(() => {
+            })
+                .then(() => {
                 console.warn('[SalarySlipController] Email notification completed successfully');
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 console.error('[SalarySlipController] Email notification FAILED!');
                 console.error('[SalarySlipController] Email Error:', error.message);
                 console.error('[SalarySlipController] Email Error Stack:', error.stack);
             });
             console.warn('[SalarySlipController] Initiating S3 upload (async)...');
-            manageSalarySlips_1.default.uploadSalarySlipToS3({
+            manageSalarySlips_1.default
+                .uploadSalarySlipToS3({
                 mongoId: salarySlipRequest._id,
                 employeeName: salarySlipRequest.employeeName,
                 payPeriod: salarySlipRequest.payPeriod,
                 pdfBuffer: result.pdfBuffer,
-            }).then((uploadResult) => {
+            })
+                .then((uploadResult) => {
                 console.warn('[SalarySlipController] S3 upload completed:', JSON.stringify(uploadResult));
-            }).catch((error) => {
+            })
+                .catch((error) => {
                 console.error('[SalarySlipController] S3 upload FAILED!');
                 console.error('[SalarySlipController] S3 Error:', error.message || error.error);
                 console.error('[SalarySlipController] S3 Error Details:', JSON.stringify(error));
@@ -76,7 +85,8 @@ const generateSalarySlip = async (req, res) => {
             console.error('[SalarySlipController] Error:', result.error);
             return res.status(salarySlipMessages_1.HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
-                message: result.error || salarySlipMessages_1.SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_GENERATION_FAILED,
+                message: result.error ||
+                    salarySlipMessages_1.SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_GENERATION_FAILED,
             });
         }
     }
@@ -95,7 +105,10 @@ const generateSalarySlip = async (req, res) => {
 const previewSalarySlip = async (req, res) => {
     try {
         const salarySlipRequest = req.body;
-        if (!salarySlipRequest.employeeId || !salarySlipRequest.employeeName || !salarySlipRequest.basicSalary || !salarySlipRequest.employeeEmail) {
+        if (!salarySlipRequest.employeeId ||
+            !salarySlipRequest.employeeName ||
+            !salarySlipRequest.basicSalary ||
+            !salarySlipRequest.employeeEmail) {
             return res.status(salarySlipMessages_1.HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: salarySlipMessages_1.SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_MISSING_REQUIRED_FIELDS,
@@ -116,7 +129,8 @@ const previewSalarySlip = async (req, res) => {
         else {
             return res.status(salarySlipMessages_1.HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
-                message: result.error || salarySlipMessages_1.SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_GENERATION_FAILED,
+                message: result.error ||
+                    salarySlipMessages_1.SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_GENERATION_FAILED,
             });
         }
     }

@@ -16,7 +16,10 @@ const deleteTaskByAdmin = (req, res) => {
         })
             .catch((error) => {
             console.error(`Error in (hard) deleting task: ${error}`);
-            res.status(500).json({ success: false, message: taskMessages_1.TASK_ERROR_MESSAGES.TASK_HARD_DELETE_ERROR_MESSAGE });
+            res.status(500).json({
+                success: false,
+                message: taskMessages_1.TASK_ERROR_MESSAGES.TASK_HARD_DELETE_ERROR_MESSAGE,
+            });
         });
     }
     else {
@@ -27,7 +30,10 @@ const deleteTaskByAdmin = (req, res) => {
         })
             .catch((error) => {
             console.error(`Error in (soft)  deleting task: ${error}`);
-            res.status(500).json({ success: false, message: taskMessages_1.TASK_ERROR_MESSAGES.TASK_SOFT_DELETE_ERROR_MESSAGE });
+            res.status(500).json({
+                success: false,
+                message: taskMessages_1.TASK_ERROR_MESSAGES.TASK_SOFT_DELETE_ERROR_MESSAGE,
+            });
         });
     }
 };

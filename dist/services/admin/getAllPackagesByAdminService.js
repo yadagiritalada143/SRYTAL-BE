@@ -16,7 +16,7 @@ const getAllPackagesWithTasksByAdmin = async () => {
         const packageIds = packagesList.map((pkg) => pkg._id);
         const taskDetails = await taskModel_1.default.find({
             packageId: { $in: packageIds },
-            isDeleted: false
+            isDeleted: false,
         })
             .populate('createdBy', 'firstName lastName')
             .lean();
@@ -34,7 +34,7 @@ const getAllPackagesWithTasksByAdmin = async () => {
         const packagesWithTasks = packagesList.map((pkg) => (Object.assign(Object.assign({}, pkg), { tasks: tasksGroupedByPackage[pkg._id.toString()] || [] })));
         return {
             success: true,
-            packagesList: packagesWithTasks
+            packagesList: packagesWithTasks,
         };
     }
     catch (error) {

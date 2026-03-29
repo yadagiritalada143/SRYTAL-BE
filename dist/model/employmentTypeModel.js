@@ -6,11 +6,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = __importDefault(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 const EmploymenttypeSchema = new mongoose_1.default.Schema({
-    employmentType: { type: mongoose_1.default.Schema.Types.String, required: true, unique: true },
+    employmentType: {
+        type: mongoose_1.default.Schema.Types.String,
+        required: true,
+        unique: true,
+    },
 }, {
     collection: 'employment-type',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
 });
 EmploymenttypeSchema.plugin(mongoose_unique_validator_1.default);
 const Employmenttype = mongoose_1.default.model('', EmploymenttypeSchema);

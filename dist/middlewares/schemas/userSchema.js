@@ -27,6 +27,6 @@ const userSchema = joi_1.default.object({
     department: joi_1.default.string().optional().allow(null),
     dateOfJoining: joi_1.default.date().optional().allow(''),
     presentAddress: joi_1.default.string().optional().allow(''),
-    permanentAddress: joi_1.default.string().optional().allow('')
+    permanentAddress: joi_1.default.string().optional().allow(''),
 });
 exports.default = userSchema;

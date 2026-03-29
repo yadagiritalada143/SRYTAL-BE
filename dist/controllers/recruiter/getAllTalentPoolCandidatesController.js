@@ -8,12 +8,15 @@ const getAllTalentPoolCandidatesByRecruiterService_1 = __importDefault(require("
 const getAllTalentPoolCandidatesByRecruiter = (req, res) => {
     getAllTalentPoolCandidatesByRecruiterService_1.default
         .getAllTalentPoolCandidates()
-        .then(getAllTalentPoolCandidatesResponse => {
+        .then((getAllTalentPoolCandidatesResponse) => {
         res.status(200).json(getAllTalentPoolCandidatesResponse);
     })
-        .catch(error => {
+        .catch((error) => {
         console.error(`Error in fetching all talent pool candidates details:${error}`);
-        res.status(500).json({ success: false, message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_CANDIDATE_DETAILS });
+        res.status(500).json({
+            success: false,
+            message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_CANDIDATE_DETAILS,
+        });
     });
 };
 exports.default = { getAllTalentPoolCandidatesByRecruiter };

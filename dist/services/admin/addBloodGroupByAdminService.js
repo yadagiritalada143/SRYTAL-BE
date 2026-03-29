@@ -6,7 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const bloodGroupModel_1 = __importDefault(require("../../model/bloodGroupModel"));
 const addBloodgroupByAdmin = async (addBloodgroup) => {
     try {
-        const bloodgroupDataToSave = new bloodGroupModel_1.default({ type: addBloodgroup });
+        const bloodgroupDataToSave = new bloodGroupModel_1.default({
+            type: addBloodgroup,
+        });
         const result = await bloodgroupDataToSave.save();
         return result;
     }

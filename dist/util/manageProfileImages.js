@@ -26,7 +26,7 @@ const getProfileImageFromS3 = async (fileName, s3FolderNameToUpload) => {
     return new Promise((resolve, reject) => {
         const params = {
             Bucket: awsS3Config_1.bucketName,
-            Key: `${s3FolderNameToUpload}/${fileName}`
+            Key: `${s3FolderNameToUpload}/${fileName}`,
         };
         s3Client_1.default.getObject(params, (error, data) => {
             if (error) {
@@ -35,7 +35,7 @@ const getProfileImageFromS3 = async (fileName, s3FolderNameToUpload) => {
             }
             const responseFromS3 = {
                 contentType: data.ContentType,
-                body: data.Body
+                body: data.Body,
             };
             resolve({ success: true, imageDetails: responseFromS3 });
         });

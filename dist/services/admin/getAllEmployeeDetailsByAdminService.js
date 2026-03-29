@@ -11,7 +11,20 @@ const formatDate = (date) => {
     if (isNaN(d.getTime()))
         return null;
     const day = String(d.getDate()).padStart(2, '0');
-    const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    const months = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
+    ];
     const month = months[d.getMonth()];
     const year = d.getFullYear();
     return `${day}-${month}-${year}`;
@@ -21,7 +34,7 @@ const getAllEmployeeDetailsByAdmin = async (organizationId, userId) => {
         const users = await userModel_1.default.find({
             organization: organizationId,
             _id: { $ne: userId }, // Exclude the user with the provided userId
-            isDeleted: false
+            isDeleted: false,
         })
             .populate('bloodGroup')
             .populate('employmentType')
@@ -54,8 +67,8 @@ const getAllEmployeeDetailsByAdmin = async (organizationId, userId) => {
                 uanNumber: user.uanNumber,
                 department: user.department,
                 presentAddress: user.presentAddress,
-                permanentAddress: user.permanentAddress
-            }))
+                permanentAddress: user.permanentAddress,
+            })),
         };
     }
     catch (error) {

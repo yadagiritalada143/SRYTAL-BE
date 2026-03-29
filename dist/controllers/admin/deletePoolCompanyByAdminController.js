@@ -16,7 +16,10 @@ const deletePoolCompanyByAdmin = (req, res) => {
         })
             .catch((error) => {
             console.error(`Error in (soft) deleting pool company: ${error}`);
-            res.status(500).json({ success: false, message: manageUserMessages_1.DELETE_POOL_COMPANY_ERROR_MESSAGE.DELETE_POOL_COMPANY_SOFT_DELETE_ERROR_MESSAGE });
+            res.status(500).json({
+                success: false,
+                message: manageUserMessages_1.DELETE_POOL_COMPANY_ERROR_MESSAGE.DELETE_POOL_COMPANY_SOFT_DELETE_ERROR_MESSAGE,
+            });
         });
     }
     else {
@@ -27,7 +30,10 @@ const deletePoolCompanyByAdmin = (req, res) => {
         })
             .catch((error) => {
             console.error(`Error in (hard)  deleting pool company: ${error}`);
-            res.status(500).json({ success: false, message: manageUserMessages_1.DELETE_POOL_COMPANY_ERROR_MESSAGE.DELETE_POOL_COMPANY_HARD_DELETE_ERROR_MESSAGE });
+            res.status(500).json({
+                success: false,
+                message: manageUserMessages_1.DELETE_POOL_COMPANY_ERROR_MESSAGE.DELETE_POOL_COMPANY_HARD_DELETE_ERROR_MESSAGE,
+            });
         });
     }
 };

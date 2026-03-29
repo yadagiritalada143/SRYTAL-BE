@@ -12,7 +12,7 @@ const getAllDepartmentsByAdmin = async () => {
         }
         return {
             success: true,
-            departments: departments
+            departments: departments,
         };
     }
     catch (error) {

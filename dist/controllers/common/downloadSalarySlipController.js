@@ -16,7 +16,7 @@ const downloadSalarySlip = async (req, res) => {
         if (!mongoId || !fullName || !month || !year) {
             return res.status(employeeSalarySlipMessage_1.HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
-                message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.INVALID_REQUEST_PARAMS
+                message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.INVALID_REQUEST_PARAMS,
             });
         }
         // Security check: Allow Admin/SuperAdmin to access any employee's salary slips
@@ -27,21 +27,26 @@ const downloadSalarySlip = async (req, res) => {
             if (!isAdmin) {
                 return res.status(employeeSalarySlipMessage_1.HTTP_STATUS.FORBIDDEN).json({
                     success: false,
-                    message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.UNAUTHORIZED_ACCESS
+                    message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.UNAUTHORIZED_ACCESS,
                 });
             }
         }
-        const result = await downloadSalarySlipService_1.default.downloadSalarySlip({ mongoId, fullName, month, year });
+        const result = await downloadSalarySlipService_1.default.downloadSalarySlip({
+            mongoId,
+            fullName,
+            month,
+            year,
+        });
         if (!result.success) {
             if (result.error === 'SALARY_SLIP_NOT_FOUND') {
                 return res.status(employeeSalarySlipMessage_1.HTTP_STATUS.NOT_FOUND).json({
                     success: false,
-                    message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_NOT_FOUND
+                    message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.SALARY_SLIP_NOT_FOUND,
                 });
             }
             return res.status(employeeSalarySlipMessage_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
                 success: false,
-                message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED_ERROR
+                message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED_ERROR,
             });
         }
         res.status(employeeSalarySlipMessage_1.HTTP_STATUS.OK).json({
@@ -49,15 +54,15 @@ const downloadSalarySlip = async (req, res) => {
             message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_SUCCESS_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED,
             data: {
                 downloadUrl: result.downloadUrl,
-                fileName: result.fileName
-            }
+                fileName: result.fileName,
+            },
         });
     }
     catch (error) {
         console.error(`Error in downloadSalarySlipController: ${error}`);
         res.status(employeeSalarySlipMessage_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED_ERROR
+            message: employeeSalarySlipMessage_1.EMPLOYEE_SALARY_SLIP_ERROR_MESSAGES.EMPLOYEE_SALARY_SLIP_DOWNLOADED_ERROR,
         });
     }
 };

@@ -13,7 +13,10 @@ const getPoolCompanyDetails = (req, res) => {
     })
         .catch((error) => {
         console.error(`Error while fetching pool company details at controller level: ${error}`);
-        res.status(500).json({ success: false, message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_COMPANY_DETAILS });
+        res.status(500).json({
+            success: false,
+            message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_COMPANY_DETAILS,
+        });
     });
 };
 const getPoolCompanyDetailsById = (req, res) => {
@@ -21,11 +24,16 @@ const getPoolCompanyDetailsById = (req, res) => {
     manageRecruiterService_1.default
         .getPoolCompanyDetailsById(id)
         .then((getPoolServicesResponse) => {
-        res.status(200).json({ success: true, poolCompanyResponse: getPoolServicesResponse });
+        res
+            .status(200)
+            .json({ success: true, poolCompanyResponse: getPoolServicesResponse });
     })
         .catch((error) => {
         console.error(`Error while fetching pool company details at controller level: ${error}`);
-        res.status(500).json({ success: false, message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_COMPANY_DETAILS });
+        res.status(500).json({
+            success: false,
+            message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_FETCHING_POOL_COMPANY_DETAILS,
+        });
     });
 };
 const addPoolCompany = (req, res) => {
@@ -36,7 +44,14 @@ const addPoolCompany = (req, res) => {
     })
         .catch((error) => {
         console.error(`Error while adding pool company details at controller level: ${error}`);
-        res.status(500).json({ success: false, message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_ADDING_POOL_COMPANY_DETAILS });
+        res.status(500).json({
+            success: false,
+            message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_ADDING_POOL_COMPANY_DETAILS,
+        });
     });
 };
-exports.default = { getPoolCompanyDetails, getPoolCompanyDetailsById, addPoolCompany };
+exports.default = {
+    getPoolCompanyDetails,
+    getPoolCompanyDetailsById,
+    addPoolCompany,
+};

@@ -11,8 +11,8 @@ const AllCourses = () => {
             path: 'modules',
             populate: {
                 path: 'tasks',
-                model: 'CourseTaskModel'
-            }
+                model: 'CourseTaskModel',
+            },
         })
             .then((courses) => {
             if (!courses) {
@@ -21,7 +21,7 @@ const AllCourses = () => {
             else {
                 resolve({
                     success: true,
-                    courses: courses
+                    courses: courses,
                 });
             }
         })

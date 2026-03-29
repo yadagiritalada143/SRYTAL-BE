@@ -33,7 +33,7 @@ app.use((0, express_session_1.default)({
 }));
 app.use((0, morgan_1.default)('dev'));
 app.use((0, cors_1.default)({
-    exposedHeaders: ["*"]
+    exposedHeaders: ['*'],
 }));
 app.use('/', commonRoutes_1.default);
 app.use('/admin', adminRoutes_1.default);

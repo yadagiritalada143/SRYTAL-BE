@@ -7,7 +7,7 @@ const updateEmployeeTimesheetService_1 = __importDefault(require("../../services
 const employeeTimesheetErrorMessage_1 = require("../../constants/common/employeeTimesheetErrorMessage");
 const updateEmployeeTimesheet = (req, res) => {
     const { userId } = req.body;
-    let updateEmployeeTimeSheetPayload = {};
+    const updateEmployeeTimeSheetPayload = {};
     let employeeIdToUpdateTimeSheet = '';
     if (req.body && req.body.employeeId) {
         employeeIdToUpdateTimeSheet = req.body.employeeId;
@@ -24,7 +24,10 @@ const updateEmployeeTimesheet = (req, res) => {
     })
         .catch((error) => {
         console.error(`Error in updating employee timesheet: ${error}`);
-        res.status(500).json({ success: false, message: employeeTimesheetErrorMessage_1.UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES.EMPLOYEE_TIMESHEET_UPDATING_ERROR_MESSAGE });
+        res.status(500).json({
+            success: false,
+            message: employeeTimesheetErrorMessage_1.UPDATE_EMPLOYEE_TIMESHEET_ERRORS_MESSAGES.EMPLOYEE_TIMESHEET_UPDATING_ERROR_MESSAGE,
+        });
     });
 };
 exports.default = { updateEmployeeTimesheet };

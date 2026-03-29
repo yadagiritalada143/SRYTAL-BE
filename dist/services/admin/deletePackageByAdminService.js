@@ -28,4 +28,7 @@ const softDeletePackageServiceByAdmin = async (packageIdToDelete) => {
         });
     });
 };
-exports.default = { hardDeletePackageServiceByAdmin, softDeletePackageServiceByAdmin };
+exports.default = {
+    hardDeletePackageServiceByAdmin,
+    softDeletePackageServiceByAdmin,
+};

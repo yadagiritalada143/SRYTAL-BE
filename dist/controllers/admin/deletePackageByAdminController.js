@@ -16,7 +16,10 @@ const deletePackageByAdmin = (req, res) => {
         })
             .catch((error) => {
             console.error(`Error in (hard) deleting package: ${error}`);
-            res.status(500).json({ success: false, message: packageMessages_1.PACKAGE_ERROR_MESSAGES.PACKAGE_HARD_DELETE_ERROR_MESSAGE });
+            res.status(500).json({
+                success: false,
+                message: packageMessages_1.PACKAGE_ERROR_MESSAGES.PACKAGE_HARD_DELETE_ERROR_MESSAGE,
+            });
         });
     }
     else {
@@ -27,7 +30,10 @@ const deletePackageByAdmin = (req, res) => {
         })
             .catch((error) => {
             console.error(`Error in (soft)  deleting package: ${error}`);
-            res.status(500).json({ success: false, message: packageMessages_1.PACKAGE_ERROR_MESSAGES.PACKAGE_SOFT_DELETE_ERROR_MESSAGE });
+            res.status(500).json({
+                success: false,
+                message: packageMessages_1.PACKAGE_ERROR_MESSAGES.PACKAGE_SOFT_DELETE_ERROR_MESSAGE,
+            });
         });
     }
 };

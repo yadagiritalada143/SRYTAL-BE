@@ -14,7 +14,10 @@ const getOrganizationThemes = (req, res) => {
     })
         .catch((error) => {
         console.error(error);
-        res.status(500).json({ success: false, message: commonErrorMessages_1.ORGANIZATION_THEMES_ERROR_MESSAGES.THEMES_FETCHING_ERROR });
+        res.status(500).json({
+            success: false,
+            message: commonErrorMessages_1.ORGANIZATION_THEMES_ERROR_MESSAGES.THEMES_FETCHING_ERROR,
+        });
     });
 };
 exports.default = { getOrganizationThemes };

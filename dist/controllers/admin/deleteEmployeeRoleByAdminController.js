@@ -14,7 +14,10 @@ const deleteEmployeeRole = (req, res) => {
     })
         .catch((error) => {
         console.error(`Error in deleting employee role: ${error}`);
-        res.status(500).json({ success: false, message: employeeRolesMessages_1.EMPLOYEE_ROLE_ERRORS_MESSAGES.EMPLOYEE_ROLE_DELETE_ERROR_MESSAGE });
+        res.status(500).json({
+            success: false,
+            message: employeeRolesMessages_1.EMPLOYEE_ROLE_ERRORS_MESSAGES.EMPLOYEE_ROLE_DELETE_ERROR_MESSAGE,
+        });
     });
 };
 exports.default = { deleteEmployeeRole };

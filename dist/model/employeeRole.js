@@ -9,7 +9,7 @@ const EmployeeroleSchema = new mongoose_1.default.Schema({
 }, {
     collection: 'employee-role',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
 });
 const Employeerole = mongoose_1.default.model('EmployeeroleSchema', EmployeeroleSchema);
 exports.default = Employeerole;

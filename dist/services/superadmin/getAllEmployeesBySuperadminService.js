@@ -14,7 +14,7 @@ const getAllEmployeesBySuperadmin = (organizationId) => {
             else {
                 resolve({
                     success: true,
-                    superadminEmployeeList: users
+                    superadminEmployeeList: users,
                 });
             }
         })

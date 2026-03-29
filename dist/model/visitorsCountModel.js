@@ -7,11 +7,11 @@ const mongoose_1 = __importDefault(require("mongoose"));
 const mongoose_unique_validator_1 = __importDefault(require("mongoose-unique-validator"));
 const VisitorsCountSchema = new mongoose_1.default.Schema({
     visitorCount: { type: mongoose_1.default.Schema.Types.Number },
-    lastUpdatedAt: { type: mongoose_1.default.Schema.Types.Date }
+    lastUpdatedAt: { type: mongoose_1.default.Schema.Types.Date },
 }, {
     collection: 'visitors-count',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
 });
 VisitorsCountSchema.plugin(mongoose_unique_validator_1.default);
 VisitorsCountSchema.virtual('id').get(function () {

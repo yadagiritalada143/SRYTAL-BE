@@ -6,13 +6,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const employeePackageModel_1 = __importDefault(require("../../model/employeePackageModel"));
 const deleteEmployeePackageServiceByAdmin = async (employeeId, packageId) => {
     try {
-        const employeePackageDoc = await employeePackageModel_1.default.findOne({ employeeId });
+        const employeePackageDoc = (await employeePackageModel_1.default.findOne({
+            employeeId,
+        }));
         if (!employeePackageDoc) {
-            return { success: false, responseAfterDelete: 'Employee package not found !' };
+            return {
+                success: false,
+                responseAfterDelete: 'Employee package not found !',
+            };
         }
         const packageToDelete = employeePackageDoc.packages.find((pkg) => pkg.packageId.toString() === packageId);
         if (!packageToDelete) {
-            return { success: false, responseAfterDelete: 'Package not found for employee !' };
+            return {
+                success: false,
+                responseAfterDelete: 'Package not found for employee !',
+            };
         }
         employeePackageDoc.packages = employeePackageDoc.packages.filter((pkg) => pkg.packageId.toString() !== packageId);
         let updatedDoc;
@@ -20,7 +28,9 @@ const deleteEmployeePackageServiceByAdmin = async (employeeId, packageId) => {
             updatedDoc = await employeePackageDoc.save();
         }
         else {
-            updatedDoc = await employeePackageModel_1.default.deleteOne({ _id: employeePackageDoc._id });
+            updatedDoc = await employeePackageModel_1.default.deleteOne({
+                _id: employeePackageDoc._id,
+            });
         }
         return { success: true, responseAfterDelete: updatedDoc };
     }

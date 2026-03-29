@@ -14,7 +14,10 @@ const deleteEmployeePackageByAdmin = (req, res) => {
     })
         .catch((error) => {
         console.error(`Error in deleting employee packages: ${error}`);
-        res.status(500).json({ success: false, message: employeePackageMessages_1.EMPLOYEE_PACKAGE_ERROR_MESSAGES.EMPLOYEE_PACKAGE_DELETE_ERROR_MESSAGE });
+        res.status(500).json({
+            success: false,
+            message: employeePackageMessages_1.EMPLOYEE_PACKAGE_ERROR_MESSAGES.EMPLOYEE_PACKAGE_DELETE_ERROR_MESSAGE,
+        });
     });
 };
 exports.default = { deleteEmployeePackageByAdmin };

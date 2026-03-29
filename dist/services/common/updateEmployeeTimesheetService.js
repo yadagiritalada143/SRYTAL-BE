@@ -8,12 +8,12 @@ const updateEmployeeTimesheet = async (updateEmployeeTimesheetPayload) => {
     try {
         const { employeeId, packages } = updateEmployeeTimesheetPayload;
         const employeePackage = await employeePackageModel_1.default.findOne({
-            employeeId: employeeId
+            employeeId: employeeId,
         });
         if (!employeePackage) {
             return {
                 success: false,
-                message: "Employee timesheet not found"
+                message: 'Employee timesheet not found',
             };
         }
         const updateOperations = {};
@@ -44,13 +44,13 @@ const updateEmployeeTimesheet = async (updateEmployeeTimesheetPayload) => {
             const result = await employeePackageModel_1.default.updateOne({ employeeId: employeeId }, { $set: updateOperations });
             return {
                 success: true,
-                responseAfterUpdateTimesheet: result
+                responseAfterUpdateTimesheet: result,
             };
         }
         else {
             return {
                 success: false,
-                message: "No valid updates found in payload"
+                message: 'No valid updates found in payload',
             };
         }
     }
@@ -59,16 +59,16 @@ const updateEmployeeTimesheet = async (updateEmployeeTimesheetPayload) => {
         return {
             success: false,
             responseAfterUpdateTimesheet: error,
-            message: error.message
+            message: error.message,
         };
     }
 };
 const areDatesEqual = (date1, date2) => {
     const d1 = new Date(date1);
     const d2 = new Date(date2);
-    const returnVal = (d1.getUTCFullYear() === d2.getUTCFullYear() &&
+    const returnVal = d1.getUTCFullYear() === d2.getUTCFullYear() &&
         d1.getUTCMonth() === d2.getUTCMonth() &&
-        d1.getUTCDate() === d2.getUTCDate());
+        d1.getUTCDate() === d2.getUTCDate();
     return returnVal;
 };
 exports.default = { updateEmployeeTimesheet };

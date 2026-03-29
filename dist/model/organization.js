@@ -9,7 +9,7 @@ const OrganizationSchema = new mongoose_1.default.Schema({
 }, {
     collection: 'organization',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
 });
 const Organization = mongoose_1.default.model('OrganizationSchema', OrganizationSchema);
 exports.default = Organization;

@@ -14,19 +14,34 @@ const updatePassword = async (updatePasswordDetails) => {
                 resolve({ success: false, message: 'User not Exists !' });
             }
             else {
-                bcrypt_1.default.compare(updatePasswordDetails.oldPassword, user.password).then((isPasswordValid) => {
+                bcrypt_1.default
+                    .compare(updatePasswordDetails.oldPassword, user.password)
+                    .then((isPasswordValid) => {
                     if (!isPasswordValid) {
-                        resolve({ success: false, message: 'Temporary password is not matched !' });
+                        resolve({
+                            success: false,
+                            message: 'Temporary password is not matched !',
+                        });
                     }
                     else {
-                        hashPassword_1.default.hashPassword(updatePasswordDetails.newPassword)
+                        hashPassword_1.default
+                            .hashPassword(updatePasswordDetails.newPassword)
                             .then(async (hashedNewPassword) => {
-                            const result = await userModel_1.default.updateOne({ _id: updatePasswordDetails.userId }, { password: hashedNewPassword, passwordResetRequired: false });
-                            resolve({ success: true, message: 'Password updated Successfully !' });
+                            const result = await userModel_1.default.updateOne({ _id: updatePasswordDetails.userId }, {
+                                password: hashedNewPassword,
+                                passwordResetRequired: false,
+                            });
+                            resolve({
+                                success: true,
+                                message: 'Password updated Successfully !',
+                            });
                         })
                             .catch((error) => {
                             console.error(`Error occured while update the Password: ${error}`);
-                            reject({ success: false, message: 'Error while updating the password !' });
+                            reject({
+                                success: false,
+                                message: 'Error while updating the password !',
+                            });
                         });
                     }
                 });
@@ -34,7 +49,10 @@ const updatePassword = async (updatePasswordDetails) => {
         })
             .catch((error) => {
             console.error(`Error while updating the password ! ${error}`);
-            reject({ success: false, message: 'Error while updating the password !' });
+            reject({
+                success: false,
+                message: 'Error while updating the password !',
+            });
         });
     });
 };

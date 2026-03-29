@@ -14,7 +14,7 @@ const getAllEmploymentTypesByAdmin = () => {
             else {
                 resolve({
                     success: true,
-                    employmentTypesList: employmentTypesList
+                    employmentTypesList: employmentTypesList,
                 });
             }
         })

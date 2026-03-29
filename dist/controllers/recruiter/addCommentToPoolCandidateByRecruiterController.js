@@ -18,7 +18,10 @@ const addCommentToPoolCandidateByRecruiter = (req, res) => {
     })
         .catch((error) => {
         console.error(`Error in updating comment for pool candidate: ${error}`);
-        res.status(500).json({ success: false, message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_ADDING_COMMENT_TO_POOL_CANDIDATE });
+        res.status(500).json({
+            success: false,
+            message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_ADDING_COMMENT_TO_POOL_CANDIDATE,
+        });
     });
 };
 exports.default = { addCommentToPoolCandidateByRecruiter };

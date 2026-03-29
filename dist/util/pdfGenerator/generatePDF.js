@@ -129,7 +129,9 @@ const injectDataIntoTemplate = (template, data) => {
             if (Object.prototype.hasOwnProperty.call(obj, key)) {
                 const value = obj[key];
                 const placeholderKey = prefix ? `${prefix}.${key}` : key;
-                if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+                if (typeof value === 'object' &&
+                    value !== null &&
+                    !Array.isArray(value)) {
                     replacePlaceholders(value, placeholderKey);
                 }
                 else {
@@ -143,4 +145,8 @@ const injectDataIntoTemplate = (template, data) => {
     return result;
 };
 exports.injectDataIntoTemplate = injectDataIntoTemplate;
-exports.default = { generatePDFFromHTML: exports.generatePDFFromHTML, generatePDFWithHeaderFooter: exports.generatePDFWithHeaderFooter, injectDataIntoTemplate: exports.injectDataIntoTemplate };
+exports.default = {
+    generatePDFFromHTML: exports.generatePDFFromHTML,
+    generatePDFWithHeaderFooter: exports.generatePDFWithHeaderFooter,
+    injectDataIntoTemplate: exports.injectDataIntoTemplate,
+};

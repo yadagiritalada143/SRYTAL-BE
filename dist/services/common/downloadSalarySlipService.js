@@ -13,10 +13,12 @@ const downloadSalarySlip = async (params) => {
         const fileName = `${sanitizedName}-${month}-${year}.pdf`;
         const s3Key = `${awsS3Config_1.salarySlipsFolder}/${mongoId}/${fileName}`;
         // Check if the file exists in S3
-        await s3Client_1.default.headObject({
+        await s3Client_1.default
+            .headObject({
             Bucket: awsS3Config_1.bucketName,
             Key: s3Key,
-        }).promise();
+        })
+            .promise();
         // Generate pre-signed URL valid for 5 minutes
         const downloadUrl = s3Client_1.default.getSignedUrl('getObject', {
             Bucket: awsS3Config_1.bucketName,

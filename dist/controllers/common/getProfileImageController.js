@@ -15,7 +15,8 @@ const getProfileImage = (req, res) => {
     getProfileImageService_1.default
         .getProfileImage(userId)
         .then((responseAftergetProfileImage) => {
-        if (!!responseAftergetProfileImage && responseAftergetProfileImage.success) {
+        if (!!responseAftergetProfileImage &&
+            responseAftergetProfileImage.success) {
             return responseAftergetProfileImage.imagePath;
         }
         else {
@@ -23,20 +24,24 @@ const getProfileImage = (req, res) => {
         }
     })
         .then((profileImagePath) => {
-        // Get Profile Image from AWS S3 bucket 
+        // Get Profile Image from AWS S3 bucket
         manageProfileImages_1.default
             .getProfileImageFromS3(profileImagePath, awsS3Config_1.profileImagesFolder)
             .then((responseFromS3) => {
             res.setHeader('Content-Type', responseFromS3.imageDetails.contentType);
             res.status(200).send(responseFromS3.imageDetails.body);
-        }).catch((error) => {
+        })
+            .catch((error) => {
             console.error(`Error from S3 while fetching profile image is: ${error}`);
             res.status(401).json(error);
         });
     })
         .catch((error) => {
         console.error(`Error occured while fetching the Profile Image: ${error}`);
-        res.status(500).json({ success: false, message: commonErrorMessages_1.EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_GETTING_ERROR });
+        res.status(500).json({
+            success: false,
+            message: commonErrorMessages_1.EMPLOYEE_ERRORS.EMPLOYEE_PROFILE_IMAGE_GETTING_ERROR,
+        });
     });
 };
 exports.default = { getProfileImage };

@@ -8,7 +8,7 @@ const validateRegistrationSchema = (schema) => {
         });
         if (error) {
             return res.status(400).json({
-                errors: error.details.map(err => err.message),
+                errors: error.details.map((err) => err.message),
             });
         }
         req.body = value;

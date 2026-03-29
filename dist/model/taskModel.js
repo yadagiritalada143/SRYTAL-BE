@@ -17,7 +17,7 @@ const TaskSchema = new mongoose_1.default.Schema({
 }, {
     collection: 'tasks',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
 });
 TaskSchema.plugin(mongoose_unique_validator_1.default);
 const TaskModel = mongoose_1.default.model('TaskModel', TaskSchema);

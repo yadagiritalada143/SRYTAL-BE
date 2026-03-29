@@ -6,16 +6,18 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const employeePackageModel_1 = __importDefault(require("../../model/employeePackageModel"));
 const employeePackageDetailsById = async (employeeId, startDate, endDate) => {
     try {
-        const employeePackageDetails = await employeePackageModel_1.default.find({ employeeId })
+        const employeePackageDetails = await employeePackageModel_1.default.find({
+            employeeId,
+        })
             .populate('packages.packageId')
             .populate('packages.tasks.taskId')
             .lean();
         if (!employeePackageDetails) {
             return { success: false };
         }
-        const filteredData = employeePackageDetails.map(empPkg => {
-            const filteredPackages = empPkg.packages.map(pkg => {
-                const filteredTasks = pkg.tasks.map(task => {
+        const filteredData = employeePackageDetails.map((empPkg) => {
+            const filteredPackages = empPkg.packages.map((pkg) => {
+                const filteredTasks = pkg.tasks.map((task) => {
                     const startDateObj = new Date(startDate);
                     const endDateObj = new Date(endDate);
                     endDateObj.setDate(endDateObj.getDate() + 1);
@@ -31,7 +33,7 @@ const employeePackageDetailsById = async (employeeId, startDate, endDate) => {
         });
         return {
             success: true,
-            employeePackageDetails: filteredData
+            employeePackageDetails: filteredData,
         };
     }
     catch (error) {

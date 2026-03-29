@@ -14,12 +14,12 @@ const CoursesSchema = new mongoose_1.default.Schema({
 }, {
     collection: 'courses',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
 });
 CoursesSchema.virtual('modules', {
     ref: 'CourseModule',
     localField: '_id',
-    foreignField: 'courseId'
+    foreignField: 'courseId',
 });
 CoursesSchema.plugin(mongoose_unique_validator_1.default);
 const CourseModel = mongoose_1.default.model('CourseModel', CoursesSchema);

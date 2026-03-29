@@ -33,12 +33,7 @@ const registrationSchema = joi_1.default.object({
         'string.pattern.base': 'Last name must contain only letters',
         'any.required': 'Last name is required',
     }),
-    email: joi_1.default.string()
-        .email()
-        .lowercase()
-        .trim()
-        .required()
-        .messages({
+    email: joi_1.default.string().email().lowercase().trim().required().messages({
         'string.empty': 'Email is required',
         'string.email': 'Email must be a valid email address',
         'any.required': 'Email is required',

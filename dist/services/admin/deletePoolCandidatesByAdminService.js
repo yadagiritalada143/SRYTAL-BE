@@ -28,4 +28,7 @@ const softDeletePoolCandidateByAdmin = async (poolCandidateIdToDelete) => {
         });
     });
 };
-exports.default = { hardDeletePoolCandidateByAdmin, softDeletePoolCandidateByAdmin };
+exports.default = {
+    hardDeletePoolCandidateByAdmin,
+    softDeletePoolCandidateByAdmin,
+};

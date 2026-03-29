@@ -6,8 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const talentPoolCandidatesModel_1 = __importDefault(require("../../model/talentPoolCandidatesModel"));
 const getAllTalentPoolCandidates = () => {
     return new Promise((resolve, reject) => {
-        talentPoolCandidatesModel_1.default
-            .find({})
+        talentPoolCandidatesModel_1.default.find({})
             .populate('comments.userId', 'firstName lastName')
             .populate('createdBy', 'firstName lastName')
             .then((talentPoolCandidates) => {

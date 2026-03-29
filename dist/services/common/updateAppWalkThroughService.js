@@ -6,7 +6,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const userModel_1 = __importDefault(require("../../model/userModel"));
 const updateAppWalkThrough = async (applicationWalkThroughToUpdate) => {
     try {
-        const result = await userModel_1.default.updateOne({ _id: applicationWalkThroughToUpdate.user_id }, { applicationWalkThrough: Number(applicationWalkThroughToUpdate.applicationWalkThrough) });
+        const result = await userModel_1.default.updateOne({ _id: applicationWalkThroughToUpdate.user_id }, {
+            applicationWalkThrough: Number(applicationWalkThroughToUpdate.applicationWalkThrough),
+        });
         return result;
     }
     catch (error) {

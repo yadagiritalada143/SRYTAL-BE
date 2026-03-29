@@ -11,6 +11,5 @@ const getDepartmentByAdmin = async (_id) => {
     catch (error) {
         throw new Error('Error in fetching department details');
     }
-    ;
 };
 exports.default = { getDepartmentByAdmin };

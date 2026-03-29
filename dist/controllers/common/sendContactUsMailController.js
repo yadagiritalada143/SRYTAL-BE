@@ -9,11 +9,16 @@ const sendContactUsMail = (req, res) => {
     sendContactUsMailService_1.default
         .sendContactUsMail(req.body)
         .then((responseAfterSentMail) => {
-        res.status(200).json({ success: true, message: 'Mail sent successfully !' });
+        res
+            .status(200)
+            .json({ success: true, message: 'Mail sent successfully !' });
     })
         .catch((error) => {
         console.error(`Error while sending email at controller lever: ${error}`);
-        res.status(500).json({ success: false, message: commonErrorMessages_1.EMAIL_ERROR_MESSAGE.SEND_NOTIFICATION_ERROR });
+        res.status(500).json({
+            success: false,
+            message: commonErrorMessages_1.EMAIL_ERROR_MESSAGE.SEND_NOTIFICATION_ERROR,
+        });
     });
 };
 exports.default = { sendContactUsMail };

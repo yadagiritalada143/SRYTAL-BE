@@ -6,20 +6,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const coursesModel_1 = __importDefault(require("../../model/coursesModel"));
 const getCourseById = async (id) => {
     try {
-        const course = await coursesModel_1.default.findById(id)
-            .populate({
+        const course = await coursesModel_1.default.findById(id).populate({
             path: 'modules',
             populate: {
                 path: 'tasks',
-                model: 'CourseTaskModel'
-            }
+                model: 'CourseTaskModel',
+            },
         });
         if (!course) {
             return { success: false };
         }
         return {
             success: true,
-            coursedata: course
+            coursedata: course,
         };
     }
     catch (error) {

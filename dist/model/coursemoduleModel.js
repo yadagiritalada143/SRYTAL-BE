@@ -14,7 +14,7 @@ const CourseModuleSchema = new mongoose_1.default.Schema({
 }, {
     collection: 'coursemodule',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
 });
 CourseModuleSchema.virtual('tasks', {
     ref: 'CourseTaskModel',

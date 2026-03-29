@@ -8,7 +8,7 @@ const registrationMessages_1 = require("../../constants/registrationMessages");
 const sendRegistrationOTPEmail_1 = __importDefault(require("../../util/sendRegistrationOTPEmail"));
 const hashPassword_1 = __importDefault(require("../../util/hashPassword"));
 const randomPasswordGenerate = () => {
-    return Math.floor(Math.random() * 90000000) + 10000000 + "";
+    return Math.floor(Math.random() * 90000000) + 10000000 + '';
 };
 const register = (req, res) => {
     const newRegistrationData = req.body;

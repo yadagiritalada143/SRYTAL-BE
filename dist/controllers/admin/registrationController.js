@@ -8,7 +8,7 @@ const registrationMessages_1 = require("../../constants/registrationMessages");
 const sendRegistrationOTPEmail_1 = __importDefault(require("../../util/sendRegistrationOTPEmail"));
 const hashPassword_1 = __importDefault(require("../../util/hashPassword"));
 const randomPasswordGenerate = () => {
-    return (Math.floor(Math.random() * 90000000) + 10000000) + '';
+    return Math.floor(Math.random() * 90000000) + 10000000 + '';
 };
 const register = (req, res) => {
     const { organizationId } = req.user || {};
@@ -27,17 +27,19 @@ const register = (req, res) => {
         }
         return hashPassword_1.default.hashPassword(newRegistrationData.password);
     })
-        .then(hashedPassword => {
+        .then((hashedPassword) => {
         newRegistrationData.password = hashedPassword;
         return registerEmployeeByAdminService_1.default.saveAccount(newRegistrationData);
     })
-        .then(responseAfterRegistration => {
+        .then((responseAfterRegistration) => {
         if (responseAfterRegistration.id) {
             sendRegistrationOTPEmail_1.default.sendOTPEmail(newRegistrationData.firstName, newRegistrationData.lastName, newRegistrationData.email, randomPassword);
         }
-        return res.status(201).json({ message: registrationMessages_1.ACCOUNT_MESSAGES.REGISTRATION_SUCCESS });
+        return res
+            .status(201)
+            .json({ message: registrationMessages_1.ACCOUNT_MESSAGES.REGISTRATION_SUCCESS });
     })
-        .catch(error => {
+        .catch((error) => {
         if (error.message === registrationMessages_1.ERRORS.EMAIL_EXISTS) {
             return res.status(409).json({ message: error.message });
         }

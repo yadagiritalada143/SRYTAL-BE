@@ -6,7 +6,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const coursesModel_1 = __importDefault(require("../../model/coursesModel"));
 const addCourseByAdmin = async (courseName, courseDescription) => {
     try {
-        const CoursesToSave = new coursesModel_1.default({ courseName, courseDescription });
+        const CoursesToSave = new coursesModel_1.default({
+            courseName,
+            courseDescription,
+        });
         const result = await CoursesToSave.save();
         return result;
     }

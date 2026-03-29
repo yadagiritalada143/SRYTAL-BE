@@ -7,7 +7,7 @@ const addTalentPoolCandidateByRecruiterService_1 = __importDefault(require("../.
 const recruiterErrorMessages_1 = require("../../constants/recruiterErrorMessages");
 const addTalentPoolCandidateByRecruiter = (req, res) => {
     var _a;
-    let candidateDetails = req.body;
+    const candidateDetails = req.body;
     candidateDetails.createdAt = new Date();
     candidateDetails.lastUpdatedAt = new Date();
     candidateDetails.createdBy = candidateDetails.userId;
@@ -24,7 +24,10 @@ const addTalentPoolCandidateByRecruiter = (req, res) => {
     })
         .catch((error) => {
         console.error(`Error in adding talent pool to tracker: ${error}`);
-        res.status(500).json({ success: false, message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_ADDING_POOL_CANDIDATE_DETAILS });
+        res.status(500).json({
+            success: false,
+            message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_ADDING_POOL_CANDIDATE_DETAILS,
+        });
     });
 };
 exports.default = { addTalentPoolCandidateByRecruiter };

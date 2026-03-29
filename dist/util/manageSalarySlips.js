@@ -10,12 +10,32 @@ console.warn('[ManageSalarySlips] Bucket Name:', awsS3Config_1.bucketName);
 console.warn('[ManageSalarySlips] Salary Slips Folder:', awsS3Config_1.salarySlipsFolder);
 const generateSalarySlipFileName = (employeeName, payPeriod) => {
     const months = [
-        'January', 'February', 'March', 'April', 'May', 'June',
-        'July', 'August', 'September', 'October', 'November', 'December'
+        'January',
+        'February',
+        'March',
+        'April',
+        'May',
+        'June',
+        'July',
+        'August',
+        'September',
+        'October',
+        'November',
+        'December',
     ];
     const monthsShort = [
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
     ];
     const sanitizedName = employeeName.replace(/\s+/g, '-');
     const parts = payPeriod.trim().split(' ');
@@ -24,7 +44,7 @@ const generateSalarySlipFileName = (employeeName, payPeriod) => {
     }
     const monthName = parts[0];
     const year = parseInt(parts[1], 10);
-    const monthIndex = months.findIndex(m => m.toLowerCase() === monthName.toLowerCase());
+    const monthIndex = months.findIndex((m) => m.toLowerCase() === monthName.toLowerCase());
     if (monthIndex === -1 || isNaN(year)) {
         return `${sanitizedName}-${payPeriod.replace(/\s+/g, '-')}.pdf`;
     }

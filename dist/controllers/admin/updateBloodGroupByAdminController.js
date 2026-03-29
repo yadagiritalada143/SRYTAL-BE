@@ -14,7 +14,10 @@ const updateBloodGroup = (req, res) => {
     })
         .catch((error) => {
         console.error(`Error in  updating blood group: ${error}`);
-        res.status(500).json({ success: false, message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_UPDATING_BLOOD_GROUP_DETAILS });
+        res.status(500).json({
+            success: false,
+            message: recruiterErrorMessages_1.RECRUITER_ERROR_MESSAGES.ERROR_UPDATING_BLOOD_GROUP_DETAILS,
+        });
     });
 };
 exports.default = { updateBloodGroup };

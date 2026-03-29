@@ -19,7 +19,12 @@ const UserSchema = new mongoose_1.default.Schema({
     mobileNumber: { type: mongoose_1.default.Schema.Types.Number },
     userRole: { type: mongoose_1.default.Schema.Types.String },
     passwordResetRequired: { type: mongoose_1.default.Schema.Types.String },
-    bloodGroup: { type: mongoose_1.default.Schema.Types.ObjectId, ref: bloodGroupModel_1.default, required: false, default: null },
+    bloodGroup: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: bloodGroupModel_1.default,
+        required: false,
+        default: null,
+    },
     bankDetailsInfo: {
         bankName: { type: mongoose_1.default.Schema.Types.String },
         accountHolderName: { type: mongoose_1.default.Schema.Types.String },
@@ -42,14 +47,19 @@ const UserSchema = new mongoose_1.default.Schema({
     panCardNumber: { type: mongoose_1.default.Schema.Types.String },
     dateOfJoining: { type: mongoose_1.default.Schema.Types.Date },
     uanNumber: { type: mongoose_1.default.Schema.Types.String },
-    department: { type: mongoose_1.default.Schema.Types.ObjectId, ref: departmentModel_1.default, required: false, default: null },
+    department: {
+        type: mongoose_1.default.Schema.Types.ObjectId,
+        ref: departmentModel_1.default,
+        required: false,
+        default: null,
+    },
     presentAddress: { type: mongoose_1.default.Schema.Types.String },
     permanentAddress: { type: mongoose_1.default.Schema.Types.String },
     refreshToken: { type: mongoose_1.default.Schema.Types.String },
 }, {
     collection: 'users',
     toObject: { virtuals: true },
-    toJSON: { virtuals: true }
+    toJSON: { virtuals: true },
 });
 UserSchema.plugin(mongoose_unique_validator_1.default);
 UserSchema.virtual('id').get(function () {

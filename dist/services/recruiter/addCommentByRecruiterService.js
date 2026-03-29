@@ -11,14 +11,12 @@ const addCommentByRecruiter = async ({ id, comment, userId }) => {
             comments: {
                 comment,
                 userId,
-                updateAt: new Date()
-            }
-        }
+                updateAt: new Date(),
+            },
+        },
     }, { new: true });
     if (result && result.id) {
-        result = await poolCompanies_1.default
-            .findOne({ _id: id })
-            .populate('comments.userId', 'firstName lastName');
+        result = await poolCompanies_1.default.findOne({ _id: id }).populate('comments.userId', 'firstName lastName');
     }
     return result;
 };

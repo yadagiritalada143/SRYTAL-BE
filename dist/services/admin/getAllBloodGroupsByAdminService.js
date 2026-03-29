@@ -14,7 +14,7 @@ const getAllBloodgroupsByAdmin = () => {
             else {
                 resolve({
                     success: true,
-                    bloodGroupList: bloodGroupsList
+                    bloodGroupList: bloodGroupsList,
                 });
             }
         })

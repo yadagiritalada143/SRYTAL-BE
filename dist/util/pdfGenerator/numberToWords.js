@@ -2,12 +2,38 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.formatIndianCurrency = exports.convertAmountToWords = exports.convertNumberToWords = void 0;
 const ones = [
-    '', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine',
-    'Ten', 'Eleven', 'Twelve', 'Thirteen', 'Fourteen', 'Fifteen', 'Sixteen',
-    'Seventeen', 'Eighteen', 'Nineteen'
+    '',
+    'One',
+    'Two',
+    'Three',
+    'Four',
+    'Five',
+    'Six',
+    'Seven',
+    'Eight',
+    'Nine',
+    'Ten',
+    'Eleven',
+    'Twelve',
+    'Thirteen',
+    'Fourteen',
+    'Fifteen',
+    'Sixteen',
+    'Seventeen',
+    'Eighteen',
+    'Nineteen',
 ];
 const tens = [
-    '', '', 'Twenty', 'Thirty', 'Forty', 'Fifty', 'Sixty', 'Seventy', 'Eighty', 'Ninety'
+    '',
+    '',
+    'Twenty',
+    'Thirty',
+    'Forty',
+    'Fifty',
+    'Sixty',
+    'Seventy',
+    'Eighty',
+    'Ninety',
 ];
 const convertTwoDigit = (num) => {
     if (num < 20) {
@@ -23,7 +49,9 @@ const convertThreeDigit = (num) => {
     }
     const hundred = Math.floor(num / 100);
     const remainder = num % 100;
-    return ones[hundred] + ' Hundred' + (remainder ? ' ' + convertTwoDigit(remainder) : '');
+    return (ones[hundred] +
+        ' Hundred' +
+        (remainder ? ' ' + convertTwoDigit(remainder) : ''));
 };
 const convertNumberToWords = (amount) => {
     if (amount === 0)
@@ -67,9 +95,14 @@ const formatIndianCurrency = (amount) => {
     const remaining = integerPart.slice(0, -3);
     let formattedInteger = lastThree;
     if (remaining) {
-        formattedInteger = remaining.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + lastThree;
+        formattedInteger =
+            remaining.replace(/\B(?=(\d{2})+(?!\d))/g, ',') + ',' + lastThree;
     }
     return formattedInteger + '.' + decimalPart;
 };
 exports.formatIndianCurrency = formatIndianCurrency;
-exports.default = { convertNumberToWords: exports.convertNumberToWords, convertAmountToWords: exports.convertAmountToWords, formatIndianCurrency: exports.formatIndianCurrency };
+exports.default = {
+    convertNumberToWords: exports.convertNumberToWords,
+    convertAmountToWords: exports.convertAmountToWords,
+    formatIndianCurrency: exports.formatIndianCurrency,
+};

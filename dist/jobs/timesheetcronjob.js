@@ -21,7 +21,7 @@ const updateNextMonthTimeSheet = async () => {
                 hours: 0,
                 comments: '',
                 leaveReason: '',
-                status: 'NOT SUBMITTED'
+                status: 'NOT SUBMITTED',
             };
         });
         const employeePackages = await employeePackageModel_1.default.find()
@@ -31,11 +31,11 @@ const updateNextMonthTimeSheet = async () => {
             .lean()
             .exec();
         const employeePackagesTyped = employeePackages;
-        const updates = employeePackagesTyped.map(empPack => {
-            empPack.packages.map(packageItem => {
-                packageItem.tasks.map(task => {
-                    const existingDates = new Set(task.timesheet.map(entry => entry.date.toISOString()));
-                    timesheet.map(newEntry => {
+        const updates = employeePackagesTyped.map((empPack) => {
+            empPack.packages.map((packageItem) => {
+                packageItem.tasks.map((task) => {
+                    const existingDates = new Set(task.timesheet.map((entry) => entry.date.toISOString()));
+                    timesheet.map((newEntry) => {
                         if (!existingDates.has(newEntry.date.toISOString())) {
                             task.timesheet.push(newEntry);
                         }
@@ -47,12 +47,12 @@ const updateNextMonthTimeSheet = async () => {
         await Promise.all(updates);
     }
     catch (error) {
-        console.error("Failed to update timesheets:", error);
+        console.error('Failed to update timesheets:', error);
         throw error;
     }
 };
 node_cron_1.default.schedule('0 0 25 * *', () => {
-    console.warn("Cron triggered! Running on the 25th of each month...");
+    console.warn('Cron triggered! Running on the 25th of each month...');
     updateNextMonthTimeSheet();
 });
 exports.default = { updateNextMonthTimeSheet };

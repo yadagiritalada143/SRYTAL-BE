@@ -14,7 +14,7 @@ const getAllEmployeeRolesByAdmin = () => {
             else {
                 resolve({
                     success: true,
-                    employeeRoles: employeeRoles
+                    employeeRoles: employeeRoles,
                 });
             }
         })

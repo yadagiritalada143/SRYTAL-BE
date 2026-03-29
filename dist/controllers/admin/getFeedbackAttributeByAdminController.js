@@ -10,13 +10,23 @@ const getFeedbackAttributeByAdmin = async (req, res) => {
         const { id } = req.params;
         const feedbackAttributeDetails = await getFeedbackAttributeByAdminService_1.default.getFeedbackAttributeByAdmin(id);
         if (!feedbackAttributeDetails) {
-            return res.status(feedbackAttributeMessages_1.HTTP_STATUS.NOT_FOUND).json({ success: false, message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FEEDBACK_ATTRIBUTE_NOT_FOUND_ERROR_MESSAGE });
+            return res.status(feedbackAttributeMessages_1.HTTP_STATUS.NOT_FOUND).json({
+                success: false,
+                message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FEEDBACK_ATTRIBUTE_NOT_FOUND_ERROR_MESSAGE,
+            });
         }
-        return res.status(feedbackAttributeMessages_1.HTTP_STATUS.OK).json({ success: true, message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FEEDBACK_ATTRIBUTE_FETCH_SUCCESS_MESSAGE, data: feedbackAttributeDetails });
+        return res.status(feedbackAttributeMessages_1.HTTP_STATUS.OK).json({
+            success: true,
+            message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FEEDBACK_ATTRIBUTE_FETCH_SUCCESS_MESSAGE,
+            data: feedbackAttributeDetails,
+        });
     }
     catch (error) {
         console.error(`Error in fetching feedback attribute details: ${error}`);
-        return res.status(feedbackAttributeMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FEEDBACK_ATTRIBUTE_FETCH_ERROR_MESSAGE });
+        return res.status(feedbackAttributeMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FEEDBACK_ATTRIBUTE_FETCH_ERROR_MESSAGE,
+        });
     }
 };
 exports.default = { getFeedbackAttributeByAdmin };

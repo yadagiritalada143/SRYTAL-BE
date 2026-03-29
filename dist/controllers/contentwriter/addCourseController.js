@@ -17,26 +17,37 @@ const addNewCourse = async (req, res) => {
         if (req.file) {
             const { originalname, buffer, mimetype } = req.file;
             const uniqueName = (0, uuid_1.v4)() + path_1.default.extname(originalname);
-            uniqueThumbnailKey = await manageCourseMedia_1.default.uploadThumbnailToS3(uniqueName, buffer, mimetype, awsS3Config_1.coursesThumbnailsFolder)
+            uniqueThumbnailKey = await manageCourseMedia_1.default
+                .uploadThumbnailToS3(uniqueName, buffer, mimetype, awsS3Config_1.coursesThumbnailsFolder)
                 .then((responseAfterProfileImageUpload) => {
                 return responseAfterProfileImageUpload.key;
             })
                 .catch((error) => {
                 console.error(`Error occured while Thumbnail Image upload: ${error}`);
-                res.status(500).json({ success: false, message: 'Error updating the thumbnail' });
+                res
+                    .status(500)
+                    .json({ success: false, message: 'Error updating the thumbnail' });
             });
         }
         const responseAfteraddingCourse = await addCourseService_1.default.addCourse(courseName, courseDescription, uniqueThumbnailKey, 'ACTIVE');
         if (responseAfteraddingCourse) {
-            return res.status(201).json({ message: courseMessages_1.COURSE_SUCCESS_MESSAGES.COURSE_ADD_SUCCESS_MESSAGE });
+            return res
+                .status(201)
+                .json({ message: courseMessages_1.COURSE_SUCCESS_MESSAGES.COURSE_ADD_SUCCESS_MESSAGE });
         }
         else {
-            res.status(500).json({ success: false, message: courseMessages_1.COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE });
+            res.status(500).json({
+                success: false,
+                message: courseMessages_1.COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE,
+            });
         }
     }
     catch (error) {
         console.log(`Error in adding new Course: ${error}`);
-        res.status(500).json({ success: false, message: courseMessages_1.COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE });
+        res.status(500).json({
+            success: false,
+            message: courseMessages_1.COURSE_ERROR_MESSAGES.COURSE_ADD_ERROR_MESSAGE,
+        });
     }
 };
 exports.default = { addNewCourse };

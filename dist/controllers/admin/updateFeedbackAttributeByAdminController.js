@@ -9,11 +9,17 @@ const updateFeedbackAttributeByAdmin = async (req, res) => {
     try {
         const { id, name } = req.body;
         await updateFeedbackAttributeByAdminService_1.default.updateFeedbackAttributeByAdmin(id, name);
-        return res.status(feedbackAttributeMessages_1.HTTP_STATUS.OK).json({ success: true, message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FEEDBACK_ATTRIBUTE_UPDATE_SUCCESS_MESSAGE });
+        return res.status(feedbackAttributeMessages_1.HTTP_STATUS.OK).json({
+            success: true,
+            message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_SUCCESS_MESSAGES.FEEDBACK_ATTRIBUTE_UPDATE_SUCCESS_MESSAGE,
+        });
     }
     catch (error) {
         console.error(`Error updating feedback attribute: ${error}`);
-        return res.status(feedbackAttributeMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FEEDBACK_ATTRIBUTE_UPDATE_ERROR_MESSAGE });
+        return res.status(feedbackAttributeMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: feedbackAttributeMessages_1.FEEDBACK_ATTRIBUTE_ERROR_MESSAGES.FEEDBACK_ATTRIBUTE_UPDATE_ERROR_MESSAGE,
+        });
     }
 };
 exports.default = { updateFeedbackAttributeByAdmin };

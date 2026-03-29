@@ -7,7 +7,7 @@ const employeePackageModel_1 = __importDefault(require("../../model/employeePack
 const addPackagetoEmployeeByAdmin = async (data) => {
     const currentDay = new Date();
     const lastDayOfMonth = getLastDateOfMonth(currentDay);
-    let timesheet = [];
+    const timesheet = [];
     const startDay = currentDay.getDate();
     const endDay = lastDayOfMonth.getDate();
     const year = currentDay.getFullYear();
@@ -15,7 +15,7 @@ const addPackagetoEmployeeByAdmin = async (data) => {
     for (let day = startDay; day <= endDay; day++) {
         const currentDate = new Date(year, month, day);
         const dayOfWeek = currentDate.getDay();
-        let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
         timesheet.push({
             date: currentDate,
             isHoliday: false,
@@ -24,7 +24,7 @@ const addPackagetoEmployeeByAdmin = async (data) => {
             hours: 0,
             comments: '',
             leaveReason: '',
-            status: 'NOT SUBMITTED'
+            status: 'NOT SUBMITTED',
         });
     }
     if (data.packages && Array.isArray(data.packages)) {
@@ -37,7 +37,10 @@ const addPackagetoEmployeeByAdmin = async (data) => {
         });
     }
     const { employeeId, packageId } = data;
-    const existingPackage = await employeePackageModel_1.default.findOne({ employeeId, packageId });
+    const existingPackage = await employeePackageModel_1.default.findOne({
+        employeeId,
+        packageId,
+    });
     if (existingPackage) {
         return await employeePackageModel_1.default.findOneAndUpdate({ employeeId, packageId }, data, { new: true });
     }

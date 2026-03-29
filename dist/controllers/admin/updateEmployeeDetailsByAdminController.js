@@ -12,7 +12,9 @@ const updateProfile = async (req, res) => {
     }
     catch (error) {
         console.error(`Error in updating profile details: ${error}`);
-        res.status(commonErrorMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ success: false, message: commonErrorMessages_1.COMMON_ERRORS.USER_UPDATING_ERROR });
+        res
+            .status(commonErrorMessages_1.HTTP_STATUS.INTERNAL_SERVER_ERROR)
+            .json({ success: false, message: commonErrorMessages_1.COMMON_ERRORS.USER_UPDATING_ERROR });
     }
 };
 exports.default = { updateProfile };
