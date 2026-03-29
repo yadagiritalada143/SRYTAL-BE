@@ -3,7 +3,7 @@ import EmployeePackageModel from '../../model/employeePackageModel';
 const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
   const currentDay = new Date();
   const lastDayOfMonth = getLastDateOfMonth(currentDay);
-  const timesheet = [];
+  const timesheet: any[] = [];
   const startDay = currentDay.getDate();
   const endDay = lastDayOfMonth.getDate();
   const year = currentDay.getFullYear();
