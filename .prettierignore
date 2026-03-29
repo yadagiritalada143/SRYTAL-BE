@@ -1,3 +1,5 @@
 node_modules
 dist
 coverage
+
+<!-- npm run format - tused to automatically fix and apply consistent code formatting across the project using Prettier. -->

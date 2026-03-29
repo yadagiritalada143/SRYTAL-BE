@@ -7,7 +7,7 @@ const addCommentToPoolCandidateByRecruiter = async ({
   callEndsAt,
   userId,
 }: any) => {
-  let result = await TalentPoolCandidatesModel.findByIdAndUpdate(
+  const result = await TalentPoolCandidatesModel.findByIdAndUpdate(
     id,
     {
       lastUpdatedAt: new Date(),

@@ -35,7 +35,7 @@ const getPoolCompanyDetails = (): Promise<any> => {
 };
 
 const getPoolCompanyDetailsById = async (id: string) => {
-  let poolCompanyDetails = await PoolCompaniesModel.findOne({
+  const poolCompanyDetails = await PoolCompaniesModel.findOne({
     _id: id,
   }).populate('comments.userId', 'firstName lastName');
 

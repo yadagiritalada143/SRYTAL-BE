@@ -3,7 +3,7 @@ import addTaskByAdminService from '../../services/admin/addTaskByAdminService';
 import { TASK_ERROR_MESSAGES } from '../../constants/admin/taskMessages';
 
 const addTaskByAdmin = (req: Request, res: Response) => {
-  let taskDetails = req.body;
+  const taskDetails = req.body;
   taskDetails.createdAt = new Date();
   taskDetails.lastUpdatedAt = new Date();
   taskDetails.createdBy = req.user?.userId;

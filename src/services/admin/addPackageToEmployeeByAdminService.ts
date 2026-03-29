@@ -3,7 +3,7 @@ import EmployeePackageModel from '../../model/employeePackageModel';
 const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
   const currentDay = new Date();
   const lastDayOfMonth = getLastDateOfMonth(currentDay);
-  let timesheet = [];
+  const timesheet = [];
   const startDay = currentDay.getDate();
   const endDay = lastDayOfMonth.getDate();
   const year = currentDay.getFullYear();
@@ -12,7 +12,7 @@ const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
   for (let day = startDay; day <= endDay; day++) {
     const currentDate = new Date(year, month, day);
     const dayOfWeek = currentDate.getDay();
-    let isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+    const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
 
     timesheet.push({
       date: currentDate,

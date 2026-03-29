@@ -3,7 +3,7 @@ import addTalentPoolCandidateByRecruiterService from '../../services/recruiter/a
 import { RECRUITER_ERROR_MESSAGES } from '../../constants/recruiterErrorMessages';
 
 const addTalentPoolCandidateByRecruiter = (req: Request, res: Response) => {
-  let candidateDetails = req.body;
+  const candidateDetails = req.body;
   candidateDetails.createdAt = new Date();
   candidateDetails.lastUpdatedAt = new Date();
   candidateDetails.createdBy = candidateDetails.userId;
