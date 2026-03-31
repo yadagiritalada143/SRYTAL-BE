@@ -9,11 +9,13 @@ const addTalentPoolCandidateByRecruiter = (req: Request, res: Response) => {
   candidateDetails.lastUpdatedAt = new Date();
   candidateDetails.createdBy = userId;
   if (candidateDetails?.comments?.length) {
-    candidateDetails.comments = candidateDetails.comments.map((comment: any) => ({
-      ...comment,
-      userId: userId,
-      updatedAt: new Date()
-    }));
+    candidateDetails.comments = candidateDetails.comments.map(
+      (comment: any) => ({
+        ...comment,
+        userId: userId,
+        updatedAt: new Date(),
+      })
+    );
   }
   addTalentPoolCandidateByRecruiterService
     .addTalentPoolCandidatesByRecruiter(candidateDetails)
@@ -22,8 +24,11 @@ const addTalentPoolCandidateByRecruiter = (req: Request, res: Response) => {
     })
     .catch((error: any) => {
       console.error(`Error in adding talent pool to tracker: ${error}`);
-      res.status(500).json({ success: false, message: RECRUITER_ERROR_MESSAGES.ERROR_ADDING_POOL_CANDIDATE_DETAILS });
-    })
-}
+      res.status(500).json({
+        success: false,
+        message: RECRUITER_ERROR_MESSAGES.ERROR_ADDING_POOL_CANDIDATE_DETAILS,
+      });
+    });
+};
 
 export default { addTalentPoolCandidateByRecruiter };
