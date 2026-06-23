@@ -4,7 +4,9 @@ export interface ICourses extends Document {
     courseName: string;
     courseDescription: string;
     thumbnail?: string;
-    
+    status?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
 }
 
 export interface IFetchAllCoursesResponse {

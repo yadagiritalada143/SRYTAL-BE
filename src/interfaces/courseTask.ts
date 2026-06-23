@@ -6,6 +6,15 @@ export interface ICourseTask extends Document {
     taskDescription: string;
     thumbnail?: string;
     type: string;
+    status?: string;
+    content?: string;
+    contentMimeType?: string;
+    contentFileName?: string;
+}
+
+export interface IFetchCourseTaskContentResponse {
+    success: boolean;
+    task?: ICourseTask;
 }
 
 export interface IUpdateCourseTaskResponse {
