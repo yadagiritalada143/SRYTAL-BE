@@ -6,6 +6,12 @@ import commonController from '../controllers/common/commonController';
 import userSchema from '../middlewares/schemas/userSchema';
 import validateProfileRequest from '../middlewares/validateProfileUpdate';
 import getAllEmployeeDetailsByAdminController from '../controllers/admin/getAllEmployeeDetailsByAdminController';
+import getDashboardStatsByAdminController from '../controllers/admin/getDashboardStatsByAdminController';
+import getNavCatalogController from '../controllers/admin/getNavCatalogController';
+import getNavRoleAccessController from '../controllers/admin/getNavRoleAccessController';
+import updateNavRoleAccessController from '../controllers/admin/updateNavRoleAccessController';
+import getNavUserAccessController from '../controllers/admin/getNavUserAccessController';
+import updateNavUserAccessController from '../controllers/admin/updateNavUserAccessController';
 import employeePasswordResetByAdminController from '../controllers/admin/employeePasswordResetByAdminController';
 import getAllBloodGroupsByAdminController from '../controllers/admin/getAllBloodGroupsByAdminController';
 import addBloodGroupByAdminController from '../controllers/admin/addBloodGroupByAdminController';
@@ -531,6 +537,118 @@ adminRouter.put('/updateEmployeeDetailsByAdmin', validateProfileRequest(userSche
  *                   example: "Error while fetching user details"
  */
 adminRouter.get('/getAllEmployeeDetailsByAdmin', validateJWT, getAllEmployeeDetailsByAdminController.getAllEmployeeDetails);
+
+/**
+ * @swagger
+ * /admin/getDashboardStatsByAdmin:
+ *   get:
+ *     summary: Get aggregated dashboard stats for the admin's organization
+ *     description: Returns org-scoped headcount and role/department/employment-type breakdowns, recent hires, birthdays and work anniversaries this month, pending password resets, and timesheet oversight (pending approvals, hours logged this month, active projects).
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard stats fetched successfully
+ *       500:
+ *         description: Error while fetching dashboard stats
+ */
+adminRouter.get('/getDashboardStatsByAdmin', validateJWT, getDashboardStatsByAdminController.getDashboardStats);
+
+// ── Navigation / Menu Access management ──────────────────────────────────────
+/**
+ * @swagger
+ * /admin/getNavCatalog:
+ *   get:
+ *     summary: Get the full navigation catalog (optionally by surface)
+ *     tags: [Admin]
+ *     security: [{ BearerAuth: [] }]
+ *     parameters:
+ *       - in: query
+ *         name: surface
+ *         schema: { type: string, enum: [employee, admin] }
+ *     responses:
+ *       200: { description: Catalog fetched }
+ */
+adminRouter.get('/getNavCatalog', validateJWT, getNavCatalogController.getNavCatalog);
+
+/**
+ * @swagger
+ * /admin/getNavRoleAccess/{role}:
+ *   get:
+ *     summary: Get the granted menu keys for a role (defaults to full surface catalog if unset)
+ *     tags: [Admin]
+ *     security: [{ BearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: role
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200: { description: Role access fetched }
+ */
+adminRouter.get('/getNavRoleAccess/:role', validateJWT, getNavRoleAccessController.getNavRoleAccess);
+
+/**
+ * @swagger
+ * /admin/updateNavRoleAccess:
+ *   put:
+ *     summary: Set the granted menu keys for a role
+ *     tags: [Admin]
+ *     security: [{ BearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role: { type: string }
+ *               navKeys: { type: array, items: { type: string } }
+ *     responses:
+ *       200: { description: Role access updated }
+ */
+adminRouter.put('/updateNavRoleAccess', validateJWT, updateNavRoleAccessController.updateNavRoleAccess);
+
+/**
+ * @swagger
+ * /admin/getNavUserAccess/{userId}:
+ *   get:
+ *     summary: Get a user's role baseline plus their per-user menu overrides
+ *     tags: [Admin]
+ *     security: [{ BearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200: { description: User access fetched }
+ */
+adminRouter.get('/getNavUserAccess/:userId', validateJWT, getNavUserAccessController.getNavUserAccess);
+
+/**
+ * @swagger
+ * /admin/updateNavUserAccess:
+ *   put:
+ *     summary: Set a user's per-user menu overrides (added/removed keys)
+ *     tags: [Admin]
+ *     security: [{ BearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId: { type: string }
+ *               addedKeys: { type: array, items: { type: string } }
+ *               removedKeys: { type: array, items: { type: string } }
+ *     responses:
+ *       200: { description: User access updated }
+ */
+adminRouter.put('/updateNavUserAccess', validateJWT, updateNavUserAccessController.updateNavUserAccess);
 
 /**
  * @swagger

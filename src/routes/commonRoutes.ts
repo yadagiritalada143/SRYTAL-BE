@@ -6,6 +6,7 @@ import updatePasswordController from '../controllers/common/updatePasswordContro
 import getOrganizationThemesController from '../controllers/common/getOrganizationThemesController';
 import getEmployeeDetailsController from '../controllers/common/getEmployeeDetailsController';
 import getEmployeeDashboardController from '../controllers/common/getEmployeeDashboardController';
+import getMyNavMenuController from '../controllers/common/getMyNavMenuController';
 import uploadProfileImageController from '../controllers/common/uploadProfileImageController';
 import getProfileImageController from '../controllers/common/getProfileImageController';
 import validateJWT from '../middlewares/validateJWT';
@@ -481,6 +482,24 @@ commonRouter.get('/getEmployeeDetails', validateJWT, getEmployeeDetailsControlle
  *         description: Error while fetching dashboard data
  */
 commonRouter.get('/getEmployeeDashboard', validateJWT, getEmployeeDashboardController.getEmployeeDashboard);
+
+/**
+ * @swagger
+ * /getMyNavMenu:
+ *   get:
+ *     summary: Get the effective navigation menu for the logged-in user
+ *     description: Returns the resolved menu tree (role grant + per-user overrides, minus revocations, plus system items) and the flat list of allowed org-relative URLs used for client-side route enforcement.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Menu resolved successfully
+ *       500:
+ *         description: Error while resolving the navigation menu
+ */
+commonRouter.get('/getMyNavMenu', validateJWT, getMyNavMenuController.getMyNavMenu);
 
 /**
  * @swagger
