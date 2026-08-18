@@ -5,6 +5,8 @@ import updateApplicationWalkThroughController from '../controllers/common/update
 import updatePasswordController from '../controllers/common/updatePasswordController';
 import getOrganizationThemesController from '../controllers/common/getOrganizationThemesController';
 import getEmployeeDetailsController from '../controllers/common/getEmployeeDetailsController';
+import getEmployeeDashboardController from '../controllers/common/getEmployeeDashboardController';
+import getMyNavMenuController from '../controllers/common/getMyNavMenuController';
 import uploadProfileImageController from '../controllers/common/uploadProfileImageController';
 import getProfileImageController from '../controllers/common/getProfileImageController';
 import validateJWT from '../middlewares/validateJWT';
@@ -444,6 +446,60 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
  *                   example: Error in fetching employee details
  */
 commonRouter.get('/getEmployeeDetails', validateJWT, getEmployeeDetailsController.getEmployeeDetails);
+
+/**
+ * @swagger
+ * /getEmployeeDashboard:
+ *   get:
+ *     summary: Get aggregated dashboard data for the logged-in employee
+ *     description: Returns profile summary, timesheet stats (this month/week), active projects with logged hours, timesheet status breakdown, and recent timesheet entries for the authenticated employee.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard data fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 profile:
+ *                   type: object
+ *                 stats:
+ *                   type: object
+ *                 statusCounts:
+ *                   type: object
+ *                 projects:
+ *                   type: array
+ *                 recentEntries:
+ *                   type: array
+ *       500:
+ *         description: Error while fetching dashboard data
+ */
+commonRouter.get('/getEmployeeDashboard', validateJWT, getEmployeeDashboardController.getEmployeeDashboard);
+
+/**
+ * @swagger
+ * /getMyNavMenu:
+ *   get:
+ *     summary: Get the effective navigation menu for the logged-in user
+ *     description: Returns the resolved menu tree (role grant + per-user overrides, minus revocations, plus system items) and the flat list of allowed org-relative URLs used for client-side route enforcement.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Menu resolved successfully
+ *       500:
+ *         description: Error while resolving the navigation menu
+ */
+commonRouter.get('/getMyNavMenu', validateJWT, getMyNavMenuController.getMyNavMenu);
 
 /**
  * @swagger

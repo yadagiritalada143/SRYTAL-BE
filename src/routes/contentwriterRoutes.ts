@@ -1,10 +1,12 @@
 import express, { Router } from 'express';
 import validateJWT from '../middlewares/validateJWT';
+import validateJWTForMedia from '../middlewares/validateJWTForMedia';
 import addCourseController from '../controllers/contentwriter/addCourseController';
 import getAllCoursesController from '../controllers/contentwriter/getAllCoursesController';
 import getCourseDetailsByIdController from '../controllers/contentwriter/getCourseByIdController';
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
 import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
+import getCourseTaskContentController from '../controllers/contentwriter/getCourseTaskContentController';
 import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
 import updateCourseModuleController from '../controllers/contentwriter/updateCourseModuleController';
 import updateCourseController from '../controllers/contentwriter/updateCourseController';
@@ -171,7 +173,11 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  * /contentwriter/addCourseTask:
  *   post:
  *     summary: Add a task to a course module
- *     description: Add a new task to an existing course module. This action requires authentication.
+ *     description: |
+ *       Add a new task to an existing course module. A task carries flexible
+ *       content: either an uploaded file (pdf/word/any type, field `taskFile`)
+ *       or an external `link` (YouTube, blog, etc). Provide exactly one.
+ *       This action requires authentication.
  *     tags:
  *       - ContentWriter
  *     security:
@@ -179,7 +185,7 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             properties:
@@ -191,8 +197,13 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *                 type: string
  *               thumbnail:
  *                 type: string
- *               type:
+ *               link:
  *                 type: string
+ *                 description: External content URL (used when no file is uploaded)
+ *               taskFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: Uploaded content file (pdf/word/any type)
  *             required:
  *               - taskName
  *               - moduleId
@@ -219,7 +230,47 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *       500:
  *         description: Server error
  */
-contentwriterRouter.post('/addCourseTask', validateJWT, addCourseTaskController.addTaskToModule);
+contentwriterRouter.post('/addCourseTask', validateJWT, upload.single('taskFile'), addCourseTaskController.addTaskToModule);
+
+/**
+ * @swagger
+ * /contentwriter/getCourseTaskContent/{id}:
+ *   get:
+ *     summary: Get a task's content (for viewing in a new tab)
+ *     description: |
+ *       Serves the content of a course task. For tasks of type `LINK` this
+ *       redirects (302) to the stored external URL; for type `FILE` it streams
+ *       the file from S3 inline so the browser renders or downloads it.
+ *       The JWT may be supplied via the `auth_token` header or query parameter
+ *       (so the URL can be opened directly in a new browser tab).
+ *     tags:
+ *       - ContentWriter
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the task whose content to serve
+ *       - in: query
+ *         name: auth_token
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: JWT token (alternative to the auth_token header)
+ *     responses:
+ *       200:
+ *         description: File content streamed inline.
+ *       302:
+ *         description: Redirect to the external link.
+ *       401:
+ *         description: Unauthorized. Missing or invalid token.
+ *       404:
+ *         description: Task or content not found.
+ *       500:
+ *         description: Server error
+ */
+contentwriterRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCourseTaskContentController.getCourseTaskContent);
 
 /**
  * @swagger

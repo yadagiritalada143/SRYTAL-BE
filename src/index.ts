@@ -14,7 +14,6 @@ import recruiterRouter from './routes/recruiterRoutes';
 import schedularService from './jobs/timesheetcronjob';
 import contentwriterRouter from './routes/contentwriterRoutes';
 
-
 dotenv.config();
 
 const app: Express = express();
@@ -42,7 +41,7 @@ app.use('/', commonRouter);
 app.use('/admin', adminRouter);
 app.use('/superadmin', superadminRouter);
 app.use('/recruiter', recruiterRouter);
-app.use('/contentwriter', contentwriterRouter)
+app.use('/contentwriter', contentwriterRouter);
 
 const startServer = async () => {
     try {

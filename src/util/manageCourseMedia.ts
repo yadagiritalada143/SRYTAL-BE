@@ -13,12 +13,33 @@ const uploadThumbnailToS3 = async (fileName: string, buffer: any, mimetype: stri
         s3Client.upload(params, (error: any, data: any) => {
             if (error) {
                 console.error(`Error uploading to S3 bucket: ${error}`);
-                reject(error);
+                return reject(error);
             }
-            console.warn(`Data is: ${error}`);
             resolve(data);
         });
     });
 }
 
-export default { uploadThumbnailToS3 }
+const getCourseMediaFromS3 = async (s3Key: string): Promise<any> => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            Bucket: bucketName,
+            Key: s3Key,
+        };
+
+        s3Client.getObject(params, (error: any, data: any) => {
+            if (error) {
+                console.error(`Error fetching course media from S3: ${error}`);
+                return reject(error);
+            }
+
+            resolve({
+                success: true,
+                contentType: data.ContentType,
+                body: data.Body,
+            });
+        });
+    });
+}
+
+export default { uploadThumbnailToS3, getCourseMediaFromS3 }
