@@ -1,6 +1,6 @@
 import CourseModel from '../../model/coursesModel';
 import { IFetchAllCoursesResponse } from '../../interfaces/courses';
-import uploadThumbnailToS3 from '../../util/manageCourseMedia';
+import courseMedia from '../../util/manageCourseMedia';
 
 // const AllCourses = (): Promise<IFetchAllCoursesResponse> => {
 //     return new Promise((resolve, reject) => {
@@ -39,7 +39,7 @@ const AllCourses = async () => {
 
                 if (course.thumbnail) {
                     thumbnailUrl =
-                        await uploadThumbnailToS3.getCourseMediaSignedUrl(
+                        await courseMedia.getCourseMediaSignedUrl(
                             course.thumbnail
                         );
                 }

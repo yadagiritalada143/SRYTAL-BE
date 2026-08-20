@@ -42,14 +42,12 @@ const getCourseMediaFromS3 = async (s3Key: string): Promise<any> => {
     });
 }
 
-const getCourseMediaSignedUrl = async (
-    s3Key: string
-): Promise<string> => {
+const getCourseMediaSignedUrl = async (s3Key: string, expiresIn: number = 3600): Promise<string> => {
     try {
         const params = {
             Bucket: bucketName,
             Key: s3Key,
-            Expires: 3600, // URL valid for 1 hour
+            Expires: expiresIn, // URL valid for 1 hour
         };
 
         const signedUrl = await s3Client.getSignedUrlPromise(
