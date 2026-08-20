@@ -15,36 +15,96 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const contentwriterRouter: Router = express.Router();
 
+// /**
+//  * @swagger
+//  * /contentwriter/getAllCourses:
+//  *   get:
+//  *     summary: Get all courses
+//  *     description: Retrieve a list of all available courses.
+//  *     tags:
+//  *       - ContentWriter
+//  *     security:
+//  *       - BearerAuth: [] # JWT Bearer token required
+//  *     responses:
+//  *       200:
+//  *         description: Successfully retrieved the courses.
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: array
+//  *               items:
+//  *                 type: object
+//  *                 properties:
+//  *                   courseName:
+//  *                     type: string
+//  *                   courseDescription:
+//  *                     type: string
+//  *       401:
+//  *         description: Unauthorized. Missing or invalid Authorization header.
+//  *       500:
+//  *         description: Server error
+//  */
+// contentwriterRouter.get('/getAllCourses', validateJWT, getAllCoursesController.getAllCourses);
+
+
 /**
  * @swagger
  * /contentwriter/getAllCourses:
  *   get:
  *     summary: Get all courses
- *     description: Retrieve a list of all available courses.
+ *     description: Get all courses with their thumbnail image URLs.
  *     tags:
  *       - ContentWriter
  *     security:
- *       - BearerAuth: [] # JWT Bearer token required
+ *       - BearerAuth: []
  *     responses:
  *       200:
- *         description: Successfully retrieved the courses.
+ *         description: Successfully fetched all courses.
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   courseName:
- *                     type: string
- *                   courseDescription:
- *                     type: string
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64f123456789abcdef123456"
+ *                       courseName:
+ *                         type: string
+ *                         example: "Node.js"
+ *                       courseDescription:
+ *                         type: string
+ *                         example: "Complete Node.js Backend Development Course"
+ *                       thumbnail:
+ *                         type: string
+ *                         example: "LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       thumbnailUrl:
+ *                         type: string
+ *                         format: uri
+ *                         example: "https://your-bucket.s3.amazonaws.com/LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       status:
+ *                         type: string
+ *                         example: "ACTIVE"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
  *       401:
  *         description: Unauthorized. Missing or invalid Authorization header.
  *       500:
- *         description: Server error
+ *         description: Server error.
  */
 contentwriterRouter.get('/getAllCourses', validateJWT, getAllCoursesController.getAllCourses);
+
 
 /**
  * @swagger
@@ -401,7 +461,7 @@ contentwriterRouter.put('/updatecoursemodule', validateJWT, updateCourseModuleCo
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
@@ -421,7 +481,8 @@ contentwriterRouter.put('/updatecoursemodule', validateJWT, updateCourseModuleCo
  *                 description: Updated course description
  *               thumbnail:
  *                 type: string
- *                 format: uri
+ *                 format: binary
+ *                 description: Updated course thumbnail image (optional)
  *               status:
  *                 type: string
  *                 description: Updated status of the course ("ACTIVE" or "ARCHIVE")
@@ -442,6 +503,6 @@ contentwriterRouter.put('/updatecoursemodule', validateJWT, updateCourseModuleCo
  *       500:
  *         description: Internal server error
  */
-contentwriterRouter.put('/updatecourse', validateJWT, updateCourseController.updateCourse)
+contentwriterRouter.put('/updatecourse', validateJWT, upload.single('thumbnail'), updateCourseController.updateCourse);
 
 export default contentwriterRouter;
