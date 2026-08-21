@@ -14,14 +14,6 @@ const getAllCourses = async(req: Request, res: Response) => {
         console.error(`Error in fetching courses: ${error}`);
         res.status(500).json({ success: false, message: COURSE_ERROR_MESSAGES.COURSE_FETCH_ERROR_MESSAGE });
     }
-    // getAllCoursesService.AllCourses()
-    //     .then((FetchAllCoursesResponse: any) => {
-    //         res.status(200).json(FetchAllCoursesResponse);
-    //     })
-    //     .catch(error => {
-    //         console.error(`Error in fetching courses: ${error}`);
-    //         res.status(500).json({ success: false, message: COURSE_ERROR_MESSAGES.COURSE_FETCH_ERROR_MESSAGE });
-    //     });
 };
 
 export default { getAllCourses }
