@@ -42,4 +42,24 @@ const getCourseMediaFromS3 = async (s3Key: string): Promise<any> => {
     });
 }
 
-export default { uploadThumbnailToS3, getCourseMediaFromS3 }
+const getCourseMediaSignedUrl = async (s3Key: string, expiresIn: number = 3600): Promise<string> => {
+    try {
+        const params = {
+            Bucket: bucketName,
+            Key: s3Key,
+            Expires: expiresIn, // URL valid for 1 hour
+        };
+
+        const signedUrl = await s3Client.getSignedUrlPromise(
+            'getObject',
+            params
+        );
+
+        return signedUrl;
+    } catch (error) {
+        console.error('Error generating S3 signed URL:', error);
+        throw error;
+    }
+};
+
+export default { uploadThumbnailToS3, getCourseMediaFromS3, getCourseMediaSignedUrl }
