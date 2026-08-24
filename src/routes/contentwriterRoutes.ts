@@ -15,38 +15,6 @@ const upload = multer({ storage: multer.memoryStorage() });
 
 const contentwriterRouter: Router = express.Router();
 
-// /**
-//  * @swagger
-//  * /contentwriter/getAllCourses:
-//  *   get:
-//  *     summary: Get all courses
-//  *     description: Retrieve a list of all available courses.
-//  *     tags:
-//  *       - ContentWriter
-//  *     security:
-//  *       - BearerAuth: [] # JWT Bearer token required
-//  *     responses:
-//  *       200:
-//  *         description: Successfully retrieved the courses.
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: array
-//  *               items:
-//  *                 type: object
-//  *                 properties:
-//  *                   courseName:
-//  *                     type: string
-//  *                   courseDescription:
-//  *                     type: string
-//  *       401:
-//  *         description: Unauthorized. Missing or invalid Authorization header.
-//  *       500:
-//  *         description: Server error
-//  */
-// contentwriterRouter.get('/getAllCourses', validateJWT, getAllCoursesController.getAllCourses);
-
-
 /**
  * @swagger
  * /contentwriter/getAllCourses:
@@ -401,7 +369,7 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *     requestBody:
  *       required: true
  *       content:
- *         application/json:
+ *         multipart/form-data:
  *           schema:
  *             type: object
  *             required:
@@ -425,7 +393,8 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *                 description: Updated module description
  *               thumbnail:
  *                 type: string
- *                 format: uri
+ *                 format: binary
+ *                 description: Updated module thumbnail image (optional)
  *               status:
  *                 type: string
  *                 description: Updated status of the module ("ACTIVE" or "ARCHIVE")
@@ -446,7 +415,7 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *       500:
  *         description: Internal server error
  */
-contentwriterRouter.put('/updatecoursemodule', validateJWT, updateCourseModuleController.updateCourseModule);
+contentwriterRouter.put('/updatecoursemodule', validateJWT, upload.single('updatemodulethumbnail'), updateCourseModuleController.updateCourseModule);
 
 /**
  * @swagger
