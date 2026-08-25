@@ -365,7 +365,7 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *     tags: 
  *       - ContentWriter
  *     security:
- *       - bearerAuth: [] # JWT Bearer token required
+ *       - BearerAuth: [] # JWT Bearer token required
  *     requestBody:
  *       required: true
  *       content:
@@ -415,7 +415,7 @@ contentwriterRouter.put('/updatecoursetask', validateJWT, updateCourseTaskContro
  *       500:
  *         description: Internal server error
  */
-contentwriterRouter.put('/updatecoursemodule', validateJWT, upload.single('updatemodulethumbnail'), updateCourseModuleController.updateCourseModule);
+contentwriterRouter.put('/updatecoursemodule', validateJWT, upload.single('thumbnail'), updateCourseModuleController.updateCourseModule);
 
 /**
  * @swagger
