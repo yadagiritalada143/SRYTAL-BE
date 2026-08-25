@@ -14,6 +14,8 @@ const addCourseTask = async (
     contentFileName: string,
 ) => {
     try {
+
+        let thumbnailPath = '';
         const CoursesTaskToSave: any = new CourseTaskModel({
             moduleId,
             taskName,
@@ -25,6 +27,7 @@ const addCourseTask = async (
             contentMimeType,
             contentFileName,
         });
+        
         const result = await CoursesTaskToSave.save();
 
         // Propagate activity up: touch the parent course's updatedAt.
@@ -41,3 +44,4 @@ const addCourseTask = async (
 };
 
 export default { addCourseTask };
+
