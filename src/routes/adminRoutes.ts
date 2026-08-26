@@ -54,6 +54,7 @@ import getAllDepartmentsByAdminController from '../controllers/admin/getAllDepar
 import getDepartmentByAdminController from '../controllers/admin/getDepartmentByAdminController';
 import deleteDepartmentByAdminController from '../controllers/admin/deleteDepartmentByAdminController';
 import updateDepartmentByAdminController from '../controllers/admin/updateDepartmentByAdminController';
+import createCourseAssignmentController from '../controllers/admin/createCourseAssignmentController';
 
 const adminRouter: Router = express.Router();
 
@@ -3466,7 +3467,7 @@ adminRouter.delete('/deletedepartmentbyadmin/:_id', validateJWT, deleteDepartmen
  *     summary: Update department by admin
  *     description: Admin can update an existing department name using department ID.
  *     tags:
- *       - Admin 
+ *       - Admin
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -3515,6 +3516,144 @@ adminRouter.delete('/deletedepartmentbyadmin/:_id', validateJWT, deleteDepartmen
  *                   type: string
  *                   example: Failed to update department
  */
-adminRouter.put('/updatedepartmentbyadmin', validateJWT, updateDepartmentByAdminController.updateDepartmentByAdmin)
+adminRouter.put('/updatedepartmentbyadmin', validateJWT, updateDepartmentByAdminController.updateDepartmentByAdmin);
+
+/**
+ * @swagger
+ * /admin/createcourseassignment:
+ *   post:
+ *     summary: Assign a course to an employee
+ *     description: Assigns a course to an employee by an authenticated admin.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseId
+ *               - employeeId
+ *               - dueDate
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the course
+ *                 example: "66c123456789abcdef123456"
+ *
+ *               employeeId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the employee user
+ *                 example: "66c123456789abcdef654321"
+ *
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Due date for completing the course
+ *                 example: "2026-09-30"
+ *
+ *     responses:
+ *       201:
+ *         description: Course assigned to employee successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Course assigned to employee successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "66d123456789abcdef123456"
+ *                     courseId:
+ *                       type: string
+ *                       example: "66c123456789abcdef123456"
+ *                     employeeId:
+ *                       type: string
+ *                       example: "66c123456789abcdef654321"
+ *                     assignedByAdminId:
+ *                       type: string
+ *                       example: "66b123456789abcdef111111"
+ *                     status:
+ *                       type: string
+ *                       enum:
+ *                         - Assigned
+ *                         - In Progress
+ *                         - Completed
+ *                       example: Assigned
+ *                     assignedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2026-08-26T06:30:00.000Z"
+ *                     dueDate:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2026-09-30T23:59:59.000Z"
+ *                     completedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *                       example: null
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *
+ *       400:
+ *         description: Invalid request or course assignment creation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Course assignment creation failed
+ *
+ *       401:
+ *         description: Unauthorized - JWT token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Admin authentication required
+ *
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+adminRouter.post('/createcourseassignment', validateJWT, createCourseAssignmentController.createCourseAssignment);
 
 export default adminRouter;
