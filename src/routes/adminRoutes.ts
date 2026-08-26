@@ -55,6 +55,7 @@ import getDepartmentByAdminController from '../controllers/admin/getDepartmentBy
 import deleteDepartmentByAdminController from '../controllers/admin/deleteDepartmentByAdminController';
 import updateDepartmentByAdminController from '../controllers/admin/updateDepartmentByAdminController';
 import createCourseAssignmentController from '../controllers/admin/createCourseAssignmentController';
+import addTaskProgressController from '../controllers/admin/addTaskProgressController';
 
 const adminRouter: Router = express.Router();
 
@@ -3655,5 +3656,117 @@ adminRouter.put('/updatedepartmentbyadmin', validateJWT, updateDepartmentByAdmin
  *                   example: Internal server error
  */
 adminRouter.post('/createcourseassignment', validateJWT, createCourseAssignmentController.createCourseAssignment);
+
+/**
+ * @swagger
+ * /admin/addtaskprogress:
+ *   post:
+ *     summary: Create task progress for an employee
+ *     description: Creates a progress record for a specific task within a course module assigned to an employee.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseAssignmentId
+ *               - moduleId
+ *               - taskId
+ *             properties:
+ *               courseAssignmentId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the employee's course assignment
+ *                 example: "66d123456789abcdef123456"
+ *               moduleId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the course module
+ *                 example: "66d223456789abcdef123456"
+ *               taskId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the task
+ *                 example: "66d323456789abcdef123456"
+ *
+ *     responses:
+ *       201:
+ *         description: Task progress created successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Task progress created successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "66d423456789abcdef123456"
+ *                     courseAssignmentId:
+ *                       type: string
+ *                       example: "66d123456789abcdef123456"
+ *                     moduleId:
+ *                       type: string
+ *                       example: "66d223456789abcdef123456"
+ *                     taskId:
+ *                       type: string
+ *                       example: "66d323456789abcdef123456"
+ *                     isCompleted:
+ *                       type: boolean
+ *                       example: false
+ *                     completedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *                       example: null
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Invalid request or task progress already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Task progress already exists
+ *
+ *       401:
+ *         description: Unauthorized - JWT token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: No token provided !
+ *       500:
+ *         description: Internal server error
+ */
+
+
+adminRouter.post('/addtaskprogress', validateJWT, addTaskProgressController.addTaskProgress);
+
 
 export default adminRouter;
