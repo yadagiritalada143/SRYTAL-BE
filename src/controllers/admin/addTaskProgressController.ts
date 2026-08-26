@@ -9,7 +9,7 @@ const addTaskProgress = async (req: Request, res: Response) => {
         if (!courseAssignmentId || !moduleId || !taskId) {
             return res.status(400).json({
                 success: false,
-                message: TASK_PROGRESS_ERROR_MESSAGES.CREATION_FAILED,
+                message: TASK_PROGRESS_ERROR_MESSAGES.ADD_TASK_PROGRESS_ERROR_MESSAGE,
                     
             });
         }
@@ -18,7 +18,7 @@ const addTaskProgress = async (req: Request, res: Response) => {
 
         return res.status(201).json({
             success: true,
-            message: TASK_PROGRESS_SUCCESS_MESSAGES.TASK_PROGRESS_CREATE_SUCCESS_MESSAGE,
+            message: TASK_PROGRESS_SUCCESS_MESSAGES.ADD_TASK_PROGRESS_SUCCESS_MESSAGE,
             data: taskProgress,
         });
     } catch (error: any) {
@@ -31,7 +31,7 @@ const addTaskProgress = async (req: Request, res: Response) => {
         }
         return res.status(400).json({
             success: false,
-            message: TASK_PROGRESS_ERROR_MESSAGES.CREATION_FAILED,
+            message: TASK_PROGRESS_ERROR_MESSAGES.ADD_TASK_PROGRESS_ERROR_MESSAGE,
         });
     }
 };
