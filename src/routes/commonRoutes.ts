@@ -18,6 +18,7 @@ import downloadSalarySlipController from '../controllers/common/downloadSalarySl
 import getMyAssignedCoursesController from '../controllers/common/getMyAssignedCoursesController';
 import getMyAssignedCourseByIdController from '../controllers/common/getMyAssignedCourseByIdController';
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
+import addTaskProgressController from '../controllers/admin/addTaskProgressController';
 const upload = multer({ storage: multer.memoryStorage() });
 
 const commonRouter: Router = express.Router();
@@ -1294,5 +1295,65 @@ commonRouter.get(
  *         description: Server error.
  */
 commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressController.updateMyTaskProgress);
+
+/**
+ * @swagger
+ * /addtaskprogress:
+ *   post:
+ *     summary: Create a task progress record for an assigned course
+ *     description: |
+ *       Initializes a task-progress record (`isCompleted: false`) for a task of an
+ *       assigned course. Usable by both employees (to register their own task
+ *       progress) and admins (to register progress on behalf of an employee).
+ *     tags:
+ *       - My Courses
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseAssignmentId
+ *               - moduleId
+ *               - taskId
+ *             properties:
+ *               courseAssignmentId:
+ *                 type: string
+ *                 example: "66d123456789abcdef123456"
+ *               moduleId:
+ *                 type: string
+ *                 example: "66d223456789abcdef123456"
+ *               taskId:
+ *                 type: string
+ *                 example: "66d323456789abcdef123456"
+ *     responses:
+ *       201:
+ *         description: Task progress created successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Task progress created successfully !
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Missing required fields or an error occurred while creating progress.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       409:
+ *         description: Task progress already exists for this course/module/task.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.post('/addtaskprogress', validateJWT, addTaskProgressController.addTaskProgress);
 
 export default commonRouter;
