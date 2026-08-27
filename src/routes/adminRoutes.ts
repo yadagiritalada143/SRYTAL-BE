@@ -56,6 +56,8 @@ import deleteDepartmentByAdminController from '../controllers/admin/deleteDepart
 import updateDepartmentByAdminController from '../controllers/admin/updateDepartmentByAdminController';
 import createCourseAssignmentController from '../controllers/admin/createCourseAssignmentController';
 import addTaskProgressController from '../controllers/admin/addTaskProgressController';
+import assignCourseToEmployeeController from '../controllers/admin/assignCourseToEmployeeController';
+import validateAdmin from '../middlewares/validateAdmin';
 
 const adminRouter: Router = express.Router();
 
@@ -3521,7 +3523,7 @@ adminRouter.put('/updatedepartmentbyadmin', validateJWT, updateDepartmentByAdmin
 
 /**
  * @swagger
- * /admin/createcourseassignment:
+ * /admin/courseassignment:
  *   post:
  *     summary: Assign a course to an employee
  *     description: Assigns a course to an employee by an authenticated admin.
@@ -3655,11 +3657,11 @@ adminRouter.put('/updatedepartmentbyadmin', validateJWT, updateDepartmentByAdmin
  *                   type: string
  *                   example: Internal server error
  */
-adminRouter.post('/createcourseassignment', validateJWT, createCourseAssignmentController.createCourseAssignment);
+adminRouter.post('/courseassignment', validateJWT, createCourseAssignmentController.createCourseAssignment);
 
 /**
  * @swagger
- * /admin/addtaskprogress:
+ * /admin/taskprogress:
  *   post:
  *     summary: Create task progress for an employee
  *     description: Creates a progress record for a specific task within a course module assigned to an employee.
@@ -3766,7 +3768,206 @@ adminRouter.post('/createcourseassignment', validateJWT, createCourseAssignmentC
  */
 
 
-adminRouter.post('/addtaskprogress', validateJWT, addTaskProgressController.addTaskProgress);
+adminRouter.post('/taskprogress', validateJWT, addTaskProgressController.addTaskProgress);
+
+/**
+ * @swagger
+ * /admin/courseassign:
+ *   post:
+ *     summary: Assign a course to an employee
+ *     description: >
+ *       Allows an Admin to assign a specific course to an individual employee.
+ *       The API validates the course and employee, checks for an existing
+ *       assignment, fetches all modules and tasks under the course, creates
+ *       the course assignment, and automatically initializes task progress
+ *       records for every task.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseId
+ *               - employeeId
+ *               - dueDate
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *                 description: ID of the course to assign
+ *                 example: "69c25608866f62d43f81b20f"
+ *
+ *               employeeId:
+ *                 type: string
+ *                 description: ID of the employee who will receive the course
+ *                 example: "69c25608866f62d43f81b20f"
+ *
+ *               dueDate:
+ *                 type: string
+ *                 format: date
+ *                 description: Due date for completing the assigned course
+ *                 example: "2026-09-30"
+ *
+ *     responses:
+ *       201:
+ *         description: Course assigned successfully and task progress initialized
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *
+ *                 message:
+ *                   type: string
+ *                   example: "Course assigned successfully to employee."
+ *
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     assignedByAdminId:
+ *                       type: string
+ *                       description: ID of the newly created course assignment
+ *                       example: "uuid-assign-991"
+ *
+ *                     courseId:
+ *                       type: string
+ *                       description: Assigned course ID
+ *                       example: "uuid-course-123"
+ *
+ *                     employeeId:
+ *                       type: string
+ *                       description: Employee ID
+ *                       example: "uuid-emp-001"
+ *
+ *                     status:
+ *                       type: string
+ *                       enum:
+ *                         - Assigned
+ *                         - In Progress
+ *                         - Completed
+ *                       example: "Assigned"
+ *
+ *                     dueDate:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2026-09-30T23:59:59Z"
+ *
+ *                     assignedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2026-08-22T13:40:00Z"
+ *
+ *                     task_progress_created:
+ *                       type: integer
+ *                       description: Number of task progress records created
+ *                       example: 10
+ *
+ *       400:
+ *         description: Invalid request or invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     missingFields:
+ *                       value: "Course ID, employee ID and due date are required."
+ *                     invalidCourseId:
+ *                       value: "Invalid course ID"
+ *                     invalidEmployeeId:
+ *                       value: "Invalid employee ID"
+ *                     invalidDueDate:
+ *                       value: "Invalid due date"
+ *
+ *       401:
+ *         description: Unauthorized - JWT token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "No token provided !"
+ *
+ *       403:
+ *         description: Forbidden - Only Admin users can assign courses
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Access denied. Only admin users can assign courses."
+ *
+ *       404:
+ *         description: Course or employee not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     courseNotFound:
+ *                       value: "Course not found"
+ *                     employeeNotFound:
+ *                       value: "Employee not found"
+ *
+ *       409:
+ *         description: Course is already assigned to the employee
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "This course is already assigned to this employee"
+ *
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Error occurred while creating course assignment !"
+ */
+adminRouter.post('/courseassign', validateJWT, assignCourseToEmployeeController.assignCourseToEmployee );
 
 
 export default adminRouter;
