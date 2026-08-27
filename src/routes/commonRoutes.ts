@@ -15,6 +15,9 @@ import forgotPasswordController from '../controllers/common/forgotPasswordContro
 import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
 import updateEmployeeTimesheetController from '../controllers/common/updateEmployeeTimesheetController';
 import downloadSalarySlipController from '../controllers/common/downloadSalarySlipController';
+import getMyAssignedCoursesController from '../controllers/common/getMyAssignedCoursesController';
+import getMyAssignedCourseByIdController from '../controllers/common/getMyAssignedCourseByIdController';
+import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
 const upload = multer({ storage: multer.memoryStorage() });
 
 const commonRouter: Router = express.Router();
@@ -992,5 +995,304 @@ commonRouter.put('/updateEmployeeTimesheet', validateJWT, updateEmployeeTimeshee
  *                   example: Error occurred while fetching salary slip download URL
  */
 commonRouter.post('/downloadSalarySlip', validateJWT, downloadSalarySlipController.downloadSalarySlip);
+
+/**
+ * @swagger
+ * /getMyAssignedCourses:
+ *   get:
+ *     summary: Get the courses assigned to the logged-in employee
+ *     description: |
+ *       Returns every course assigned to the authenticated employee together with
+ *       the progress needed to render the course list. `status` and `progress` are
+ *       derived from the employee's task-progress records, so they always reflect
+ *       the actual completion state. The module/task tree is not included here —
+ *       fetch it with `/getMyAssignedCourseById/{courseAssignmentId}`.
+ *     tags:
+ *       - My Courses
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the assigned courses.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 courses:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       courseAssignmentId:
+ *                         type: string
+ *                         example: "66d123456789abcdef123456"
+ *                       courseId:
+ *                         type: string
+ *                         example: "64f123456789abcdef123456"
+ *                       courseName:
+ *                         type: string
+ *                         example: "Node.js"
+ *                       courseDescription:
+ *                         type: string
+ *                         example: "<p>Complete Node.js backend course</p>"
+ *                       thumbnailUrl:
+ *                         type: string
+ *                         format: uri
+ *                       status:
+ *                         type: string
+ *                         enum:
+ *                           - Assigned
+ *                           - In Progress
+ *                           - Completed
+ *                         example: In Progress
+ *                       assignedAt:
+ *                         type: string
+ *                         format: date-time
+ *                       dueDate:
+ *                         type: string
+ *                         format: date-time
+ *                       completedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         nullable: true
+ *                       isOverdue:
+ *                         type: boolean
+ *                         example: false
+ *                       totalModules:
+ *                         type: integer
+ *                         example: 4
+ *                       progress:
+ *                         type: object
+ *                         properties:
+ *                           totalTasks:
+ *                             type: integer
+ *                             example: 12
+ *                           completedTasks:
+ *                             type: integer
+ *                             example: 5
+ *                           percentComplete:
+ *                             type: integer
+ *                             example: 42
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get('/getMyAssignedCourses', validateJWT, getMyAssignedCoursesController.getMyAssignedCourses);
+
+/**
+ * @swagger
+ * /getMyAssignedCourseById/{courseAssignmentId}:
+ *   get:
+ *     summary: Get one assigned course with its modules, tasks and progress
+ *     description: |
+ *       Returns a single course assignment belonging to the authenticated employee,
+ *       expanded into its module -> task tree with per-task completion state. Only
+ *       ACTIVE modules and tasks are returned. The assignment is looked up by id
+ *       **and** employee, so an employee cannot read another employee's assignment.
+ *
+ *       Task content is not inlined: `LINK` tasks expose the external URL as `link`,
+ *       while `FILE` tasks are streamed through
+ *       `/contentwriter/getCourseTaskContent/{taskId}`.
+ *     tags:
+ *       - My Courses
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: courseAssignmentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the course assignment to retrieve
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the assigned course.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 course:
+ *                   type: object
+ *                   properties:
+ *                     courseAssignmentId:
+ *                       type: string
+ *                     courseId:
+ *                       type: string
+ *                     courseName:
+ *                       type: string
+ *                     courseDescription:
+ *                       type: string
+ *                     thumbnailUrl:
+ *                       type: string
+ *                       format: uri
+ *                     status:
+ *                       type: string
+ *                       example: In Progress
+ *                     dueDate:
+ *                       type: string
+ *                       format: date-time
+ *                     isOverdue:
+ *                       type: boolean
+ *                     progress:
+ *                       type: object
+ *                       properties:
+ *                         totalTasks:
+ *                           type: integer
+ *                         completedTasks:
+ *                           type: integer
+ *                         percentComplete:
+ *                           type: integer
+ *                     modules:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           moduleName:
+ *                             type: string
+ *                           moduleDescription:
+ *                             type: string
+ *                           totalTasks:
+ *                             type: integer
+ *                           completedTasks:
+ *                             type: integer
+ *                           tasks:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 _id:
+ *                                   type: string
+ *                                 taskName:
+ *                                   type: string
+ *                                 taskDescription:
+ *                                   type: string
+ *                                 type:
+ *                                   type: string
+ *                                   enum:
+ *                                     - FILE
+ *                                     - LINK
+ *                                 link:
+ *                                   type: string
+ *                                   description: External URL, only present for LINK tasks.
+ *                                 contentMimeType:
+ *                                   type: string
+ *                                   example: video/mp4
+ *                                 contentFileName:
+ *                                   type: string
+ *                                   example: intro.mp4
+ *                                 isCompleted:
+ *                                   type: boolean
+ *                                 completedAt:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   nullable: true
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Course assignment not found for this employee.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get(
+    '/getMyAssignedCourseById/:courseAssignmentId',
+    validateJWT,
+    getMyAssignedCourseByIdController.getMyAssignedCourseById
+);
+
+/**
+ * @swagger
+ * /updateMyTaskProgress:
+ *   put:
+ *     summary: Mark a task of an assigned course complete or incomplete
+ *     description: |
+ *       Upserts the authenticated employee's progress record for one task of an
+ *       assigned course, then re-derives the course assignment status from the
+ *       resulting counts (`Assigned` -> `In Progress` -> `Completed`) and returns
+ *       the refreshed progress.
+ *     tags:
+ *       - My Courses
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseAssignmentId
+ *               - taskId
+ *               - isCompleted
+ *             properties:
+ *               courseAssignmentId:
+ *                 type: string
+ *                 example: "66d123456789abcdef123456"
+ *               taskId:
+ *                 type: string
+ *                 example: "66d323456789abcdef123456"
+ *               isCompleted:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Progress updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Progress updated successfully !
+ *                 courseStatus:
+ *                   type: string
+ *                   example: In Progress
+ *                 progress:
+ *                   type: object
+ *                   properties:
+ *                     totalTasks:
+ *                       type: integer
+ *                       example: 12
+ *                     completedTasks:
+ *                       type: integer
+ *                       example: 6
+ *                     percentComplete:
+ *                       type: integer
+ *                       example: 50
+ *                 task:
+ *                   type: object
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                     isCompleted:
+ *                       type: boolean
+ *                     completedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *       400:
+ *         description: Missing fields, or the task does not belong to the assigned course.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Course assignment not found for this employee.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressController.updateMyTaskProgress);
 
 export default commonRouter;
