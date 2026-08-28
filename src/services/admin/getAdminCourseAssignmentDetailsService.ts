@@ -3,6 +3,7 @@ import CourseModel from '../../model/coursesModel';
 import UserModel from '../../model/userModel';
 import courseMedia from '../../util/manageCourseMedia';
 import courseProgress from '../../util/manageCourseProgress';
+import { COURSE_ASSIGNMENT_STATUS } from '../../types/courseAssignmentStatusValues';
 import { IFetchMyAssignedCourseByIdResponse } from '../../interfaces/myCourses';
 
 /**
@@ -73,7 +74,7 @@ const getAdminCourseAssignmentDetails = async (
             dueDate: assignment.dueDate,
             completedAt: assignment.completedAt || null,
             isOverdue:
-                status !== 'Completed' &&
+                status !== COURSE_ASSIGNMENT_STATUS.COMPLETED &&
                 !!assignment.dueDate &&
                 new Date(assignment.dueDate) < new Date(),
             totalModules: modules.length,

@@ -5,6 +5,13 @@ import courseProgress from '../../util/manageCourseProgress';
 import { COURSE_ASSIGNMENT_STATUS } from '../../types/courseAssignmentStatusValues';
 import { COURSE_ASSIGNMENT_ERRORS_MESSAGES } from '../../constants/admin/courseAssignmentMessages';
 
+interface GetAllCourseAssignmentsParams {
+    employeeId?: string;
+    employeeName?: string;
+    page?: number;
+    limit?: number;
+}
+
 /**
  * Every course assignment in the system, enriched the same way the admin
  * details endpoint is: each row carries the employee + course metadata, the
@@ -12,8 +19,13 @@ import { COURSE_ASSIGNMENT_ERRORS_MESSAGES } from '../../constants/admin/courseA
  * total tasks, percent complete). The full module/task tree is intentionally
  * omitted from the list to keep the payload small — it is fetched on demand by
  * getCourseAssignmentDetailsService when a single assignment is opened.
+ *
+ * Supports optional filtering by employeeId / employeeName and pagination
+ * (page, limit).
  */
-const getAllCourseAssignments = async (): Promise<any[]> => {
+const getAllCourseAssignments = async (
+    params: GetAllCourseAssignmentsParams = {}
+): Promise<{ data: any[]; pagination: { page: number; limit: number; total: number; totalPages: number } }> => {
     try {
         const assignments = await CourseAssignment.find({})
             .populate({ path: 'courseId', model: CourseModel })
@@ -24,7 +36,10 @@ const getAllCourseAssignments = async (): Promise<any[]> => {
         const validAssignments = assignments.filter((assignment: any) => assignment.courseId);
 
         if (validAssignments.length === 0) {
-            return [];
+            return {
+                data: [],
+                pagination: { page: Math.max(1, params.page || 1), limit: Math.max(1, params.limit || 10), total: 0, totalPages: 0 }
+            };
         }
 
         const courseIds = validAssignments.map((assignment: any) => String(assignment.courseId._id));
@@ -50,7 +65,7 @@ const getAllCourseAssignments = async (): Promise<any[]> => {
 
         const now = new Date();
 
-        return validAssignments.map((assignment: any) => {
+        const enriched = validAssignments.map((assignment: any) => {
             const course = assignment.courseId;
             const modules = courseProgress.buildCourseModules(
                 modulesByCourse.get(String(course._id)) || [],
@@ -88,6 +103,47 @@ const getAllCourseAssignments = async (): Promise<any[]> => {
                 progress
             };
         });
+
+        let filtered = enriched;
+
+        if (params.employeeId) {
+            const query = params.employeeId.trim().toLowerCase();
+            filtered = filtered.filter((assignment: any) => {
+                const employee = assignment.employee;
+                const employeeCode = employee ? String(employee.employeeCode || '').toLowerCase() : '';
+                const employeeObjectId = employee ? String(employee.employeeId || '').toLowerCase() : '';
+
+                return employeeCode.includes(query) || employeeObjectId.includes(query);
+            });
+        }
+
+        if (params.employeeName) {
+            const query = params.employeeName.trim().toLowerCase();
+            filtered = filtered.filter((assignment: any) => {
+                const employee = assignment.employee;
+                if (!employee) return false;
+
+                const fullName = `${employee.firstName} ${employee.lastName}`.toLowerCase();
+                return (
+                    fullName.includes(query) ||
+                    (employee.firstName || '').toLowerCase().includes(query) ||
+                    (employee.lastName || '').toLowerCase().includes(query) ||
+                    (employee.employeeCode || '').toLowerCase().includes(query)
+                );
+            });
+        }
+
+        const total = filtered.length;
+        const page = Math.max(1, params.page || 1);
+        const limit = Math.max(1, params.limit || 10);
+        const totalPages = Math.ceil(total / limit);
+        const startIndex = (page - 1) * limit;
+        const data = filtered.slice(startIndex, startIndex + limit);
+
+        return {
+            data,
+            pagination: { page, limit, total, totalPages }
+        };
     } catch (error: any) {
         console.error(`Error in fetching all course assignments: ${error.message}`);
         throw new Error(COURSE_ASSIGNMENT_ERRORS_MESSAGES.COURSE_ASSIGNMENT_FETCH_ERROR_MESSAGE);

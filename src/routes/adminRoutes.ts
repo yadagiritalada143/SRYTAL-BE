@@ -56,6 +56,7 @@ import deleteDepartmentByAdminController from '../controllers/admin/deleteDepart
 import updateDepartmentByAdminController from '../controllers/admin/updateDepartmentByAdminController';
 import createCourseAssignmentController from '../controllers/admin/createCourseAssignmentController';
 import getAllCourseAssignmentsController from '../controllers/admin/getAllCourseAssignmentsController';
+import updateCourseAssignmentDueDateController from '../controllers/admin/updateCourseAssignmentDueDateController';
 import addTaskProgressController from '../controllers/admin/addTaskProgressController';
 import getCourseAssignmentDetailsController from '../controllers/admin/getCourseAssignmentDetailsController';
 import authorizeAdmin from '../middlewares/authorizeAdmin';
@@ -3665,15 +3666,42 @@ adminRouter.post('/createcourseassignment', validateJWT, createCourseAssignmentC
  * /admin/getallcourseassignments:
  *   get:
  *     summary: Get all course assignments
- *     description: Returns every course assignment created in the system.
+ *     description: Returns every course assignment created in the system. Supports filtering by employeeId / employeeName and pagination.
  *     tags:
  *       - Course Assignment
  *     security:
  *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: employeeId
+ *         required: false
+ *         description: Case-insensitive match on the employee id (user id or employee code)
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: employeeName
+ *         required: false
+ *         description: Case-insensitive substring match on the employee name or employee code
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         description: 1-based page number (default 1)
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         description: Number of records per page (default 10)
+ *         schema:
+ *           type: integer
+ *           example: 10
  *
  *     responses:
  *       200:
- *         description: List of all course assignments
+ *         description: Paginated list of all course assignments
  *         content:
  *           application/json:
  *             schema:
@@ -3741,6 +3769,17 @@ adminRouter.post('/createcourseassignment', validateJWT, createCourseAssignmentC
  *                             type: integer
  *                           percentComplete:
  *                             type: integer
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     total:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
  *
  *       401:
  *         description: Unauthorized - JWT token is missing or invalid
@@ -3770,7 +3809,7 @@ adminRouter.post('/createcourseassignment', validateJWT, createCourseAssignmentC
  *                   type: string
  *                   example: Error occurred while fetching course assignments !
  */
-adminRouter.get('/getallcourseassignments', validateJWT, getAllCourseAssignmentsController.getAllCourseAssignments);
+adminRouter.get('/getallcourseassignments', validateJWT, authorizeAdmin, getAllCourseAssignmentsController.getAllCourseAssignments);
 
 /**
  * @swagger
@@ -3892,6 +3931,74 @@ adminRouter.get(
     validateJWT,
     authorizeAdmin,
     getCourseAssignmentDetailsController.getCourseAssignmentDetails
+);
+
+/**
+ * @swagger
+ * /admin/courses/assignments/{courseAssignmentId}/duedate:
+ *   patch:
+ *     summary: Update the due date of a course assignment (Admin)
+ *     description: >
+ *       Updates the due date of an existing course assignment identified by its
+ *       id. Admin role authorization is enforced.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: courseAssignmentId
+ *         required: true
+ *         description: MongoDB ObjectId of the course assignment
+ *         schema:
+ *           type: string
+ *           example: uuid-assign-991
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - dueDate
+ *             properties:
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: New due date for the assignment
+ *                 example: 2026-09-30T00:00:00.000Z
+ *     responses:
+ *       200:
+ *         description: Course assignment due date updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Course assignment due date updated successfully !
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Missing courseAssignmentId or dueDate
+ *       401:
+ *         description: Unauthorized - Admin authentication required
+ *       403:
+ *         description: Forbidden - Admin role required
+ *       404:
+ *         description: Course assignment not found
+ *       500:
+ *         description: Internal server error
+ */
+adminRouter.patch(
+    '/courses/assignments/:courseAssignmentId/duedate',
+    validateJWT,
+    authorizeAdmin,
+    updateCourseAssignmentDueDateController.updateCourseAssignmentDueDate
 );
 
 export default adminRouter;
