@@ -34,10 +34,6 @@ const formatDueDate = (date: Date | string): string => {
 };
 
 const sendCourseAssignmentEmail = async (details: ICourseAssignmentEmailDetails): Promise<void> => {
-    // if (!details.employeeEmail) {
-    //     console.error('Employee email is missing!');
-    //     return;
-    // }
 
     try {
         const transporter = nodemailer.createTransport(emailConfiguration);

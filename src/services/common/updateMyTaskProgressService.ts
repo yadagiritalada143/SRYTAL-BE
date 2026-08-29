@@ -5,6 +5,9 @@ import TaskProgressModel from '../../model/taskProgressModel';
 import courseProgress from '../../util/manageCourseProgress';
 import { COURSE_ASSIGNMENT_STATUS } from '../../types/courseAssignmentStatusValues';
 import { IUpdateMyTaskProgressResponse } from '../../interfaces/myCourses';
+import UserModel from '../../model/userModel';
+import CourseModel from '../../model/coursesModel';
+import sendCourseCompletionEmail from '../../util/sendCourseCompletionEmail';
 
 /**
  * Marks a single task of an assigned course complete/incomplete for the logged-in
@@ -68,6 +71,11 @@ const updateMyTaskProgress = async (
         progress.totalTasks
     );
 
+    const previousStatus = assignment.status;
+    const nowCompleted =
+        courseStatus === COURSE_ASSIGNMENT_STATUS.COMPLETED &&
+        previousStatus !== COURSE_ASSIGNMENT_STATUS.COMPLETED;
+
     await CourseAssignment.updateOne(
         { _id: assignment._id },
         {
@@ -81,12 +89,63 @@ const updateMyTaskProgress = async (
         }
     );
 
+    if (nowCompleted) {
+        console.log(`[CourseCompletion] Transition to Completed detected for assignment ${assignment._id} (employee ${assignment.employeeId}); dispatching admin notification.`);
+        void notifyAdminOnCourseCompletion(
+            assignment,
+            courseStatus === COURSE_ASSIGNMENT_STATUS.COMPLETED
+                ? assignment.completedAt || new Date()
+                : new Date()
+        );
+    } else {
+        console.log(`[CourseCompletion] No completion transition (status=${courseStatus}, previous=${previousStatus}); no email sent.`);
+    }
+
     return {
         success: true,
         courseStatus,
         progress,
         task: { taskId, isCompleted, completedAt }
     };
+};
+
+
+//  Sends a course-completion notification to the admin who assigned the course
+
+const notifyAdminOnCourseCompletion = async (
+    assignment: any,
+    completedAt: Date
+): Promise<void> => {
+    try {
+        const [employee, course, admin] = await Promise.all([
+            UserModel.findById(assignment.employeeId).lean(),
+            CourseModel.findById(assignment.courseId).lean(),
+            assignment.assignedByAdminId
+                ? UserModel.findById(assignment.assignedByAdminId).lean()
+                : null
+        ]);
+
+        const adminEmail =
+            (admin && (admin as any).email) ||
+            process.env.ADMIN_EMAIL_ABOUT_CUSTOMER;
+
+        if (!adminEmail) {
+            console.error('[CourseCompletion] No admin email available; skipping notification.');
+            return;
+        }
+
+        console.log(`[CourseCompletion] Resolved admin recipient: ${adminEmail}`);
+
+        await sendCourseCompletionEmail.sendCourseCompletionEmail({
+            adminEmail,
+            adminName: admin ? `${(admin as any).firstName || ''} ${(admin as any).lastName || ''}`.trim() : undefined,
+            employeeName: employee ? `${(employee as any).firstName || ''} ${(employee as any).lastName || ''}`.trim() : 'Employee',
+            courseName: course ? (course as any).courseName : 'Course',
+            completedAt
+        });
+    } catch (error: any) {
+        console.error('[CourseCompletion] Failed to notify admin:', error?.message || error);
+    }
 };
 
 export default { updateMyTaskProgress };
