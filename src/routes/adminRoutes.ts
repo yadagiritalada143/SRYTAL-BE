@@ -3463,6 +3463,7 @@ adminRouter.get('/getdepartmentbyadmin/:_id', validateJWT, getDepartmentByAdminC
  *                   type: string
  *                   example: Error deleting department
  */
+
 adminRouter.delete('/deletedepartmentbyadmin/:_id', validateJWT, deleteDepartmentByAdminController.deleteDepartmentByAdmin);
 
 /**
@@ -3521,6 +3522,7 @@ adminRouter.delete('/deletedepartmentbyadmin/:_id', validateJWT, deleteDepartmen
  *                   type: string
  *                   example: Failed to update department
  */
+
 adminRouter.put('/updatedepartmentbyadmin', validateJWT, updateDepartmentByAdminController.updateDepartmentByAdmin);
 
 /**
@@ -3659,6 +3661,7 @@ adminRouter.put('/updatedepartmentbyadmin', validateJWT, updateDepartmentByAdmin
  *                   type: string
  *                   example: Internal server error
  */
+
 adminRouter.post('/createcourseassignment', validateJWT, createCourseAssignmentController.createCourseAssignment);
 
 /**
@@ -3809,6 +3812,7 @@ adminRouter.post('/createcourseassignment', validateJWT, createCourseAssignmentC
  *                   type: string
  *                   example: Error occurred while fetching course assignments !
  */
+
 adminRouter.get('/getallcourseassignments', validateJWT, authorizeAdmin, getAllCourseAssignmentsController.getAllCourseAssignments);
 
 /**
@@ -3926,17 +3930,13 @@ adminRouter.get('/getallcourseassignments', validateJWT, authorizeAdmin, getAllC
  *       500:
  *         description: Internal server error
  */
-adminRouter.get(
-    '/courses/assignments/:courseAssignmentId/details',
-    validateJWT,
-    authorizeAdmin,
-    getCourseAssignmentDetailsController.getCourseAssignmentDetails
-);
+
+adminRouter.get('/courses/assignments/:courseAssignmentId/details', validateJWT, authorizeAdmin, getCourseAssignmentDetailsController.getCourseAssignmentDetails);
 
 /**
  * @swagger
  * /admin/courses/assignments/{courseAssignmentId}/duedate:
- *   patch:
+ *   put:
  *     summary: Update the due date of a course assignment (Admin)
  *     description: >
  *       Updates the due date of an existing course assignment identified by its
@@ -3994,11 +3994,7 @@ adminRouter.get(
  *       500:
  *         description: Internal server error
  */
-adminRouter.patch(
-    '/courses/assignments/:courseAssignmentId/duedate',
-    validateJWT,
-    authorizeAdmin,
-    updateCourseAssignmentDueDateController.updateCourseAssignmentDueDate
-);
+
+adminRouter.put('/courses/assignments/:courseAssignmentId/duedate', validateJWT, authorizeAdmin, updateCourseAssignmentDueDateController.updateCourseAssignmentDueDate);
 
 export default adminRouter;
