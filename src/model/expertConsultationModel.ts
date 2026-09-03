@@ -6,7 +6,7 @@ const ExpertConsultationSchema = new mongoose.Schema({
     fullName: { type: mongoose.Schema.Types.String, required: true,},
     email: { type: mongoose.Schema.Types.String, required: true },
     phoneNumber: { type: mongoose.Schema.Types.String, required: true },
-    company: { type: mongoose.Schema.Types.String, required: true },
+    company: { type: mongoose.Schema.Types.String },
     projectBudget: { type: mongoose.Schema.Types.String, required: true },
     timeline: { type: mongoose.Schema.Types.String, required: true },
     createdAt: { type: mongoose.Schema.Types.Date, default: Date.now },

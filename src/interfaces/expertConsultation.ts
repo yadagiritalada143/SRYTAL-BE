@@ -5,4 +5,4 @@ export interface IExpertConsultation {
     company?: string;
     projectBudget: string;
     timeline: string;
-}
+};

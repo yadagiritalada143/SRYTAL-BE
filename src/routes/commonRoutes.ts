@@ -1359,7 +1359,7 @@ commonRouter.post('/addtaskprogress', validateJWT, addTaskProgressController.add
 
 /**
  * @swagger
- * /createExpertConsultation:
+ * /expertconsultation:
  *   post:
  *     summary: Submit an expert consultation request
  *     description: Creates a new expert consultation request and sends confirmation emails to customer and admin.
@@ -1427,6 +1427,6 @@ commonRouter.post('/addtaskprogress', validateJWT, addTaskProgressController.add
  *                   type: string
  *                   example: Failed to submit expert consultation request
  */
-commonRouter.post('/createExpertConsultation', expertConsultationController.createExpertConsultation);
+commonRouter.post('/expertconsultation', expertConsultationController.createExpertConsultation);
 
 export default commonRouter;

@@ -2,14 +2,14 @@ import ExpertConsultation from '../../model/expertConsultationModel';
 import { IExpertConsultation } from '../../interfaces/expertConsultation';
 import customerConsultationEmail from '../../util/customerConsultationEmail';
 
-const ExpertConsultationService = async (consultationData: IExpertConsultation) => {
+const ExpertConsultationService = async (fullName: string, email: string, phoneNumber: string, company: string, projectBudget: string, timeline: string): Promise<IExpertConsultation> => {
     try {
-        const consultation = new ExpertConsultation(consultationData);
+        const consultation = new ExpertConsultation({ fullName, email, phoneNumber, company, projectBudget, timeline });
         await consultation.save();
 
         await Promise.all([
-            customerConsultationEmail.sendCustomerThankYouEmail(consultationData),
-            customerConsultationEmail.sendAdminNotificationEmail(consultationData),
+            customerConsultationEmail.sendCustomerThankYouEmail(consultation),
+            customerConsultationEmail.sendAdminNotificationEmail(consultation),
         ]);
 
         return consultation;
