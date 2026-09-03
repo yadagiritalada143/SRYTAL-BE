@@ -19,6 +19,7 @@ import getMyAssignedCoursesController from '../controllers/common/getMyAssignedC
 import getMyAssignedCourseByIdController from '../controllers/common/getMyAssignedCourseByIdController';
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
 import addTaskProgressController from '../controllers/admin/addTaskProgressController';
+import expertConsultationController from '../controllers/common/expertConsultationController';
 const upload = multer({ storage: multer.memoryStorage() });
 
 const commonRouter: Router = express.Router();
@@ -1355,5 +1356,77 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *         description: Server error.
  */
 commonRouter.post('/addtaskprogress', validateJWT, addTaskProgressController.addTaskProgress);
+
+/**
+ * @swagger
+ * /expertconsultation:
+ *   post:
+ *     summary: Submit an expert consultation request
+ *     description: Creates a new expert consultation request and sends confirmation emails to customer and admin.
+ *     tags:
+ *       - Common
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fullName
+ *               - email
+ *               - phoneNumber
+ *               - projectBudget
+ *               - timeline
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: john@example.com
+ *               phoneNumber:
+ *                 type: string
+ *                 example: "9876543210"
+ *               company:
+ *                 type: string
+ *                 example: ABC Technologies
+ *               projectBudget:
+ *                 type: string
+ *                 example: "10000-25000"
+ *               timeline:
+ *                 type: string
+ *                 example: "3 months"
+ *     responses:
+ *       201:
+ *         description: Consultation request submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Expert consultation request submitted successfully
+ *                 data:
+ *                   type: object
+ *       500:
+ *         description: Failed to submit expert consultation request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to submit expert consultation request
+ */
+commonRouter.post('/expertconsultation', expertConsultationController.createExpertConsultation);
 
 export default commonRouter;
