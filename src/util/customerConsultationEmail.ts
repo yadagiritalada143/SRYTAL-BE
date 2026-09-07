@@ -38,11 +38,11 @@ const sendCustomerThankYouEmail = async (details: IExpertConsultation): Promise<
         </p>
 
         <p style="margin: 0 0 15px; font-size: 14px; color: #333;">
-          Thank you for reaching out to SRYTAL SYSTEMS INDIA PVT LTD. for an expert consultation.
+          Thank you for reaching out to <b>SRYTAL SYSTEMS INDIA PVT LTD.</b> for an expert consultation.
         </p>
 
         <p style="margin: 0 0 15px; font-size: 14px; color: #333;">
-          We have successfully received your request. Our team will review the information you provided and get back to you shortly to discuss your requirements.
+          We have received your request. Our team will review the information you provided and get back to you shortly to discuss your requirements.
         </p>
 
         <div style="background-color: #fff; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid rgb(76, 175, 80);">
