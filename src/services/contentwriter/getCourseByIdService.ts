@@ -17,17 +17,25 @@ const getCourseById = async (id: string): Promise<IFetchCourseByIdResponse> => {
             return { success: false };
 
         }
-        let thumbnailUrl = '';
+        const courseData = course.toObject() as any;
+        courseData.thumbnailUrl = course.thumbnail
+            ? await courseMedia.getCourseMediaSignedUrl(course.thumbnail)
+            : '';
 
-        if (course.thumbnail) {
-            thumbnailUrl = await courseMedia.getCourseMediaSignedUrl(
-                course.thumbnail
-            );
+        if (Array.isArray(courseData.modules)) {
+            for (const module of courseData.modules) {
+                module.thumbnailUrl = module.thumbnail
+                    ? await courseMedia.getCourseMediaSignedUrl(module.thumbnail)
+                    : '';
+                if (Array.isArray(module.tasks)) {
+                    for (const task of module.tasks) {
+                        task.thumbnailUrl = task.thumbnail
+                            ? await courseMedia.getCourseMediaSignedUrl(task.thumbnail)
+                            : '';
+                    }
+                }
+            }
         }
-        const courseData = {
-            ...course.toObject(),
-            thumbnailUrl
-        };
 
         return {
             success: true,

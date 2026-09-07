@@ -1,6 +1,6 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
-import {ICourseAssignment} from '../interfaces/courseAssignment';
+import { ICourseAssignment } from '../interfaces/courseAssignment';
 
 const CourseAssignmentSchema = new mongoose.Schema({
     courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseModel', required: true, index: true },
