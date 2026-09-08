@@ -12,6 +12,11 @@ export interface ICourses extends Document {
 export interface IFetchAllCoursesResponse {
     success: boolean;
     courses?: any;
+    totals?: {
+        totalCourses: number;
+        totalModules: number;
+        totalTasks: number;
+    };
 }
 
 export interface IFetchCourseByIdResponse {

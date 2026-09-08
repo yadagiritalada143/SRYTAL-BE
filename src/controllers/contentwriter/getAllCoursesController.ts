@@ -4,11 +4,12 @@ import { COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessa
 
 const getAllCourses = async(req: Request, res: Response) => {
     try {
-        const courses = await getAllCoursesService.AllCourses();
+        const data = await getAllCoursesService.AllCourses();
 
        return res.status(200).json({
             success: true,
-            courses: courses,
+            courses: data.courses,
+            totals: data.totals,
         });
     } catch (error: any) {
         console.error(`Error in fetching courses: ${error}`);
