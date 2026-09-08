@@ -1,10 +1,9 @@
 import { Request, Response } from 'express';
 import { USER_OPENROUTER_KEY_ERROR_MESSAGES, USER_OPENROUTER_KEY_SUCCESS_MESSAGES } from '../../constants/user-router/userOpenRouterKeyMessage';
-import addUserOpenRouterKey from '../../services/user-router/userOpenRouterKeyService';
+import validateAndSaveOpenRouterKey from '../../services/useropenrouter/validateAndSaveOpenRouterKeyService';
 
- const userOpenRouterKey = async (req: Request, res: Response) => {
+const validateAndSaveOpenRouterKeyController = async (req: Request, res: Response) => {
     try {
-
         const { openrouterKey } = req.body;
         const userId = req.user?.userId;
 
@@ -17,7 +16,7 @@ import addUserOpenRouterKey from '../../services/user-router/userOpenRouterKeySe
             return;
         }
 
-        if (!openrouterKey) {
+        if (!openrouterKey || typeof openrouterKey !== 'string' || openrouterKey.trim() === '') {
             res.status(400).json({
                 success: false,
                 message: USER_OPENROUTER_KEY_ERROR_MESSAGES.OPENROUTER_KEY_REQUIRED,
@@ -26,16 +25,16 @@ import addUserOpenRouterKey from '../../services/user-router/userOpenRouterKeySe
             return;
         }
 
-        const addKey = await addUserOpenRouterKey.userOpenRouterKeyService(userId, openrouterKey);
+        await validateAndSaveOpenRouterKey.validateAndSaveOpenRouterKeyService(userId, openrouterKey.trim());
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
-            message: USER_OPENROUTER_KEY_SUCCESS_MESSAGES.USER_OPENROUTER_KEY_ADDED_SUCCESS_MESSAGES,
-            data: addKey
+            message: USER_OPENROUTER_KEY_SUCCESS_MESSAGES.USER_OPENROUTER_KEY_VALIDATED_SUCCESS_MESSAGES,
         });
 
     } catch (error: any) {
-        console.error(`Add User OpenRouter Key Error: ${error.message}`);
+        console.error(`Validate And Save OpenRouter Key Error: ${error.message}`);
+
         if (error.message === 'USER_NOT_FOUND') {
             res.status(404).json({
                 success: false,
@@ -44,10 +43,10 @@ import addUserOpenRouterKey from '../../services/user-router/userOpenRouterKeySe
             return;
         }
 
-        if (error.message === 'USER_OPENROUTER_KEY_EXISTS') {
-            res.status(409).json({
+        if (error.message === 'INVALID_OPENROUTER_KEY') {
+            res.status(400).json({
                 success: false,
-                message: USER_OPENROUTER_KEY_ERROR_MESSAGES.USER_OPENROUTER_KEY_EXISTS,
+                message: USER_OPENROUTER_KEY_ERROR_MESSAGES.USER_OPENROUTER_KEY_INVALID,
             });
             return;
         }
@@ -59,4 +58,4 @@ import addUserOpenRouterKey from '../../services/user-router/userOpenRouterKeySe
     }
 };
 
-export default { userOpenRouterKey };
+export default { validateAndSaveOpenRouterKeyController };

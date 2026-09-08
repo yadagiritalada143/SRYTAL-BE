@@ -1,6 +1,7 @@
 export const USER_OPENROUTER_KEY_SUCCESS_MESSAGES = {
     USER_OPENROUTER_KEY_ADDED_SUCCESS_MESSAGES: 'OpenRouter key added successfully.',
     USER_OPENROUTER_KEY_GET_SUCCESS_MESSAGES: 'OpenRouter key fetched successfully.',
+    USER_OPENROUTER_KEY_VALIDATED_SUCCESS_MESSAGES: 'Key is Valid and saved successfully !',
 
 };
 
@@ -12,4 +13,5 @@ export const USER_OPENROUTER_KEY_ERROR_MESSAGES = {
     OPENROUTER_KEY_REQUIRED: 'OpenRouter api key is required.',
     USER_OPENROUTER_KEY_EXISTS: 'OpenRouter key already exists for this user.',
     USER_OPENROUTER_KEY_NOT_FOUND: 'OpenRouter key not found for this user.',
+    USER_OPENROUTER_KEY_INVALID: 'Invalid Key !',
 };

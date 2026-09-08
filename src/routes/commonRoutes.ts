@@ -20,8 +20,6 @@ import getMyAssignedCourseByIdController from '../controllers/common/getMyAssign
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
 import addTaskProgressController from '../controllers/admin/addTaskProgressController';
 import expertConsultationController from '../controllers/common/expertConsultationController';
-import userOpenRouterKeyController from '../controllers/user-router/userOpenRouterKeyController';
-import getUserOpenRouterKeyController from '../controllers/user-router/getUserOpenRouterKeyController'; 
 
 const upload = multer({ storage: multer.memoryStorage() });
 

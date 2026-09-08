@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { USER_OPENROUTER_KEY_ERROR_MESSAGES, USER_OPENROUTER_KEY_SUCCESS_MESSAGES } from '../../constants/user-router/userOpenRouterKeyMessage';
-import UserOpenRouterKey from '../../services/user-router/getUserOpenRouterKeyService';
+import UserOpenRouterKey from '../../services/useropenrouter/getUserOpenRouterKeyService';
 
 const getUserOpenRouterKey = async (req: Request, res: Response) => {
     try {
 
-        const userId = req.params.id;
+        const userId = req.user?.userId;
 
         if (!userId) {
             res.status(400).json({
