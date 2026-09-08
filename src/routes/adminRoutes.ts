@@ -57,7 +57,6 @@ import updateDepartmentByAdminController from '../controllers/admin/updateDepart
 import createCourseAssignmentController from '../controllers/admin/createCourseAssignmentController';
 import getAllCourseAssignmentsController from '../controllers/admin/getAllCourseAssignmentsController';
 import updateCourseAssignmentDueDateController from '../controllers/admin/updateCourseAssignmentDueDateController';
-import addTaskProgressController from '../controllers/admin/addTaskProgressController';
 import getCourseAssignmentDetailsController from '../controllers/admin/getCourseAssignmentDetailsController';
 import deleteCourseAssignmentController from '../controllers/admin/deleteCourseAssignmentController';
 import authorizeAdmin from '../middlewares/authorizeAdmin';
