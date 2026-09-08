@@ -59,6 +59,7 @@ import getAllCourseAssignmentsController from '../controllers/admin/getAllCourse
 import updateCourseAssignmentDueDateController from '../controllers/admin/updateCourseAssignmentDueDateController';
 import addTaskProgressController from '../controllers/admin/addTaskProgressController';
 import getCourseAssignmentDetailsController from '../controllers/admin/getCourseAssignmentDetailsController';
+import deleteCourseAssignmentController from '../controllers/admin/deleteCourseAssignmentController';
 import authorizeAdmin from '../middlewares/authorizeAdmin';
 
 const adminRouter: Router = express.Router();
@@ -3996,5 +3997,100 @@ adminRouter.get('/courses/assignments/:courseAssignmentId/details', validateJWT,
  */
 
 adminRouter.put('/courses/assignments/:courseAssignmentId/duedate', validateJWT, authorizeAdmin, updateCourseAssignmentDueDateController.updateCourseAssignmentDueDate);
+
+/**
+ * @swagger
+ * /admin/deletecourseassignment/{courseAssignmentId}:
+ *   delete:
+ *     summary: Delete a course assignment
+ *     description: Deletes a course assignment by its ID. Only accessible by an authenticated admin.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *
+ *     parameters:
+ *       - in: path
+ *         name: courseAssignmentId
+ *         required: true
+ *         description: MongoDB ObjectId of the course assignment to delete
+ *         schema:
+ *           type: string
+ *           example: "66d123456789abcdef123456"
+ *
+ *     responses:
+ *       200:
+ *         description: Course assignment deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Course Assignment deleted successfully !
+ *
+ *       400:
+ *         description: Invalid request or course assignment deletion failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occurred while deleting course assignment !
+ *
+ *       401:
+ *         description: Unauthorized - JWT token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Admin authentication required
+ *
+ *       404:
+ *         description: Course assignment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Course assignment not found !
+ *
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+
+adminRouter.delete('/deletecourseassignment/:courseAssignmentId', validateJWT, deleteCourseAssignmentController.deleteCourseAssignment);
+
 
 export default adminRouter;
