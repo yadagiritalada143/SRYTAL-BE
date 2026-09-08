@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { USER_OPENROUTER_KEY_ERROR_MESSAGES, USER_OPENROUTER_KEY_SUCCESS_MESSAGES } from '../../constants/common/userOpenRouterKeyConstants';
-
 import addUserOpenRouterKey from '../../services/common/userOpenRouterKeyService';
 
  const userOpenRouterKey = async (req: Request, res: Response) => {
@@ -60,4 +59,4 @@ import addUserOpenRouterKey from '../../services/common/userOpenRouterKeyService
     }
 };
 
-export default {userOpenRouterKey};
+export default { userOpenRouterKey };

@@ -21,6 +21,8 @@ import updateMyTaskProgressController from '../controllers/common/updateMyTaskPr
 import addTaskProgressController from '../controllers/admin/addTaskProgressController';
 import expertConsultationController from '../controllers/common/expertConsultationController';
 import userOpenRouterKeyController from '../controllers/common/userOpenRouterKeyController';
+import getUserOpenRouterKeyController from '../controllers/common/getUserOpenRouterKeyController'; 
+
 const upload = multer({ storage: multer.memoryStorage() });
 
 const commonRouter: Router = express.Router();
@@ -1542,5 +1544,115 @@ commonRouter.post('/expertconsultation', expertConsultationController.createExpe
  *                   example: Internal server error.
  */
 commonRouter.post('/UserOpenRouterKey', validateJWT, userOpenRouterKeyController.userOpenRouterKey);
+
+/**
+ * @swagger
+ * /getUserOpenRouterKey/{id}:
+ *   get:
+ *     summary: Get OpenRouter key for a user by user ID
+ *     tags: 
+ *      - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: User ID whose OpenRouter key needs to be fetched
+ *         example: 68b123456789abcdef123456
+ *     responses:
+ *       200:
+ *         description: OpenRouter key fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: OpenRouter key fetched successfully.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 68c123456789abcdef123456
+ *                     userId:
+ *                       type: string
+ *                       example: 68b123456789abcdef123456
+ *                     openrouterKey:
+ *                       type: string
+ *                       example: sk-or-v1-xxxxxxxxxxxxxxxxxxxxxxxx
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2026-09-07T13:30:00.000Z
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: 2026-09-07T13:30:00.000Z
+ *
+ *       400:
+ *         description: User ID is missing
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: User ID is required.
+ *
+ *       401:
+ *         description: User ID was not found in JWT token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: User ID not found.
+ *
+ *       404:
+ *         description: User or OpenRouter key not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: OpenRouter key not found for this user.
+ *
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: error occurred while fetching OpenRouter key, Please try again !
+ */
+commonRouter.get('/getUserOpenRouterKey/:id', validateJWT, getUserOpenRouterKeyController.getUserOpenRouterKey);
 
 export default commonRouter;
