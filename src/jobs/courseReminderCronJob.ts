@@ -48,7 +48,6 @@ const sendCourseReminders = async () => {
         const course = (assignment as any).courseId;
 
         if (!employee || !employee.email || !course || !course.courseName) {
-          console.warn(`Course Reminder Cron: Skipping assignment ${(assignment as any)._id} — missing employee or course data.`);
           continue;
         }
 

@@ -22,7 +22,7 @@ const contentwriterRouter: Router = express.Router();
  * /contentwriter/getAllCourses:
  *   get:
  *     summary: Get all courses
- *     description: Get all courses with their thumbnail image URLs.
+ *     description: Get all courses with their thumbnail image URLs, plus aggregate totals of courses, modules, and tasks.
  *     tags:
  *       - ContentWriter
  *     security:
