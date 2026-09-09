@@ -1,55 +1,42 @@
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const emailConfiguration: any = {
-  service: process.env.EMAIL_CONFIG_SERVICE,
-  host: process.env.EMAIL_CONFIG_HOST,
-  port: Number(process.env.EMAIL_CONFIG_PORT),
-  secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
-  auth: {
-    user: process.env.EMAIL_CONFIG_AUTH_USER,
-    pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-  }
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-
-export interface ICourseAssignmentEmailDetails {
-    employeeName: string;
-    employeeEmail: string;
-    courseName: string;
-    courseDescription?: string;
-    modules: { moduleName: string; moduleDescription?: string }[];
-    dueDate: Date | string;
-    assignedByAdminName?: string;
-}
-
-const formatDueDate = (date: Date | string): string => {
+Object.defineProperty(exports, "__esModule", { value: true });
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const emailConfiguration = {
+    service: process.env.EMAIL_CONFIG_SERVICE,
+    host: process.env.EMAIL_CONFIG_HOST,
+    port: Number(process.env.EMAIL_CONFIG_PORT),
+    secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
+    auth: {
+        user: process.env.EMAIL_CONFIG_AUTH_USER,
+        pass: process.env.EMAIL_CONFIG_AUTH_PASS,
+    }
+};
+const formatDueDate = (date) => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
-    if (isNaN(dateObj.getTime())) return String(date);
+    if (isNaN(dateObj.getTime()))
+        return String(date);
     return dateObj.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
     });
 };
-
-const sendCourseAssignmentEmail = async (details: ICourseAssignmentEmailDetails): Promise<void> => {
-
+const sendCourseAssignmentEmail = async (details) => {
     try {
-        const transporter = nodemailer.createTransport(emailConfiguration);
-
+        const transporter = nodemailer_1.default.createTransport(emailConfiguration);
         const moduleRows = details.modules.length
             ? details.modules
-                .map(
-                    (module, index) => `
+                .map((module, index) => `
                 <li style="margin: 0 0 8px; font-size: 14px; color: #333;">
                     <b>${index + 1}. ${module.moduleName}</b>
-                </li>`
-                )
+                </li>`)
                 .join('')
             : `<li style="margin: 0 0 8px; font-size: 14px; color: #666;">No modules available yet.</li>`;
-
         const mailBody = `
 <html>
   <body style="font-family: serif; background-color: #f4f4f9; padding: 20px;">
@@ -115,19 +102,16 @@ const sendCourseAssignmentEmail = async (details: ICourseAssignmentEmailDetails)
     </div>
   </body>
 </html>`;
-
         const mailOptions = {
             from: process.env.EMAIL_FROM,
             to: details.employeeEmail,
             subject: `New Course Assigned - ${details.courseName}`,
             html: mailBody,
         };
-
         const result = await transporter.sendMail(mailOptions);
-
-    } catch (error: any) {
-      console.error('Email sending FAILED!');
+    }
+    catch (error) {
+        console.error('Email sending FAILED!');
     }
 };
-
-export default { sendCourseAssignmentEmail };
+exports.default = { sendCourseAssignmentEmail };

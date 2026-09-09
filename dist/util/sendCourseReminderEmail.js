@@ -1,55 +1,34 @@
-import nodemailer from 'nodemailer';
-import dotenv from 'dotenv';
-
-dotenv.config();
-
-const emailConfiguration: any = {
-  service: process.env.EMAIL_CONFIG_SERVICE,
-  host: process.env.EMAIL_CONFIG_HOST,
-  port: Number(process.env.EMAIL_CONFIG_PORT),
-  secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
-  auth: {
-    user: process.env.EMAIL_CONFIG_AUTH_USER,
-    pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-  }
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-
-export interface ICourseAssignmentEmailDetails {
-    employeeName: string;
-    employeeEmail: string;
-    courseName: string;
-    courseDescription?: string;
-    modules: { moduleName: string; moduleDescription?: string }[];
-    dueDate: Date | string;
-    assignedByAdminName?: string;
-}
-
-const formatDueDate = (date: Date | string): string => {
+Object.defineProperty(exports, "__esModule", { value: true });
+const nodemailer_1 = __importDefault(require("nodemailer"));
+const dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
+const emailConfiguration = {
+    service: process.env.EMAIL_CONFIG_SERVICE,
+    host: process.env.EMAIL_CONFIG_HOST,
+    port: Number(process.env.EMAIL_CONFIG_PORT),
+    secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
+    auth: {
+        user: process.env.EMAIL_CONFIG_AUTH_USER,
+        pass: process.env.EMAIL_CONFIG_AUTH_PASS,
+    }
+};
+const formatDueDate = (date) => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
-    if (isNaN(dateObj.getTime())) return String(date);
+    if (isNaN(dateObj.getTime()))
+        return String(date);
     return dateObj.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'long',
         day: 'numeric'
     });
 };
-
-const sendCourseAssignmentEmail = async (details: ICourseAssignmentEmailDetails): Promise<void> => {
-
+const sendCourseReminderEmail = async (details) => {
     try {
-        const transporter = nodemailer.createTransport(emailConfiguration);
-
-        const moduleRows = details.modules.length
-            ? details.modules
-                .map(
-                    (module, index) => `
-                <li style="margin: 0 0 8px; font-size: 14px; color: #333;">
-                    <b>${index + 1}. ${module.moduleName}</b>
-                </li>`
-                )
-                .join('')
-            : `<li style="margin: 0 0 8px; font-size: 14px; color: #666;">No modules available yet.</li>`;
-
+        const transporter = nodemailer_1.default.createTransport(emailConfiguration);
         const mailBody = `
 <html>
   <body style="font-family: serif; background-color: #f4f4f9; padding: 20px;">
@@ -58,7 +37,7 @@ const sendCourseAssignmentEmail = async (details: ICourseAssignmentEmailDetails)
       <!-- Header Section -->
       <div style="background-color: rgb(121, 181, 245); color: #fff; text-align: center; padding: 12px; border-top-left-radius: 5px; border-top-right-radius: 5px;">
         <h2 style="margin: 0; font-size: 18px;">
-          New Course Assigned
+          Course Reminder
         </h2>
       </div>
 
@@ -69,28 +48,21 @@ const sendCourseAssignmentEmail = async (details: ICourseAssignmentEmailDetails)
         </p>
 
         <p style="margin: 0 0 15px; font-size: 14px; color: #333;">
-          A new course has been assigned to you${details.assignedByAdminName ? ` by <b>${details.assignedByAdminName}</b>` : ''}. Please complete it before the due date.
+          This is a friendly reminder that you have an assigned course that is still incomplete. Please complete it before the due date to stay on track.
         </p>
 
         <div style="background-color: #fff; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid rgb(121, 181, 245);">
           <p style="margin: 0 0 10px; font-size: 14px; color: #333;">
             <b>Course:</b> ${details.courseName}
           </p>
-          ${details.courseDescription ? `
-          <p style="margin: 0 0 10px; font-size: 14px; color: #333;">
-            <b>Course Description:</b> ${details.courseDescription}
-          </p>` : ''}
           <p style="margin: 0; font-size: 14px; color: #333;">
             <b>Due Date:</b> ${formatDueDate(details.dueDate)}
           </p>
         </div>
 
-        <p style="margin: 0 0 10px; font-size: 14px; color: #333;">
-          <b>Modules included in this course:</b>
+        <p style="margin: 0 0 15px; font-size: 14px; color: #333;">
+          Please log in and complete the remaining tasks at your earliest convenience.
         </p>
-        <ul style="margin: 0 0 15px; padding-left: 20px;">
-          ${moduleRows}
-        </ul>
 
         <p style="margin: 0 0 15px; font-size: 14px; color: #333;">
           Click here to access the Employee Login:
@@ -98,7 +70,7 @@ const sendCourseAssignmentEmail = async (details: ICourseAssignmentEmailDetails)
              style="color: #007bff; text-decoration: none; font-weight: bold;">
             https://www.srytal.com/srytal/employee/login
           </a>
-          and start learning.
+          and continue learning.
         </p>
 
         <p style="margin: 0 0 15px; font-size: 14px; color: #333;">
@@ -115,19 +87,16 @@ const sendCourseAssignmentEmail = async (details: ICourseAssignmentEmailDetails)
     </div>
   </body>
 </html>`;
-
         const mailOptions = {
             from: process.env.EMAIL_FROM,
             to: details.employeeEmail,
-            subject: `New Course Assigned - ${details.courseName}`,
+            subject: `Course Reminder - ${details.courseName}`,
             html: mailBody,
         };
-
-        const result = await transporter.sendMail(mailOptions);
-
-    } catch (error: any) {
-      console.error('Email sending FAILED!');
+        await transporter.sendMail(mailOptions);
+    }
+    catch (error) {
+        console.error('Course reminder email sending FAILED!', (error === null || error === void 0 ? void 0 : error.message) || error);
     }
 };
-
-export default { sendCourseAssignmentEmail };
+exports.default = { sendCourseReminderEmail };
