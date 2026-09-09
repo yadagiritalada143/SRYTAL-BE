@@ -1,6 +1,6 @@
 import { Document, Types } from 'mongoose';
 
-export type NavSurface = 'employee' | 'admin';
+export type NavSurface = 'Employee' | 'admin';
 
 export interface INavItem extends Document {
     key: string;

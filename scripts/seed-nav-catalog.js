@@ -13,16 +13,16 @@ const mongoose = require('mongoose');
 // ── Catalog (the app's real pages) ───────────────────────────────────────────
 const CATALOG = [
   // Employee surface
-  { key: 'employee.profile', label: 'My Profile', url: 'employee/dashboard/profile', icon: 'IconUserEdit', surface: 'employee', order: 1, isSystem: true },
-  { key: 'employee.dashboard', label: 'Dashboard', url: 'employee/dashboard', icon: 'IconLayoutDashboard', surface: 'employee', order: 2 },
-  { key: 'employee.timesheet', label: 'Timesheet', url: 'employee/dashboard/timesheet', icon: 'IconCalendarTime', surface: 'employee', order: 3 },
-  { key: 'employee.content-writer', label: 'Content Writer', url: 'employee/dashboard/content-writer', icon: 'IconBook', surface: 'employee', order: 4 },
-  { key: 'employee.my-courses', label: 'My Courses', url: 'employee/dashboard/course-assignments', icon: 'IconBook', surface: 'employee', order: 5 },
-  { key: 'employee.talent-pool', label: 'Talent Pool', icon: 'IconUserStar', surface: 'employee', order: 6 },
-  { key: 'employee.pool-candidates', label: 'Pool Candidates', url: 'employee/dashboard/pool-candidates', icon: 'IconUsersGroup', surface: 'employee', parentKey: 'employee.talent-pool', order: 7 },
-  { key: 'employee.pool-companies', label: 'Pool Companies', url: 'employee/dashboard/pool-companies', icon: 'IconBuildings', surface: 'employee', parentKey: 'employee.talent-pool', order: 8 },
-  { key: 'employee.reports', label: 'Reports', icon: 'IconNotebook', surface: 'employee', order: 9 },
-  { key: 'employee.salary-slip', label: 'Salary Slip', url: 'employee/dashboard/reports/salary-slip', icon: 'IconReportMoney', surface: 'employee', parentKey: 'employee.reports', order: 10 },
+  { key: 'Employee.profile', label: 'My Profile', url: 'employee/dashboard/profile', icon: 'IconUserEdit', surface: 'Employee', order: 1, isSystem: true },
+  { key: 'Employee.dashboard', label: 'Dashboard', url: 'employee/dashboard', icon: 'IconLayoutDashboard', surface: 'Employee', order: 2 },
+  { key: 'Employee.timesheet', label: 'Timesheet', url: 'employee/dashboard/timesheet', icon: 'IconCalendarTime', surface: 'Employee', order: 3 },
+  { key: 'Employee.content-writer', label: 'Content Writer', url: 'employee/dashboard/content-writer', icon: 'IconBook', surface: 'Employee', order: 4 },
+  { key: 'Employee.my-courses', label: 'My Courses', url: 'employee/dashboard/course-assignments', icon: 'IconBook', surface: 'Employee', order: 5 },
+  { key: 'Employee.talent-pool', label: 'Talent Pool', icon: 'IconUserStar', surface: 'Employee', order: 6 },
+  { key: 'Employee.pool-candidates', label: 'Pool Candidates', url: 'employee/dashboard/pool-candidates', icon: 'IconUsersGroup', surface: 'Employee', parentKey: 'Employee.talent-pool', order: 7 },
+  { key: 'Employee.pool-companies', label: 'Pool Companies', url: 'employee/dashboard/pool-companies', icon: 'IconBuildings', surface: 'Employee', parentKey: 'Employee.talent-pool', order: 8 },
+  { key: 'Employee.reports', label: 'Reports', icon: 'IconNotebook', surface: 'Employee', order: 9 },
+  { key: 'Employee.salary-slip', label: 'Salary Slip', url: 'employee/dashboard/reports/salary-slip', icon: 'IconReportMoney', surface: 'Employee', parentKey: 'Employee.reports', order: 10 },
 
   // Admin surface
   { key: 'admin.dashboard', label: 'Dashboard', url: 'admin/dashboard', icon: 'IconLayoutDashboard', surface: 'admin', order: 1 },
@@ -41,9 +41,9 @@ const CATALOG = [
 
 // Default grants per role = exactly what each role sees today.
 const DEFAULT_ROLE_GRANTS = {
-  Employee: ['employee.profile', 'employee.dashboard', 'employee.timesheet', 'employee.my-courses', 'employee.reports', 'employee.salary-slip'],
-  Recruiter: ['employee.profile', 'employee.dashboard', 'employee.timesheet', 'employee.my-courses', 'employee.talent-pool', 'employee.pool-candidates', 'employee.pool-companies', 'employee.reports', 'employee.salary-slip'],
-  ContentWriter: ['employee.profile', 'employee.dashboard', 'employee.content-writer', 'employee.my-courses', 'employee.reports', 'employee.salary-slip'],
+  Employee: ['Employee.profile', 'Employee.dashboard', 'Employee.timesheet', 'Employee.my-courses', 'Employee.reports', 'Employee.salary-slip'],
+  Recruiter: ['Employee.profile', 'Employee.dashboard', 'Employee.timesheet', 'Employee.my-courses', 'Employee.talent-pool', 'Employee.pool-candidates', 'Employee.pool-companies', 'Employee.reports', 'Employee.salary-slip'],
+  ContentWriter: ['Employee.profile', 'Employee.dashboard', 'Employee.content-writer', 'Employee.my-courses', 'Employee.reports', 'Employee.salary-slip'],
   admin: CATALOG.filter(i => i.surface === 'admin').map(i => i.key)
 };
 
