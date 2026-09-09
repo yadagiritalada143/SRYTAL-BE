@@ -59,6 +59,8 @@ import getAllCourseAssignmentsController from '../controllers/admin/getAllCourse
 import updateCourseAssignmentDueDateController from '../controllers/admin/updateCourseAssignmentDueDateController';
 import getCourseAssignmentDetailsController from '../controllers/admin/getCourseAssignmentDetailsController';
 import deleteCourseAssignmentController from '../controllers/admin/deleteCourseAssignmentController';
+import approveLeaveByAdminController from '../controllers/admin/approveLeaveByAdminController';
+import rejectLeaveByAdminController from '../controllers/admin/rejectLeaveByAdminController';
 import authorizeAdmin from '../middlewares/authorizeAdmin';
 
 const adminRouter: Router = express.Router();
@@ -4090,6 +4092,154 @@ adminRouter.put('/courses/assignments/:courseAssignmentId/duedate', validateJWT,
  */
 
 adminRouter.delete('/deletecourseassignment/:courseAssignmentId', validateJWT, deleteCourseAssignmentController.deleteCourseAssignment);
+
+/**
+ * @swagger
+ * /admin/approveLeave/{leaveId}:
+ *   put:
+ *     summary: Approve an employee leave request (Admin)
+ *     description: Approves a pending leave request identified by its id and sends an approval email to the employee. Admin role authorization is enforced.
+ *     tags:
+ *       - Leave
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: leaveId
+ *         required: true
+ *         description: MongoDB ObjectId of the leave request
+ *         schema:
+ *           type: string
+ *           example: 60d21b4667d0d8992e610c85
+ *     responses:
+ *       200:
+ *         description: Leave request approved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Leave request approved successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     employeeId:
+ *                       type: string
+ *                     leaveType:
+ *                       type: string
+ *                     startDate:
+ *                       type: string
+ *                       format: date
+ *                     endDate:
+ *                       type: string
+ *                       format: date
+ *                     numberOfDays:
+ *                       type: integer
+ *                     reason:
+ *                       type: string
+ *                     status:
+ *                       type: string
+ *                       example: Approved
+ *       400:
+ *         description: Invalid leave request ID or error while approving leave
+ *       401:
+ *         description: Unauthorized - Admin authentication required
+ *       403:
+ *         description: Forbidden - Admin role required
+ *       404:
+ *         description: Leave request not found
+ *       409:
+ *         description: Leave request has already been processed
+ *       500:
+ *         description: Internal server error
+ */
+
+adminRouter.put('/approveLeave/:leaveId', validateJWT, authorizeAdmin, approveLeaveByAdminController.approveLeave);
+
+/**
+ * @swagger
+ * /admin/rejectLeave/{leaveId}:
+ *   put:
+ *     summary: Reject an employee leave request (Admin)
+ *     description: Rejects a pending leave request identified by its id and sends a rejection email to the employee. Admin role authorization is enforced.
+ *     tags:
+ *       - Leave
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: leaveId
+ *         required: true
+ *         description: MongoDB ObjectId of the leave request
+ *         schema:
+ *           type: string
+ *           example: 60d21b4667d0d8992e610c85
+ *     requestBody:
+ *       required: false
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               rejectionReason:
+ *                 type: string
+ *                 example: Insufficient balance of leave days
+ *     responses:
+ *       200:
+ *         description: Leave request rejected successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Leave request rejected successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     employeeId:
+ *                       type: string
+ *                     leaveType:
+ *                       type: string
+ *                     startDate:
+ *                       type: string
+ *                       format: date
+ *                     endDate:
+ *                       type: string
+ *                       format: date
+ *                     numberOfDays:
+ *                       type: integer
+ *                     reason:
+ *                       type: string
+ *                     status:
+ *                       type: string
+ *                       example: Rejected
+ *                     rejectionReason:
+ *                       type: string
+ *       400:
+ *         description: Invalid leave request ID or error while rejecting leave
+ *       401:
+ *         description: Unauthorized - Admin authentication required
+ *       403:
+ *         description: Forbidden - Admin role required
+ *       404:
+ *         description: Leave request not found
+ *       409:
+ *         description: Leave request has already been processed
+ *       500:
+ *         description: Internal server error
+ */
+
+adminRouter.put('/rejectLeave/:leaveId', validateJWT, authorizeAdmin, rejectLeaveByAdminController.rejectLeave);
 
 
 export default adminRouter;

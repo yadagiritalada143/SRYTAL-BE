@@ -19,6 +19,7 @@ import getMyAssignedCoursesController from '../controllers/common/getMyAssignedC
 import getMyAssignedCourseByIdController from '../controllers/common/getMyAssignedCourseByIdController';
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
 import expertConsultationController from '../controllers/common/expertConsultationController';
+import applyLeaveController from '../controllers/common/applyLeaveController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -1368,5 +1369,97 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *                   example: Failed to submit expert consultation request
  */
 commonRouter.post('/expertconsultation', expertConsultationController.createExpertConsultation);
+
+/**
+ * @swagger
+ * /applyLeave:
+ *   post:
+ *     summary: Apply for leave
+ *     description: Creates a new leave request with status Pending and sends an email notification to the admins. Number of leave days is derived from startDate and endDate.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - leaveType
+ *               - startDate
+ *               - endDate
+ *             properties:
+ *               leaveType:
+ *                 type: string
+ *                 example: Casual Leave
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2026-09-15"
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *                 example: "2026-09-17"
+ *               reason:
+ *                 type: string
+ *                 example: Family function
+ *     responses:
+ *       201:
+ *         description: Leave application submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Leave application submitted successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     employeeId:
+ *                       type: string
+ *                       example: 60d21b4667d0d8992e610c85
+ *                     leaveType:
+ *                       type: string
+ *                       example: Casual Leave
+ *                     startDate:
+ *                       type: string
+ *                       format: date
+ *                     endDate:
+ *                       type: string
+ *                       format: date
+ *                     numberOfDays:
+ *                       type: integer
+ *                       example: 3
+ *                     reason:
+ *                       type: string
+ *                     status:
+ *                       type: string
+ *                       example: Pending
+ *       400:
+ *         description: Missing fields, invalid date range, or error while applying for leave
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *       401:
+ *         description: Unauthorized. Missing or invalid token.
+ *       500:
+ *         description: Internal server error
+ */
+
+commonRouter.post('/applyLeave', validateJWT, applyLeaveController.applyLeave);
 
 export default commonRouter;
