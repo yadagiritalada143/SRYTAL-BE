@@ -16,11 +16,44 @@ const uploadThumbnailToS3 = async (fileName, buffer, mimetype, s3FolderNameToUpl
         s3Client_1.default.upload(params, (error, data) => {
             if (error) {
                 console.error(`Error uploading to S3 bucket: ${error}`);
-                reject(error);
+                return reject(error);
             }
-            console.warn(`Data is: ${error}`);
             resolve(data);
         });
     });
 };
-exports.default = { uploadThumbnailToS3 };
+const getCourseMediaFromS3 = async (s3Key) => {
+    return new Promise((resolve, reject) => {
+        const params = {
+            Bucket: awsS3Config_1.bucketName,
+            Key: s3Key,
+        };
+        s3Client_1.default.getObject(params, (error, data) => {
+            if (error) {
+                console.error(`Error fetching course media from S3: ${error}`);
+                return reject(error);
+            }
+            resolve({
+                success: true,
+                contentType: data.ContentType,
+                body: data.Body,
+            });
+        });
+    });
+};
+const getCourseMediaSignedUrl = async (s3Key, expiresIn = 3600) => {
+    try {
+        const params = {
+            Bucket: awsS3Config_1.bucketName,
+            Key: s3Key,
+            Expires: expiresIn, // URL valid for 1 hour
+        };
+        const signedUrl = await s3Client_1.default.getSignedUrlPromise('getObject', params);
+        return signedUrl;
+    }
+    catch (error) {
+        console.error('Error generating S3 signed URL:', error);
+        throw error;
+    }
+};
+exports.default = { uploadThumbnailToS3, getCourseMediaFromS3, getCourseMediaSignedUrl };

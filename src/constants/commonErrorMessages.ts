@@ -27,7 +27,8 @@ export const ORGANIZATION_THEMES_ERROR_MESSAGES = {
 export const EMPLOYEE_ERRORS = {
     EMPLOYEE_DETAILS_FETCHING_ERROR: 'An error occurred while fetching Employee details, Please try again !',
     EMPLOYEE_PROFILE_IMAGE_UPDATE_ERROR: 'Error occured while updating the Profile Image, Please try again !',
-    EMPLOYEE_PROFILE_IMAGE_GETTING_ERROR: 'Error occured while fetching the Profile Image, Please try again !'
+    EMPLOYEE_PROFILE_IMAGE_GETTING_ERROR: 'Error occured while fetching the Profile Image, Please try again !',
+    EMPLOYEE_DASHBOARD_FETCHING_ERROR: 'An error occurred while fetching dashboard data, Please try again !'
 };
 
 export const HTTP_STATUS = {

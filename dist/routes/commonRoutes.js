@@ -10,6 +10,8 @@ const updateApplicationWalkThroughController_1 = __importDefault(require("../con
 const updatePasswordController_1 = __importDefault(require("../controllers/common/updatePasswordController"));
 const getOrganizationThemesController_1 = __importDefault(require("../controllers/common/getOrganizationThemesController"));
 const getEmployeeDetailsController_1 = __importDefault(require("../controllers/common/getEmployeeDetailsController"));
+const getEmployeeDashboardController_1 = __importDefault(require("../controllers/common/getEmployeeDashboardController"));
+const getMyNavMenuController_1 = __importDefault(require("../controllers/common/getMyNavMenuController"));
 const uploadProfileImageController_1 = __importDefault(require("../controllers/common/uploadProfileImageController"));
 const getProfileImageController_1 = __importDefault(require("../controllers/common/getProfileImageController"));
 const validateJWT_1 = __importDefault(require("../middlewares/validateJWT"));
@@ -18,6 +20,10 @@ const forgotPasswordController_1 = __importDefault(require("../controllers/commo
 const employeePackageDetailsByIdController_1 = __importDefault(require("../controllers/common/employeePackageDetailsByIdController"));
 const updateEmployeeTimesheetController_1 = __importDefault(require("../controllers/common/updateEmployeeTimesheetController"));
 const downloadSalarySlipController_1 = __importDefault(require("../controllers/common/downloadSalarySlipController"));
+const getMyAssignedCoursesController_1 = __importDefault(require("../controllers/common/getMyAssignedCoursesController"));
+const getMyAssignedCourseByIdController_1 = __importDefault(require("../controllers/common/getMyAssignedCourseByIdController"));
+const updateMyTaskProgressController_1 = __importDefault(require("../controllers/common/updateMyTaskProgressController"));
+const expertConsultationController_1 = __importDefault(require("../controllers/common/expertConsultationController"));
 const upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
 const commonRouter = express_1.default.Router();
 commonRouter.get('/', (req, res) => {
@@ -441,6 +447,58 @@ commonRouter.get('/getOrganizationThemes/:organization_name', getOrganizationThe
  *                   example: Error in fetching employee details
  */
 commonRouter.get('/getEmployeeDetails', validateJWT_1.default, getEmployeeDetailsController_1.default.getEmployeeDetails);
+/**
+ * @swagger
+ * /getEmployeeDashboard:
+ *   get:
+ *     summary: Get aggregated dashboard data for the logged-in employee
+ *     description: Returns profile summary, timesheet stats (this month/week), active projects with logged hours, timesheet status breakdown, and recent timesheet entries for the authenticated employee.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard data fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 profile:
+ *                   type: object
+ *                 stats:
+ *                   type: object
+ *                 statusCounts:
+ *                   type: object
+ *                 projects:
+ *                   type: array
+ *                 recentEntries:
+ *                   type: array
+ *       500:
+ *         description: Error while fetching dashboard data
+ */
+commonRouter.get('/getEmployeeDashboard', validateJWT_1.default, getEmployeeDashboardController_1.default.getEmployeeDashboard);
+/**
+ * @swagger
+ * /getMyNavMenu:
+ *   get:
+ *     summary: Get the effective navigation menu for the logged-in user
+ *     description: Returns the resolved menu tree (role grant + per-user overrides, minus revocations, plus system items) and the flat list of allowed org-relative URLs used for client-side route enforcement.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Menu resolved successfully
+ *       500:
+ *         description: Error while resolving the navigation menu
+ */
+commonRouter.get('/getMyNavMenu', validateJWT_1.default, getMyNavMenuController_1.default.getMyNavMenu);
 /**
  * @swagger
  * /uploadProfileImage:
@@ -927,4 +985,367 @@ commonRouter.put('/updateEmployeeTimesheet', validateJWT_1.default, updateEmploy
  *                   example: Error occurred while fetching salary slip download URL
  */
 commonRouter.post('/downloadSalarySlip', validateJWT_1.default, downloadSalarySlipController_1.default.downloadSalarySlip);
+/**
+ * @swagger
+ * /getMyAssignedCourses:
+ *   get:
+ *     summary: Get the courses assigned to the logged-in employee
+ *     description: |
+ *       Returns every course assigned to the authenticated employee together with
+ *       the progress needed to render the course list. `status` and `progress` are
+ *       derived from the employee's task-progress records, so they always reflect
+ *       the actual completion state. The module/task tree is not included here —
+ *       fetch it with `/getMyAssignedCourseById/{courseAssignmentId}`.
+ *     tags:
+ *       - My Courses
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the assigned courses.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 courses:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       courseAssignmentId:
+ *                         type: string
+ *                         example: "66d123456789abcdef123456"
+ *                       courseId:
+ *                         type: string
+ *                         example: "64f123456789abcdef123456"
+ *                       courseName:
+ *                         type: string
+ *                         example: "Node.js"
+ *                       courseDescription:
+ *                         type: string
+ *                         example: "<p>Complete Node.js backend course</p>"
+ *                       thumbnailUrl:
+ *                         type: string
+ *                         format: uri
+ *                       status:
+ *                         type: string
+ *                         enum:
+ *                           - Assigned
+ *                           - In Progress
+ *                           - Completed
+ *                         example: In Progress
+ *                       assignedAt:
+ *                         type: string
+ *                         format: date-time
+ *                       dueDate:
+ *                         type: string
+ *                         format: date-time
+ *                       completedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         nullable: true
+ *                       isOverdue:
+ *                         type: boolean
+ *                         example: false
+ *                       totalModules:
+ *                         type: integer
+ *                         example: 4
+ *                       progress:
+ *                         type: object
+ *                         properties:
+ *                           totalTasks:
+ *                             type: integer
+ *                             example: 12
+ *                           completedTasks:
+ *                             type: integer
+ *                             example: 5
+ *                           percentComplete:
+ *                             type: integer
+ *                             example: 42
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get('/getMyAssignedCourses', validateJWT_1.default, getMyAssignedCoursesController_1.default.getMyAssignedCourses);
+/**
+ * @swagger
+ * /getMyAssignedCourseById/{courseAssignmentId}:
+ *   get:
+ *     summary: Get one assigned course with its modules, tasks and progress
+ *     description: |
+ *       Returns a single course assignment belonging to the authenticated employee,
+ *       expanded into its module -> task tree with per-task completion state. Only
+ *       ACTIVE modules and tasks are returned. The assignment is looked up by id
+ *       **and** employee, so an employee cannot read another employee's assignment.
+ *
+ *       Task content is not inlined: `LINK` tasks expose the external URL as `link`,
+ *       while `FILE` tasks are streamed through
+ *       `/contentwriter/getCourseTaskContent/{taskId}`.
+ *     tags:
+ *       - My Courses
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: courseAssignmentId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the course assignment to retrieve
+ *     responses:
+ *       200:
+ *         description: Successfully fetched the assigned course.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 course:
+ *                   type: object
+ *                   properties:
+ *                     courseAssignmentId:
+ *                       type: string
+ *                     courseId:
+ *                       type: string
+ *                     courseName:
+ *                       type: string
+ *                     courseDescription:
+ *                       type: string
+ *                     thumbnailUrl:
+ *                       type: string
+ *                       format: uri
+ *                     status:
+ *                       type: string
+ *                       example: In Progress
+ *                     dueDate:
+ *                       type: string
+ *                       format: date-time
+ *                     isOverdue:
+ *                       type: boolean
+ *                     progress:
+ *                       type: object
+ *                       properties:
+ *                         totalTasks:
+ *                           type: integer
+ *                         completedTasks:
+ *                           type: integer
+ *                         percentComplete:
+ *                           type: integer
+ *                     modules:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                           moduleName:
+ *                             type: string
+ *                           moduleDescription:
+ *                             type: string
+ *                           totalTasks:
+ *                             type: integer
+ *                           completedTasks:
+ *                             type: integer
+ *                           tasks:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 _id:
+ *                                   type: string
+ *                                 taskName:
+ *                                   type: string
+ *                                 taskDescription:
+ *                                   type: string
+ *                                 type:
+ *                                   type: string
+ *                                   enum:
+ *                                     - FILE
+ *                                     - LINK
+ *                                 link:
+ *                                   type: string
+ *                                   description: External URL, only present for LINK tasks.
+ *                                 contentMimeType:
+ *                                   type: string
+ *                                   example: video/mp4
+ *                                 contentFileName:
+ *                                   type: string
+ *                                   example: intro.mp4
+ *                                 isCompleted:
+ *                                   type: boolean
+ *                                 completedAt:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   nullable: true
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Course assignment not found for this employee.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get('/getMyAssignedCourseById/:courseAssignmentId', validateJWT_1.default, getMyAssignedCourseByIdController_1.default.getMyAssignedCourseById);
+/**
+ * @swagger
+ * /updateMyTaskProgress:
+ *   put:
+ *     summary: Mark a task of an assigned course complete or incomplete
+ *     description: |
+ *       Upserts the authenticated employee's progress record for one task of an
+ *       assigned course, then re-derives the course assignment status from the
+ *       resulting counts (`Assigned` -> `In Progress` -> `Completed`) and returns
+ *       the refreshed progress.
+ *     tags:
+ *       - My Courses
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseAssignmentId
+ *               - taskId
+ *               - isCompleted
+ *             properties:
+ *               courseAssignmentId:
+ *                 type: string
+ *                 example: "66d123456789abcdef123456"
+ *               taskId:
+ *                 type: string
+ *                 example: "66d323456789abcdef123456"
+ *               isCompleted:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Progress updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Progress updated successfully !
+ *                 courseStatus:
+ *                   type: string
+ *                   example: In Progress
+ *                 progress:
+ *                   type: object
+ *                   properties:
+ *                     totalTasks:
+ *                       type: integer
+ *                       example: 12
+ *                     completedTasks:
+ *                       type: integer
+ *                       example: 6
+ *                     percentComplete:
+ *                       type: integer
+ *                       example: 50
+ *                 task:
+ *                   type: object
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                     isCompleted:
+ *                       type: boolean
+ *                     completedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *       400:
+ *         description: Missing fields, or the task does not belong to the assigned course.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Course assignment not found for this employee.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.put('/updateMyTaskProgress', validateJWT_1.default, updateMyTaskProgressController_1.default.updateMyTaskProgress);
+/**
+ * @swagger
+ * /expertconsultation:
+ *   post:
+ *     summary: Submit an expert consultation request
+ *     description: Creates a new expert consultation request and sends confirmation emails to customer and admin.
+ *     tags:
+ *       - Common
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - fullName
+ *               - email
+ *               - phoneNumber
+ *               - projectBudget
+ *               - timeline
+ *             properties:
+ *               fullName:
+ *                 type: string
+ *                 example: John Doe
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: john@example.com
+ *               phoneNumber:
+ *                 type: string
+ *                 example: "9876543210"
+ *               company:
+ *                 type: string
+ *                 example: ABC Technologies
+ *               projectBudget:
+ *                 type: string
+ *                 example: "10000-25000"
+ *               timeline:
+ *                 type: string
+ *                 example: "3 months"
+ *     responses:
+ *       201:
+ *         description: Consultation request submitted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Expert consultation request submitted successfully
+ *                 data:
+ *                   type: object
+ *       500:
+ *         description: Failed to submit expert consultation request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to submit expert consultation request
+ */
+commonRouter.post('/expertconsultation', expertConsultationController_1.default.createExpertConsultation);
 exports.default = commonRouter;

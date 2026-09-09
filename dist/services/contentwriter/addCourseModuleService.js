@@ -4,10 +4,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const coursemoduleModel_1 = __importDefault(require("../../model/coursemoduleModel"));
+const coursesModel_1 = __importDefault(require("../../model/coursesModel"));
 const addNewCourseModule = async (courseId, moduleName, moduleDescription, thumbnail, status) => {
     try {
         const CoursesModuleToSave = new coursemoduleModel_1.default({ courseId, moduleName, moduleDescription, thumbnail, status });
         const result = await CoursesModuleToSave.save();
+        // Touch the parent course so its updatedAt reflects this activity.
+        await coursesModel_1.default.findByIdAndUpdate(courseId, { $currentDate: { updatedAt: true } });
         return result;
     }
     catch (error) {

@@ -12,8 +12,15 @@ const CourseTaskSchema = new mongoose_1.default.Schema({
     thumbnail: { type: mongoose_1.default.Schema.Types.String },
     status: { type: mongoose_1.default.Schema.Types.String },
     type: { type: mongoose_1.default.Schema.Types.String },
+    // Reference to the task content. For type 'LINK' this is the external URL
+    // (YouTube, blog, etc). For type 'FILE' this is the S3 object key of the
+    // uploaded file (pdf/word/any). Served back via /getCourseTaskContent/:id.
+    content: { type: mongoose_1.default.Schema.Types.String },
+    contentMimeType: { type: mongoose_1.default.Schema.Types.String },
+    contentFileName: { type: mongoose_1.default.Schema.Types.String },
 }, {
     collection: 'coursetask',
+    timestamps: true,
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
 });

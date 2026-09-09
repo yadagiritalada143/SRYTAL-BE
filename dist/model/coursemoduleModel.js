@@ -13,6 +13,7 @@ const CourseModuleSchema = new mongoose_1.default.Schema({
     status: { type: mongoose_1.default.Schema.Types.String },
 }, {
     collection: 'coursemodule',
+    timestamps: true,
     toObject: { virtuals: true },
     toJSON: { virtuals: true }
 });

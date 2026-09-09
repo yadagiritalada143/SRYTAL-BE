@@ -12,8 +12,9 @@ import adminRouter from './routes/adminRoutes';
 import superadminRouter from './routes/superadminRoutes';
 import recruiterRouter from './routes/recruiterRoutes';
 import schedularService from './jobs/timesheetcronjob';
+import courseReminderService from './jobs/courseReminderCronJob';
 import contentwriterRouter from './routes/contentwriterRoutes';
-
+import userOpenRouter from './routes/userRoutes'; 
 
 dotenv.config();
 
@@ -42,13 +43,15 @@ app.use('/', commonRouter);
 app.use('/admin', adminRouter);
 app.use('/superadmin', superadminRouter);
 app.use('/recruiter', recruiterRouter);
-app.use('/contentwriter', contentwriterRouter)
+app.use('/contentwriter', contentwriterRouter);
+app.use('/user', userOpenRouter);
 
 const startServer = async () => {
     try {
         await connectToDb();
 
         schedularService.updateNextMonthTimeSheet();
+        courseReminderService.sendCourseReminders();
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port} [${process.env.NODE_ENV || 'development'}]`);

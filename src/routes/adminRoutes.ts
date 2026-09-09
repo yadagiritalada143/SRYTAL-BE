@@ -6,6 +6,12 @@ import commonController from '../controllers/common/commonController';
 import userSchema from '../middlewares/schemas/userSchema';
 import validateProfileRequest from '../middlewares/validateProfileUpdate';
 import getAllEmployeeDetailsByAdminController from '../controllers/admin/getAllEmployeeDetailsByAdminController';
+import getDashboardStatsByAdminController from '../controllers/admin/getDashboardStatsByAdminController';
+import getNavCatalogController from '../controllers/admin/getNavCatalogController';
+import getNavRoleAccessController from '../controllers/admin/getNavRoleAccessController';
+import updateNavRoleAccessController from '../controllers/admin/updateNavRoleAccessController';
+import getNavUserAccessController from '../controllers/admin/getNavUserAccessController';
+import updateNavUserAccessController from '../controllers/admin/updateNavUserAccessController';
 import employeePasswordResetByAdminController from '../controllers/admin/employeePasswordResetByAdminController';
 import getAllBloodGroupsByAdminController from '../controllers/admin/getAllBloodGroupsByAdminController';
 import addBloodGroupByAdminController from '../controllers/admin/addBloodGroupByAdminController';
@@ -48,6 +54,12 @@ import getAllDepartmentsByAdminController from '../controllers/admin/getAllDepar
 import getDepartmentByAdminController from '../controllers/admin/getDepartmentByAdminController';
 import deleteDepartmentByAdminController from '../controllers/admin/deleteDepartmentByAdminController';
 import updateDepartmentByAdminController from '../controllers/admin/updateDepartmentByAdminController';
+import createCourseAssignmentController from '../controllers/admin/createCourseAssignmentController';
+import getAllCourseAssignmentsController from '../controllers/admin/getAllCourseAssignmentsController';
+import updateCourseAssignmentDueDateController from '../controllers/admin/updateCourseAssignmentDueDateController';
+import getCourseAssignmentDetailsController from '../controllers/admin/getCourseAssignmentDetailsController';
+import deleteCourseAssignmentController from '../controllers/admin/deleteCourseAssignmentController';
+import authorizeAdmin from '../middlewares/authorizeAdmin';
 
 const adminRouter: Router = express.Router();
 
@@ -531,6 +543,118 @@ adminRouter.put('/updateEmployeeDetailsByAdmin', validateProfileRequest(userSche
  *                   example: "Error while fetching user details"
  */
 adminRouter.get('/getAllEmployeeDetailsByAdmin', validateJWT, getAllEmployeeDetailsByAdminController.getAllEmployeeDetails);
+
+/**
+ * @swagger
+ * /admin/getDashboardStatsByAdmin:
+ *   get:
+ *     summary: Get aggregated dashboard stats for the admin's organization
+ *     description: Returns org-scoped headcount and role/department/employment-type breakdowns, recent hires, birthdays and work anniversaries this month, pending password resets, and timesheet oversight (pending approvals, hours logged this month, active projects).
+ *     tags:
+ *       - Admin
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Dashboard stats fetched successfully
+ *       500:
+ *         description: Error while fetching dashboard stats
+ */
+adminRouter.get('/getDashboardStatsByAdmin', validateJWT, getDashboardStatsByAdminController.getDashboardStats);
+
+// ── Navigation / Menu Access management ──────────────────────────────────────
+/**
+ * @swagger
+ * /admin/getNavCatalog:
+ *   get:
+ *     summary: Get the full navigation catalog (optionally by surface)
+ *     tags: [Admin]
+ *     security: [{ BearerAuth: [] }]
+ *     parameters:
+ *       - in: query
+ *         name: surface
+ *         schema: { type: string, enum: [employee, admin] }
+ *     responses:
+ *       200: { description: Catalog fetched }
+ */
+adminRouter.get('/getNavCatalog', validateJWT, getNavCatalogController.getNavCatalog);
+
+/**
+ * @swagger
+ * /admin/getNavRoleAccess/{role}:
+ *   get:
+ *     summary: Get the granted menu keys for a role (defaults to full surface catalog if unset)
+ *     tags: [Admin]
+ *     security: [{ BearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: role
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200: { description: Role access fetched }
+ */
+adminRouter.get('/getNavRoleAccess/:role', validateJWT, getNavRoleAccessController.getNavRoleAccess);
+
+/**
+ * @swagger
+ * /admin/updateNavRoleAccess:
+ *   put:
+ *     summary: Set the granted menu keys for a role
+ *     tags: [Admin]
+ *     security: [{ BearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               role: { type: string }
+ *               navKeys: { type: array, items: { type: string } }
+ *     responses:
+ *       200: { description: Role access updated }
+ */
+adminRouter.put('/updateNavRoleAccess', validateJWT, updateNavRoleAccessController.updateNavRoleAccess);
+
+/**
+ * @swagger
+ * /admin/getNavUserAccess/{userId}:
+ *   get:
+ *     summary: Get a user's role baseline plus their per-user menu overrides
+ *     tags: [Admin]
+ *     security: [{ BearerAuth: [] }]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema: { type: string }
+ *     responses:
+ *       200: { description: User access fetched }
+ */
+adminRouter.get('/getNavUserAccess/:userId', validateJWT, getNavUserAccessController.getNavUserAccess);
+
+/**
+ * @swagger
+ * /admin/updateNavUserAccess:
+ *   put:
+ *     summary: Set a user's per-user menu overrides (added/removed keys)
+ *     tags: [Admin]
+ *     security: [{ BearerAuth: [] }]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId: { type: string }
+ *               addedKeys: { type: array, items: { type: string } }
+ *               removedKeys: { type: array, items: { type: string } }
+ *     responses:
+ *       200: { description: User access updated }
+ */
+adminRouter.put('/updateNavUserAccess', validateJWT, updateNavUserAccessController.updateNavUserAccess);
 
 /**
  * @swagger
@@ -3339,6 +3463,7 @@ adminRouter.get('/getdepartmentbyadmin/:_id', validateJWT, getDepartmentByAdminC
  *                   type: string
  *                   example: Error deleting department
  */
+
 adminRouter.delete('/deletedepartmentbyadmin/:_id', validateJWT, deleteDepartmentByAdminController.deleteDepartmentByAdmin);
 
 /**
@@ -3348,7 +3473,7 @@ adminRouter.delete('/deletedepartmentbyadmin/:_id', validateJWT, deleteDepartmen
  *     summary: Update department by admin
  *     description: Admin can update an existing department name using department ID.
  *     tags:
- *       - Admin 
+ *       - Admin
  *     security:
  *       - BearerAuth: []
  *     requestBody:
@@ -3397,6 +3522,574 @@ adminRouter.delete('/deletedepartmentbyadmin/:_id', validateJWT, deleteDepartmen
  *                   type: string
  *                   example: Failed to update department
  */
-adminRouter.put('/updatedepartmentbyadmin', validateJWT, updateDepartmentByAdminController.updateDepartmentByAdmin)
+
+adminRouter.put('/updatedepartmentbyadmin', validateJWT, updateDepartmentByAdminController.updateDepartmentByAdmin);
+
+/**
+ * @swagger
+ * /admin/createcourseassignment:
+ *   post:
+ *     summary: Assign a course to an employee
+ *     description: Assigns a course to an employee by an authenticated admin.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseId
+ *               - employeeId
+ *               - dueDate
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the course
+ *                 example: "66c123456789abcdef123456"
+ *
+ *               employeeId:
+ *                 type: string
+ *                 description: MongoDB ObjectId of the employee user
+ *                 example: "66c123456789abcdef654321"
+ *
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: Due date for completing the course
+ *                 example: "2026-09-30"
+ *
+ *     responses:
+ *       201:
+ *         description: Course assigned to employee successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Course assigned to employee successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "66d123456789abcdef123456"
+ *                     courseId:
+ *                       type: string
+ *                       example: "66c123456789abcdef123456"
+ *                     employeeId:
+ *                       type: string
+ *                       example: "66c123456789abcdef654321"
+ *                     assignedByAdminId:
+ *                       type: string
+ *                       example: "66b123456789abcdef111111"
+ *                     status:
+ *                       type: string
+ *                       enum:
+ *                         - Assigned
+ *                         - In Progress
+ *                         - Completed
+ *                       example: Assigned
+ *                     assignedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2026-08-26T06:30:00.000Z"
+ *                     dueDate:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2026-09-30T23:59:59.000Z"
+ *                     completedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *                       example: null
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *
+ *       400:
+ *         description: Invalid request or course assignment creation failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Course assignment creation failed
+ *
+ *       401:
+ *         description: Unauthorized - JWT token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Admin authentication required
+ *
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+
+adminRouter.post('/createcourseassignment', validateJWT, createCourseAssignmentController.createCourseAssignment);
+
+/**
+ * @swagger
+ * /admin/getallcourseassignments:
+ *   get:
+ *     summary: Get all course assignments
+ *     description: Returns every course assignment created in the system. Supports filtering by employeeId / employeeName and pagination.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: employeeId
+ *         required: false
+ *         description: Case-insensitive match on the employee id (user id or employee code)
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: employeeName
+ *         required: false
+ *         description: Case-insensitive substring match on the employee name or employee code
+ *         schema:
+ *           type: string
+ *       - in: query
+ *         name: page
+ *         required: false
+ *         description: 1-based page number (default 1)
+ *         schema:
+ *           type: integer
+ *           example: 1
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         description: Number of records per page (default 10)
+ *         schema:
+ *           type: integer
+ *           example: 10
+ *
+ *     responses:
+ *       200:
+ *         description: Paginated list of all course assignments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Course Assignments fetched successfully !
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       courseAssignmentId:
+ *                         type: string
+ *                       courseId:
+ *                         type: string
+ *                       courseName:
+ *                         type: string
+ *                       courseDescription:
+ *                         type: string
+ *                       employee:
+ *                         type: object
+ *                         nullable: true
+ *                         properties:
+ *                           employeeId:
+ *                             type: string
+ *                           firstName:
+ *                             type: string
+ *                           lastName:
+ *                             type: string
+ *                           email:
+ *                             type: string
+ *                           employeeCode:
+ *                             type: string
+ *                       status:
+ *                         type: string
+ *                         enum:
+ *                           - Assigned
+ *                           - In Progress
+ *                           - Completed
+ *                       assignedAt:
+ *                         type: string
+ *                         format: date-time
+ *                       dueDate:
+ *                         type: string
+ *                         format: date-time
+ *                       completedAt:
+ *                         type: string
+ *                         format: date-time
+ *                         nullable: true
+ *                       isOverdue:
+ *                         type: boolean
+ *                       totalModules:
+ *                         type: integer
+ *                       progress:
+ *                         type: object
+ *                         properties:
+ *                           totalTasks:
+ *                             type: integer
+ *                           completedTasks:
+ *                             type: integer
+ *                           percentComplete:
+ *                             type: integer
+ *                 pagination:
+ *                   type: object
+ *                   properties:
+ *                     page:
+ *                       type: integer
+ *                     limit:
+ *                       type: integer
+ *                     total:
+ *                       type: integer
+ *                     totalPages:
+ *                       type: integer
+ *
+ *       401:
+ *         description: Unauthorized - JWT token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Admin authentication required
+ *
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occurred while fetching course assignments !
+ */
+
+adminRouter.get('/getallcourseassignments', validateJWT, authorizeAdmin, getAllCourseAssignmentsController.getAllCourseAssignments);
+
+/**
+ * @swagger
+ * /admin/courses/assignments/{courseAssignmentId}/details:
+ *   get:
+ *     summary: Get granular progress details of an assigned course (Admin)
+ *     description: >
+ *       Returns the full course structure (modules and the tasks within each
+ *       module) for a given course assignment, together with the employee's
+ *       per-task completion state and an overall progress summary. Admin role
+ *       authorization is enforced.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: courseAssignmentId
+ *         required: true
+ *         description: MongoDB ObjectId of the course assignment
+ *         schema:
+ *           type: string
+ *           example: uuid-assign-991
+ *     responses:
+ *       200:
+ *         description: Course assignment details fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Course assignment details fetched successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     employee:
+ *                       type: object
+ *                       nullable: true
+ *                       properties:
+ *                         employeeId:
+ *                           type: string
+ *                         firstName:
+ *                           type: string
+ *                         lastName:
+ *                           type: string
+ *                         email:
+ *                           type: string
+ *                         employeeCode:
+ *                           type: string
+ *                     course:
+ *                       type: object
+ *                       properties:
+ *                         courseAssignmentId:
+ *                           type: string
+ *                         courseId:
+ *                           type: string
+ *                         courseName:
+ *                           type: string
+ *                         status:
+ *                           type: string
+ *                           enum: [Assigned, In Progress, Completed]
+ *                         totalModules:
+ *                           type: integer
+ *                         progress:
+ *                           type: object
+ *                           properties:
+ *                             totalTasks:
+ *                               type: integer
+ *                             completedTasks:
+ *                               type: integer
+ *                             percentComplete:
+ *                               type: integer
+ *                         modules:
+ *                           type: array
+ *                           items:
+ *                             type: object
+ *                             properties:
+ *                               _id:
+ *                                 type: string
+ *                               moduleName:
+ *                                 type: string
+ *                               totalTasks:
+ *                                 type: integer
+ *                               completedTasks:
+ *                                 type: integer
+ *                               tasks:
+ *                                 type: array
+ *                                 items:
+ *                                   type: object
+ *                                   properties:
+ *                                     _id:
+ *                                       type: string
+ *                                     taskName:
+ *                                       type: string
+ *                                     type:
+ *                                       type: string
+ *                                     isCompleted:
+ *                                       type: boolean
+ *                                     completedAt:
+ *                                       type: string
+ *                                       format: date-time
+ *                                       nullable: true
+ *       401:
+ *         description: Unauthorized - Admin authentication required
+ *       403:
+ *         description: Forbidden - Admin role required
+ *       404:
+ *         description: Course assignment not found
+ *       500:
+ *         description: Internal server error
+ */
+
+adminRouter.get('/courses/assignments/:courseAssignmentId/details', validateJWT, authorizeAdmin, getCourseAssignmentDetailsController.getCourseAssignmentDetails);
+
+/**
+ * @swagger
+ * /admin/courses/assignments/{courseAssignmentId}/duedate:
+ *   put:
+ *     summary: Update the due date of a course assignment (Admin)
+ *     description: >
+ *       Updates the due date of an existing course assignment identified by its
+ *       id. Admin role authorization is enforced.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: courseAssignmentId
+ *         required: true
+ *         description: MongoDB ObjectId of the course assignment
+ *         schema:
+ *           type: string
+ *           example: uuid-assign-991
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - dueDate
+ *             properties:
+ *               dueDate:
+ *                 type: string
+ *                 format: date-time
+ *                 description: New due date for the assignment
+ *                 example: 2026-09-30T00:00:00.000Z
+ *     responses:
+ *       200:
+ *         description: Course assignment due date updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Course assignment due date updated successfully !
+ *                 data:
+ *                   type: object
+ *       400:
+ *         description: Missing courseAssignmentId or dueDate
+ *       401:
+ *         description: Unauthorized - Admin authentication required
+ *       403:
+ *         description: Forbidden - Admin role required
+ *       404:
+ *         description: Course assignment not found
+ *       500:
+ *         description: Internal server error
+ */
+
+adminRouter.put('/courses/assignments/:courseAssignmentId/duedate', validateJWT, authorizeAdmin, updateCourseAssignmentDueDateController.updateCourseAssignmentDueDate);
+
+/**
+ * @swagger
+ * /admin/deletecourseassignment/{courseAssignmentId}:
+ *   delete:
+ *     summary: Delete a course assignment
+ *     description: Deletes a course assignment by its ID. Only accessible by an authenticated admin.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *
+ *     parameters:
+ *       - in: path
+ *         name: courseAssignmentId
+ *         required: true
+ *         description: MongoDB ObjectId of the course assignment to delete
+ *         schema:
+ *           type: string
+ *           example: "66d123456789abcdef123456"
+ *
+ *     responses:
+ *       200:
+ *         description: Course assignment deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Course Assignment deleted successfully !
+ *
+ *       400:
+ *         description: Invalid request or course assignment deletion failed
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occurred while deleting course assignment !
+ *
+ *       401:
+ *         description: Unauthorized - JWT token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Admin authentication required
+ *
+ *       404:
+ *         description: Course assignment not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Course assignment not found !
+ *
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error
+ */
+
+adminRouter.delete('/deletecourseassignment/:courseAssignmentId', validateJWT, deleteCourseAssignmentController.deleteCourseAssignment);
+
 
 export default adminRouter;

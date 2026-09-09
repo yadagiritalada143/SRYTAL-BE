@@ -4,14 +4,16 @@ import { RECRUITER_ERROR_MESSAGES } from '../../constants/recruiterErrorMessages
 
 const addTalentPoolCandidateByRecruiter = (req: Request, res: Response) => {
     let candidateDetails = req.body;
+    const userId = (req as any).user?.userId;
     candidateDetails.createdAt = new Date();
     candidateDetails.lastUpdatedAt = new Date();
-    candidateDetails.createdBy = candidateDetails.userId;
+    candidateDetails.createdBy = userId;
     if (candidateDetails?.comments?.length) {
-        candidateDetails.comments.map((comment: any) => {
-            comment.userId = candidateDetails.userId;
-            comment.updateAt = new Date();
-        });
+       candidateDetails.comments = candidateDetails.comments.map((comment: any) => ({
+        ...comment,
+        userId: userId, 
+        updatedAt: new Date()
+    }));
     }
     addTalentPoolCandidateByRecruiterService
         .addTalentPoolCandidatesByRecruiter(candidateDetails)

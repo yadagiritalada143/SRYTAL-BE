@@ -17,7 +17,9 @@ const adminRoutes_1 = __importDefault(require("./routes/adminRoutes"));
 const superadminRoutes_1 = __importDefault(require("./routes/superadminRoutes"));
 const recruiterRoutes_1 = __importDefault(require("./routes/recruiterRoutes"));
 const timesheetcronjob_1 = __importDefault(require("./jobs/timesheetcronjob"));
+const courseReminderCronJob_1 = __importDefault(require("./jobs/courseReminderCronJob"));
 const contentwriterRoutes_1 = __importDefault(require("./routes/contentwriterRoutes"));
+const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
 const port = process.env.PORT || 3000;
@@ -40,10 +42,12 @@ app.use('/admin', adminRoutes_1.default);
 app.use('/superadmin', superadminRoutes_1.default);
 app.use('/recruiter', recruiterRoutes_1.default);
 app.use('/contentwriter', contentwriterRoutes_1.default);
+app.use('/user', userRoutes_1.default);
 const startServer = async () => {
     try {
         await (0, databaseConfig_1.default)();
         timesheetcronjob_1.default.updateNextMonthTimeSheet();
+        courseReminderCronJob_1.default.sendCourseReminders();
         app.listen(port, () => {
             console.log(`Server is running on port ${port} [${process.env.NODE_ENV || 'development'}]`);
         });

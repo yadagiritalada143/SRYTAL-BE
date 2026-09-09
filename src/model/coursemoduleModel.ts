@@ -11,6 +11,7 @@ const CourseModuleSchema = new mongoose.Schema({
 },
     {
         collection: 'coursemodule',
+        timestamps: true,
         toObject: { virtuals: true },
         toJSON: { virtuals: true }
     });

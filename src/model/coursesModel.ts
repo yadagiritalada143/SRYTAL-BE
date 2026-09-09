@@ -11,6 +11,7 @@ const CoursesSchema = new mongoose.Schema({
 },
     {
         collection: 'courses',
+        timestamps: true,
         toObject: { virtuals: true },
         toJSON: { virtuals: true }
     }
