@@ -6,7 +6,7 @@ import { NavMenuNode, NavSurface } from '../../interfaces/navigation';
 // admins use the 'admin' surface; everyone else (Employee/Recruiter/ContentWriter)
 // uses the 'employee' surface.
 export const surfaceForRole = (role?: string): NavSurface =>
-    role === 'admin' ? 'admin' : 'employee';
+    role === 'admin' ? 'admin' : 'Employee';
 
 /**
  * Resolves the set of catalog keys a user may access:
