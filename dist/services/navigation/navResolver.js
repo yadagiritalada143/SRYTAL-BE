@@ -9,7 +9,7 @@ const navRoleAccessModel_1 = __importDefault(require("../../model/navRoleAccessM
 const navUserAccessModel_1 = __importDefault(require("../../model/navUserAccessModel"));
 // admins use the 'admin' surface; everyone else (Employee/Recruiter/ContentWriter)
 // uses the 'employee' surface.
-const surfaceForRole = (role) => role === 'admin' ? 'admin' : 'employee';
+const surfaceForRole = (role) => role === 'admin' ? 'admin' : 'Employee';
 exports.surfaceForRole = surfaceForRole;
 /**
  * Resolves the set of catalog keys a user may access:
