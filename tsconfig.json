@@ -1,7 +1,10 @@
 {
   "ts-node": {
     "transpileOnly": true,
-    "files": true
+    "files": true,
+    "require": [
+      "tsconfig-paths/register"
+    ]
   },
   "compilerOptions": {
     "baseUrl": ".",
@@ -21,6 +24,9 @@
     "strict": true,
     "noImplicitAny": true,
     "skipLibCheck": true,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "strictPropertyInitialization": false,
     "types": [
       "jest",
       "node"
@@ -29,8 +35,6 @@
   "exclude": [
     "node_modules",
     "public_html",
-    "tests",
-    "**/*.spec.ts",
     "./coverage",
     "./dist",
     "__tests__",
