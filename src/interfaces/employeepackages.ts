@@ -8,6 +8,11 @@ export interface ITimesheet {
     hours: number;
     comments: string;
     leaveReason: string;
+    status?: string;
+    rejectionReason?: string;
+    leaveType?: string;
+    startDate?: Date | string;
+    endDate?: Date | string;
 }
 
 export interface ITask {
