@@ -96,7 +96,8 @@ describe('createCourseAssignmentService', () => {
                 status: 'Assigned',
                 assignedAt: expect.any(Date),
                 dueDate,
-                completedAt: null
+                completedAt: null,
+                reminderScheduleStartDate: expect.any(Date)
             })
         );
         expect(saveSpy).toHaveBeenCalledTimes(1);
