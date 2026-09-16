@@ -20,7 +20,7 @@ const createCourseAssignment = async (courseId: string, employeeId: string, assi
             throw new Error(COURSE_ASSIGNMENT_ERRORS_MESSAGES.COURSE_ASSIGNMENT_ALREADY_ASSIGNED_MESSAGE);
         };
 
-        const newCourseAssignment = new CourseAssignment({ courseId, employeeId, assignedByAdminId, status: 'Assigned', assignedAt: new Date(), dueDate, completedAt: null });
+        const newCourseAssignment = new CourseAssignment({ courseId, employeeId, assignedByAdminId, status: 'Assigned', assignedAt: new Date(), dueDate, completedAt: null, reminderScheduleStartDate: new Date() });
 
         const result = await newCourseAssignment.save();
 

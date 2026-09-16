@@ -94,6 +94,9 @@ describe('updateCourseAssignmentDueDateService', () => {
 
         expect(findByIdMock).toHaveBeenCalledTimes(1);
         expect(findByIdMock).toHaveBeenCalledWith('a1');
+        expect(assignmentDoc.dueDate).toEqual(newDueDate);
+        expect(assignmentDoc.reminderScheduleStartDate).toBeInstanceOf(Date);
+        expect(assignmentDoc.lastReminderSentAt).toBeNull();
         expect(assignmentDoc.save).toHaveBeenCalledTimes(1);
         expect(userFindByIdMock).toHaveBeenCalledWith('e1');
         expect(courseFindByIdMock).toHaveBeenCalledWith('c1');

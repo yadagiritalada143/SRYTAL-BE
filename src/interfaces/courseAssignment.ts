@@ -9,6 +9,8 @@ export interface ICourseAssignment  extends Document {
     assignedAt: Date;
     dueDate: Date;
     completedAt?: Date | null;
+    lastReminderSentAt?: Date | null;
+    reminderScheduleStartDate?: Date | null;
     createdAt: Date;
     updatedAt: Date;
 };
