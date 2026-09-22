@@ -1,11 +1,13 @@
 export const PROGRAMMING_LANGUAGES_SUCCESS_MESSAGES = {
     PROGRAMMING_LANGUAGE_ADD_SUCCESS_MESSAGE: 'Programming language added successfully !!',
     PROGRAMMING_LANGUAGE_UPDATE_SUCCESS_MESSAGE: 'Programming language updated successfully !!',
+    FETCH_ALL_PROGRAMMING_LANGUAGES_SUCCESS_MESSAGE: 'Fetched all programming languages successfully !!',
 }
 
 export const PROGRAMMING_LANGUAGES_ERROR_MESSAGES = {
     PROGRAMMING_LANGUAGE_ADD_ERROR_MESSAGE: 'An error occurred while adding programming language !!',
-    PROGRAMMING_LANGUAGE_UPDATE_ERROR_MESSAGE: 'An error occurred while updating programming language !!'
+    PROGRAMMING_LANGUAGE_UPDATE_ERROR_MESSAGE: 'An error occurred while updating programming language !!',
+    FETCH_ALL_PROGRAMMING_LANGUAGES_ERROR_MESSAGE: 'An error occurred while fetching all programming languages !!'
 }
 
 export const HTTP_STATUS = {
