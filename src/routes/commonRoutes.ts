@@ -20,6 +20,7 @@ import getMyAssignedCourseByIdController from '../controllers/common/getMyAssign
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
 import expertConsultationController from '../controllers/common/expertConsultationController';
 import addProgrammingLanguageController from '../controllers/common/addProgrammingLanguageController';
+import updateProgrammingLanguageController from '../controllers/common/updateProgrammingLanguageController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -1421,5 +1422,63 @@ commonRouter.post('/expertconsultation', expertConsultationController.createExpe
  *                   example: An error occurred while adding programming language !!
  */
 commonRouter.post('/addprogramminglanguage', validateJWT, addProgrammingLanguageController.addProgrammingLanguage);
+
+
+/**
+ * @swagger
+ * /updateprogramminglanguage:
+ *   put:
+ *     summary: Update a programming language
+ *     description: This API allows an authenticated user to update an existing programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - languageName
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
+ *               languageName:
+ *                 type: string
+ *                 example: JavaScript
+ *     responses:
+ *       200:
+ *         description: Programming language updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language updated successfully !!
+ *       500:
+ *         description: Error while updating programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while updating programming language !!
+ */
+commonRouter.put('/updateprogramminglanguage', validateJWT, updateProgrammingLanguageController.updateProgrammingLanguage);
 
 export default commonRouter;
