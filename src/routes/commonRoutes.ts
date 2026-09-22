@@ -19,6 +19,9 @@ import getMyAssignedCoursesController from '../controllers/common/getMyAssignedC
 import getMyAssignedCourseByIdController from '../controllers/common/getMyAssignedCourseByIdController';
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
 import expertConsultationController from '../controllers/common/expertConsultationController';
+import addProgrammingLanguageController from '../controllers/common/addProgrammingLanguageController';
+import updateProgrammingLanguageController from '../controllers/common/updateProgrammingLanguageController';
+import getAllProgrammingLanguagesController from '../controllers/common/getAllProgrammingLanguagesController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -1368,5 +1371,172 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *                   example: Failed to submit expert consultation request
  */
 commonRouter.post('/expertconsultation', expertConsultationController.createExpertConsultation);
+
+/**
+ * @swagger
+ * /addprogramminglanguage:
+ *   post:
+ *     summary: Add a new programming language
+ *     description: This API allows an authenticated user to create a new programming language in the system.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - languageName
+ *             properties:
+ *               languageName:
+ *                 type: string
+ *                 example: JavaScript
+ *     responses:
+ *       200:
+ *         description: Programming language added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language added successfully !!
+ *       500:
+ *         description: Error while adding programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while adding programming language !!
+ */
+commonRouter.post('/addprogramminglanguage', validateJWT, addProgrammingLanguageController.addProgrammingLanguage);
+
+
+/**
+ * @swagger
+ * /updateprogramminglanguage:
+ *   put:
+ *     summary: Update a programming language
+ *     description: This API allows an authenticated user to update an existing programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - languageName
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
+ *               languageName:
+ *                 type: string
+ *                 example: JavaScript
+ *     responses:
+ *       200:
+ *         description: Programming language updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language updated successfully !!
+ *       500:
+ *         description: Error while updating programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while updating programming language !!
+ */
+commonRouter.put('/updateprogramminglanguage', validateJWT, updateProgrammingLanguageController.updateProgrammingLanguage);
+
+/**
+ * @swagger
+ * /getallprogramminglanguages:
+ *   get:
+ *     summary: Get all programming languages
+ *     description: This API fetches all programming languages available in the system.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Programming languages fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Fetched all programming languages successfully !!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "65f1a2b3c4d5e6f7890abcd1"
+ *                       languageName:
+ *                         type: string
+ *                         example: JavaScript
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       500:
+ *         description: Error while fetching programming languages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while fetching all programming languages !!
+ */
+commonRouter.get('/getallprogramminglanguages', validateJWT, getAllProgrammingLanguagesController.getAllProgrammingLanguages);
 
 export default commonRouter;

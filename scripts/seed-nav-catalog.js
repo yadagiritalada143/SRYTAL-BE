@@ -36,7 +36,8 @@ const CATALOG = [
   { key: 'admin.payroll', label: 'Payroll Management', icon: 'IconNotebook', surface: 'admin', order: 9 },
   { key: 'admin.salary-slip', label: 'Generate Salary Slip', url: 'admin/dashboard/reports/generate-salary-slip', icon: 'IconReportMoney', surface: 'admin', parentKey: 'admin.payroll', order: 10 },
   { key: 'admin.payroll-reports', label: 'Payroll Reports', url: 'admin/dashboard/reports/all-employee-reports', icon: 'IconReport', surface: 'admin', parentKey: 'admin.payroll', order: 11 },
-  { key: 'admin.settings', label: 'Settings', url: 'admin/dashboard/settings', icon: 'IconSettings', surface: 'admin', order: 12, isSystem: true }
+  { key: 'admin.settings', label: 'Settings', url: 'admin/dashboard/settings', icon: 'IconSettings', surface: 'admin', order: 12, isSystem: true },
+  { key: 'admin.content-writer', label: 'Content Writer', url: 'admin/dashboard/content-writer', icon: 'IconBook', surface: 'admin', order: 13 }
 ];
 
 // Default grants per role = exactly what each role sees today.
