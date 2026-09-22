@@ -23,6 +23,7 @@ import addProgrammingLanguageController from '../controllers/common/addProgrammi
 import updateProgrammingLanguageController from '../controllers/common/updateProgrammingLanguageController';
 import getAllProgrammingLanguagesController from '../controllers/common/getAllProgrammingLanguagesController';
 import getProgrammingLanguageByIdController from '../controllers/common/getProgrammingLanguageByIdController';
+import deleteProgrammingLanguageController from '../controllers/common/deleteProgrammingLanguageController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -1615,5 +1616,66 @@ commonRouter.get('/getallprogramminglanguages', validateJWT, getAllProgrammingLa
  *                   example: An error occurred while fetching programming language !!
  */
 commonRouter.get('/getprogramminglanguagebyid/:id', validateJWT, getProgrammingLanguageByIdController.getProgrammingLanguageById);
+
+/**
+ * @swagger
+ * /deleteprogramminglanguage/{id}:
+ *   delete:
+ *     summary: Delete a programming language by ID
+ *     description: This API deletes a single programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the programming language to delete
+ *         example: "65f1a2b3c4d5e6f7890abcd1"
+ *     responses:
+ *       200:
+ *         description: Programming language deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language deleted successfully !!
+ *       404:
+ *         description: Programming language not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Programming language not found !!
+ *       500:
+ *         description: Error while deleting programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while deleting programming language !!
+ */
+commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgrammingLanguageController.deleteProgrammingLanguage);
 
 export default commonRouter;
