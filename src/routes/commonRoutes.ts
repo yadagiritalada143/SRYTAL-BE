@@ -19,6 +19,7 @@ import getMyAssignedCoursesController from '../controllers/common/getMyAssignedC
 import getMyAssignedCourseByIdController from '../controllers/common/getMyAssignedCourseByIdController';
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
 import expertConsultationController from '../controllers/common/expertConsultationController';
+import addProgrammingLanguageController from '../controllers/common/addProgrammingLanguageController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -1368,5 +1369,57 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *                   example: Failed to submit expert consultation request
  */
 commonRouter.post('/expertconsultation', expertConsultationController.createExpertConsultation);
+
+/**
+ * @swagger
+ * /addprogramminglanguage:
+ *   post:
+ *     summary: Add a new programming language
+ *     description: This API allows an authenticated user to create a new programming language in the system.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - languageName
+ *             properties:
+ *               languageName:
+ *                 type: string
+ *                 example: JavaScript
+ *     responses:
+ *       200:
+ *         description: Programming language added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language added successfully !!
+ *       500:
+ *         description: Error while adding programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while adding programming language !!
+ */
+commonRouter.post('/addprogramminglanguage', validateJWT, addProgrammingLanguageController.addProgrammingLanguage);
 
 export default commonRouter;
