@@ -24,6 +24,9 @@ import updateProgrammingLanguageController from '../controllers/common/updatePro
 import getAllProgrammingLanguagesController from '../controllers/common/getAllProgrammingLanguagesController';
 import getProgrammingLanguageByIdController from '../controllers/common/getProgrammingLanguageByIdController';
 import deleteProgrammingLanguageController from '../controllers/common/deleteProgrammingLanguageController';
+import getCodingQuestionController from '../controllers/common/getCodingQuestionController';
+import runCodeController from '../controllers/common/runCodeController';
+import submitCodeController from '../controllers/common/submitCodeController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -1677,5 +1680,262 @@ commonRouter.get('/getprogramminglanguagebyid/:id', validateJWT, getProgrammingL
  *                   example: An error occurred while deleting programming language !!
  */
 commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgrammingLanguageController.deleteProgrammingLanguage);
+
+/**
+ * @swagger
+ * /getCodingQuestion/{questionId}:
+ *   get:
+ *     summary: Open a coding question with its starter code
+ *     description: |
+ *       Returns the coding question problem statement, the allowed languages and
+ *       the starter code for the requested language (query param `language`, e.g.
+ *       `javascript`). Falls back to the first allowed language when no language
+ *       is provided and to a built-in starter template when the content writer
+ *       did not supply one. The question must belong to a course assigned to the
+ *       authenticated employee.
+ *     tags:
+ *       - Coding Question
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: questionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the coding question (course task)
+ *       - in: query
+ *         name: language
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: The programming language to view the starter code for
+ *         example: javascript
+ *     responses:
+ *       200:
+ *         description: Coding question fetched successfully.
+ *       400:
+ *         description: Not a coding question or invalid language.
+ *       403:
+ *         description: Question not part of the employee's assigned courses.
+ *       404:
+ *         description: Coding question not found.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get('/getCodingQuestion/:questionId', validateJWT, getCodingQuestionController.getCodingQuestion);
+
+/**
+ * @swagger
+ * /runcode:
+ *   post:
+ *     summary: Run employee code against a coding question
+ *     description: |
+ *       Executes the authenticated employee's submitted code for a coding
+ *       question. On the very first run for a question, test cases are generated
+ *       via OpenRouter and stored; later runs reuse them. The code is executed
+ *       against every test-case input on the Piston execution API, each test
+ *       case is reported as passed or failed (verdict always from the actual
+ *       execution, never the AI), the score is computed as
+ *       (passed / total) x 100 and an informational OpenRouter code-quality
+ *       evaluation is attached.
+ *     tags:
+ *       - Coding Question
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - questionId
+ *               - language
+ *               - code
+ *             properties:
+ *               questionId:
+ *                 type: string
+ *                 example: "66d323456789abcdef123456"
+ *               language:
+ *                 type: string
+ *                 example: javascript
+ *               code:
+ *                 type: string
+ *                 example: "function isPalindrome(str) { const s = str.replace(/\\s/g, '').toLowerCase(); return s === s.split('').reverse().join(''); }"
+ *     responses:
+ *       200:
+ *         description: Code executed successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     questionId:
+ *                       type: string
+ *                     language:
+ *                       type: string
+ *                     totalTestCases:
+ *                       type: number
+ *                     passedTestCases:
+ *                       type: number
+ *                     failedTestCases:
+ *                       type: number
+ *                     score:
+ *                       type: number
+ *                       description: Execution score, (passed / total) x 100.
+ *                     results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           input:
+ *                             type: string
+ *                           expectedOutput:
+ *                             type: string
+ *                           actualOutput:
+ *                             type: string
+ *                           passed:
+ *                             type: boolean
+ *                           status:
+ *                             type: string
+ *                           errorDetails:
+ *                             type: string
+ *                     aiEvaluation:
+ *                       type: object
+ *                       nullable: true
+ *                       description: Informational code-quality analysis from OpenRouter.
+ *                       properties:
+ *                         score:
+ *                           type: number
+ *                         suggestions:
+ *                           type: array
+ *                           items:
+ *                             type: string
+ *                         failedTests:
+ *                           type: array
+ *                           items:
+ *                             type: string
+ *                         codingStandards:
+ *                           type: object
+ *                           properties:
+ *                             readability:
+ *                               type: string
+ *                             efficiency:
+ *                               type: string
+ *                             errorHandling:
+ *                               type: string
+ *                             namingConventions:
+ *                               type: string
+ *                         explanation:
+ *                           type: string
+ *       400:
+ *         description: Missing fields, invalid language, or invalid generated test cases.
+ *       403:
+ *         description: Question not part of the employee's assigned courses.
+ *       404:
+ *         description: Coding question not found.
+ *       409:
+ *         description: Test cases are still being generated.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
+
+/**
+ * @swagger
+ * /submitcode:
+ *   post:
+ *     summary: Submit final code for a coding question
+ *     description: |
+ *       The employee's final answer for a coding question. Runs the same
+ *       grading engine as Run Code (generate/reuse test cases -> Piston
+ *       execution -> compare results -> score -> OpenRouter code-quality
+ *       analysis) and stores the record as a `type: 'submit'` document in the
+ *       code-run collection. A submission is only accepted when every test case
+ *       passes — otherwise 400 is returned so the employee must fix the code
+ *       and re-run. The pass/fail verdicts always come from the actual
+ *       execution, never the AI. Course progress (task completion) is handled
+ *       separately by the frontend via the existing task-progress endpoint.
+ *     tags:
+ *       - Coding Question
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - questionId
+ *               - language
+ *               - code
+ *             properties:
+ *               questionId:
+ *                 type: string
+ *                 example: "66d323456789abcdef123456"
+ *               language:
+ *                 type: string
+ *                 example: javascript
+ *               code:
+ *                 type: string
+ *                 example: "function isPalindrome(str) { const s = str.replace(/\\s/g, '').toLowerCase(); return s === s.split('').reverse().join(''); }"
+ *     responses:
+ *       200:
+ *         description: Code submitted successfully (same response shape as /runcode).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                   example: Code submitted successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     questionId:
+ *                       type: string
+ *                     language:
+ *                       type: string
+ *                     totalTestCases:
+ *                       type: number
+ *                     passedTestCases:
+ *                       type: number
+ *                     failedTestCases:
+ *                       type: number
+ *                     score:
+ *                       type: number
+ *                     results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     aiEvaluation:
+ *                       type: object
+ *                       nullable: true
+ *       400:
+ *         description: Missing fields, invalid language, or invalid generated test cases.
+ *       403:
+ *         description: Question not part of the employee's assigned courses.
+ *       404:
+ *         description: Coding question not found.
+ *       409:
+ *         description: Test cases are still being generated.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.post('/submitcode', validateJWT, submitCodeController.submitCode);
 
 export default commonRouter;
