@@ -8,7 +8,7 @@ import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../..
 
 const addTaskToModule = async (req: Request, res: Response) => {
     try {
-        const { moduleId, taskName, taskDescription, link, isCoding, question, allowedLanguages, starterCode } = req.body;
+        const { moduleId, taskName, taskDescription, link, isCoding, question, allowedLanguages } = req.body;
         const status = 'ACTIVE';
 
         // Coding tasks are flagged via isCoding (string from multipart form or boolean).
@@ -25,19 +25,6 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 } catch {
                     allowedLanguagesList = allowedLanguages.split(',').map((item: string) => item.trim()).filter(Boolean);
                 }
-            }
-        }
-
-        let starterCodeMap: Record<string, string> = {};
-        if (starterCode) {
-            if (typeof starterCode === 'string') {
-                try {
-                    starterCodeMap = JSON.parse(starterCode);
-                } catch {
-                    starterCodeMap = {};
-                }
-            } else {
-                starterCodeMap = starterCode;
             }
         }
 
@@ -112,7 +99,6 @@ const addTaskToModule = async (req: Request, res: Response) => {
             isCodingTask,
             isCodingTask ? question : '',
             isCodingTask ? allowedLanguagesList : [],
-            isCodingTask ? starterCodeMap : {},
         );
 
         if (responseAfteraddingCourseTask && responseAfteraddingCourseTask.id) {
@@ -129,7 +115,6 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 isCoding: responseAfteraddingCourseTask.isCoding,
                 question: responseAfteraddingCourseTask.question,
                 allowedLanguages: responseAfteraddingCourseTask.allowedLanguages,
-                starterCode: responseAfteraddingCourseTask.starterCode,
             });
         }
 

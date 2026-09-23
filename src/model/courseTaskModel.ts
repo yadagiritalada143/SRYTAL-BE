@@ -18,7 +18,6 @@ const CourseTaskSchema = new mongoose.Schema({
     isCoding: { type: mongoose.Schema.Types.Boolean, default: false },
     question: { type: mongoose.Schema.Types.String },
     allowedLanguages: [{ type: mongoose.Schema.Types.String }],
-    starterCode: { type: mongoose.Schema.Types.Mixed },
 },
     {
         collection: 'coursetask',

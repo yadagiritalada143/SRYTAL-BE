@@ -275,15 +275,6 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *                   Accepts a JSON array string, a comma separated list, or a raw array.
  *                 example: ["JavaScript", "Python"]
  *
- *               starterCode:
- *                 type: object
- *                 additionalProperties:
- *                   type: string
- *                 description: |
- *                   Starter code keyed by language name, e.g. {"JavaScript": "...", "Python": "..."}.
- *                   Accepts a JSON object string or a raw object.
- *                 example: {"JavaScript": "function solve() {}", "Python": "def solve():"}
- *
  *               taskFile:
  *                 type: string
  *                 format: binary
@@ -471,14 +462,6 @@ contentwriterRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCou
  *                   Languages allowed for the coding task. Required when isCoding is true.
  *                   Accepts a JSON array string, a comma separated list, or a raw array.
  *                 example: ["JavaScript", "Python"]
- *               starterCode:
- *                 type: object
- *                 additionalProperties:
- *                   type: string
- *                 description: |
- *                   Starter code keyed by language name, e.g. {"JavaScript": "...", "Python": "..."}.
- *                   Accepts a JSON object string or a raw object.
- *                 example: {"JavaScript": "function solve() {}", "Python": "def solve():"}
  *     responses:
  *       200:
  *         description: Course task updated successfully
@@ -534,11 +517,6 @@ contentwriterRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCou
  *                       items:
  *                         type: string
  *                       example: ["JavaScript", "Python"]
- *                     starterCode:
- *                       type: object
- *                       additionalProperties:
- *                         type: string
- *                       example: {"JavaScript": "function solve() {}", "Python": "def solve():"}
  *       400:
  *         description: Invalid input, status, or thumbnail type
  *       401:

@@ -100,7 +100,6 @@ describe('updateCourseTaskController', () => {
             undefined,
             undefined,
             undefined,
-            undefined,
             undefined
         );
         expect(uploadThumbnailToS3Mock).not.toHaveBeenCalled();
@@ -136,7 +135,6 @@ describe('updateCourseTaskController', () => {
             'file.pdf',
             undefined,
             undefined,
-            undefined,
             undefined
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
@@ -148,8 +146,7 @@ describe('updateCourseTaskController', () => {
             body: {
                 isCoding: 'true',
                 question: 'Write a function to reverse a string.',
-                allowedLanguages: '["JavaScript", "Python"]',
-                starterCode: '{"JavaScript": "function solve() {}", "Python": "def solve():"}'
+                allowedLanguages: '["JavaScript", "Python"]'
             }
         });
         const updateResponse = { success: true, responseAfterUpdate: { modifiedCount: 1 } };
@@ -168,8 +165,7 @@ describe('updateCourseTaskController', () => {
             undefined,
             true,
             'Write a function to reverse a string.',
-            ['JavaScript', 'Python'],
-            { JavaScript: 'function solve() {}', Python: 'def solve():' }
+            ['JavaScript', 'Python']
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
     });
@@ -199,8 +195,7 @@ describe('updateCourseTaskController', () => {
             undefined,
             true,
             'Add two numbers.',
-            ['JavaScript', 'Python', 'Java'],
-            undefined
+            ['JavaScript', 'Python', 'Java']
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
     });
@@ -283,7 +278,6 @@ describe('updateCourseTaskController', () => {
             'Read the docs',
             expect.stringContaining('LMSData/Courses/CourseTaskThumbnails/'),
             'ACTIVE',
-            undefined,
             undefined,
             undefined,
             undefined,

@@ -10,7 +10,7 @@ import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../confi
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
         
-        const { id, taskName, taskDescription, status, isCoding, question, allowedLanguages, starterCode } = req.body;
+        const { id, taskName, taskDescription, status, isCoding, question, allowedLanguages } = req.body;
 
         if (!isValidStatus(status)) {
             return res.status(400).json({
@@ -36,19 +36,6 @@ const updateCourseTask = async (req: Request, res: Response) => {
                 } catch {
                     allowedLanguagesList = allowedLanguages.split(',').map((item: string) => item.trim()).filter(Boolean);
                 }
-            }
-        }
-
-        let starterCodeMap: Record<string, string> | undefined;
-        if (starterCode !== undefined) {
-            if (typeof starterCode === 'string') {
-                try {
-                    starterCodeMap = JSON.parse(starterCode);
-                } catch {
-                    starterCodeMap = {};
-                }
-            } else {
-                starterCodeMap = starterCode;
             }
         }
 
@@ -143,7 +130,6 @@ const updateCourseTask = async (req: Request, res: Response) => {
             isCodingTask,
             question,
             allowedLanguagesList,
-            starterCodeMap,
         );
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {

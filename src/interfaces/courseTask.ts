@@ -13,7 +13,6 @@ export interface ICourseTask extends Document {
     isCoding?: boolean;
     question?: string;
     allowedLanguages?: string[];
-    starterCode?: Record<string, string>;
 }
 
 export interface IFetchCourseTaskContentResponse {

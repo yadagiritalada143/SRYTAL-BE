@@ -86,8 +86,7 @@ describe('addCourseTaskController', () => {
             '',
             false,
             '',
-            [],
-            {}
+            []
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
         expect(mockJson).toHaveBeenCalledWith({
@@ -126,8 +125,7 @@ describe('addCourseTaskController', () => {
             'file.pdf',
             false,
             '',
-            [],
-            {}
+            []
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
     });
@@ -159,8 +157,7 @@ describe('addCourseTaskController', () => {
             '',
             false,
             '',
-            [],
-            {}
+            []
         );
     });
 
@@ -189,14 +186,13 @@ describe('addCourseTaskController', () => {
         });
     });
 
-    it('returns 201 and saves a coding task with question, languages and starter code', async () => {
+    it('returns 201 and saves a coding task with question and languages', async () => {
         const req = buildReq({
             body: {
                 link: '',
                 isCoding: 'true',
                 question: 'Write a function to reverse a string.',
-                allowedLanguages: '["JavaScript", "Python"]',
-                starterCode: '{"JavaScript": "function solve() {}", "Python": "def solve():"}'
+                allowedLanguages: '["JavaScript", "Python"]'
             }
         });
         addCourseTaskMock.mockResolvedValue({
@@ -221,8 +217,7 @@ describe('addCourseTaskController', () => {
             '',
             true,
             'Write a function to reverse a string.',
-            ['JavaScript', 'Python'],
-            { JavaScript: 'function solve() {}', Python: 'def solve():' }
+            ['JavaScript', 'Python']
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
     });
@@ -252,8 +247,7 @@ describe('addCourseTaskController', () => {
             '',
             true,
             'Add two numbers.',
-            ['JavaScript', 'Python', 'Java'],
-            {}
+            ['JavaScript', 'Python', 'Java']
         );
     });
 

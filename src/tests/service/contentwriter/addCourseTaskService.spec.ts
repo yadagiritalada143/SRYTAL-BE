@@ -51,7 +51,6 @@ describe('addCourseTaskService', () => {
         isCoding: false,
         question: '',
         allowedLanguages: [],
-        starterCode: {},
         ...overrides
     });
 
@@ -74,8 +73,7 @@ describe('addCourseTaskService', () => {
             args.contentFileName,
             args.isCoding,
             args.question,
-            args.allowedLanguages,
-            args.starterCode
+            args.allowedLanguages
         );
 
         expect(CourseTaskModelMock).toHaveBeenCalledTimes(1);
@@ -91,8 +89,7 @@ describe('addCourseTaskService', () => {
             contentFileName: '',
             isCoding: false,
             question: '',
-            allowedLanguages: [],
-            starterCode: {}
+            allowedLanguages: []
         });
         expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(moduleFindByIdMock).toHaveBeenCalledWith('m1');
@@ -100,7 +97,7 @@ describe('addCourseTaskService', () => {
         expect(result).toEqual(savedTask);
     });
 
-    it('saves a coding task with question, allowed languages and starter code', async () => {
+    it('saves a coding task with question and allowed languages', async () => {
         const savedTask = {
             _id: 't3',
             moduleId: 'm1',
@@ -108,8 +105,7 @@ describe('addCourseTaskService', () => {
             type: 'LINK',
             isCoding: true,
             question: 'Write a function to reverse a string.',
-            allowedLanguages: ['JavaScript', 'Python'],
-            starterCode: { JavaScript: 'function solve() {}', Python: 'def solve():' }
+            allowedLanguages: ['JavaScript', 'Python']
         };
         saveSpy.mockResolvedValue(savedTask);
         moduleFindByIdMock.mockReturnValue({ lean: jest.fn().mockResolvedValue({ courseId: 'c1' }) });
@@ -118,8 +114,7 @@ describe('addCourseTaskService', () => {
         const args = buildArgs({
             isCoding: true,
             question: 'Write a function to reverse a string.',
-            allowedLanguages: ['JavaScript', 'Python'],
-            starterCode: { JavaScript: 'function solve() {}', Python: 'def solve():' }
+            allowedLanguages: ['JavaScript', 'Python']
         });
         const result = await addCourseTaskService.addCourseTask(
             args.moduleId,
@@ -133,8 +128,7 @@ describe('addCourseTaskService', () => {
             args.contentFileName,
             args.isCoding,
             args.question,
-            args.allowedLanguages,
-            args.starterCode
+            args.allowedLanguages
         );
 
         expect(CourseTaskModelMock).toHaveBeenCalledWith({
@@ -149,8 +143,7 @@ describe('addCourseTaskService', () => {
             contentFileName: '',
             isCoding: true,
             question: 'Write a function to reverse a string.',
-            allowedLanguages: ['JavaScript', 'Python'],
-            starterCode: { JavaScript: 'function solve() {}', Python: 'def solve():' }
+            allowedLanguages: ['JavaScript', 'Python']
         });
         expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(savedTask);
@@ -173,8 +166,7 @@ describe('addCourseTaskService', () => {
             args.contentFileName,
             args.isCoding,
             args.question,
-            args.allowedLanguages,
-            args.starterCode
+            args.allowedLanguages
         );
 
         expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
@@ -197,8 +189,7 @@ describe('addCourseTaskService', () => {
             args.contentFileName,
             args.isCoding,
             args.question,
-            args.allowedLanguages,
-            args.starterCode
+            args.allowedLanguages
         );
 
         expect(CourseTaskModelMock).toHaveBeenCalledTimes(1);

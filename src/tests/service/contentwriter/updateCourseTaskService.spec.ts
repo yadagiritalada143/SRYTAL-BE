@@ -85,7 +85,7 @@ describe('updateCourseTaskService', () => {
 
     it('updates the coding task fields when provided', async () => {
         findByIdMock.mockResolvedValue({ _id: 't1', thumbnail: null, content: null });
-        const updatedTask = { _id: 't1', taskName: 'Read', status: 'ACTIVE', isCoding: true, question: 'Reverse a string.', allowedLanguages: ['JavaScript', 'Python'], starterCode: { JavaScript: 'function solve() {}' } };
+        const updatedTask = { _id: 't1', taskName: 'Read', status: 'ACTIVE', isCoding: true, question: 'Reverse a string.', allowedLanguages: ['JavaScript', 'Python'] };
         findByIdAndUpdateMock.mockResolvedValue(updatedTask);
 
         const result = await updateCourseTaskService.updateCourseTask(
@@ -99,8 +99,7 @@ describe('updateCourseTaskService', () => {
             undefined,
             true,
             'Reverse a string.',
-            ['JavaScript', 'Python'],
-            { JavaScript: 'function solve() {}' }
+            ['JavaScript', 'Python']
         );
 
         expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
@@ -112,8 +111,7 @@ describe('updateCourseTaskService', () => {
                     status: 'ACTIVE',
                     isCoding: true,
                     question: 'Reverse a string.',
-                    allowedLanguages: ['JavaScript', 'Python'],
-                    starterCode: { JavaScript: 'function solve() {}' }
+                    allowedLanguages: ['JavaScript', 'Python']
                 }
             },
             { new: true, runValidators: true }
