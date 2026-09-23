@@ -83,6 +83,59 @@ describe('updateCourseTaskService', () => {
         expect(result).toEqual({ success: true, responseAfterUpdate: updatedTask });
     });
 
+    it('updates the coding task fields when provided', async () => {
+        findByIdMock.mockResolvedValue({ _id: 't1', thumbnail: null, content: null });
+        const updatedTask = { _id: 't1', taskName: 'Read', status: 'ACTIVE', isCoding: true, question: 'Reverse a string.', allowedLanguages: ['JavaScript', 'Python'], starterCode: { JavaScript: 'function solve() {}' } };
+        findByIdAndUpdateMock.mockResolvedValue(updatedTask);
+
+        const result = await updateCourseTaskService.updateCourseTask(
+            't1',
+            'Read',
+            'Description',
+            undefined,
+            'ACTIVE',
+            undefined,
+            undefined,
+            undefined,
+            true,
+            'Reverse a string.',
+            ['JavaScript', 'Python'],
+            { JavaScript: 'function solve() {}' }
+        );
+
+        expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
+            't1',
+            {
+                $set: {
+                    taskName: 'Read',
+                    taskDescription: 'Description',
+                    status: 'ACTIVE',
+                    isCoding: true,
+                    question: 'Reverse a string.',
+                    allowedLanguages: ['JavaScript', 'Python'],
+                    starterCode: { JavaScript: 'function solve() {}' }
+                }
+            },
+            { new: true, runValidators: true }
+        );
+        expect(result).toEqual({ success: true, responseAfterUpdate: updatedTask });
+    });
+
+    it('does not touch coding fields when not provided', async () => {
+        findByIdMock.mockResolvedValue({ _id: 't1', thumbnail: null, content: null, isCoding: true, question: 'old question' });
+        const updatedTask = { _id: 't1', taskName: 'Read', status: 'ARCHIVE' };
+        findByIdAndUpdateMock.mockResolvedValue(updatedTask);
+
+        const result = await updateCourseTaskService.updateCourseTask('t1', 'Read', 'Description', undefined, 'ARCHIVE');
+
+        expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
+            't1',
+            { $set: { taskName: 'Read', taskDescription: 'Description', status: 'ARCHIVE' } },
+            { new: true, runValidators: true }
+        );
+        expect(result).toEqual({ success: true, responseAfterUpdate: updatedTask });
+    });
+
     it('returns { success: false } when the findByIdAndUpdate returns null', async () => {
         findByIdMock.mockResolvedValue({ _id: 't1', thumbnail: null, content: null });
         findByIdAndUpdateMock.mockResolvedValue(null);

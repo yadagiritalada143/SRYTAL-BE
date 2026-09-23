@@ -252,6 +252,38 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *                   Use this when taskFile is not uploaded.
  *                 example: https://www.youtube.com/watch?v=example
  *
+ *               isCoding:
+ *                 type: boolean
+ *                 description: |
+ *                   Marks the task as a coding task.
+ *                   When true, `question` and `allowedLanguages` are required
+ *                   and no file or link is needed.
+ *                 example: true
+ *
+ *               question:
+ *                 type: string
+ *                 description: |
+ *                   The coding problem statement. Required when isCoding is true.
+ *                 example: Write a function to reverse a string.
+ *
+ *               allowedLanguages:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: |
+ *                   Languages allowed for the coding task. Required when isCoding is true.
+ *                   Accepts a JSON array string, a comma separated list, or a raw array.
+ *                 example: ["JavaScript", "Python"]
+ *
+ *               starterCode:
+ *                 type: object
+ *                 additionalProperties:
+ *                   type: string
+ *                 description: |
+ *                   Starter code keyed by language name, e.g. {"JavaScript": "...", "Python": "..."}.
+ *                   Accepts a JSON object string or a raw object.
+ *                 example: {"JavaScript": "function solve() {}", "Python": "def solve():"}
+ *
  *               taskFile:
  *                 type: string
  *                 format: binary
@@ -420,6 +452,33 @@ contentwriterRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCou
  *               link:
  *                 type: string
  *                 description: Optional external link for the task content (used when no file is uploaded)
+ *               isCoding:
+ *                 type: boolean
+ *                 description: |
+ *                   Marks the task as a coding task.
+ *                   When true, `question` and `allowedLanguages` are required.
+ *                 example: true
+ *               question:
+ *                 type: string
+ *                 description: |
+ *                   The coding problem statement. Required when isCoding is true.
+ *                 example: Write a function to reverse a string.
+ *               allowedLanguages:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: |
+ *                   Languages allowed for the coding task. Required when isCoding is true.
+ *                   Accepts a JSON array string, a comma separated list, or a raw array.
+ *                 example: ["JavaScript", "Python"]
+ *               starterCode:
+ *                 type: object
+ *                 additionalProperties:
+ *                   type: string
+ *                 description: |
+ *                   Starter code keyed by language name, e.g. {"JavaScript": "...", "Python": "..."}.
+ *                   Accepts a JSON object string or a raw object.
+ *                 example: {"JavaScript": "function solve() {}", "Python": "def solve():"}
  *     responses:
  *       200:
  *         description: Course task updated successfully
@@ -464,6 +523,22 @@ contentwriterRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCou
  *                     contentFileName:
  *                       type: string
  *                       example: nodejs-tutorial.mp4
+ *                     isCoding:
+ *                       type: boolean
+ *                       example: true
+ *                     question:
+ *                       type: string
+ *                       example: Write a function to reverse a string.
+ *                     allowedLanguages:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["JavaScript", "Python"]
+ *                     starterCode:
+ *                       type: object
+ *                       additionalProperties:
+ *                         type: string
+ *                       example: {"JavaScript": "function solve() {}", "Python": "def solve():"}
  *       400:
  *         description: Invalid input, status, or thumbnail type
  *       401:

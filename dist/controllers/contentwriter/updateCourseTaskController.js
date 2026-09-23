@@ -13,12 +13,54 @@ const awsS3Config_1 = require("../../config/awsS3Config");
 const updateCourseTask = async (req, res) => {
     var _a, _b;
     try {
-        const { id, taskName, taskDescription, status } = req.body;
+        const { id, taskName, taskDescription, status, isCoding, question, allowedLanguages, starterCode } = req.body;
         if (!(0, validateCourseStatusTypesUtil_1.default)(status)) {
             return res.status(400).json({
                 success: false,
                 message: coursetaskMessages_1.COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_STATUS_MESSAGE,
             });
+        }
+        // Coding tasks are flagged via isCoding (string from multipart form or boolean).
+        let isCodingTask;
+        if (isCoding !== undefined) {
+            isCodingTask = isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
+        }
+        let allowedLanguagesList;
+        if (allowedLanguages !== undefined) {
+            if (Array.isArray(allowedLanguages)) {
+                allowedLanguagesList = allowedLanguages;
+            }
+            else if (typeof allowedLanguages === 'string') {
+                try {
+                    const parsed = JSON.parse(allowedLanguages);
+                    allowedLanguagesList = Array.isArray(parsed) ? parsed : [parsed];
+                }
+                catch (_c) {
+                    allowedLanguagesList = allowedLanguages.split(',').map((item) => item.trim()).filter(Boolean);
+                }
+            }
+        }
+        let starterCodeMap;
+        if (starterCode !== undefined) {
+            if (typeof starterCode === 'string') {
+                try {
+                    starterCodeMap = JSON.parse(starterCode);
+                }
+                catch (_d) {
+                    starterCodeMap = {};
+                }
+            }
+            else {
+                starterCodeMap = starterCode;
+            }
+        }
+        if (isCodingTask === true) {
+            if (!question) {
+                return res.status(400).json({ success: false, message: coursetaskMessages_1.COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE });
+            }
+            if (!allowedLanguagesList || !allowedLanguagesList.length) {
+                return res.status(400).json({ success: false, message: coursetaskMessages_1.COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_LANGUAGES_MESSAGE });
+            }
         }
         const files = req.files;
         const taskFile = (_a = files === null || files === void 0 ? void 0 : files.taskFile) === null || _a === void 0 ? void 0 : _a[0];
@@ -54,7 +96,7 @@ const updateCourseTask = async (req, res) => {
             newThumbnail =
                 `${awsS3Config_1.courseTaskThumbnailsFolder}/${uniqueName}`;
         }
-        const updateCourseResponse = await updateCourseTaskService_1.default.updateCourseTask(id, taskName, taskDescription, newThumbnail, status.toUpperCase(), newContent, newContentMimeType, newContentFileName);
+        const updateCourseResponse = await updateCourseTaskService_1.default.updateCourseTask(id, taskName, taskDescription, newThumbnail, status.toUpperCase(), newContent, newContentMimeType, newContentFileName, isCodingTask, question, allowedLanguagesList, starterCodeMap);
         res.status(200).json(updateCourseResponse);
     }
     catch (error) {

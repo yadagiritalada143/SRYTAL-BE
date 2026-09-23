@@ -83,7 +83,11 @@ describe('addCourseTaskController', () => {
             'LINK',
             'https://example.com',
             '',
-            ''
+            '',
+            false,
+            '',
+            [],
+            {}
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
         expect(mockJson).toHaveBeenCalledWith({
@@ -119,7 +123,11 @@ describe('addCourseTaskController', () => {
             'FILE',
             expect.stringContaining('LMSData/Courses/CourseTaskContent/'),
             'application/pdf',
-            'file.pdf'
+            'file.pdf',
+            false,
+            '',
+            [],
+            {}
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
     });
@@ -148,7 +156,11 @@ describe('addCourseTaskController', () => {
             'LINK',
             'https://example.com',
             '',
-            ''
+            '',
+            false,
+            '',
+            [],
+            {}
         );
     });
 
@@ -174,6 +186,112 @@ describe('addCourseTaskController', () => {
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
         expect(mockJson).toHaveBeenCalledWith({
             message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ADD_ERROR_MESSAGE
+        });
+    });
+
+    it('returns 201 and saves a coding task with question, languages and starter code', async () => {
+        const req = buildReq({
+            body: {
+                link: '',
+                isCoding: 'true',
+                question: 'Write a function to reverse a string.',
+                allowedLanguages: '["JavaScript", "Python"]',
+                starterCode: '{"JavaScript": "function solve() {}", "Python": "def solve():"}'
+            }
+        });
+        addCourseTaskMock.mockResolvedValue({
+            id: 't1',
+            taskName: 'Reverse string',
+            taskDescription: 'Coding task',
+            type: 'LINK'
+        });
+
+        await addCourseTaskController.addTaskToModule(req, res);
+
+        expect(uploadThumbnailToS3Mock).not.toHaveBeenCalled();
+        expect(addCourseTaskMock).toHaveBeenCalledWith(
+            'm1',
+            'Read',
+            'Read the docs',
+            '',
+            'ACTIVE',
+            'LINK',
+            '',
+            '',
+            '',
+            true,
+            'Write a function to reverse a string.',
+            ['JavaScript', 'Python'],
+            { JavaScript: 'function solve() {}', Python: 'def solve():' }
+        );
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
+    });
+
+    it('normalizes comma separated allowedLanguages and boolean isCoding', async () => {
+        const req = buildReq({
+            body: {
+                link: '',
+                isCoding: true,
+                question: 'Add two numbers.',
+                allowedLanguages: 'JavaScript, Python, Java'
+            }
+        });
+        addCourseTaskMock.mockResolvedValue({ id: 't1', taskName: 'Add', taskDescription: 'Coding', type: 'LINK' });
+
+        await addCourseTaskController.addTaskToModule(req, res);
+
+        expect(addCourseTaskMock).toHaveBeenCalledWith(
+            'm1',
+            'Read',
+            'Read the docs',
+            '',
+            'ACTIVE',
+            'LINK',
+            '',
+            '',
+            '',
+            true,
+            'Add two numbers.',
+            ['JavaScript', 'Python', 'Java'],
+            {}
+        );
+    });
+
+    it('returns 400 when a coding task has no question', async () => {
+        const req = buildReq({
+            body: {
+                link: '',
+                isCoding: 'true',
+                allowedLanguages: '["JavaScript"]'
+            }
+        });
+
+        await addCourseTaskController.addTaskToModule(req, res);
+
+        expect(addCourseTaskMock).not.toHaveBeenCalled();
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+        expect(mockJson).toHaveBeenCalledWith({
+            success: false,
+            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE
+        });
+    });
+
+    it('returns 400 when a coding task has no allowed languages', async () => {
+        const req = buildReq({
+            body: {
+                link: '',
+                isCoding: 'true',
+                question: 'Write a function to reverse a string.'
+            }
+        });
+
+        await addCourseTaskController.addTaskToModule(req, res);
+
+        expect(addCourseTaskMock).not.toHaveBeenCalled();
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+        expect(mockJson).toHaveBeenCalledWith({
+            success: false,
+            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_LANGUAGES_MESSAGE
         });
     });
 

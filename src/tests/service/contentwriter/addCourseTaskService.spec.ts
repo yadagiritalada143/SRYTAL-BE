@@ -48,6 +48,10 @@ describe('addCourseTaskService', () => {
         content: 'https://example.com',
         contentMimeType: '',
         contentFileName: '',
+        isCoding: false,
+        question: '',
+        allowedLanguages: [],
+        starterCode: {},
         ...overrides
     });
 
@@ -67,7 +71,11 @@ describe('addCourseTaskService', () => {
             args.type,
             args.content,
             args.contentMimeType,
-            args.contentFileName
+            args.contentFileName,
+            args.isCoding,
+            args.question,
+            args.allowedLanguages,
+            args.starterCode
         );
 
         expect(CourseTaskModelMock).toHaveBeenCalledTimes(1);
@@ -80,11 +88,71 @@ describe('addCourseTaskService', () => {
             type: 'LINK',
             content: 'https://example.com',
             contentMimeType: '',
-            contentFileName: ''
+            contentFileName: '',
+            isCoding: false,
+            question: '',
+            allowedLanguages: [],
+            starterCode: {}
         });
         expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(moduleFindByIdMock).toHaveBeenCalledWith('m1');
         expect(findByIdAndUpdateMock).toHaveBeenCalledWith('c1', { $currentDate: { updatedAt: true } });
+        expect(result).toEqual(savedTask);
+    });
+
+    it('saves a coding task with question, allowed languages and starter code', async () => {
+        const savedTask = {
+            _id: 't3',
+            moduleId: 'm1',
+            taskName: 'Reverse string',
+            type: 'LINK',
+            isCoding: true,
+            question: 'Write a function to reverse a string.',
+            allowedLanguages: ['JavaScript', 'Python'],
+            starterCode: { JavaScript: 'function solve() {}', Python: 'def solve():' }
+        };
+        saveSpy.mockResolvedValue(savedTask);
+        moduleFindByIdMock.mockReturnValue({ lean: jest.fn().mockResolvedValue({ courseId: 'c1' }) });
+        findByIdAndUpdateMock.mockResolvedValue({});
+
+        const args = buildArgs({
+            isCoding: true,
+            question: 'Write a function to reverse a string.',
+            allowedLanguages: ['JavaScript', 'Python'],
+            starterCode: { JavaScript: 'function solve() {}', Python: 'def solve():' }
+        });
+        const result = await addCourseTaskService.addCourseTask(
+            args.moduleId,
+            args.taskName,
+            args.taskDescription,
+            args.thumbnail,
+            args.status,
+            args.type,
+            args.content,
+            args.contentMimeType,
+            args.contentFileName,
+            args.isCoding,
+            args.question,
+            args.allowedLanguages,
+            args.starterCode
+        );
+
+        expect(CourseTaskModelMock).toHaveBeenCalledWith({
+            moduleId: 'm1',
+            taskName: 'Read',
+            taskDescription: 'Read the docs',
+            thumbnail: 'thumb.png',
+            status: 'ACTIVE',
+            type: 'LINK',
+            content: 'https://example.com',
+            contentMimeType: '',
+            contentFileName: '',
+            isCoding: true,
+            question: 'Write a function to reverse a string.',
+            allowedLanguages: ['JavaScript', 'Python'],
+            starterCode: { JavaScript: 'function solve() {}', Python: 'def solve():' }
+        });
+        expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(savedTask);
     });
 
@@ -102,7 +170,11 @@ describe('addCourseTaskService', () => {
             args.type,
             args.content,
             args.contentMimeType,
-            args.contentFileName
+            args.contentFileName,
+            args.isCoding,
+            args.question,
+            args.allowedLanguages,
+            args.starterCode
         );
 
         expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
@@ -122,7 +194,11 @@ describe('addCourseTaskService', () => {
             args.type,
             args.content,
             args.contentMimeType,
-            args.contentFileName
+            args.contentFileName,
+            args.isCoding,
+            args.question,
+            args.allowedLanguages,
+            args.starterCode
         );
 
         expect(CourseTaskModelMock).toHaveBeenCalledTimes(1);

@@ -10,13 +10,55 @@ import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../confi
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
         
-        const { id, taskName, taskDescription, status } = req.body;
+        const { id, taskName, taskDescription, status, isCoding, question, allowedLanguages, starterCode } = req.body;
 
         if (!isValidStatus(status)) {
             return res.status(400).json({
                 success: false,
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_STATUS_MESSAGE,
             });
+        }
+
+        // Coding tasks are flagged via isCoding (string from multipart form or boolean).
+        let isCodingTask: boolean | undefined;
+        if (isCoding !== undefined) {
+            isCodingTask = isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
+        }
+
+        let allowedLanguagesList: string[] | undefined;
+        if (allowedLanguages !== undefined) {
+            if (Array.isArray(allowedLanguages)) {
+                allowedLanguagesList = allowedLanguages;
+            } else if (typeof allowedLanguages === 'string') {
+                try {
+                    const parsed = JSON.parse(allowedLanguages);
+                    allowedLanguagesList = Array.isArray(parsed) ? parsed : [parsed];
+                } catch {
+                    allowedLanguagesList = allowedLanguages.split(',').map((item: string) => item.trim()).filter(Boolean);
+                }
+            }
+        }
+
+        let starterCodeMap: Record<string, string> | undefined;
+        if (starterCode !== undefined) {
+            if (typeof starterCode === 'string') {
+                try {
+                    starterCodeMap = JSON.parse(starterCode);
+                } catch {
+                    starterCodeMap = {};
+                }
+            } else {
+                starterCodeMap = starterCode;
+            }
+        }
+
+        if (isCodingTask === true) {
+            if (!question) {
+                return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE });
+            }
+            if (!allowedLanguagesList || !allowedLanguagesList.length) {
+                return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_LANGUAGES_MESSAGE });
+            }
         }
 
         const files = req.files as {[fieldname: string]: Express.Multer.File[]};
@@ -98,6 +140,10 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContent,
             newContentMimeType,
             newContentFileName,
+            isCodingTask,
+            question,
+            allowedLanguagesList,
+            starterCodeMap,
         );
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {

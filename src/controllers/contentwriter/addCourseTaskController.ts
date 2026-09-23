@@ -8,8 +8,48 @@ import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../..
 
 const addTaskToModule = async (req: Request, res: Response) => {
     try {
-        const { moduleId, taskName, taskDescription, link } = req.body;
+        const { moduleId, taskName, taskDescription, link, isCoding, question, allowedLanguages, starterCode } = req.body;
         const status = 'ACTIVE';
+
+        // Coding tasks are flagged via isCoding (string from multipart form or boolean).
+        const isCodingTask = isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
+
+        let allowedLanguagesList: string[] = [];
+        if (allowedLanguages) {
+            if (Array.isArray(allowedLanguages)) {
+                allowedLanguagesList = allowedLanguages;
+            } else if (typeof allowedLanguages === 'string') {
+                try {
+                    const parsed = JSON.parse(allowedLanguages);
+                    allowedLanguagesList = Array.isArray(parsed) ? parsed : [parsed];
+                } catch {
+                    allowedLanguagesList = allowedLanguages.split(',').map((item: string) => item.trim()).filter(Boolean);
+                }
+            }
+        }
+
+        let starterCodeMap: Record<string, string> = {};
+        if (starterCode) {
+            if (typeof starterCode === 'string') {
+                try {
+                    starterCodeMap = JSON.parse(starterCode);
+                } catch {
+                    starterCodeMap = {};
+                }
+            } else {
+                starterCodeMap = starterCode;
+            }
+        }
+
+        if (isCodingTask) {
+            if (!question) {
+                return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE });
+            }
+            if (!allowedLanguagesList.length) {
+                return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_LANGUAGES_MESSAGE });
+            }
+        }
+
         //get uploaded files 
         //  taskFile       -> PDF, Word, Video, etc.
         //  thumbnailFile  -> JPG, PNG, WEBP, etc.
@@ -54,7 +94,7 @@ const addTaskToModule = async (req: Request, res: Response) => {
         }
 
 
-        if (!content) {
+        if (!isCodingTask && !content) {
             return res
             .status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_CONTENT_MESSAGE });
         }
@@ -69,6 +109,10 @@ const addTaskToModule = async (req: Request, res: Response) => {
             content,
             contentMimeType,
             contentFileName,
+            isCodingTask,
+            isCodingTask ? question : '',
+            isCodingTask ? allowedLanguagesList : [],
+            isCodingTask ? starterCodeMap : {},
         );
 
         if (responseAfteraddingCourseTask && responseAfteraddingCourseTask.id) {
@@ -78,6 +122,14 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 taskName: responseAfteraddingCourseTask.taskName,
                 taskDescription: responseAfteraddingCourseTask.taskDescription,
                 type: responseAfteraddingCourseTask.type,
+                content: responseAfteraddingCourseTask.content,
+                contentMimeType: responseAfteraddingCourseTask.contentMimeType,
+                contentFileName: responseAfteraddingCourseTask.contentFileName,
+                thumbnailPath: responseAfteraddingCourseTask.thumbnailPath,
+                isCoding: responseAfteraddingCourseTask.isCoding,
+                question: responseAfteraddingCourseTask.question,
+                allowedLanguages: responseAfteraddingCourseTask.allowedLanguages,
+                starterCode: responseAfteraddingCourseTask.starterCode,
             });
         }
 

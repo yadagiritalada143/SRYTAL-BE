@@ -12,10 +12,13 @@ const addCourseTask = async (
     content: string,
     contentMimeType: string,
     contentFileName: string,
+    isCoding: boolean = false,
+    question: string = '',
+    allowedLanguages: string[] = [],
+    starterCode: Record<string, string> = {},
 ) => {
     try {
 
-        let thumbnailPath = '';
         const CoursesTaskToSave: any = new CourseTaskModel({
             moduleId,
             taskName,
@@ -26,6 +29,10 @@ const addCourseTask = async (
             content,
             contentMimeType,
             contentFileName,
+            isCoding,
+            question,
+            allowedLanguages,
+            starterCode,
         });
         
         const result = await CoursesTaskToSave.save();

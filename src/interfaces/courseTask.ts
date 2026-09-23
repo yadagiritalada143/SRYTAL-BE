@@ -10,6 +10,10 @@ export interface ICourseTask extends Document {
     content?: string;
     contentMimeType?: string;
     contentFileName?: string;
+    isCoding?: boolean;
+    question?: string;
+    allowedLanguages?: string[];
+    starterCode?: Record<string, string>;
 }
 
 export interface IFetchCourseTaskContentResponse {
