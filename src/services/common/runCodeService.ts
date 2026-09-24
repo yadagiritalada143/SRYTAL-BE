@@ -16,8 +16,33 @@ import {
 
 const GENERATION_WAIT_ATTEMPTS = 12;
 const GENERATION_WAIT_INTERVAL_MS = 250;
+const TEST_CASE_EXECUTION_CONCURRENCY = 2;
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Runs `mapper` over `items` with at most `limit` promises in flight at once.
+ * Used for the per-test-case execution loop because the public Wandbox API
+ * queues concurrent requests; firing every test case at once makes them pile
+ * up and occasionally trip the request timeout.
+ */
+const mapWithConcurrency = async <T, R>(
+    items: T[],
+    limit: number,
+    mapper: (item: T, index: number) => Promise<R>
+): Promise<R[]> => {
+    const results: R[] = new Array(items.length);
+    let cursor = 0;
+    const workerCount = Math.min(limit, items.length);
+    const workers = Array.from({ length: workerCount }, async () => {
+        while (cursor < items.length) {
+            const index = cursor++;
+            results[index] = await mapper(items[index], index);
+        }
+    });
+    await Promise.all(workers);
+    return results;
+};
 
 /**
  * Returns the stored test cases for a coding question, generating them via
@@ -168,8 +193,10 @@ const runCode = async (
         language
     );
 
-    const results: ICodeRunTestCaseResult[] = await Promise.all(
-        testCases.map(async (testCase: any) => {
+    const results: ICodeRunTestCaseResult[] = await mapWithConcurrency(
+        testCases,
+        TEST_CASE_EXECUTION_CONCURRENCY,
+        async (testCase: any) => {
             const execution = await executeCodeService.executeCode({
                 language,
                 code,
@@ -177,7 +204,7 @@ const runCode = async (
             });
 
             return evaluateTestCasesService.evaluateTestCase(testCase, execution);
-        })
+        }
     );
 
     const { total, passed, failed, score } = evaluateTestCasesService.summarizeResults(results);

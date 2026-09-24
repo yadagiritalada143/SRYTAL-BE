@@ -17,7 +17,8 @@ export const LANGUAGE_MAP: Record<string, string> = {
     ts: 'typescript',
     java: 'java',
     c: 'c',
-    cpp: 'c++'
+    cpp: 'c++',
+    'c++': 'c++'
 };
 
 export const LANGUAGE_FILE_EXTENSIONS: Record<string, string> = {
