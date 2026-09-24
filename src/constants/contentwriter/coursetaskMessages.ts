@@ -11,6 +11,5 @@ export const COURSE_TASK_ERRORS_MESSAGES = {
     COURSE_TASK_NOT_FOUND_MESSAGE: 'Task not found !',
     COURSE_TASK_INVALID_THUMBNAIL_TYPE_MESSAGE: 'Invalid thumbnail type. Supported types are JPG, JPEG, PNG, and WEBP.',
     COURSE_TASK_MISSING_QUESTION_MESSAGE: 'Please provide a question for the coding task !',
-    COURSE_TASK_MISSING_LANGUAGES_MESSAGE: 'Please provide at least one allowed language for the coding task !',
     
 };

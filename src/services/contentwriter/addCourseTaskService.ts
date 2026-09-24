@@ -14,7 +14,6 @@ const addCourseTask = async (
     contentFileName: string,
     isCoding: boolean = false,
     question: string = '',
-    allowedLanguages: string[] = [],
 ) => {
     try {
 
@@ -30,7 +29,6 @@ const addCourseTask = async (
             contentFileName,
             isCoding,
             question,
-            allowedLanguages,
         });
         
         const result = await CoursesTaskToSave.save();

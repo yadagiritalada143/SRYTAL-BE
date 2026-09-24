@@ -100,6 +100,27 @@ const submitCode = async (req: Request, res: Response) => {
             });
         }
 
+        if (error.message === 'OPENROUTER_KEY_INVALID') {
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
+                success: false,
+                message: CODING_QUESTION_ERROR_MESSAGES.OPENROUTER_KEY_INVALID_MESSAGE
+            });
+        }
+
+        if (error.message === 'OPENROUTER_TEST_CASE_GENERATION_TIMEOUT') {
+            return res.status(HTTP_STATUS.GATEWAY_TIMEOUT).json({
+                success: false,
+                message: CODING_QUESTION_ERROR_MESSAGES.OPENROUTER_TEST_CASE_GENERATION_TIMEOUT_MESSAGE
+            });
+        }
+
+        if (error.message === 'TEST_CASES_GENERATION_FAILED') {
+            return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+                success: false,
+                message: CODING_QUESTION_ERROR_MESSAGES.TEST_CASES_GENERATION_FAILED_MESSAGE
+            });
+        }
+
         console.error(`Error in submitting code: ${error}`);
         return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,

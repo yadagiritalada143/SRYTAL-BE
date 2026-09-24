@@ -6,6 +6,7 @@ const OPENROUTER_CHAT_COMPLETIONS_URL = 'https://openrouter.ai/api/v1/chat/compl
 const OPENROUTER_TESTS_MODEL = process.env.OPENROUTER_MODEL || 'openrouter/auto';
 const OPENROUTER_TIMEOUT_MS = 30000;
 const DEFAULT_TEST_CASE_COUNT = 5;
+export const MIN_TEST_CASE_COUNT = 2;
 
 /**
  * Parses the raw OpenRouter response content into an array of test cases.
@@ -38,20 +39,26 @@ const extractTestCases = (content: string): ITestCase[] => {
     }
 
     if (parsed && !Array.isArray(parsed) && typeof parsed === 'object') {
-        const wrapper = Object.values(parsed).find((value) => Array.isArray(value));
-        if (wrapper) {
-            parsed = wrapper;
-        } else if (
-            parsed.input !== undefined &&
-            parsed.expectedOutput !== undefined
-        ) {
-            // 'json_object' mode sometimes makes the model return a single
-            // test-case object instead of an array.
-            parsed = [parsed];
+        if (Array.isArray(parsed.testCases)) {
+            parsed = parsed.testCases;
+        } else {
+            const wrapper = Object.values(parsed).find((value) => Array.isArray(value));
+            if (wrapper) {
+                parsed = wrapper;
+            } else if (
+                parsed.input !== undefined &&
+                parsed.expectedOutput !== undefined
+            ) {
+                // 'json_object' mode sometimes makes the model return a single
+                // test-case object instead of an array.
+                parsed = [parsed];
+            }
         }
     }
 
     const source = Array.isArray(parsed) ? parsed : [];
+
+    const seen = new Set<string>();
 
     const testCases = source
         .filter((item: any) =>
@@ -67,7 +74,15 @@ const extractTestCases = (content: string): ITestCase[] => {
             input: String(item.input),
             expectedOutput: String(item.expectedOutput),
             isSample: Boolean(item.isSample) || false
-        }));
+        }))
+        .filter((testCase: ITestCase) => {
+            const key = `${testCase.input}|${testCase.expectedOutput}`;
+            if (seen.has(key)) {
+                return false;
+            }
+            seen.add(key);
+            return true;
+        });
 
     if (testCases.length === 0) {
         console.error(`Could not extract test cases from OpenRouter. Raw content: ${raw.slice(0, 2000)}`);
@@ -105,36 +120,59 @@ ${question}
 Selected programming language: ${language}
 
 Requirements:
-- Generate exactly ${DEFAULT_TEST_CASE_COUNT} test cases.
+- Generate exactly ${DEFAULT_TEST_CASE_COUNT} DIFFERENT test cases.
 - Include normal/common cases and appropriate edge cases (empty input, large values, negative numbers, boundary conditions, etc.).
-- Each test case must be an object in the exact format below.
-- Return ONLY a valid JSON array. Do not include markdown, code fences, or any explanation text.
+- Each test case must have a unique "name".
+- Response type is json_object: return a single JSON object containing a "testCases" array in the exact format below.
+- Return ONLY the JSON object. Do not include markdown, code fences, or any explanation text.
 
 Format:
-[
-  {
-    "name": "test case name",
-    "input": "input value",
-    "expectedOutput": "expected output"
-  }
-]`;
+{
+  "testCases": [
+    {
+      "name": "test case name",
+      "input": "input value",
+      "expectedOutput": "expected output"
+    }
+  ]
+}`;
 
-    const response = await axios.post(
-        OPENROUTER_CHAT_COMPLETIONS_URL,
-        {
-            model: OPENROUTER_TESTS_MODEL,
-            messages: [{ role: 'user', content: prompt }],
-            temperature: 0.2,
-            response_format: { type: 'json_object' }
-        },
-        {
-            headers: {
-                Authorization: `Bearer ${openRouterKey}`,
-                'Content-Type': 'application/json'
+    let response: any;
+    try {
+        response = await axios.post(
+            OPENROUTER_CHAT_COMPLETIONS_URL,
+            {
+                model: OPENROUTER_TESTS_MODEL,
+                messages: [{ role: 'user', content: prompt }],
+                temperature: 0.2,
+                response_format: { type: 'json_object' }
             },
-            timeout: OPENROUTER_TIMEOUT_MS
+            {
+                headers: {
+                    Authorization: `Bearer ${openRouterKey}`,
+                    'Content-Type': 'application/json'
+                },
+                timeout: OPENROUTER_TIMEOUT_MS
+            }
+        );
+    } catch (error: any) {
+        const isTimeout =
+            error.code === 'ECONNABORTED' ||
+            error.response?.status === 408 ||
+            String(error.message).includes('timeout');
+
+        if (isTimeout) {
+            throw new Error('OPENROUTER_TEST_CASE_GENERATION_TIMEOUT');
         }
-    );
+
+        const status = error.response?.status;
+        if (status === 401 || status === 403) {
+            throw new Error('OPENROUTER_KEY_INVALID');
+        }
+
+        console.error(`OpenRouter test-case generation error: ${error.message}`);
+        throw new Error('TEST_CASES_GENERATION_FAILED');
+    }
 
     const content = response.data?.choices?.[0]?.message?.content;
 

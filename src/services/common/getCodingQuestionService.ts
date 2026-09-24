@@ -1,14 +1,16 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseAssignment from '../../model/courseAssignmentModel';
-import { normalizeLanguage, isLanguageAllowed, resolveStarterCode } from '../../util/languageUtils';
+import { normalizeLanguage, isSupportedLanguage, resolveStarterCode } from '../../util/languageUtils';
+import { SUPPORTED_LANGUAGES } from '../../types/languageExecutionMap';
 import { IFetchCodingQuestionResponse } from '../../interfaces/codingQuestion';
 
 /**
  * Employee-facing "open a coding question": returns the problem statement, the
- * allowed languages and the starter code for the requested (or first allowed)
- * language. Scoped by employee so a user can only read questions that belong
- * to one of their assigned courses.
+ * available languages and the starter code for the requested (or first) language.
+ * Scoped by employee so a user can only read questions that belong to one of
+ * their assigned courses. The full supported-language list is returned so the
+ * employee can pick the language at run time.
  */
 const getCodingQuestion = async (
     questionId: string,
@@ -38,14 +40,16 @@ const getCodingQuestion = async (
     }
 
     if (language) {
-        if (!isLanguageAllowed(task.allowedLanguages, language)) {
+        if (!isSupportedLanguage(language)) {
             return { success: false, invalidLanguage: true };
         }
     }
 
+    const allowedLanguages = SUPPORTED_LANGUAGES;
+
     const resolvedLanguage = normalizeLanguage(language) ||
-        normalizeLanguage((task.allowedLanguages || [])[0] || '') ||
-        (task.allowedLanguages || [])[0] ||
+        normalizeLanguage(allowedLanguages[0] || '') ||
+        allowedLanguages[0] ||
         '';
 
     return {
@@ -53,7 +57,7 @@ const getCodingQuestion = async (
         question: {
             questionId: String(task._id),
             question: task.question || '',
-            allowedLanguages: task.allowedLanguages || [],
+            allowedLanguages,
             language: resolvedLanguage,
             starterCode: resolveStarterCode(task, resolvedLanguage)
         }

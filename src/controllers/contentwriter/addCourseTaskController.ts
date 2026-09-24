@@ -8,32 +8,15 @@ import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../..
 
 const addTaskToModule = async (req: Request, res: Response) => {
     try {
-        const { moduleId, taskName, taskDescription, link, isCoding, question, allowedLanguages } = req.body;
+        const { moduleId, taskName, taskDescription, link, isCoding, question } = req.body;
         const status = 'ACTIVE';
 
         // Coding tasks are flagged via isCoding (string from multipart form or boolean).
         const isCodingTask = isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
 
-        let allowedLanguagesList: string[] = [];
-        if (allowedLanguages) {
-            if (Array.isArray(allowedLanguages)) {
-                allowedLanguagesList = allowedLanguages;
-            } else if (typeof allowedLanguages === 'string') {
-                try {
-                    const parsed = JSON.parse(allowedLanguages);
-                    allowedLanguagesList = Array.isArray(parsed) ? parsed : [parsed];
-                } catch {
-                    allowedLanguagesList = allowedLanguages.split(',').map((item: string) => item.trim()).filter(Boolean);
-                }
-            }
-        }
-
         if (isCodingTask) {
             if (!question) {
                 return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE });
-            }
-            if (!allowedLanguagesList.length) {
-                return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_LANGUAGES_MESSAGE });
             }
         }
 
@@ -98,7 +81,6 @@ const addTaskToModule = async (req: Request, res: Response) => {
             contentFileName,
             isCodingTask,
             isCodingTask ? question : '',
-            isCodingTask ? allowedLanguagesList : [],
         );
 
         if (responseAfteraddingCourseTask && responseAfteraddingCourseTask.id) {
@@ -114,7 +96,6 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 thumbnailPath: responseAfteraddingCourseTask.thumbnailPath,
                 isCoding: responseAfteraddingCourseTask.isCoding,
                 question: responseAfteraddingCourseTask.question,
-                allowedLanguages: responseAfteraddingCourseTask.allowedLanguages,
             });
         }
 

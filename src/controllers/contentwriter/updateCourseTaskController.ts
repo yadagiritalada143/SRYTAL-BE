@@ -10,7 +10,7 @@ import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../confi
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
         
-        const { id, taskName, taskDescription, status, isCoding, question, allowedLanguages } = req.body;
+        const { id, taskName, taskDescription, status, isCoding, question } = req.body;
 
         if (!isValidStatus(status)) {
             return res.status(400).json({
@@ -25,26 +25,9 @@ const updateCourseTask = async (req: Request, res: Response) => {
             isCodingTask = isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
         }
 
-        let allowedLanguagesList: string[] | undefined;
-        if (allowedLanguages !== undefined) {
-            if (Array.isArray(allowedLanguages)) {
-                allowedLanguagesList = allowedLanguages;
-            } else if (typeof allowedLanguages === 'string') {
-                try {
-                    const parsed = JSON.parse(allowedLanguages);
-                    allowedLanguagesList = Array.isArray(parsed) ? parsed : [parsed];
-                } catch {
-                    allowedLanguagesList = allowedLanguages.split(',').map((item: string) => item.trim()).filter(Boolean);
-                }
-            }
-        }
-
         if (isCodingTask === true) {
             if (!question) {
                 return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE });
-            }
-            if (!allowedLanguagesList || !allowedLanguagesList.length) {
-                return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_LANGUAGES_MESSAGE });
             }
         }
 
@@ -129,7 +112,6 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContentFileName,
             isCodingTask,
             question,
-            allowedLanguagesList,
         );
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {

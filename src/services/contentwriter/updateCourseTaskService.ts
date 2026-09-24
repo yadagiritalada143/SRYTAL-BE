@@ -1,7 +1,7 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 import { IUpdateCourseTaskResponse } from '../../interfaces/courseTask';
 
-const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string, allowedLanguages?: string[]): Promise<IUpdateCourseTaskResponse> => {
+const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string): Promise<IUpdateCourseTaskResponse> => {
     try {
         // const result = await CourseTaskModel.updateMany({ _id: id }, { taskName,  taskDescription, thumbnail, status });
         // if (!result) {
@@ -48,10 +48,6 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
 
         if (question !== undefined) {
             updateData.question = question;
-        }
-
-        if (allowedLanguages !== undefined) {
-            updateData.allowedLanguages = allowedLanguages;
         }
 
         const updatedTask =

@@ -9,15 +9,12 @@ export const normalizeLanguage = (language: string): string | undefined =>
     LANGUAGE_MAP[(language || '').trim().toLowerCase()];
 
 /**
- * Whether the given language is part of the task's allowedLanguages list.
+ * Whether the given language is a supported execution language. The employee
+ * picks the language at run time, so any supported language is allowed.
  * Comparison is case-insensitive and also accepts aliases ('cpp' -> 'C++').
  */
-export const isLanguageAllowed = (allowedLanguages: string[] | undefined, language: string): boolean => {
-    const expected = normalizeLanguage(language) || (language || '').trim().toLowerCase();
-    return (allowedLanguages || []).some(
-        (allowed) => allowed.trim().toLowerCase() === expected
-    );
-};
+export const isSupportedLanguage = (language: string): boolean =>
+    Boolean(normalizeLanguage(language));
 
 /**
  * Resolves the starter code shown for a language: a content-writer supplied

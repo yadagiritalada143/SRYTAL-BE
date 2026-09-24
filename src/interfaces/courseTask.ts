@@ -12,7 +12,6 @@ export interface ICourseTask extends Document {
     contentFileName?: string;
     isCoding?: boolean;
     question?: string;
-    allowedLanguages?: string[];
     starterCode?: { languageName: string; code: string }[];
 }
 

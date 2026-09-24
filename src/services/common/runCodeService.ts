@@ -3,11 +3,11 @@ import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseAssignment from '../../model/courseAssignmentModel';
 import CodingQuestionTestCaseModel from '../../model/codingQuestionTestCaseModel';
 import CodeRunModel from '../../model/codeRunModel';
-import generateTestCasesService from './generateTestCasesService';
+import generateTestCasesService, { MIN_TEST_CASE_COUNT } from './generateTestCasesService';
 import executeCodeService from './executeCodeService';
 import evaluateTestCasesService from './evaluateTestCasesService';
 import codeQualityAnalysisService from './codeQualityAnalysisService';
-import { isLanguageAllowed } from '../../util/languageUtils';
+import { isSupportedLanguage } from '../../util/languageUtils';
 import {
     IRunCodeResponse,
     ICodeRunTestCaseResult,
@@ -25,6 +25,12 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * Uses the taskId as the coding-question identifier and a status-based claim so
  * concurrent first clicks cannot generate duplicate test-case sets.
  */
+const hasEnoughTestCases = (doc: any): boolean =>
+    doc &&
+    doc.status === 'COMPLETED' &&
+    Array.isArray(doc.testCases) &&
+    doc.testCases.length >= MIN_TEST_CASE_COUNT;
+
 const ensureTestCases = async (
     taskId: string,
     userId: string,
@@ -33,27 +39,38 @@ const ensureTestCases = async (
 ): Promise<any[]> => {
     let doc: any = await CodingQuestionTestCaseModel.findOne({ taskId }).lean();
 
-    if (doc && doc.status === 'COMPLETED' && Array.isArray(doc.testCases) && doc.testCases.length > 0) {
+    if (hasEnoughTestCases(doc)) {
         return doc.testCases;
     }
 
-    // Another request is already generating: wait briefly and reuse the result.
-    if (doc && doc.status === 'GENERATING') {
+    const waitForCompletion = async (): Promise<any[]> => {
         for (let i = 0; i < GENERATION_WAIT_ATTEMPTS; i++) {
             await wait(GENERATION_WAIT_INTERVAL_MS);
             doc = await CodingQuestionTestCaseModel.findOne({ taskId }).lean();
-            if (doc && doc.status === 'COMPLETED' && Array.isArray(doc.testCases) && doc.testCases.length > 0) {
+            if (hasEnoughTestCases(doc)) {
                 return doc.testCases;
             }
         }
         throw new Error('TEST_CASES_GENERATION_IN_PROGRESS');
+    };
+
+    // Another request is already generating: wait briefly and reuse the result.
+    if (doc && doc.status === 'GENERATING') {
+        return waitForCompletion();
     }
 
-    // No doc yet (first run) or the previous attempt failed: claim generation.
+    // Claim generation: either a fresh doc (PENDING/FAILED) or an existing doc
+    // that only has an insufficient number of test cases (regenerate).
     let claim: any;
     try {
         claim = await CodingQuestionTestCaseModel.findOneAndUpdate(
-            { taskId, status: { $in: ['PENDING', 'FAILED'] } },
+            {
+                taskId,
+                $or: [
+                    { status: { $in: ['PENDING', 'FAILED'] } },
+                    { status: 'COMPLETED', $expr: { $lt: [{ $size: { $ifNull: ['$testCases', []] } }, MIN_TEST_CASE_COUNT] } }
+                ]
+            },
             { $set: { status: 'GENERATING', generatedBy: 'OpenRouter' } },
             { new: true }
         );
@@ -61,20 +78,26 @@ const ensureTestCases = async (
         console.error(`Test case generation claim error: ${error.message}`);
     }
 
-    if (!claim) {
+    if (claim) {
+        if (hasEnoughTestCases(claim)) {
+            return claim.testCases;
+        }
+    } else if (doc) {
+        // Doc exists but is not claimable (another request is generating it).
+        return waitForCompletion();
+    } else {
         try {
             claim = await CodingQuestionTestCaseModel.findOneAndUpdate(
                 { taskId },
-                { $setOnInsert: { status: 'GENERATING', generatedBy: 'OpenRouter', testCases: [] } },
+                { $set: { status: 'GENERATING' }, $setOnInsert: { generatedBy: 'OpenRouter', testCases: [] } },
                 { new: true, upsert: true, setDefaultsOnInsert: true }
             );
         } catch (error: any) {
             console.error(`Test case generation upsert error: ${error.message}`);
         }
-    }
-
-    if (claim && Array.isArray(claim.testCases) && claim.testCases.length > 0) {
-        return claim.testCases;
+        if (claim && hasEnoughTestCases(claim)) {
+            return claim.testCases;
+        }
     }
 
     try {
@@ -134,7 +157,7 @@ const runCode = async (
         return { success: false, notAssigned: true };
     }
 
-    if (!isLanguageAllowed(task.allowedLanguages, language)) {
+    if (!isSupportedLanguage(language)) {
         return { success: false, invalidLanguage: true };
     }
 

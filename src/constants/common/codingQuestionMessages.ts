@@ -11,6 +11,8 @@ export const CODING_QUESTION_ERROR_MESSAGES = {
     QUESTION_NOT_ASSIGNED_MESSAGE: 'This coding question is not part of your assigned courses !',
     INVALID_LANGUAGE_MESSAGE: 'Please provide a valid programming language for this coding question !',
     OPENROUTER_KEY_NOT_FOUND_MESSAGE: 'OpenRouter API key not found. Please add your OpenRouter API key first !',
+    OPENROUTER_KEY_INVALID_MESSAGE: 'Your OpenRouter API key is invalid. Please update your OpenRouter API key !',
+    OPENROUTER_TEST_CASE_GENERATION_TIMEOUT_MESSAGE: 'Test case generation is taking longer than expected, Please try again !',
     TEST_CASES_GENERATION_FAILED_MESSAGE: 'Failed to generate test cases for this coding question, Please try again !',
     TEST_CASES_GENERATION_IN_PROGRESS_MESSAGE: 'Test cases are being generated for this coding question. Please try again in a moment !',
     INVALID_GENERATED_TEST_CASES_MESSAGE: 'Invalid test cases were generated for this coding question !',
