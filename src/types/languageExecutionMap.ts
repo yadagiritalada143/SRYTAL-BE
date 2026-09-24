@@ -20,12 +20,6 @@ export const LANGUAGE_MAP: Record<string, string> = {
     cpp: 'c++'
 };
 
-/**
- * The languages an employee can pick from when writing code against a coding
- * question. The employee selects the language at run time.
- */
-export const SUPPORTED_LANGUAGES: string[] = ['JavaScript', 'Python', 'TypeScript', 'Java', 'C', 'C++'];
-
 export const LANGUAGE_FILE_EXTENSIONS: Record<string, string> = {
     javascript: 'js',
     python: 'py',

@@ -1,16 +1,18 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseAssignment from '../../model/courseAssignmentModel';
+import ProgrammingLanguages from '../../model/programmingLanguagesModel';
 import { normalizeLanguage, isSupportedLanguage, resolveStarterCode } from '../../util/languageUtils';
-import { SUPPORTED_LANGUAGES } from '../../types/languageExecutionMap';
+import { LANGUAGE_MAP } from '../../types/languageExecutionMap';
 import { IFetchCodingQuestionResponse } from '../../interfaces/codingQuestion';
 
 /**
  * Employee-facing "open a coding question": returns the problem statement, the
  * available languages and the starter code for the requested (or first) language.
  * Scoped by employee so a user can only read questions that belong to one of
- * their assigned courses. The full supported-language list is returned so the
- * employee can pick the language at run time.
+ * their assigned courses. The available languages are read from the
+ * programming-languages collection so the employee can pick the language at run
+ * time; the hardcoded list is only used as a fallback when the collection is empty.
  */
 const getCodingQuestion = async (
     questionId: string,
@@ -45,11 +47,19 @@ const getCodingQuestion = async (
         }
     }
 
-    const allowedLanguages = SUPPORTED_LANGUAGES;
+    const languageDocs: any[] = await ProgrammingLanguages.find({}).select('languageName').lean();
+    const collectionLanguages = (languageDocs || [])
+        .map((languageDoc) => (languageDoc?.languageName || '').trim())
+        .filter(Boolean);
+
+    const fallbackLanguages = [...new Set(Object.values(LANGUAGE_MAP))]
+        .map((language) => language.charAt(0).toUpperCase() + language.slice(1));
+
+    const availableLanguages = collectionLanguages.length > 0 ? collectionLanguages : fallbackLanguages;
 
     const resolvedLanguage = normalizeLanguage(language) ||
-        normalizeLanguage(allowedLanguages[0] || '') ||
-        allowedLanguages[0] ||
+        normalizeLanguage(availableLanguages[0] || '') ||
+        availableLanguages[0] ||
         '';
 
     return {
@@ -57,7 +67,7 @@ const getCodingQuestion = async (
         question: {
             questionId: String(task._id),
             question: task.question || '',
-            allowedLanguages,
+            allowedLanguages: availableLanguages,
             language: resolvedLanguage,
             starterCode: resolveStarterCode(task, resolvedLanguage)
         }

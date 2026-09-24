@@ -1,0 +1,10 @@
+node_modules
+dist
+coverage
+.git
+.gitignore
+.env
+*.log
+public_html
+diag-*.tmp.ts
+verify-*.tmp.ts

@@ -1,0 +1,35 @@
+services:
+  lms-backend:
+    build: .
+    container_name: srytal-lms-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    environment:
+      # Inside the compose network, Piston is reached by service name.
+      - PISTON_URL=http://piston:2000/api/v2
+    depends_on:
+      - piston
+    restart: unless-stopped
+
+  piston:
+    image: ghcr.io/engineer-man/piston:main
+    container_name: srytal-piston
+    ports:
+      - "2000:2000"
+    restart: unless-stopped
+
+  # Optional: local MongoDB instead of Atlas.
+  # Uncomment and set DB_CONNECTION_STRING=mongodb://mongo:27017/srytal-lms in .env
+  # mongo:
+  #   image: mongo:7
+  #   container_name: srytal-mongo
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongo-data:/data/db
+  #   restart: unless-stopped
+
+# volumes:
+#   mongo-data:
