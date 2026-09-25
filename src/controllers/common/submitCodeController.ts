@@ -16,9 +16,9 @@ import {
  */
 const submitCode = async (req: Request, res: Response) => {
     try {
-        const { questionId, language, code } = req.body;
+        const { questionId, language: languageId, code } = req.body;
 
-        if (!questionId || !language || typeof code !== 'string' || code.trim() === '') {
+        if (!questionId || typeof languageId !== 'string' || languageId.trim() === '' || typeof code !== 'string' || code.trim() === '') {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: CODING_QUESTION_ERROR_MESSAGES.RUN_CODE_MISSING_FIELDS_MESSAGE
@@ -27,7 +27,7 @@ const submitCode = async (req: Request, res: Response) => {
 
         const response = await runCodeService.runCode(
             questionId,
-            language,
+            languageId,
             code,
             req.user?.userId as string,
             'submit'

@@ -4,7 +4,7 @@ import { ICodeRunTestCaseResult, IAiCodeQualityEvaluation } from './codingQuesti
 export interface ICodeRun extends Document {
     userId: mongoose.Schema.Types.ObjectId;
     taskId: mongoose.Schema.Types.ObjectId;
-    language: string;
+    languageId: mongoose.Schema.Types.ObjectId;
     sourceCode: string;
     results: ICodeRunTestCaseResult[];
     passedCount: number;

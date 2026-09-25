@@ -1759,7 +1759,8 @@ commonRouter.get('/getCodingQuestion/:questionId', validateJWT, getCodingQuestio
  *                 example: "66d323456789abcdef123456"
  *               language:
  *                 type: string
- *                 example: javascript
+ *                 description: ID of the selected programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
  *               code:
  *                 type: string
  *                 example: "function isPalindrome(str) { const s = str.replace(/\\s/g, '').toLowerCase(); return s === s.split('').reverse().join(''); }"
@@ -1886,7 +1887,8 @@ commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
  *                 example: "66d323456789abcdef123456"
  *               language:
  *                 type: string
- *                 example: javascript
+ *                 description: ID of the selected programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
  *               code:
  *                 type: string
  *                 example: "function isPalindrome(str) { const s = str.replace(/\\s/g, '').toLowerCase(); return s === s.split('').reverse().join(''); }"

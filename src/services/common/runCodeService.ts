@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import CourseTaskModel from '../../model/courseTaskModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseAssignment from '../../model/courseAssignmentModel';
@@ -7,7 +8,8 @@ import generateTestCasesService, { MIN_TEST_CASE_COUNT } from './generateTestCas
 import executeCodeService from './executeCodeService';
 import evaluateTestCasesService from './evaluateTestCasesService';
 import codeQualityAnalysisService from './codeQualityAnalysisService';
-import { isSupportedLanguage } from '../../util/languageUtils';
+import getProgrammingLanguageByIdService from './getProgrammingLanguageByIdService';
+import { normalizeLanguage } from '../../util/languageUtils';
 import {
     IRunCodeResponse,
     ICodeRunTestCaseResult,
@@ -155,7 +157,7 @@ const ensureTestCases = async (
  */
 const runCode = async (
     questionId: string,
-    language: string,
+    languageId: string,
     code: string,
     employeeId: string,
     runType: 'run' | 'submit' = 'run'
@@ -182,7 +184,22 @@ const runCode = async (
         return { success: false, notAssigned: true };
     }
 
-    if (!isSupportedLanguage(language)) {
+    if (typeof languageId !== 'string' || !Types.ObjectId.isValid(languageId)) {
+        return { success: false, invalidLanguage: true };
+    }
+
+    const programmingLanguage = await getProgrammingLanguageByIdService.getProgrammingLanguageById(languageId);
+
+    if (!programmingLanguage) {
+        return { success: false, invalidLanguage: true };
+    }
+
+    const resolvedLanguage =
+        typeof programmingLanguage.languageName === 'string'
+            ? normalizeLanguage(programmingLanguage.languageName)
+            : undefined;
+
+    if (!resolvedLanguage) {
         return { success: false, invalidLanguage: true };
     }
 
@@ -190,7 +207,7 @@ const runCode = async (
         String(task._id),
         employeeId,
         task.question || '',
-        language
+        resolvedLanguage
     );
 
     const results: ICodeRunTestCaseResult[] = await mapWithConcurrency(
@@ -198,7 +215,7 @@ const runCode = async (
         TEST_CASE_EXECUTION_CONCURRENCY,
         async (testCase: any) => {
             const execution = await executeCodeService.executeCode({
-                language,
+                language: resolvedLanguage,
                 code,
                 input: testCase.input
             });
@@ -223,7 +240,7 @@ const runCode = async (
         aiEvaluation = await codeQualityAnalysisService.analyzeCodeQuality({
             userId: employeeId,
             question: task.question || '',
-            language,
+            language: resolvedLanguage,
             code,
             results
         });
@@ -235,7 +252,7 @@ const runCode = async (
     await CodeRunModel.create({
         userId: employeeId,
         taskId: questionId,
-        language,
+        languageId,
         sourceCode: code,
         results,
         passedCount: passed,
@@ -250,7 +267,7 @@ const runCode = async (
         success: true,
         executionResult: {
             questionId,
-            language,
+            language: resolvedLanguage,
             totalTestCases: total,
             passedTestCases: passed,
             failedTestCases: failed,

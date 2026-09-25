@@ -9,7 +9,7 @@ import { ICodeRun } from '../interfaces/codeRun';
 const CodeRunSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'userModel', required: true, index: true },
     taskId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseTaskModel', required: true, index: true },
-    language: { type: mongoose.Schema.Types.String, required: true },
+    languageId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProgrammingLanguagesSchema', required: true },
     sourceCode: { type: mongoose.Schema.Types.String, required: true },
     results: [{
         name: { type: mongoose.Schema.Types.String },
