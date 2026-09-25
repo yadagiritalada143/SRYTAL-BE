@@ -16,9 +16,9 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
  * transpiled to plain JavaScript first and then run on the Node.js runtime.
  */
 export const WANDBOX_COMPILER_MAP: Record<string, string> = {
-    javascript: 'nodejs-20.17.0',
+    javascript: 'nodejs-24.21.0',
     python: 'cpython-3.12.7',
-    typescript: 'nodejs-20.17.0',
+    typescript: 'nodejs-24.21.0',
     java: 'openjdk-jdk-21+35',
     c: 'gcc-13.2.0-c',
     'c++': 'gcc-13.2.0'

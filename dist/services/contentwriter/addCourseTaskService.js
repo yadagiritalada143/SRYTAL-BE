@@ -6,9 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const courseTaskModel_1 = __importDefault(require("../../model/courseTaskModel"));
 const coursemoduleModel_1 = __importDefault(require("../../model/coursemoduleModel"));
 const coursesModel_1 = __importDefault(require("../../model/coursesModel"));
-const addCourseTask = async (moduleId, taskName, taskDescription, thumbnail, status, type, content, contentMimeType, contentFileName) => {
+const addCourseTask = async (moduleId, taskName, taskDescription, thumbnail, status, type, content, contentMimeType, contentFileName, isCoding = false, question = '') => {
     try {
-        let thumbnailPath = '';
         const CoursesTaskToSave = new courseTaskModel_1.default({
             moduleId,
             taskName,
@@ -19,6 +18,8 @@ const addCourseTask = async (moduleId, taskName, taskDescription, thumbnail, sta
             content,
             contentMimeType,
             contentFileName,
+            isCoding,
+            question,
         });
         const result = await CoursesTaskToSave.save();
         // Propagate activity up: touch the parent course's updatedAt.
