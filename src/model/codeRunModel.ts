@@ -2,9 +2,8 @@ import mongoose from 'mongoose';
 import { ICodeRun } from '../interfaces/codeRun';
 
 /**
- * One Run Code execution made by an employee against a coding question. Each
- * result entry corresponds to a single generated test case, so the run history
- * doubles as an audit trail of every employee submission.
+ * Latest run snapshot and submission snapshots made by an employee against a
+ * coding question. Each result entry corresponds to a single generated test case.
  */
 const CodeRunSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'userModel', required: true, index: true },
@@ -32,7 +31,7 @@ const CodeRunSchema = new mongoose.Schema({
     type: { type: mongoose.Schema.Types.String, enum: ['run', 'submit'], default: 'run', index: true }
 },
     {
-        collection: 'code-run',
+        collection: 'code-executions',
         timestamps: true,
         toObject: { virtuals: true },
         toJSON: { virtuals: true }

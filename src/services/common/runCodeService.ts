@@ -249,7 +249,7 @@ const runCode = async (
         console.error(`Code-quality analysis skipped: ${error.message}`);
     }
 
-    await CodeRunModel.create({
+    const executionRecord = {
         userId: employeeId,
         taskId: questionId,
         languageId,
@@ -259,9 +259,21 @@ const runCode = async (
         failedCount: failed,
         score,
         aiEvaluation,
-        status: overallStatus,
-        type: runType
-    } as any);
+        status: overallStatus
+    };
+
+    if (runType === 'submit') {
+        await CodeRunModel.create({
+            ...executionRecord,
+            type: 'submit'
+        } as any);
+    } else {
+        await CodeRunModel.findOneAndUpdate(
+            { userId: employeeId, taskId: questionId, type: 'run' },
+            { $set: { ...executionRecord, type: 'run' } },
+            { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true }
+        );
+    }
 
     return {
         success: true,

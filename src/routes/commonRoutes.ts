@@ -1751,7 +1751,7 @@ commonRouter.get('/getCodingQuestion/:questionId', validateJWT, getCodingQuestio
  *             type: object
  *             required:
  *               - questionId
- *               - language
+ *               - languageId
  *               - code
  *             properties:
  *               questionId:
@@ -1879,7 +1879,7 @@ commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
  *             type: object
  *             required:
  *               - questionId
- *               - language
+ *               - languageId
  *               - code
  *             properties:
  *               questionId:

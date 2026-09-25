@@ -31,7 +31,7 @@ jest.mock('../../../model/codingQuestionTestCaseModel', () => ({
 
 jest.mock('../../../model/codeRunModel', () => ({
     __esModule: true,
-    default: { create: jest.fn() }
+    default: { create: jest.fn(), findOneAndUpdate: jest.fn() }
 }));
 
 jest.mock('../../../services/common/getProgrammingLanguageByIdService', () => ({
@@ -65,6 +65,7 @@ const courseModuleFindByIdMock = (CourseModuleModel as unknown as { findById: je
 const courseAssignmentFindOneMock = (CourseAssignment as unknown as { findOne: jest.Mock }).findOne;
 const testCaseFindOneMock = (CodingQuestionTestCaseModel as unknown as { findOne: jest.Mock }).findOne;
 const codeRunCreateMock = (CodeRunModel as unknown as { create: jest.Mock }).create;
+const codeRunFindOneAndUpdateMock = (CodeRunModel as unknown as { findOneAndUpdate: jest.Mock }).findOneAndUpdate;
 const getProgrammingLanguageMock = getProgrammingLanguageByIdService.getProgrammingLanguageById as unknown as jest.Mock;
 const executeCodeMock = executeCodeService.executeCode as unknown as jest.Mock;
 const evaluateTestCaseMock = evaluateTestCasesService.evaluateTestCase as unknown as jest.Mock;
@@ -125,6 +126,7 @@ const setUpValidRequest = (): void => {
     summarizeResultsMock.mockReturnValue({ total: 3, passed: 3, failed: 0, score: 100 });
     analyzeCodeQualityMock.mockResolvedValue(null);
     codeRunCreateMock.mockResolvedValue(undefined);
+    codeRunFindOneAndUpdateMock.mockResolvedValue(undefined);
 };
 
 describe('runCodeService', () => {
@@ -152,10 +154,80 @@ describe('runCodeService', () => {
             code: 'console.log(1);',
             input: '1'
         });
+        expect(codeRunCreateMock).not.toHaveBeenCalled();
+        expect(codeRunFindOneAndUpdateMock).toHaveBeenCalledWith(
+            { userId: employeeId, taskId: questionId, type: 'run' },
+            {
+                $set: expect.objectContaining({
+                    languageId,
+                    results: expect.any(Array),
+                    type: 'run'
+                })
+            },
+            {
+                upsert: true,
+                new: true,
+                runValidators: true,
+                setDefaultsOnInsert: true
+            }
+        );
+        expect(response.executionResult?.language).toBe('javascript');
+    });
+
+    it('uses the same run key when code is rerun', async () => {
+        await runCodeService.runCode(
+            questionId,
+            languageId,
+            'console.log(1);',
+            employeeId
+        );
+        await runCodeService.runCode(
+            questionId,
+            languageId,
+            'console.log(2);',
+            employeeId
+        );
+
+        expect(codeRunFindOneAndUpdateMock).toHaveBeenCalledTimes(2);
+        expect(codeRunFindOneAndUpdateMock.mock.calls[0][0]).toEqual(
+            codeRunFindOneAndUpdateMock.mock.calls[1][0]
+        );
+        expect(codeRunFindOneAndUpdateMock.mock.calls[1][1].$set.sourceCode).toBe('console.log(2);');
+    });
+
+    it('stores a successful submission as a separate record', async () => {
+        const response = await runCodeService.runCode(
+            questionId,
+            languageId,
+            'console.log(1);',
+            employeeId,
+            'submit'
+        );
+
+        expect(codeRunFindOneAndUpdateMock).not.toHaveBeenCalled();
         expect(codeRunCreateMock).toHaveBeenCalledWith(expect.objectContaining({
-            languageId
+            userId: employeeId,
+            taskId: questionId,
+            languageId,
+            type: 'submit'
         }));
         expect(response.executionResult?.language).toBe('javascript');
+    });
+
+    it('does not persist a submission when a test case fails', async () => {
+        summarizeResultsMock.mockReturnValue({ total: 3, passed: 2, failed: 1, score: 67 });
+
+        const response = await runCodeService.runCode(
+            questionId,
+            languageId,
+            'console.log(1);',
+            employeeId,
+            'submit'
+        );
+
+        expect(response).toEqual({ success: false, notAllTestsPassed: true });
+        expect(codeRunCreateMock).not.toHaveBeenCalled();
+        expect(codeRunFindOneAndUpdateMock).not.toHaveBeenCalled();
     });
 
     it('rejects a language name instead of passing it to the executor', async () => {
