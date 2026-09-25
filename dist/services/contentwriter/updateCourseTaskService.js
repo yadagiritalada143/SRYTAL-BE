@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const courseTaskModel_1 = __importDefault(require("../../model/courseTaskModel"));
-const updateCourseTask = async (id, taskName, taskDescription, newThumbnail, status, newContent, newContentMimeType, newContentFileName) => {
+const updateCourseTask = async (id, taskName, taskDescription, newThumbnail, status, newContent, newContentMimeType, newContentFileName, isCoding, question, allowedLanguages, starterCode) => {
     try {
         // const result = await CourseTaskModel.updateMany({ _id: id }, { taskName,  taskDescription, thumbnail, status });
         // if (!result) {
@@ -33,6 +33,18 @@ const updateCourseTask = async (id, taskName, taskDescription, newThumbnail, sta
                 newContentMimeType;
             updateData.contentFileName =
                 newContentFileName;
+        }
+        if (isCoding !== undefined) {
+            updateData.isCoding = isCoding;
+        }
+        if (question !== undefined) {
+            updateData.question = question;
+        }
+        if (allowedLanguages !== undefined) {
+            updateData.allowedLanguages = allowedLanguages;
+        }
+        if (starterCode !== undefined) {
+            updateData.starterCode = starterCode;
         }
         const updatedTask = await courseTaskModel_1.default.findByIdAndUpdate(id, {
             $set: updateData,

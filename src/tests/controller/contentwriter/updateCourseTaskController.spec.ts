@@ -97,6 +97,8 @@ describe('updateCourseTaskController', () => {
             'ACTIVE',
             undefined,
             undefined,
+            undefined,
+            undefined,
             undefined
         );
         expect(uploadThumbnailToS3Mock).not.toHaveBeenCalled();
@@ -129,9 +131,57 @@ describe('updateCourseTaskController', () => {
             'ACTIVE',
             expect.stringContaining('LMSData/Courses/CourseTaskContent/'),
             'application/pdf',
-            'file.pdf'
+            'file.pdf',
+            undefined,
+            undefined
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
+    });
+
+    it('updates the coding task fields when a coding task is provided', async () => {
+        isValidStatusMock.mockReturnValue(true);
+        const req = buildReq({
+            body: {
+                isCoding: 'true',
+                question: 'Write a function to reverse a string.'
+            }
+        });
+        const updateResponse = { success: true, responseAfterUpdate: { modifiedCount: 1 } };
+        updateCourseTaskMock.mockResolvedValue(updateResponse);
+
+        await updateCourseTaskController.updateCourseTask(req, res);
+
+        expect(updateCourseTaskMock).toHaveBeenCalledWith(
+            't1',
+            'Read',
+            'Read the docs',
+            undefined,
+            'ACTIVE',
+            undefined,
+            undefined,
+            undefined,
+            true,
+            'Write a function to reverse a string.'
+        );
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
+    });
+
+    it('returns 400 when a coding task has no question', async () => {
+        isValidStatusMock.mockReturnValue(true);
+        const req = buildReq({
+            body: {
+                isCoding: 'true'
+            }
+        });
+
+        await updateCourseTaskController.updateCourseTask(req, res);
+
+        expect(updateCourseTaskMock).not.toHaveBeenCalled();
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+        expect(mockJson).toHaveBeenCalledWith({
+            success: false,
+            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE
+        });
     });
 
     it('returns 400 when the thumbnail type is invalid', async () => {
@@ -174,6 +224,8 @@ describe('updateCourseTaskController', () => {
             'Read the docs',
             expect.stringContaining('LMSData/Courses/CourseTaskThumbnails/'),
             'ACTIVE',
+            undefined,
+            undefined,
             undefined,
             undefined,
             undefined

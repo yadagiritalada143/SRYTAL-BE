@@ -83,6 +83,8 @@ describe('addCourseTaskController', () => {
             'LINK',
             'https://example.com',
             '',
+            '',
+            false,
             ''
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
@@ -119,7 +121,9 @@ describe('addCourseTaskController', () => {
             'FILE',
             expect.stringContaining('LMSData/Courses/CourseTaskContent/'),
             'application/pdf',
-            'file.pdf'
+            'file.pdf',
+            false,
+            ''
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
     });
@@ -148,6 +152,8 @@ describe('addCourseTaskController', () => {
             'LINK',
             'https://example.com',
             '',
+            '',
+            false,
             ''
         );
     });
@@ -174,6 +180,58 @@ describe('addCourseTaskController', () => {
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
         expect(mockJson).toHaveBeenCalledWith({
             message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ADD_ERROR_MESSAGE
+        });
+    });
+
+    it('returns 201 and saves a coding task with a question', async () => {
+        const req = buildReq({
+            body: {
+                link: '',
+                isCoding: 'true',
+                question: 'Write a function to reverse a string.'
+            }
+        });
+        addCourseTaskMock.mockResolvedValue({
+            id: 't1',
+            taskName: 'Reverse string',
+            taskDescription: 'Coding task',
+            type: 'LINK'
+        });
+
+        await addCourseTaskController.addTaskToModule(req, res);
+
+        expect(uploadThumbnailToS3Mock).not.toHaveBeenCalled();
+        expect(addCourseTaskMock).toHaveBeenCalledWith(
+            'm1',
+            'Read',
+            'Read the docs',
+            '',
+            'ACTIVE',
+            'LINK',
+            '',
+            '',
+            '',
+            true,
+            'Write a function to reverse a string.'
+        );
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
+    });
+
+    it('returns 400 when a coding task has no question', async () => {
+        const req = buildReq({
+            body: {
+                link: '',
+                isCoding: 'true'
+            }
+        });
+
+        await addCourseTaskController.addTaskToModule(req, res);
+
+        expect(addCourseTaskMock).not.toHaveBeenCalled();
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+        expect(mockJson).toHaveBeenCalledWith({
+            success: false,
+            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE
         });
     });
 
