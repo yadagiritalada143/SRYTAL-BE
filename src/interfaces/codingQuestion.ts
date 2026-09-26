@@ -1,11 +1,23 @@
 import { ITestCase } from './codingQuestionTestCase';
 
+/**
+ * The employee's own latest successful submission for a coding question, in a
+ * specific language. Surfaced on `getCodingQuestion` so the editor can restore
+ * their submitted answer instead of the starter code.
+ */
+export interface ILastSubmittedCode {
+    language: string;
+    code: string;
+}
+
 export interface ICodingQuestionDetail {
     questionId: string;
     question: string;
     allowedLanguages: string[];
+    language: string;
     languageId: string;
     starterCode: string;
+    lastSubmittedCode?: ILastSubmittedCode | null;
 }
 
 export interface IFetchCodingQuestionResponse {
@@ -43,6 +55,7 @@ export interface IAiCodeQualityEvaluation {
 
 export interface IRunCodeExecutionResult {
     questionId: string;
+    language: string;
     languageId: string;
     totalTestCases: number;
     passedTestCases: number;

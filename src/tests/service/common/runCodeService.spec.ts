@@ -4,6 +4,7 @@ import CourseModuleModel from '../../../model/coursemoduleModel';
 import CourseAssignment from '../../../model/courseAssignmentModel';
 import CodingQuestionTestCaseModel from '../../../model/codingQuestionTestCaseModel';
 import CodeRunModel from '../../../model/codeRunModel';
+import ProgrammingLanguages from '../../../model/programmingLanguagesModel';
 import getProgrammingLanguageByIdService from '../../../services/common/getProgrammingLanguageByIdService';
 import executeCodeService from '../../../services/common/executeCodeService';
 import evaluateTestCasesService from '../../../services/common/evaluateTestCasesService';
@@ -32,6 +33,11 @@ jest.mock('../../../model/codingQuestionTestCaseModel', () => ({
 jest.mock('../../../model/codeRunModel', () => ({
     __esModule: true,
     default: { create: jest.fn(), findOneAndUpdate: jest.fn(), findOne: jest.fn() }
+}));
+
+jest.mock('../../../model/programmingLanguagesModel', () => ({
+    __esModule: true,
+    default: { find: jest.fn() }
 }));
 
 jest.mock('../../../services/common/getProgrammingLanguageByIdService', () => ({
@@ -68,6 +74,7 @@ const codeRunCreateMock = (CodeRunModel as unknown as { create: jest.Mock }).cre
 const codeRunFindOneAndUpdateMock = (CodeRunModel as unknown as { findOneAndUpdate: jest.Mock }).findOneAndUpdate;
 const codeRunFindOneMock = (CodeRunModel as unknown as { findOne: jest.Mock }).findOne;
 const getProgrammingLanguageMock = getProgrammingLanguageByIdService.getProgrammingLanguageById as unknown as jest.Mock;
+const programmingLanguagesFindMock = (ProgrammingLanguages as unknown as { find: jest.Mock }).find;
 const executeCodeMock = executeCodeService.executeCode as unknown as jest.Mock;
 const evaluateTestCaseMock = evaluateTestCasesService.evaluateTestCase as unknown as jest.Mock;
 const summarizeResultsMock = evaluateTestCasesService.summarizeResults as unknown as jest.Mock;
@@ -92,6 +99,16 @@ const testCases = [
 const mockLastSubmissionLookup = (doc: any) => {
     const lean = jest.fn().mockResolvedValue(doc);
     codeRunFindOneMock.mockReturnValue({ sort: jest.fn().mockReturnValue({ lean }) });
+};
+
+/**
+ * `ProgrammingLanguages.find({}).lean()` chain used to resolve a language by
+ * name/alias. Defaults to "no matching language".
+ */
+const mockProgrammingLanguagesLookup = (docs: any[]) => {
+    programmingLanguagesFindMock.mockReturnValue({
+        lean: jest.fn().mockResolvedValue(docs)
+    });
 };
 
 const setUpValidRequest = (): void => {
@@ -119,6 +136,7 @@ const setUpValidRequest = (): void => {
         _id: languageId,
         languageName: 'JavaScript'
     });
+    mockProgrammingLanguagesLookup([]);
     executeCodeMock.mockResolvedValue({
         stdout: '1',
         stderr: '',
@@ -331,7 +349,11 @@ describe('runCodeService', () => {
         expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
-    it('rejects a language name instead of passing it to the executor', async () => {
+    it('accepts a language name and resolves it to the language id', async () => {
+        mockProgrammingLanguagesLookup([
+            { _id: languageId, languageName: 'JavaScript' }
+        ]);
+
         const response = await runCodeService.runCode(
             questionId,
             'javascript',
@@ -339,9 +361,22 @@ describe('runCodeService', () => {
             employeeId
         );
 
-        expect(response).toEqual({ success: false, invalidLanguage: true });
+        expect(response.success).toBe(true);
         expect(getProgrammingLanguageMock).not.toHaveBeenCalled();
-        expect(executeCodeMock).not.toHaveBeenCalled();
+        expect(programmingLanguagesFindMock).toHaveBeenCalled();
+        expect(executeCodeMock).toHaveBeenCalled();
+        expect(codeRunFindOneAndUpdateMock).toHaveBeenCalledWith(
+            { userId: employeeId, taskId: questionId, type: 'run' },
+            {
+                $set: expect.objectContaining({
+                    languageId,
+                    type: 'run'
+                })
+            },
+            expect.anything()
+        );
+        expect(response.executionResult?.language).toBe('javascript');
+        expect(response.executionResult?.languageId).toBe(languageId);
     });
 
     it('returns invalidLanguage when the language ID does not exist', async () => {

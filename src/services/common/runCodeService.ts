@@ -4,6 +4,7 @@ import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseAssignment from '../../model/courseAssignmentModel';
 import CodingQuestionTestCaseModel from '../../model/codingQuestionTestCaseModel';
 import CodeRunModel from '../../model/codeRunModel';
+import ProgrammingLanguages from '../../model/programmingLanguagesModel';
 import generateTestCasesService, { MIN_TEST_CASE_COUNT } from './generateTestCasesService';
 import executeCodeService from './executeCodeService';
 import evaluateTestCasesService from './evaluateTestCasesService';
@@ -196,6 +197,36 @@ const getLastSubmission = async (employeeId: string): Promise<ILastCodeSubmissio
 };
 
 /**
+ * Resolves the `language` field the client sends on Run Code / Submit Code. It
+ * may be a MongoDB programming-language id (the current contract) OR a language
+ * name/alias (the employee UI still sends e.g. "Javascript"); both are accepted
+ * so old and new clients keep working. Returns the programming-language document
+ * or null when nothing matches.
+ */
+const resolveProgrammingLanguage = async (input: string): Promise<any | null> => {
+    const trimmed = (input || '').trim();
+    if (!trimmed) return null;
+
+    if (Types.ObjectId.isValid(trimmed)) {
+        const byId = await getProgrammingLanguageByIdService.getProgrammingLanguageById(trimmed);
+        if (byId) {
+            return byId;
+        }
+    }
+
+    const wanted = normalizeLanguage(trimmed) || trimmed.toLowerCase();
+    const languages: any[] = await ProgrammingLanguages.find({}).lean();
+    return (
+        languages.find((language) => {
+            const name =
+                normalizeLanguage(language?.languageName) ||
+                String(language?.languageName || '').toLowerCase().trim();
+            return name === wanted;
+        }) || null
+    );
+};
+
+/**
  * The shared grading engine behind both Run Code and Submit Code: validates
  * the request, resolves (or generates-and-stores) the coding-question test
  * cases, runs the employee's submitted code against every test-case input on
@@ -235,15 +266,13 @@ const runCode = async (
         return { success: false, notAssigned: true };
     }
 
-    if (typeof languageId !== 'string' || !Types.ObjectId.isValid(languageId)) {
-        return { success: false, invalidLanguage: true };
-    }
-
-    const programmingLanguage = await getProgrammingLanguageByIdService.getProgrammingLanguageById(languageId);
+    const programmingLanguage: any = await resolveProgrammingLanguage(languageId);
 
     if (!programmingLanguage) {
         return { success: false, invalidLanguage: true };
     }
+
+    const resolvedLanguageId = String(programmingLanguage._id);
 
     const resolvedLanguage =
         typeof programmingLanguage.languageName === 'string'
@@ -303,7 +332,7 @@ const runCode = async (
     const executionRecord = {
         userId: employeeId,
         taskId: questionId,
-        languageId,
+        languageId: resolvedLanguageId,
         sourceCode: code,
         results,
         passedCount: passed,
@@ -343,6 +372,7 @@ const runCode = async (
         executionResult: {
             questionId,
             language: resolvedLanguage,
+            languageId: resolvedLanguageId,
             totalTestCases: total,
             passedTestCases: passed,
             failedTestCases: failed,
