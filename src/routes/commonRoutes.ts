@@ -1757,7 +1757,7 @@ commonRouter.get('/getCodingQuestion/:questionId', validateJWT, getCodingQuestio
  *               questionId:
  *                 type: string
  *                 example: "66d323456789abcdef123456"
- *               language:
+ *               languageId:
  *                 type: string
  *                 description: ID of the selected programming language
  *                 example: "65f1a2b3c4d5e6f7890abcd1"
@@ -1781,7 +1781,7 @@ commonRouter.get('/getCodingQuestion/:questionId', validateJWT, getCodingQuestio
  *                   properties:
  *                     questionId:
  *                       type: string
- *                     language:
+ *                     languageId:
  *                       type: string
  *                     totalTestCases:
  *                       type: number
@@ -1885,7 +1885,7 @@ commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
  *               questionId:
  *                 type: string
  *                 example: "66d323456789abcdef123456"
- *               language:
+ *               languageId:
  *                 type: string
  *                 description: ID of the selected programming language
  *                 example: "65f1a2b3c4d5e6f7890abcd1"
@@ -1910,7 +1910,7 @@ commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
  *                   properties:
  *                     questionId:
  *                       type: string
- *                     language:
+ *                     languageId:
  *                       type: string
  *                     totalTestCases:
  *                       type: number
@@ -1927,6 +1927,34 @@ commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
  *                     aiEvaluation:
  *                       type: object
  *                       nullable: true
+ *                 lastSubmission:
+ *                   type: object
+ *                   nullable: true
+ *                   description: The last code this employee ran or submitted, across all coding questions. Null if they have never run anything.
+ *                   properties:
+ *                     employeeId:
+ *                       type: string
+ *                     questionId:
+ *                       type: string
+ *                     languageId:
+ *                       type: string
+ *                     code:
+ *                       type: string
+ *                     passedTestCases:
+ *                       type: number
+ *                     failedTestCases:
+ *                       type: number
+ *                     score:
+ *                       type: number
+ *                     status:
+ *                       type: string
+ *                     type:
+ *                       type: string
+ *                       enum: [run, submit]
+ *                       description: Whether this record was a trial run or a final submission.
+ *                     submittedAt:
+ *                       type: string
+ *                       format: date-time
  *       400:
  *         description: Missing fields, invalid language, or invalid generated test cases.
  *       403:

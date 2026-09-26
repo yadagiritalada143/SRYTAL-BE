@@ -13,7 +13,8 @@ import { normalizeLanguage } from '../../util/languageUtils';
 import {
     IRunCodeResponse,
     ICodeRunTestCaseResult,
-    IAiCodeQualityEvaluation
+    IAiCodeQualityEvaluation,
+    ILastCodeSubmission
 } from '../../interfaces/codingQuestion';
 
 const GENERATION_WAIT_ATTEMPTS = 12;
@@ -146,14 +147,64 @@ const ensureTestCases = async (
 };
 
 /**
+ * The last code the employee ran or submitted, across every coding question -
+ * not just the one being submitted now. Both record types live in the same
+ * collection, so a single lookup sorted by `updatedAt` yields whichever was
+ * touched most recently: `type: 'run'` snapshots (one per question, upserted
+ * and re-stamped on every trial run) and `type: 'submit'` history. Sorting on
+ * `updatedAt` rather than `createdAt` matters for runs, because re-running a
+ * question bumps `updatedAt` while leaving the original `createdAt` intact.
+ *
+ * Read before the new submission is persisted so the value reported back is the
+ * *previous* one. Returns null when the employee has never run anything.
+ */
+const getLastSubmission = async (employeeId: string): Promise<ILastCodeSubmission | null> => {
+    const doc: any = await CodeRunModel.findOne(
+        { userId: employeeId },
+        {
+            userId: 1,
+            taskId: 1,
+            languageId: 1,
+            sourceCode: 1,
+            passedCount: 1,
+            failedCount: 1,
+            score: 1,
+            status: 1,
+            type: 1,
+            updatedAt: 1
+        }
+    )
+        .sort({ updatedAt: -1 })
+        .lean();
+
+    if (!doc) {
+        return null;
+    }
+
+    return {
+        employeeId: String(doc.userId),
+        questionId: String(doc.taskId),
+        languageId: String(doc.languageId),
+        code: doc.sourceCode,
+        passedTestCases: doc.passedCount,
+        failedTestCases: doc.failedCount,
+        score: doc.score,
+        status: doc.status,
+        type: doc.type,
+        submittedAt: doc.updatedAt
+    };
+};
+
+/**
  * The shared grading engine behind both Run Code and Submit Code: validates
  * the request, resolves (or generates-and-stores) the coding-question test
  * cases, runs the employee's submitted code against every test-case input on
- * Piston, evaluates each result (compares expected vs actual output), computes
+ * Wandbox, evaluates each result (compares expected vs actual output), computes
  * the score, gathers an informational OpenRouter code-quality evaluation
  * (never overriding the execution verdicts), persists the run
  * (`type: 'run'` for a trial run, `type: 'submit'` for a final submission)
- * and returns the combined result.
+ * and returns the combined result. Submissions additionally report the last
+ * code the employee ran or submitted via `lastSubmission`.
  */
 const runCode = async (
     questionId: string,
@@ -262,7 +313,18 @@ const runCode = async (
         status: overallStatus
     };
 
+    let lastSubmission: ILastCodeSubmission | null = null;
+
     if (runType === 'submit') {
+        // Fetch the previous run/submission before inserting the new one, so the
+        // employee gets their prior code back rather than the current one.
+        try {
+            lastSubmission = await getLastSubmission(employeeId);
+        } catch (error: any) {
+            // Supplementary context only: never fail a valid submission for it.
+            console.error(`Last submission lookup skipped: ${error.message}`);
+        }
+
         await CodeRunModel.create({
             ...executionRecord,
             type: 'submit'
@@ -277,6 +339,7 @@ const runCode = async (
 
     return {
         success: true,
+        lastSubmission,
         executionResult: {
             questionId,
             language: resolvedLanguage,

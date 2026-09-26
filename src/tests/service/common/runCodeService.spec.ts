@@ -31,7 +31,7 @@ jest.mock('../../../model/codingQuestionTestCaseModel', () => ({
 
 jest.mock('../../../model/codeRunModel', () => ({
     __esModule: true,
-    default: { create: jest.fn(), findOneAndUpdate: jest.fn() }
+    default: { create: jest.fn(), findOneAndUpdate: jest.fn(), findOne: jest.fn() }
 }));
 
 jest.mock('../../../services/common/getProgrammingLanguageByIdService', () => ({
@@ -66,6 +66,7 @@ const courseAssignmentFindOneMock = (CourseAssignment as unknown as { findOne: j
 const testCaseFindOneMock = (CodingQuestionTestCaseModel as unknown as { findOne: jest.Mock }).findOne;
 const codeRunCreateMock = (CodeRunModel as unknown as { create: jest.Mock }).create;
 const codeRunFindOneAndUpdateMock = (CodeRunModel as unknown as { findOneAndUpdate: jest.Mock }).findOneAndUpdate;
+const codeRunFindOneMock = (CodeRunModel as unknown as { findOne: jest.Mock }).findOne;
 const getProgrammingLanguageMock = getProgrammingLanguageByIdService.getProgrammingLanguageById as unknown as jest.Mock;
 const executeCodeMock = executeCodeService.executeCode as unknown as jest.Mock;
 const evaluateTestCaseMock = evaluateTestCasesService.evaluateTestCase as unknown as jest.Mock;
@@ -83,6 +84,15 @@ const testCases = [
     { name: 'two', input: '2', expectedOutput: '2' },
     { name: 'three', input: '3', expectedOutput: '3' }
 ];
+
+/**
+ * `CodeRunModel.findOne(...).sort(...).lean()` chain used to look up the last
+ * code the employee ran or submitted. Defaults to "nothing run yet".
+ */
+const mockLastSubmissionLookup = (doc: any) => {
+    const lean = jest.fn().mockResolvedValue(doc);
+    codeRunFindOneMock.mockReturnValue({ sort: jest.fn().mockReturnValue({ lean }) });
+};
 
 const setUpValidRequest = (): void => {
     courseTaskFindByIdMock.mockReturnValue({
@@ -127,6 +137,7 @@ const setUpValidRequest = (): void => {
     analyzeCodeQualityMock.mockResolvedValue(null);
     codeRunCreateMock.mockResolvedValue(undefined);
     codeRunFindOneAndUpdateMock.mockResolvedValue(undefined);
+    mockLastSubmissionLookup(null);
 };
 
 describe('runCodeService', () => {
@@ -228,6 +239,96 @@ describe('runCodeService', () => {
         expect(response).toEqual({ success: false, notAllTestsPassed: true });
         expect(codeRunCreateMock).not.toHaveBeenCalled();
         expect(codeRunFindOneAndUpdateMock).not.toHaveBeenCalled();
+    });
+
+    it('returns null as the last submission when the employee has never run anything', async () => {
+        const response = await runCodeService.runCode(
+            questionId,
+            languageId,
+            'console.log(1);',
+            employeeId,
+            'submit'
+        );
+
+        expect(response.lastSubmission).toBeNull();
+    });
+
+    it("returns the employee's last run or submission, across all questions", async () => {
+        const submittedAt = new Date('2026-01-05T10:00:00.000Z');
+        mockLastSubmissionLookup({
+            userId: employeeId,
+            taskId: '65f1a2b3c4d5e6f7890abcd3',
+            languageId,
+            sourceCode: 'console.log(42);',
+            passedCount: 3,
+            failedCount: 0,
+            score: 100,
+            status: 'ALL_PASSED',
+            type: 'run',
+            updatedAt: submittedAt
+        });
+
+        const response = await runCodeService.runCode(
+            questionId,
+            languageId,
+            'console.log(1);',
+            employeeId,
+            'submit'
+        );
+
+        // No `type` filter: the lookup must consider run snapshots too.
+        expect(codeRunFindOneMock).toHaveBeenCalledWith(
+            { userId: employeeId },
+            expect.objectContaining({ sourceCode: 1, type: 1, updatedAt: 1 })
+        );
+        expect(response.lastSubmission).toEqual({
+            employeeId,
+            questionId: '65f1a2b3c4d5e6f7890abcd3',
+            languageId,
+            code: 'console.log(42);',
+            passedTestCases: 3,
+            failedTestCases: 0,
+            score: 100,
+            status: 'ALL_PASSED',
+            type: 'run',
+            submittedAt
+        });
+        // The previous record is read before the new one is inserted.
+        expect(codeRunFindOneMock.mock.invocationCallOrder[0]).toBeLessThan(
+            codeRunCreateMock.mock.invocationCallOrder[0]
+        );
+    });
+
+    it('does not look up a previous run for a trial run', async () => {
+        const response = await runCodeService.runCode(
+            questionId,
+            languageId,
+            'console.log(1);',
+            employeeId
+        );
+
+        expect(codeRunFindOneMock).not.toHaveBeenCalled();
+        expect(response.lastSubmission).toBeNull();
+    });
+
+    it('still submits when the previous run lookup fails', async () => {
+        codeRunFindOneMock.mockImplementation(() => {
+            throw new Error('db unavailable');
+        });
+        const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
+
+        const response = await runCodeService.runCode(
+            questionId,
+            languageId,
+            'console.log(1);',
+            employeeId,
+            'submit'
+        );
+
+        expect(response.success).toBe(true);
+        expect(response.lastSubmission).toBeNull();
+        expect(codeRunCreateMock).toHaveBeenCalled();
+        expect(consoleErrorSpy).toHaveBeenCalled();
     });
 
     it('rejects a language name instead of passing it to the executor', async () => {

@@ -37,7 +37,7 @@ describe('submitCodeController', () => {
             body: { questionId, language: languageId, code },
             user: { userId: '65f1a2b3c4d5e6f7890abcd2' }
         } as unknown as Request;
-        runCodeMock.mockResolvedValue({ success: true, executionResult });
+        runCodeMock.mockResolvedValue({ success: true, executionResult, lastSubmission: null });
 
         await submitCodeController.submitCode(req, res);
 
@@ -52,7 +52,40 @@ describe('submitCodeController', () => {
         expect(mockJson).toHaveBeenCalledWith({
             success: true,
             message: CODING_QUESTION_SUCCESS_MESSAGES.SUBMIT_CODE_SUCCESS_MESSAGE,
-            data: executionResult
+            data: executionResult,
+            lastSubmission: null
+        });
+    });
+
+    it('returns the last code the employee ran alongside the result', async () => {
+        const questionId = '66d323456789abcdef123456';
+        const languageId = '65f1a2b3c4d5e6f7890abcd1';
+        const employeeId = '65f1a2b3c4d5e6f7890abcd2';
+        const executionResult = { questionId, language: 'javascript' };
+        const lastSubmission = {
+            employeeId,
+            questionId: '65f1a2b3c4d5e6f7890abcd3',
+            languageId,
+            code: 'console.log(42);',
+            passedTestCases: 3,
+            failedTestCases: 0,
+            score: 100,
+            status: 'SOME_FAILED',
+            type: 'run'
+        };
+        const req = {
+            body: { questionId, language: languageId, code: 'console.log(1);' },
+            user: { userId: employeeId }
+        } as unknown as Request;
+        runCodeMock.mockResolvedValue({ success: true, executionResult, lastSubmission });
+
+        await submitCodeController.submitCode(req, res);
+
+        expect(mockJson).toHaveBeenCalledWith({
+            success: true,
+            message: CODING_QUESTION_SUCCESS_MESSAGES.SUBMIT_CODE_SUCCESS_MESSAGE,
+            data: executionResult,
+            lastSubmission
         });
     });
 
