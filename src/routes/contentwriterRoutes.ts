@@ -252,6 +252,19 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *                   Use this when taskFile is not uploaded.
  *                 example: https://www.youtube.com/watch?v=example
  *
+ *               isCoding:
+ *                 type: boolean
+ *                 description: |
+ *                   Marks the task as a coding task.
+ *                   When true, `question` is required and no file or link is needed.
+ *                 example: true
+ *
+ *               question:
+ *                 type: string
+ *                 description: |
+ *                   The coding problem statement. Required when isCoding is true.
+ *                 example: Write a function to reverse a string.
+ *
  *               taskFile:
  *                 type: string
  *                 format: binary
@@ -420,6 +433,17 @@ contentwriterRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCou
  *               link:
  *                 type: string
  *                 description: Optional external link for the task content (used when no file is uploaded)
+ *               isCoding:
+ *                 type: boolean
+ *                 description: |
+ *                   Marks the task as a coding task.
+ *                   When true, `question` is required.
+ *                 example: true
+ *               question:
+ *                 type: string
+ *                 description: |
+ *                   The coding problem statement. Required when isCoding is true.
+ *                 example: Write a function to reverse a string.
  *     responses:
  *       200:
  *         description: Course task updated successfully
@@ -464,6 +488,12 @@ contentwriterRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCou
  *                     contentFileName:
  *                       type: string
  *                       example: nodejs-tutorial.mp4
+ *                     isCoding:
+ *                       type: boolean
+ *                       example: true
+ *                     question:
+ *                       type: string
+ *                       example: Write a function to reverse a string.
  *       400:
  *         description: Invalid input, status, or thumbnail type
  *       401:

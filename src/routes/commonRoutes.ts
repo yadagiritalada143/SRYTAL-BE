@@ -19,6 +19,14 @@ import getMyAssignedCoursesController from '../controllers/common/getMyAssignedC
 import getMyAssignedCourseByIdController from '../controllers/common/getMyAssignedCourseByIdController';
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
 import expertConsultationController from '../controllers/common/expertConsultationController';
+import addProgrammingLanguageController from '../controllers/common/addProgrammingLanguageController';
+import updateProgrammingLanguageController from '../controllers/common/updateProgrammingLanguageController';
+import getAllProgrammingLanguagesController from '../controllers/common/getAllProgrammingLanguagesController';
+import getProgrammingLanguageByIdController from '../controllers/common/getProgrammingLanguageByIdController';
+import deleteProgrammingLanguageController from '../controllers/common/deleteProgrammingLanguageController';
+import getCodingQuestionController from '../controllers/common/getCodingQuestionController';
+import runCodeController from '../controllers/common/runCodeController';
+import submitCodeController from '../controllers/common/submitCodeController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -1368,5 +1376,596 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *                   example: Failed to submit expert consultation request
  */
 commonRouter.post('/expertconsultation', expertConsultationController.createExpertConsultation);
+
+/**
+ * @swagger
+ * /addprogramminglanguage:
+ *   post:
+ *     summary: Add a new programming language
+ *     description: This API allows an authenticated user to create a new programming language in the system.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - languageName
+ *             properties:
+ *               languageName:
+ *                 type: string
+ *                 example: JavaScript
+ *     responses:
+ *       200:
+ *         description: Programming language added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language added successfully !!
+ *       500:
+ *         description: Error while adding programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while adding programming language !!
+ */
+commonRouter.post('/addprogramminglanguage', validateJWT, addProgrammingLanguageController.addProgrammingLanguage);
+
+
+/**
+ * @swagger
+ * /updateprogramminglanguage:
+ *   put:
+ *     summary: Update a programming language
+ *     description: This API allows an authenticated user to update an existing programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - languageName
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
+ *               languageName:
+ *                 type: string
+ *                 example: JavaScript
+ *     responses:
+ *       200:
+ *         description: Programming language updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language updated successfully !!
+ *       500:
+ *         description: Error while updating programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while updating programming language !!
+ */
+commonRouter.put('/updateprogramminglanguage', validateJWT, updateProgrammingLanguageController.updateProgrammingLanguage);
+
+/**
+ * @swagger
+ * /getallprogramminglanguages:
+ *   get:
+ *     summary: Get all programming languages
+ *     description: This API fetches all programming languages available in the system.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Programming languages fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Fetched all programming languages successfully !!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "65f1a2b3c4d5e6f7890abcd1"
+ *                       languageName:
+ *                         type: string
+ *                         example: JavaScript
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       500:
+ *         description: Error while fetching programming languages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while fetching all programming languages !!
+ */
+commonRouter.get('/getallprogramminglanguages', validateJWT, getAllProgrammingLanguagesController.getAllProgrammingLanguages);
+
+/**
+ * @swagger
+ * /getprogramminglanguagebyid/{id}:
+ *   get:
+ *     summary: Get a programming language by ID
+ *     description: This API fetches a single programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the programming language to fetch
+ *         example: "65f1a2b3c4d5e6f7890abcd1"
+ *     responses:
+ *       200:
+ *         description: Programming language fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Fetched programming language successfully !!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "65f1a2b3c4d5e6f7890abcd1"
+ *                     languageName:
+ *                       type: string
+ *                       example: JavaScript
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       404:
+ *         description: Programming language not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Programming language not found !!
+ *       500:
+ *         description: Error while fetching programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while fetching programming language !!
+ */
+commonRouter.get('/getprogramminglanguagebyid/:id', validateJWT, getProgrammingLanguageByIdController.getProgrammingLanguageById);
+
+/**
+ * @swagger
+ * /deleteprogramminglanguage/{id}:
+ *   delete:
+ *     summary: Delete a programming language by ID
+ *     description: This API deletes a single programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the programming language to delete
+ *         example: "65f1a2b3c4d5e6f7890abcd1"
+ *     responses:
+ *       200:
+ *         description: Programming language deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language deleted successfully !!
+ *       404:
+ *         description: Programming language not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Programming language not found !!
+ *       500:
+ *         description: Error while deleting programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while deleting programming language !!
+ */
+commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgrammingLanguageController.deleteProgrammingLanguage);
+
+/**
+ * @swagger
+ * /getCodingQuestion/{questionId}:
+ *   get:
+ *     summary: Open a coding question with its starter code
+ *     description: |
+ *       Returns the coding question problem statement, the allowed languages and
+ *       the starter code for the requested language (query param `language`, e.g.
+ *       `javascript`). Falls back to the first allowed language when no language
+ *       is provided and to a built-in starter template when the content writer
+ *       did not supply one. The question must belong to a course assigned to the
+ *       authenticated employee.
+ *     tags:
+ *       - Coding Question
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: questionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the coding question (course task)
+ *       - in: query
+ *         name: language
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: The programming language to view the starter code for
+ *         example: javascript
+ *     responses:
+ *       200:
+ *         description: Coding question fetched successfully.
+ *       400:
+ *         description: Not a coding question or invalid language.
+ *       403:
+ *         description: Question not part of the employee's assigned courses.
+ *       404:
+ *         description: Coding question not found.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get('/getCodingQuestion/:questionId', validateJWT, getCodingQuestionController.getCodingQuestion);
+
+/**
+ * @swagger
+ * /runcode:
+ *   post:
+ *     summary: Run employee code against a coding question
+ *     description: |
+ *       Executes the authenticated employee's submitted code for a coding
+ *       question. On the very first run for a question, test cases are generated
+ *       via OpenRouter and stored; later runs reuse them. The code is executed
+ *       against every test-case input on the Piston execution API, each test
+ *       case is reported as passed or failed (verdict always from the actual
+ *       execution, never the AI), the score is computed as
+ *       (passed / total) x 100 and an informational OpenRouter code-quality
+ *       evaluation is attached.
+ *     tags:
+ *       - Coding Question
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - questionId
+ *               - languageId
+ *               - code
+ *             properties:
+ *               questionId:
+ *                 type: string
+ *                 example: "66d323456789abcdef123456"
+ *               languageId:
+ *                 type: string
+ *                 description: ID of the selected programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
+ *               code:
+ *                 type: string
+ *                 example: "function isPalindrome(str) { const s = str.replace(/\\s/g, '').toLowerCase(); return s === s.split('').reverse().join(''); }"
+ *     responses:
+ *       200:
+ *         description: Code executed successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     questionId:
+ *                       type: string
+ *                     languageId:
+ *                       type: string
+ *                     totalTestCases:
+ *                       type: number
+ *                     passedTestCases:
+ *                       type: number
+ *                     failedTestCases:
+ *                       type: number
+ *                     score:
+ *                       type: number
+ *                       description: Execution score, (passed / total) x 100.
+ *                     results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           input:
+ *                             type: string
+ *                           expectedOutput:
+ *                             type: string
+ *                           actualOutput:
+ *                             type: string
+ *                           passed:
+ *                             type: boolean
+ *                           status:
+ *                             type: string
+ *                           errorDetails:
+ *                             type: string
+ *                     aiEvaluation:
+ *                       type: object
+ *                       nullable: true
+ *                       description: Informational code-quality analysis from OpenRouter.
+ *                       properties:
+ *                         score:
+ *                           type: number
+ *                         suggestions:
+ *                           type: array
+ *                           items:
+ *                             type: string
+ *                         failedTests:
+ *                           type: array
+ *                           items:
+ *                             type: string
+ *                         codingStandards:
+ *                           type: object
+ *                           properties:
+ *                             readability:
+ *                               type: string
+ *                             efficiency:
+ *                               type: string
+ *                             errorHandling:
+ *                               type: string
+ *                             namingConventions:
+ *                               type: string
+ *                         explanation:
+ *                           type: string
+ *       400:
+ *         description: Missing fields, invalid language, or invalid generated test cases.
+ *       403:
+ *         description: Question not part of the employee's assigned courses.
+ *       404:
+ *         description: Coding question not found.
+ *       409:
+ *         description: Test cases are still being generated.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
+
+/**
+ * @swagger
+ * /submitcode:
+ *   post:
+ *     summary: Submit final code for a coding question
+ *     description: |
+ *       The employee's final answer for a coding question. Runs the same
+ *       grading engine as Run Code (generate/reuse test cases -> Piston
+ *       execution -> compare results -> score -> OpenRouter code-quality
+ *       analysis) and stores the record as a `type: 'submit'` document in the
+ *       code-run collection. A submission is only accepted when every test case
+ *       passes — otherwise 400 is returned so the employee must fix the code
+ *       and re-run. The pass/fail verdicts always come from the actual
+ *       execution, never the AI. Course progress (task completion) is handled
+ *       separately by the frontend via the existing task-progress endpoint.
+ *     tags:
+ *       - Coding Question
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - questionId
+ *               - languageId
+ *               - code
+ *             properties:
+ *               questionId:
+ *                 type: string
+ *                 example: "66d323456789abcdef123456"
+ *               languageId:
+ *                 type: string
+ *                 description: ID of the selected programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
+ *               code:
+ *                 type: string
+ *                 example: "function isPalindrome(str) { const s = str.replace(/\\s/g, '').toLowerCase(); return s === s.split('').reverse().join(''); }"
+ *     responses:
+ *       200:
+ *         description: Code submitted successfully (same response shape as /runcode).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                   example: Code submitted successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     questionId:
+ *                       type: string
+ *                     languageId:
+ *                       type: string
+ *                     totalTestCases:
+ *                       type: number
+ *                     passedTestCases:
+ *                       type: number
+ *                     failedTestCases:
+ *                       type: number
+ *                     score:
+ *                       type: number
+ *                     results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     aiEvaluation:
+ *                       type: object
+ *                       nullable: true
+ *                 lastSubmission:
+ *                   type: object
+ *                   nullable: true
+ *                   description: The last code this employee ran or submitted, across all coding questions. Null if they have never run anything.
+ *                   properties:
+ *                     employeeId:
+ *                       type: string
+ *                     questionId:
+ *                       type: string
+ *                     languageId:
+ *                       type: string
+ *                     code:
+ *                       type: string
+ *                     passedTestCases:
+ *                       type: number
+ *                     failedTestCases:
+ *                       type: number
+ *                     score:
+ *                       type: number
+ *                     status:
+ *                       type: string
+ *                     type:
+ *                       type: string
+ *                       enum: [run, submit]
+ *                       description: Whether this record was a trial run or a final submission.
+ *                     submittedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Missing fields, invalid language, or invalid generated test cases.
+ *       403:
+ *         description: Question not part of the employee's assigned courses.
+ *       404:
+ *         description: Coding question not found.
+ *       409:
+ *         description: Test cases are still being generated.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.post('/submitcode', validateJWT, submitCodeController.submitCode);
 
 export default commonRouter;

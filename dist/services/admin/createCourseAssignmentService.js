@@ -22,7 +22,7 @@ const createCourseAssignment = async (courseId, employeeId, assignedByAdminId, d
             throw new Error(courseAssignmentMessages_1.COURSE_ASSIGNMENT_ERRORS_MESSAGES.COURSE_ASSIGNMENT_ALREADY_ASSIGNED_MESSAGE);
         }
         ;
-        const newCourseAssignment = new courseAssignmentModel_1.default({ courseId, employeeId, assignedByAdminId, status: 'Assigned', assignedAt: new Date(), dueDate, completedAt: null });
+        const newCourseAssignment = new courseAssignmentModel_1.default({ courseId, employeeId, assignedByAdminId, status: 'Assigned', assignedAt: new Date(), dueDate, completedAt: null, reminderScheduleStartDate: new Date() });
         const result = await newCourseAssignment.save();
         // Dispatch the assignment notification email. Failures here must never
         // break the assignment creation or the API response.

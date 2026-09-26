@@ -8,8 +8,18 @@ import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../..
 
 const addTaskToModule = async (req: Request, res: Response) => {
     try {
-        const { moduleId, taskName, taskDescription, link } = req.body;
+        const { moduleId, taskName, taskDescription, link, isCoding, question } = req.body;
         const status = 'ACTIVE';
+
+        // Coding tasks are flagged via isCoding (string from multipart form or boolean).
+        const isCodingTask = isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
+
+        if (isCodingTask) {
+            if (!question) {
+                return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE });
+            }
+        }
+
         //get uploaded files 
         //  taskFile       -> PDF, Word, Video, etc.
         //  thumbnailFile  -> JPG, PNG, WEBP, etc.
@@ -54,7 +64,7 @@ const addTaskToModule = async (req: Request, res: Response) => {
         }
 
 
-        if (!content) {
+        if (!isCodingTask && !content) {
             return res
             .status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_CONTENT_MESSAGE });
         }
@@ -69,6 +79,8 @@ const addTaskToModule = async (req: Request, res: Response) => {
             content,
             contentMimeType,
             contentFileName,
+            isCodingTask,
+            isCodingTask ? question : '',
         );
 
         if (responseAfteraddingCourseTask && responseAfteraddingCourseTask.id) {
@@ -78,6 +90,12 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 taskName: responseAfteraddingCourseTask.taskName,
                 taskDescription: responseAfteraddingCourseTask.taskDescription,
                 type: responseAfteraddingCourseTask.type,
+                content: responseAfteraddingCourseTask.content,
+                contentMimeType: responseAfteraddingCourseTask.contentMimeType,
+                contentFileName: responseAfteraddingCourseTask.contentFileName,
+                thumbnailPath: responseAfteraddingCourseTask.thumbnailPath,
+                isCoding: responseAfteraddingCourseTask.isCoding,
+                question: responseAfteraddingCourseTask.question,
             });
         }
 
