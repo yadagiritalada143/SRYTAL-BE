@@ -8,17 +8,20 @@ import {
 
 /**
  * Submit Code: the employee's final answer for a coding question. Runs the
- * exact same grading engine as Run Code (generate/reuse test cases -> Piston
+ * exact same grading engine as Run Code (generate/reuse test cases -> Wandbox
  * execution -> compare -> score -> AI quality analysis) but persists the
- * result as a `type: 'submit'` document in the code-run collection. Course
- * progress (task-completion) is intentionally NOT touched here — the frontend
- * drives that separately through the existing task-progress endpoint.
+ * result as a `type: 'submit'` document in the code-run collection. The
+ * response also carries `lastSubmission`: the last code that employee ran or
+ * submitted (any coding question, newest first), or null if they have never
+ * run anything. Course progress (task-completion) is intentionally NOT touched
+ * here - the frontend drives that separately through the existing task-progress
+ * endpoint.
  */
 const submitCode = async (req: Request, res: Response) => {
     try {
-        const { questionId, language, code } = req.body;
+        const { questionId, language: languageId, code } = req.body;
 
-        if (!questionId || !language || typeof code !== 'string' || code.trim() === '') {
+        if (!questionId || typeof languageId !== 'string' || languageId.trim() === '' || typeof code !== 'string' || code.trim() === '') {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: CODING_QUESTION_ERROR_MESSAGES.RUN_CODE_MISSING_FIELDS_MESSAGE
@@ -27,7 +30,7 @@ const submitCode = async (req: Request, res: Response) => {
 
         const response = await runCodeService.runCode(
             questionId,
-            language,
+            languageId,
             code,
             req.user?.userId as string,
             'submit'
@@ -73,7 +76,8 @@ const submitCode = async (req: Request, res: Response) => {
         return res.status(HTTP_STATUS.OK).json({
             success: true,
             message: CODING_QUESTION_SUCCESS_MESSAGES.SUBMIT_CODE_SUCCESS_MESSAGE,
-            data: response.executionResult
+            data: response.executionResult,
+            lastSubmission: response.lastSubmission ?? null
         });
     } catch (error: any) {
         if (

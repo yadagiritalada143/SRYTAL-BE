@@ -4,7 +4,7 @@ export interface ICodingQuestionDetail {
     questionId: string;
     question: string;
     allowedLanguages: string[];
-    language: string;
+    languageId: string;
     starterCode: string;
 }
 
@@ -43,13 +43,30 @@ export interface IAiCodeQualityEvaluation {
 
 export interface IRunCodeExecutionResult {
     questionId: string;
-    language: string;
+    languageId: string;
     totalTestCases: number;
     passedTestCases: number;
     failedTestCases: number;
     score: number;
     results: ICodeRunTestCaseResult[];
     aiEvaluation: IAiCodeQualityEvaluation | null;
+}
+
+/**
+ * The last code an employee ran or submitted, surfaced alongside a fresh
+ * submission so the client can restore what they were working on.
+ */
+export interface ILastCodeSubmission {
+    employeeId: string;
+    questionId: string;
+    languageId: string;
+    code: string;
+    passedTestCases: number;
+    failedTestCases: number;
+    score: number;
+    status: string;
+    type: 'run' | 'submit';
+    submittedAt?: Date;
 }
 
 export interface IRunCodeResponse {
@@ -60,4 +77,5 @@ export interface IRunCodeResponse {
     invalidLanguage?: boolean;
     notAllTestsPassed?: boolean;
     executionResult?: IRunCodeExecutionResult;
+    lastSubmission?: ILastCodeSubmission | null;
 }

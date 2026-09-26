@@ -1,3 +1,4 @@
+import { Types } from 'mongoose';
 import CourseTaskModel from '../../model/courseTaskModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseAssignment from '../../model/courseAssignmentModel';
@@ -7,11 +8,13 @@ import generateTestCasesService, { MIN_TEST_CASE_COUNT } from './generateTestCas
 import executeCodeService from './executeCodeService';
 import evaluateTestCasesService from './evaluateTestCasesService';
 import codeQualityAnalysisService from './codeQualityAnalysisService';
-import { isSupportedLanguage } from '../../util/languageUtils';
+import getProgrammingLanguageByIdService from './getProgrammingLanguageByIdService';
+import { normalizeLanguage } from '../../util/languageUtils';
 import {
     IRunCodeResponse,
     ICodeRunTestCaseResult,
-    IAiCodeQualityEvaluation
+    IAiCodeQualityEvaluation,
+    ILastCodeSubmission
 } from '../../interfaces/codingQuestion';
 
 const GENERATION_WAIT_ATTEMPTS = 12;
@@ -144,18 +147,68 @@ const ensureTestCases = async (
 };
 
 /**
+ * The last code the employee ran or submitted, across every coding question -
+ * not just the one being submitted now. Both record types live in the same
+ * collection, so a single lookup sorted by `updatedAt` yields whichever was
+ * touched most recently: `type: 'run'` snapshots (one per question, upserted
+ * and re-stamped on every trial run) and `type: 'submit'` history. Sorting on
+ * `updatedAt` rather than `createdAt` matters for runs, because re-running a
+ * question bumps `updatedAt` while leaving the original `createdAt` intact.
+ *
+ * Read before the new submission is persisted so the value reported back is the
+ * *previous* one. Returns null when the employee has never run anything.
+ */
+const getLastSubmission = async (employeeId: string): Promise<ILastCodeSubmission | null> => {
+    const doc: any = await CodeRunModel.findOne(
+        { userId: employeeId },
+        {
+            userId: 1,
+            taskId: 1,
+            languageId: 1,
+            sourceCode: 1,
+            passedCount: 1,
+            failedCount: 1,
+            score: 1,
+            status: 1,
+            type: 1,
+            updatedAt: 1
+        }
+    )
+        .sort({ updatedAt: -1 })
+        .lean();
+
+    if (!doc) {
+        return null;
+    }
+
+    return {
+        employeeId: String(doc.userId),
+        questionId: String(doc.taskId),
+        languageId: String(doc.languageId),
+        code: doc.sourceCode,
+        passedTestCases: doc.passedCount,
+        failedTestCases: doc.failedCount,
+        score: doc.score,
+        status: doc.status,
+        type: doc.type,
+        submittedAt: doc.updatedAt
+    };
+};
+
+/**
  * The shared grading engine behind both Run Code and Submit Code: validates
  * the request, resolves (or generates-and-stores) the coding-question test
  * cases, runs the employee's submitted code against every test-case input on
- * Piston, evaluates each result (compares expected vs actual output), computes
+ * Wandbox, evaluates each result (compares expected vs actual output), computes
  * the score, gathers an informational OpenRouter code-quality evaluation
  * (never overriding the execution verdicts), persists the run
  * (`type: 'run'` for a trial run, `type: 'submit'` for a final submission)
- * and returns the combined result.
+ * and returns the combined result. Submissions additionally report the last
+ * code the employee ran or submitted via `lastSubmission`.
  */
 const runCode = async (
     questionId: string,
-    language: string,
+    languageId: string,
     code: string,
     employeeId: string,
     runType: 'run' | 'submit' = 'run'
@@ -182,7 +235,22 @@ const runCode = async (
         return { success: false, notAssigned: true };
     }
 
-    if (!isSupportedLanguage(language)) {
+    if (typeof languageId !== 'string' || !Types.ObjectId.isValid(languageId)) {
+        return { success: false, invalidLanguage: true };
+    }
+
+    const programmingLanguage = await getProgrammingLanguageByIdService.getProgrammingLanguageById(languageId);
+
+    if (!programmingLanguage) {
+        return { success: false, invalidLanguage: true };
+    }
+
+    const resolvedLanguage =
+        typeof programmingLanguage.languageName === 'string'
+            ? normalizeLanguage(programmingLanguage.languageName)
+            : undefined;
+
+    if (!resolvedLanguage) {
         return { success: false, invalidLanguage: true };
     }
 
@@ -190,7 +258,7 @@ const runCode = async (
         String(task._id),
         employeeId,
         task.question || '',
-        language
+        resolvedLanguage
     );
 
     const results: ICodeRunTestCaseResult[] = await mapWithConcurrency(
@@ -198,7 +266,7 @@ const runCode = async (
         TEST_CASE_EXECUTION_CONCURRENCY,
         async (testCase: any) => {
             const execution = await executeCodeService.executeCode({
-                language,
+                language: resolvedLanguage,
                 code,
                 input: testCase.input
             });
@@ -223,7 +291,7 @@ const runCode = async (
         aiEvaluation = await codeQualityAnalysisService.analyzeCodeQuality({
             userId: employeeId,
             question: task.question || '',
-            language,
+            language: resolvedLanguage,
             code,
             results
         });
@@ -232,25 +300,49 @@ const runCode = async (
         console.error(`Code-quality analysis skipped: ${error.message}`);
     }
 
-    await CodeRunModel.create({
+    const executionRecord = {
         userId: employeeId,
         taskId: questionId,
-        language,
+        languageId,
         sourceCode: code,
         results,
         passedCount: passed,
         failedCount: failed,
         score,
         aiEvaluation,
-        status: overallStatus,
-        type: runType
-    } as any);
+        status: overallStatus
+    };
+
+    let lastSubmission: ILastCodeSubmission | null = null;
+
+    if (runType === 'submit') {
+        // Fetch the previous run/submission before inserting the new one, so the
+        // employee gets their prior code back rather than the current one.
+        try {
+            lastSubmission = await getLastSubmission(employeeId);
+        } catch (error: any) {
+            // Supplementary context only: never fail a valid submission for it.
+            console.error(`Last submission lookup skipped: ${error.message}`);
+        }
+
+        await CodeRunModel.create({
+            ...executionRecord,
+            type: 'submit'
+        } as any);
+    } else {
+        await CodeRunModel.findOneAndUpdate(
+            { userId: employeeId, taskId: questionId, type: 'run' },
+            { $set: { ...executionRecord, type: 'run' } },
+            { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true }
+        );
+    }
 
     return {
         success: true,
+        lastSubmission,
         executionResult: {
             questionId,
-            language,
+            language: resolvedLanguage,
             totalTestCases: total,
             passedTestCases: passed,
             failedTestCases: failed,

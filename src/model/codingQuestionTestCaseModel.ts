@@ -21,7 +21,7 @@ const CodingQuestionTestCaseSchema = new mongoose.Schema({
     generatedAt: { type: mongoose.Schema.Types.Date, default: null }
 },
     {
-        collection: 'coding-question-testcases',
+        collection: 'coding-task-test-cases',
         timestamps: true,
         toObject: { virtuals: true },
         toJSON: { virtuals: true }
