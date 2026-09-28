@@ -3,8 +3,8 @@ import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseAssignment from '../../model/courseAssignmentModel';
 import ProgrammingLanguages from '../../model/programmingLanguagesModel';
 import CodeRunModel from '../../model/codeRunModel';
-import { normalizeLanguage, isSupportedLanguage, resolveStarterCode } from '../../util/languageUtils';
-import { LANGUAGE_MAP } from '../../types/languageExecutionMap';
+import { normalizeLanguage, isSupportedLanguage, resolveStarterCode, getFallbackLanguages } from '../../util/languageUtils';
+import executeCodeService from './executeCodeService';
 import { IFetchCodingQuestionResponse, ILastSubmittedCode } from '../../interfaces/codingQuestion';
 
 /**
@@ -51,7 +51,13 @@ const getCodingQuestion = async (
         }
     }
 
-    const languageDocs: any[] = await ProgrammingLanguages.find({}).select('_id languageName').lean();
+    // Only active languages are offered to employees (the seed marks
+    // non-executable Wandbox labels such as CPP/OpenSSL inactive). `$ne: false`
+    // keeps legacy docs that predate the isActive field working.
+    const languageDocs: any[] = await ProgrammingLanguages.find({ isActive: { $ne: false } })
+        .select('_id languageName canonicalKey')
+        .sort({ displayOrder: 1 })
+        .lean();
     const languageIdByCanonical: Record<string, string> = {};
     const collectionLanguages: string[] = [];
     for (const languageDoc of languageDocs || []) {
@@ -60,12 +66,12 @@ const getCodingQuestion = async (
             continue;
         }
         collectionLanguages.push(name);
-        const canonical = normalizeLanguage(name) || name.toLowerCase();
+        const canonicalKey = (languageDoc?.canonicalKey || '').trim();
+        const canonical = canonicalKey || normalizeLanguage(name) || name.toLowerCase();
         languageIdByCanonical[canonical] = String(languageDoc._id);
     }
 
-    const fallbackLanguages = [...new Set(Object.values(LANGUAGE_MAP))]
-        .map((language) => language.charAt(0).toUpperCase() + language.slice(1));
+    const fallbackLanguages = getFallbackLanguages();
 
     const availableLanguages = collectionLanguages.length > 0 ? collectionLanguages : fallbackLanguages;
 
@@ -92,6 +98,18 @@ const getCodingQuestion = async (
         }
     }
 
+    // A writer-supplied starter wins; every other language falls back to Wandbox's
+    // own hello-world template (see getWandboxStarter), then '' (empty editor).
+    let starterCode = resolveStarterCode(task, resolvedLanguage);
+    if (!starterCode) {
+        try {
+            starterCode = await executeCodeService.getWandboxStarter(resolvedLanguage);
+        } catch (error: any) {
+            console.error(`Dynamic starter resolution failed for '${resolvedLanguage}': ${error.message}`);
+            starterCode = '';
+        }
+    }
+
     return {
         success: true,
         question: {
@@ -100,7 +118,7 @@ const getCodingQuestion = async (
             allowedLanguages: availableLanguages,
             language: resolvedLanguage,
             languageId: resolvedLanguageId,
-            starterCode: resolveStarterCode(task, resolvedLanguage),
+            starterCode,
             lastSubmittedCode
         }
     };

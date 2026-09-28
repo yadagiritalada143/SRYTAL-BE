@@ -10,7 +10,8 @@
     "test": "jest",
     "coverage": "jest --coverage",
     "executeInsertScript": "ts-node -r dotenv/config src/script-executors/executeInsertScripts.ts",
-    "executeUpdateScript": "ts-node -r dotenv/config src/script-executors/executeUpdateScripts.ts"
+    "executeUpdateScript": "ts-node -r dotenv/config src/script-executors/executeUpdateScripts.ts",
+    "seed:wandbox": "node scripts/seed-wandbox-languages.js"
   },
   "keywords": [
     "srytal"

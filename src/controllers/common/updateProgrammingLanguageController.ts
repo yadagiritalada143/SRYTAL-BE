@@ -4,8 +4,14 @@ import { PROGRAMMING_LANGUAGES_SUCCESS_MESSAGES, PROGRAMMING_LANGUAGES_ERROR_MES
 
 const updateProgrammingLanguage = async (req: Request, res: Response): Promise<Response> => {
     try {
-        const { id, languageName } = req.body;
-        const result = await updateProgrammingLanguageService.updateProgrammingLanguage(id, languageName);
+        const { id, languageName, canonicalKey, wandboxLabel, isActive, isExecutable, displayOrder } = req.body;
+        const result = await updateProgrammingLanguageService.updateProgrammingLanguage(id, languageName, {
+            ...(canonicalKey !== undefined ? { canonicalKey } : {}),
+            ...(wandboxLabel !== undefined ? { wandboxLabel } : {}),
+            ...(isActive !== undefined ? { isActive } : {}),
+            ...(isExecutable !== undefined ? { isExecutable } : {}),
+            ...(displayOrder !== undefined ? { displayOrder } : {})
+        });
         return res.status(HTTP_STATUS.OK).json({ success: true, message: PROGRAMMING_LANGUAGES_SUCCESS_MESSAGES.PROGRAMMING_LANGUAGE_UPDATE_SUCCESS_MESSAGE, result });
 
     } catch (error: any) {

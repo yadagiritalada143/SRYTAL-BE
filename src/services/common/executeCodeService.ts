@@ -1,35 +1,43 @@
 import axios from 'axios';
 import ts from 'typescript';
 import { LANGUAGE_MAP } from '../../types/languageExecutionMap';
+import { isExecutableLanguage, getWandboxLabel } from '../../util/languageUtils';
 
 const WANDBOX_URL = 'https://wandbox.org/api/compile.json';
 const WANDBOX_COMPILER_LIST_URL = 'https://wandbox.org/api/list.json';
 const WANDBOX_REQUEST_TIMEOUT_MS = 20000;
+const WANDBOX_SLOW_REQUEST_TIMEOUT_MS = 60000;
 const WANDBOX_MAX_ATTEMPTS = 3;
 const WANDBOX_RETRY_DELAY_MS = 500;
 const WANDBOX_COMPILER_CACHE_MS = 10 * 60 * 1000;
 
+/*
+ * Compilers that routinely exceed the 20s default because their cold compile
+ * is heavy (measured in seconds: Go ~30-35, Rust ~31, Haskell ~23, Zig ~20).
+ * They get a longer per-attempt timeout; counting on retries instead is
+ * pointless because retrying a timeout just burns another 20s.
+ */
+const WANDBOX_SLOW_COMPILE_LANGUAGES = new Set(['go', 'rust', 'haskell', 'zig', 'swift']);
+
+const getRequestTimeoutMs = (canonicalKey: string): number =>
+    WANDBOX_SLOW_COMPILE_LANGUAGES.has(canonicalKey)
+        ? WANDBOX_SLOW_REQUEST_TIMEOUT_MS
+        : WANDBOX_REQUEST_TIMEOUT_MS;
+
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * Wandbox compilers for the languages we expose. Wandbox's public API needs no
- * API key or IP whitelist, so code execution works locally and on serverless
- * hosting (Vercel) without running any extra infrastructure. TypeScript is
- * transpiled to plain JavaScript first and then run on the Node.js runtime.
+ * Execution runs on Wandbox, whose public API needs no API key or IP whitelist,
+ * so code execution works locally and on serverless hosting (Vercel) without
+ * any extra infrastructure. TypeScript is transpiled to plain JavaScript first
+ * and then run on the Node.js runtime (the type-script compiler on Wandbox has
+ * no Node type definitions, which breaks `require`/node imports).
  *
- * Compiler versions are NOT hardcoded here because Wandbox can add/remove
- * compiler versions. The currently available compiler is resolved dynamically
- * from Wandbox's compiler list API.
+ * The language whitelist lives in LANGUAGE_REGISTRY (see languageExecutionMap):
+ * every canonical key resolves its Wandbox label there. Compiler VERSIONS are
+ * never hardcoded - Wandbox adds/removes them constantly, so the current
+ * compiler for a language is resolved dynamically from the compiler list API.
  */
-export const WANDBOX_COMPILER_MAP: Record<string, string> = {
-    javascript: 'JavaScript',
-    python: 'Python',
-    typescript: 'JavaScript',
-    java: 'Java',
-    c: 'C',
-    'c++': 'C++'
-};
-
 interface IWandboxCompiler {
     name: string;
     version?: string;
@@ -64,8 +72,17 @@ const getWandboxCompilers = async (): Promise<IWandboxCompiler[]> => {
     return wandboxCompilerCache;
 };
 
-const getWandboxCompiler = async (language: string): Promise<string | null> => {
-    const expectedLanguage = WANDBOX_COMPILER_MAP[language];
+/*
+ * Resolves the Wandbox compiler for a CANONICAL language key (e.g. 'go',
+ * 'c++'). The expected label comes from the registry; TypeScript is special -
+ * it is transpiled locally and executed on the JavaScript/Node runtime, so it
+ * resolves to the 'JavaScript' label rather than Wandbox's TypeScript compiler.
+ */
+const getWandboxCompiler = async (canonicalKey: string): Promise<string | null> => {
+    const expectedLanguage =
+        canonicalKey === 'typescript'
+            ? 'JavaScript'
+            : getWandboxLabel(canonicalKey);
 
     if (!expectedLanguage) {
         return null;
@@ -86,11 +103,51 @@ const getWandboxCompiler = async (language: string): Promise<string | null> => {
     /*
      * Wandbox can have multiple compiler versions for the same language.
      *
-     * Prefer the compiler whose name contains the latest-looking version.
-     * The compiler list returned by Wandbox is used instead of hardcoding
-     * versions such as nodejs-20.17.0 or cpython-3.12.7.
+     * Order: prefer a stable (non-head) release over pre-release '-head'
+     * compilers, then any compiler whitelisted in LANGUAGE_COMPILER_PREFERENCES,
+     * finally the newest version overall. The compiler list returned by Wandbox
+     * is used instead of hardcoding versions such as nodejs-20.17.0 or
+     * cpython-3.12.7.
      */
+    /*
+     * Preference carve-outs for boxes Wandbox broke (verified 2026-09 with the
+     * language's own starter AND minimal code - the chosen newest-stable
+     * compiler fails on any input):
+     *   python - prefer CPython over PyPy (the numeric version sort alone picks
+     *            PyPy because 'v7.3.17' sorts above '3.14.0');
+     *   csharp - dotnetcore-8's box dies with sandbox exit 153 (file-size
+     *            limit) on any code; dotnetcore-6 and mono both work;
+     *   scala  - scala-3.5's box dies with exit 126 on any code; 3.3/2.13 work.
+     * If the preferred version disappears, the newest-stable fallback still
+     * applies, so Wandbox housekeeping cannot break resolution.
+     */
+    const LANGUAGE_COMPILER_PREFERENCES: Record<string, string[]> = {
+        python: ['cpython'],
+        csharp: ['dotnetcore-6'],
+        scala: ['scala-3.3']
+    };
+
     const sortedCompilers = [...matchingCompilers].sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+
+        const headDifference =
+            (/(^|-)head(-|$)/i.test(nameA) ? 1 : 0) -
+            (/(^|-)head(-|$)/i.test(nameB) ? 1 : 0);
+        if (headDifference !== 0) {
+            return headDifference;
+        }
+
+        const preferences = LANGUAGE_COMPILER_PREFERENCES[canonicalKey] || [];
+        const fallbackRank = preferences.length + 1;
+        const rankA = preferences.findIndex((token) => nameA.includes(token));
+        const rankB = preferences.findIndex((token) => nameB.includes(token));
+        const normalizedA = rankA === -1 ? fallbackRank : rankA;
+        const normalizedB = rankB === -1 ? fallbackRank : rankB;
+        if (normalizedA !== normalizedB) {
+            return normalizedA - normalizedB;
+        }
+
         const versionA = String(a.version || '');
         const versionB = String(b.version || '');
 
@@ -101,6 +158,118 @@ const getWandboxCompiler = async (language: string): Promise<string | null> => {
     });
 
     return sortedCompilers[0].name;
+};
+
+const WANDBOX_TEMPLATE_URL = 'https://wandbox.org/api/template/';
+
+const WANDBOX_TEMPLATE_BANNER_RE = /for wandbox/i;
+const WANDBOX_TEMPLATE_BLURB_RE = /^[ \t]*(?:\/\/|#|;|--|%|"|\(\*)\s*.*(?:references?|documents?):/i;
+
+/**
+ * Strips Wandbox's branding from a hello-world template: the leading "This
+ * file is ... for wandbox." banner comment (keeping a Bash shebang above it)
+ * and the trailing "X references:" blurb. Returns the bare runnable snippet.
+ */
+export const cleanWandboxTemplate = (template: string): string => {
+    if (!template) {
+        return '';
+    }
+
+    let lines = template.split('\n');
+
+    // The banner is always the first line, or the second when a shebang
+    // (#!/bin/bash) precedes it - never anywhere deeper in the code.
+    const bannerIndex = WANDBOX_TEMPLATE_BANNER_RE.test(lines[0])
+        ? 0
+        : /^#!/.test(lines[0]) && WANDBOX_TEMPLATE_BANNER_RE.test(lines[1])
+            ? 1
+            : -1;
+    if (bannerIndex !== -1) {
+        lines.splice(bannerIndex, 1);
+    }
+
+    const blurbStart = lines.findIndex((line) => WANDBOX_TEMPLATE_BLURB_RE.test(line));
+    if (blurbStart !== -1) {
+        lines = lines.slice(0, blurbStart);
+    }
+
+    return lines.join('\n').trim() + '\n';
+};
+
+// Failures ('') are cached only briefly so a transient Wandbox blip never
+// zombies a language's boilerplate for 10 minutes.
+const WANDBOX_STARTER_FAILURE_CACHE_MS = 60 * 1000;
+
+const wandboxStarterCache: Record<string, { code: string; time: number; ttl: number }> = {};
+
+/**
+ * Returns the current "Hello, world!" template Wandbox ships for a canonical
+ * language key, with Wandbox's banner/trailing blurb stripped. Used as the
+ * starter boilerplate for any language without a writer-supplied starter.
+ * Successes are cached for the same duration as the compiler list; failures
+ * for a minute so they are retried soon after. Returns '' when the language is
+ * unknown or Wandbox cannot be reached, so callers fall back to their own
+ * boilerplate without surfacing an error.
+ */
+export const getWandboxStarter = async (canonicalKey: string): Promise<string> => {
+    if (!canonicalKey) {
+        return '';
+    }
+
+    const now = Date.now();
+    const cached = wandboxStarterCache[canonicalKey];
+    if (cached && now - cached.time < cached.ttl) {
+        return cached.code;
+    }
+
+    const cacheResult = (code: string) => {
+        wandboxStarterCache[canonicalKey] = {
+            code,
+            time: now,
+            ttl: code ? WANDBOX_COMPILER_CACHE_MS : WANDBOX_STARTER_FAILURE_CACHE_MS
+        };
+        return code;
+    };
+
+    let compiler: string | null = null;
+    try {
+        compiler = await getWandboxCompiler(canonicalKey);
+    } catch (error: any) {
+        console.error(`Failed to resolve Wandbox compiler for starter: ${error.message}`);
+        return cacheResult('');
+    }
+
+    if (!compiler) {
+        return cacheResult('');
+    }
+
+    let templateName: string | undefined;
+    try {
+        const compilers = await getWandboxCompilers();
+        templateName = compilers.find(
+            (entry) => entry.name === compiler && Array.isArray(entry.templates) && entry.templates.length > 0
+        )?.templates?.[0];
+    } catch (error: any) {
+        console.error(`Failed to resolve Wandbox starter template: ${error.message}`);
+        return cacheResult('');
+    }
+
+    if (!templateName) {
+        return cacheResult('');
+    }
+
+    try {
+        const response = await axios.get(
+            `${WANDBOX_TEMPLATE_URL}${encodeURIComponent(templateName)}`,
+            { timeout: WANDBOX_REQUEST_TIMEOUT_MS }
+        );
+        return cacheResult(
+            cleanWandboxTemplate(String(response.data?.code || ''))
+        );
+    } catch (error: any) {
+        console.error(`Failed to fetch Wandbox starter template '${templateName}': ${error.message}`);
+        return cacheResult('');
+    }
 };
 
 export type ExecutionStatus =
@@ -145,6 +314,17 @@ const executeCode = async ({
             stderr: '',
             compilationError: null,
             runtimeError: 'Unsupported or invalid programming language.',
+            status: 'INVALID_LANGUAGE',
+            executionTimeMs: 0
+        };
+    }
+
+    if (!isExecutableLanguage(normalizedLanguage)) {
+        return {
+            stdout: '',
+            stderr: '',
+            compilationError: null,
+            runtimeError: `The language '${normalizedLanguage}' is not executable.`,
             status: 'INVALID_LANGUAGE',
             executionTimeMs: 0
         };
@@ -267,7 +447,7 @@ const executeOnWandbox = async ({
                     'compiler-option-raw': '',
                     save: false
                 },
-                { timeout: WANDBOX_REQUEST_TIMEOUT_MS }
+{ timeout: getRequestTimeoutMs(language) }
             );
 
             const executionTimeMs = Date.now() - startedAt;
@@ -419,4 +599,4 @@ const isTransientWandboxError = (error: any): boolean => {
     );
 };
 
-export default { executeCode };
+export default { executeCode, getWandboxStarter, cleanWandboxTemplate };
