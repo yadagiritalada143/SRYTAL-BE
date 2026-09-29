@@ -10,9 +10,9 @@
  *                        execability. This is the whitelist that decides what
  *                        may be executed; anything not listed is rejected.
  *   LANGUAGE_FILE_EXTENSIONS - file extension per canonical key.
- * Starter boilerplate is NOT hardcoded: it is fetched live from Wandbox's
- * template endpoint for every language (see getWandboxStarter), falling back
- * to a writer-supplied starter when present.
+ * Starter boilerplate is NOT hardcoded: it is generated per question + language
+ * via OpenRouter and cached in the task's starterCode array; a writer-supplied
+ * starter wins over a generated one.
  */
 
 export interface ILanguageRegistryEntry {

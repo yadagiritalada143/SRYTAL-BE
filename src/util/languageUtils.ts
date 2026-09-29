@@ -47,10 +47,10 @@ export const getFallbackLanguages = (): string[] =>
     getExecutableCanonicalKeys().map((key) => LANGUAGE_REGISTRY[key].displayName);
 
 /**
- * Resolves the starter code shown for a language: only a content-writer
- * supplied starter is used here. Anything else (including Wandbox's own
- * hello-world background) is handled by the caller via getWandboxStarter.
- * Returns '' when no writer starter exists.
+ * Resolves the starter code shown for a language from the task's starterCode
+ * array: a content-writer supplied starter wins, and AI-generated skeletons are
+ * cached into the same array (keyed by the canonical language key). Returns ''
+ * when no entry exists so callers can trigger AI generation.
  */
 export const resolveStarterCode = (task: any, language: string): string => {
     const normalized = normalizeLanguage(language) || '';

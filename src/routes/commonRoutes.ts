@@ -24,7 +24,7 @@ import updateProgrammingLanguageController from '../controllers/common/updatePro
 import getAllProgrammingLanguagesController from '../controllers/common/getAllProgrammingLanguagesController';
 import getProgrammingLanguageByIdController from '../controllers/common/getProgrammingLanguageByIdController';
 import deleteProgrammingLanguageController from '../controllers/common/deleteProgrammingLanguageController';
-import getCodingQuestionController from '../controllers/common/getCodingQuestionController';
+import getQuestionController from '../controllers/common/getQuestionController';
 import runCodeController from '../controllers/common/runCodeController';
 import submitCodeController from '../controllers/common/submitCodeController';
 
@@ -1683,15 +1683,17 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
 
 /**
  * @swagger
- * /getCodingQuestion/{questionId}:
+ * /getquestion/{id}:
  *   get:
- *     summary: Open a coding question with its starter code
+ *     summary: Open a coding question (languages, starter, last submission)
  *     description: |
- *       Returns the coding question problem statement, the allowed languages and
- *       the starter code for the requested language (query param `language`, e.g.
- *       `javascript`). Falls back to the first allowed language when no language
- *       is provided and to a built-in starter template when the content writer
- *       did not supply one. The question must belong to a course assigned to the
+ *       Returns everything the editor needs for the coding question: its id, the
+ *       allowed languages, and the resolved language (query param
+ *       `language`, e.g. `javascript`; falls back to the first allowed language
+ *       when omitted) with its id. The editor body is `lastSubmittedCode` when the
+ *       employee has already submitted that language, otherwise the starter code:
+ *       writer-supplied first, then an AI-generated (cached) question + language
+ *       skeleton. The question must belong to a course assigned to the
  *       authenticated employee.
  *     tags:
  *       - Coding Question
@@ -1699,7 +1701,7 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
  *       - BearerAuth: []
  *     parameters:
  *       - in: path
- *         name: questionId
+ *         name: id
  *         required: true
  *         schema:
  *           type: string
@@ -1709,11 +1711,46 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
  *         required: false
  *         schema:
  *           type: string
- *         description: The programming language to view the starter code for
- *         example: javascript
+ *         description: The programming language canonical key or friendly name (e.g. `python`). Omit or use `languageId` instead.
+ *         example: python
+ *       - in: query
+ *         name: languageId
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: The programming-language Mongo _id. Wins over `language` when both are provided.
+ *         example: 60f7a1b2c3d4e5f6a7b8c9d0
  *     responses:
  *       200:
  *         description: Coding question fetched successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 questionId:
+ *                   type: string
+ *                   description: The coding question (course task) id
+ *                 allowedLanguages:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                 language:
+ *                   type: string
+ *                 languageId:
+ *                   type: string
+ *                 starterCode:
+ *                   type: string
+ *                 lastSubmittedCode:
+ *                   type: object
+ *                   nullable: true
+ *                   properties:
+ *                     language:
+ *                       type: string
+ *                     code:
+ *                       type: string
  *       400:
  *         description: Not a coding question or invalid language.
  *       403:
@@ -1723,7 +1760,7 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
  *       500:
  *         description: Server error.
  */
-commonRouter.get('/getCodingQuestion/:questionId', validateJWT, getCodingQuestionController.getCodingQuestion);
+commonRouter.get('/getquestion/:id', validateJWT, getQuestionController.getQuestion);
 
 /**
  * @swagger
