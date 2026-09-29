@@ -16,10 +16,10 @@ const inFlightGenerations: Record<string, Promise<string> | undefined> = {};
 const generationKey = (taskId: string, canonicalKey: string) => `${taskId}:${canonicalKey}`;
 
 const REASONING_PROSE_RE =
-    /\b(we? need|the prompt|the problem|let me|but |however|could (also|be)|probably|likely|might|may|should |would |sound like|require|Requisit)\b/i;
+    /\b(we? need|the prompt|the problem|let me|but |however|could (also|be)|probably|likely|might|may|should |would |sound like|require|Requisit|here is|below is|the answer)\b/i;
 
 const STARTER_SIGNATURE_RE =
-    /\b(function|def|class|public|private|package|sub|defun|defmodule|fn|func|proc|program|module|import|include|using|namespace|export)\b|#include|^#!|\b(select|echo|print)\s*\(|void main|int main/;
+    /\b(function|def|class|public|private|package|sub|defun|defmodule|fn|func|proc|program|module|import|include|using|namespace|export|static|final|async|await)\b|#include|#import|^#!|\b(select|echo|print)\s*\(|void main|int main|main\s*\(|__name__|System\.out|Console\.|puts\(|printf\(/;
 
 const looksLikeStarterCode = (code: string): boolean => {
     const trimmed = (code || '').trim();
@@ -91,6 +91,7 @@ ${task.question || ''}
 Language: ${displayLanguage}
 
 Return ONLY the starter code. Requirements:
+- Output the language's standard skeleton entry point, not just a bare signature: C needs the usual #include lines plus int main(void) { ... }, Python needs the class Solution + method, Java/C#/C++ need the class with a public static main, JavaScript/TypeScript need function or class + method.
 - Correct function or class+method signature derived from the problem, with language-idiomatic type hints (JSDoc @param/@return for JavaScript/TypeScript, :type/:rtype docstring for Python, etc).
 - Empty body - only whitespace. Do not implement any logic.
 - No extra comments, no explanation, no reasoning, no markdown code fences - output the code only.`;
