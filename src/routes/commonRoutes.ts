@@ -1707,13 +1707,6 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
  *           type: string
  *         description: ID of the coding question (course task)
  *       - in: query
- *         name: language
- *         required: false
- *         schema:
- *           type: string
- *         description: The programming language canonical key or friendly name (e.g. `python`). Omit or use `languageId` instead.
- *         example: python
- *       - in: query
  *         name: languageId
  *         required: false
  *         schema:
