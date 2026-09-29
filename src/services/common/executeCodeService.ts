@@ -1,35 +1,43 @@
 import axios from 'axios';
 import ts from 'typescript';
 import { LANGUAGE_MAP } from '../../types/languageExecutionMap';
+import { isExecutableLanguage, getWandboxLabel } from '../../util/languageUtils';
 
 const WANDBOX_URL = 'https://wandbox.org/api/compile.json';
 const WANDBOX_COMPILER_LIST_URL = 'https://wandbox.org/api/list.json';
 const WANDBOX_REQUEST_TIMEOUT_MS = 20000;
+const WANDBOX_SLOW_REQUEST_TIMEOUT_MS = 60000;
 const WANDBOX_MAX_ATTEMPTS = 3;
 const WANDBOX_RETRY_DELAY_MS = 500;
 const WANDBOX_COMPILER_CACHE_MS = 10 * 60 * 1000;
 
+/*
+ * Compilers that routinely exceed the 20s default because their cold compile
+ * is heavy (measured in seconds: Go ~30-35, Rust ~31, Haskell ~23, Zig ~20).
+ * They get a longer per-attempt timeout; counting on retries instead is
+ * pointless because retrying a timeout just burns another 20s.
+ */
+const WANDBOX_SLOW_COMPILE_LANGUAGES = new Set(['go', 'rust', 'haskell', 'zig', 'swift']);
+
+const getRequestTimeoutMs = (canonicalKey: string): number =>
+    WANDBOX_SLOW_COMPILE_LANGUAGES.has(canonicalKey)
+        ? WANDBOX_SLOW_REQUEST_TIMEOUT_MS
+        : WANDBOX_REQUEST_TIMEOUT_MS;
+
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * Wandbox compilers for the languages we expose. Wandbox's public API needs no
- * API key or IP whitelist, so code execution works locally and on serverless
- * hosting (Vercel) without running any extra infrastructure. TypeScript is
- * transpiled to plain JavaScript first and then run on the Node.js runtime.
+ * Execution runs on Wandbox, whose public API needs no API key or IP whitelist,
+ * so code execution works locally and on serverless hosting (Vercel) without
+ * any extra infrastructure. TypeScript is transpiled to plain JavaScript first
+ * and then run on the Node.js runtime (the type-script compiler on Wandbox has
+ * no Node type definitions, which breaks `require`/node imports).
  *
- * Compiler versions are NOT hardcoded here because Wandbox can add/remove
- * compiler versions. The currently available compiler is resolved dynamically
- * from Wandbox's compiler list API.
+ * The language whitelist lives in LANGUAGE_REGISTRY (see languageExecutionMap):
+ * every canonical key resolves its Wandbox label there. Compiler VERSIONS are
+ * never hardcoded - Wandbox adds/removes them constantly, so the current
+ * compiler for a language is resolved dynamically from the compiler list API.
  */
-export const WANDBOX_COMPILER_MAP: Record<string, string> = {
-    javascript: 'JavaScript',
-    python: 'Python',
-    typescript: 'JavaScript',
-    java: 'Java',
-    c: 'C',
-    'c++': 'C++'
-};
-
 interface IWandboxCompiler {
     name: string;
     version?: string;
@@ -64,8 +72,17 @@ const getWandboxCompilers = async (): Promise<IWandboxCompiler[]> => {
     return wandboxCompilerCache;
 };
 
-const getWandboxCompiler = async (language: string): Promise<string | null> => {
-    const expectedLanguage = WANDBOX_COMPILER_MAP[language];
+/*
+ * Resolves the Wandbox compiler for a CANONICAL language key (e.g. 'go',
+ * 'c++'). The expected label comes from the registry; TypeScript is special -
+ * it is transpiled locally and executed on the JavaScript/Node runtime, so it
+ * resolves to the 'JavaScript' label rather than Wandbox's TypeScript compiler.
+ */
+const getWandboxCompiler = async (canonicalKey: string): Promise<string | null> => {
+    const expectedLanguage =
+        canonicalKey === 'typescript'
+            ? 'JavaScript'
+            : getWandboxLabel(canonicalKey);
 
     if (!expectedLanguage) {
         return null;
@@ -86,11 +103,51 @@ const getWandboxCompiler = async (language: string): Promise<string | null> => {
     /*
      * Wandbox can have multiple compiler versions for the same language.
      *
-     * Prefer the compiler whose name contains the latest-looking version.
-     * The compiler list returned by Wandbox is used instead of hardcoding
-     * versions such as nodejs-20.17.0 or cpython-3.12.7.
+     * Order: prefer a stable (non-head) release over pre-release '-head'
+     * compilers, then any compiler whitelisted in LANGUAGE_COMPILER_PREFERENCES,
+     * finally the newest version overall. The compiler list returned by Wandbox
+     * is used instead of hardcoding versions such as nodejs-20.17.0 or
+     * cpython-3.12.7.
      */
+    /*
+     * Preference carve-outs for boxes Wandbox broke (verified 2026-09 with the
+     * language's own starter AND minimal code - the chosen newest-stable
+     * compiler fails on any input):
+     *   python - prefer CPython over PyPy (the numeric version sort alone picks
+     *            PyPy because 'v7.3.17' sorts above '3.14.0');
+     *   csharp - dotnetcore-8's box dies with sandbox exit 153 (file-size
+     *            limit) on any code; dotnetcore-6 and mono both work;
+     *   scala  - scala-3.5's box dies with exit 126 on any code; 3.3/2.13 work.
+     * If the preferred version disappears, the newest-stable fallback still
+     * applies, so Wandbox housekeeping cannot break resolution.
+     */
+    const LANGUAGE_COMPILER_PREFERENCES: Record<string, string[]> = {
+        python: ['cpython'],
+        csharp: ['dotnetcore-6'],
+        scala: ['scala-3.3']
+    };
+
     const sortedCompilers = [...matchingCompilers].sort((a, b) => {
+        const nameA = a.name.toLowerCase();
+        const nameB = b.name.toLowerCase();
+
+        const headDifference =
+            (/(^|-)head(-|$)/i.test(nameA) ? 1 : 0) -
+            (/(^|-)head(-|$)/i.test(nameB) ? 1 : 0);
+        if (headDifference !== 0) {
+            return headDifference;
+        }
+
+        const preferences = LANGUAGE_COMPILER_PREFERENCES[canonicalKey] || [];
+        const fallbackRank = preferences.length + 1;
+        const rankA = preferences.findIndex((token) => nameA.includes(token));
+        const rankB = preferences.findIndex((token) => nameB.includes(token));
+        const normalizedA = rankA === -1 ? fallbackRank : rankA;
+        const normalizedB = rankB === -1 ? fallbackRank : rankB;
+        if (normalizedA !== normalizedB) {
+            return normalizedA - normalizedB;
+        }
+
         const versionA = String(a.version || '');
         const versionB = String(b.version || '');
 
@@ -145,6 +202,17 @@ const executeCode = async ({
             stderr: '',
             compilationError: null,
             runtimeError: 'Unsupported or invalid programming language.',
+            status: 'INVALID_LANGUAGE',
+            executionTimeMs: 0
+        };
+    }
+
+    if (!isExecutableLanguage(normalizedLanguage)) {
+        return {
+            stdout: '',
+            stderr: '',
+            compilationError: null,
+            runtimeError: `The language '${normalizedLanguage}' is not executable.`,
             status: 'INVALID_LANGUAGE',
             executionTimeMs: 0
         };
@@ -267,7 +335,7 @@ const executeOnWandbox = async ({
                     'compiler-option-raw': '',
                     save: false
                 },
-                { timeout: WANDBOX_REQUEST_TIMEOUT_MS }
+{ timeout: getRequestTimeoutMs(language) }
             );
 
             const executionTimeMs = Date.now() - startedAt;

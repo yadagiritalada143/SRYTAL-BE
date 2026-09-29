@@ -19,7 +19,16 @@ import {
  */
 const submitCode = async (req: Request, res: Response) => {
     try {
-        const { questionId, language: languageId, code } = req.body;
+        const body = req.body || {};
+        const { questionId, code } = body;
+        // Accept the language as either `language` (documented contract, used by
+        // the frontend) or `languageId` (what some clients send by mistake).
+        const languageId =
+            typeof body.language === 'string' && body.language.trim() !== ''
+                ? body.language
+                : typeof body.languageId === 'string'
+                    ? body.languageId
+                    : '';
 
         if (!questionId || typeof languageId !== 'string' || languageId.trim() === '' || typeof code !== 'string' || code.trim() === '') {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({

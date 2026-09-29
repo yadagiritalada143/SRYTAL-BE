@@ -1,8 +1,17 @@
 import ProgrammingLanguages from '../../model/programmingLanguagesModel';
+import { IAddProgrammingLanguageFields } from './addProgrammingLanguageService';
 
-const updateProgrammingLanguage = async (id: string, languageName: string) => {
+export interface IUpdateProgrammingLanguageFields extends IAddProgrammingLanguageFields {
+    languageName?: string;
+}
+
+const updateProgrammingLanguage = async (id: string, languageName: string, fields: IUpdateProgrammingLanguageFields = {}) => {
     try {
-        const result = await ProgrammingLanguages.updateOne({ _id: id }, { languageName });
+        const updates: IUpdateProgrammingLanguageFields = {
+            ...(languageName ? { languageName } : {}),
+            ...fields
+        };
+        const result = await ProgrammingLanguages.updateOne({ _id: id }, { $set: updates });
         return result;
 
     } catch (error: any) {

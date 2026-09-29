@@ -10,7 +10,7 @@ import executeCodeService from './executeCodeService';
 import evaluateTestCasesService from './evaluateTestCasesService';
 import codeQualityAnalysisService from './codeQualityAnalysisService';
 import getProgrammingLanguageByIdService from './getProgrammingLanguageByIdService';
-import { normalizeLanguage } from '../../util/languageUtils';
+import { normalizeLanguage, isExecutableLanguage } from '../../util/languageUtils';
 import {
     IRunCodeResponse,
     ICodeRunTestCaseResult,
@@ -221,7 +221,10 @@ const resolveProgrammingLanguage = async (input: string): Promise<any | null> =>
             const name =
                 normalizeLanguage(language?.languageName) ||
                 String(language?.languageName || '').toLowerCase().trim();
-            return name === wanted;
+            return (
+                name === wanted ||
+                String(language?.canonicalKey || '').toLowerCase().trim() === wanted
+            );
         }) || null
     );
 };
@@ -274,12 +277,16 @@ const runCode = async (
 
     const resolvedLanguageId = String(programmingLanguage._id);
 
+    // The `language` field the client sends may be a MongoDB _id, a friendly
+    // name (e.g. 'Bash script'), or a canonical key (e.g. 'go'). Prefer the
+    // document's canonicalKey so every seeded language resolves; legacy docs
+    // that predate the schema fall back to name normalization.
     const resolvedLanguage =
-        typeof programmingLanguage.languageName === 'string'
-            ? normalizeLanguage(programmingLanguage.languageName)
-            : undefined;
+        (typeof programmingLanguage.canonicalKey === 'string' && programmingLanguage.canonicalKey.trim())
+        || normalizeLanguage(programmingLanguage.languageName)
+        || undefined;
 
-    if (!resolvedLanguage) {
+    if (!resolvedLanguage || !isExecutableLanguage(resolvedLanguage)) {
         return { success: false, invalidLanguage: true };
     }
 

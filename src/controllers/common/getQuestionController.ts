@@ -1,27 +1,29 @@
 import { Request, Response } from 'express';
-import getCodingQuestionService from '../../services/common/getCodingQuestionService';
+import getQuestionService from '../../services/common/getQuestionService';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
 import {
     CODING_QUESTION_SUCCESS_MESSAGES,
     CODING_QUESTION_ERROR_MESSAGES
 } from '../../constants/common/codingQuestionMessages';
 
-const getCodingQuestion = async (req: Request, res: Response) => {
+const getQuestion = async (req: Request, res: Response) => {
     try {
-        const { questionId } = req.params;
-        const language = (req.query.language as string) || '';
+        const { id } = req.params;
+        const language = String(req.query.language || '');
+        const languageId = String(req.query.languageId || '');
 
-        if (!questionId) {
+        if (!id) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: CODING_QUESTION_ERROR_MESSAGES.QUESTION_NOT_FOUND_MESSAGE
             });
         }
 
-        const response = await getCodingQuestionService.getCodingQuestion(
-            questionId,
+        const response = await getQuestionService.getQuestion(
+            id,
             language,
-            req.user?.userId as string
+            req.user?.userId as string,
+            languageId
         );
 
         if (!response.success) {
@@ -57,7 +59,12 @@ const getCodingQuestion = async (req: Request, res: Response) => {
         return res.status(HTTP_STATUS.OK).json({
             success: true,
             message: CODING_QUESTION_SUCCESS_MESSAGES.CODING_QUESTION_FETCH_SUCCESS_MESSAGE,
-            question: response.question
+            questionId: response.questionId,
+            allowedLanguages: response.allowedLanguages,
+            language: response.language,
+            languageId: response.languageId,
+            starterCode: response.starterCode,
+            lastSubmittedCode: response.lastSubmittedCode
         });
     } catch (error: any) {
         console.error(`Error in fetching coding question: ${error}`);
@@ -68,4 +75,4 @@ const getCodingQuestion = async (req: Request, res: Response) => {
     }
 };
 
-export default { getCodingQuestion };
+export default { getQuestion };
