@@ -98,8 +98,9 @@ const getCodingQuestion = async (
         }
     }
 
-    // A writer-supplied starter wins; every other language falls back to Wandbox's
-    // own hello-world template (see getWandboxStarter), then '' (empty editor).
+    // Priority chain: writer-supplied starter, then Wandbox's own hello-world
+    // template (see getWandboxStarter), then hardcoded last-resort boilerplate
+    // (see HARDCODED_STARTER_CODE), then '' (empty editor).
     let starterCode = resolveStarterCode(task, resolvedLanguage);
     if (!starterCode) {
         try {
