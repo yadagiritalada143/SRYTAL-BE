@@ -11,6 +11,9 @@ import evaluateTestCasesService from './evaluateTestCasesService';
 import codeQualityAnalysisService from './codeQualityAnalysisService';
 import getProgrammingLanguageByIdService from './getProgrammingLanguageByIdService';
 import { normalizeLanguage, isExecutableLanguage } from '../../util/languageUtils';
+import { resolveQuestion, toQuestionIdFilter } from '../../util/courseTaskQuestions';
+import { syncTaskCompletionFromSubmissions } from '../../util/syncTaskCompletion';
+import { ICourseTaskQuestion } from '../../interfaces/courseTask';
 import {
     IRunCodeResponse,
     ICodeRunTestCaseResult,
@@ -49,10 +52,11 @@ const mapWithConcurrency = async <T, R>(
 };
 
 /**
- * Returns the stored test cases for a coding question, generating them via
- * OpenRouter on the very first Run Code request and reusing them afterwards.
- * Uses the taskId as the coding-question identifier and a status-based claim so
- * concurrent first clicks cannot generate duplicate test-case sets.
+ * Returns the stored test cases for one question of a coding task, generating
+ * them via OpenRouter on the very first Run Code request and reusing them
+ * afterwards. A task holds many questions, so the identity is the
+ * (taskId, questionId) pair and a status-based claim keeps two concurrent first
+ * clicks on the same question from generating duplicate test-case sets.
  */
 const hasEnoughTestCases = (doc: any): boolean =>
     doc &&
@@ -62,11 +66,13 @@ const hasEnoughTestCases = (doc: any): boolean =>
 
 const ensureTestCases = async (
     taskId: string,
+    questionId: string | null,
     userId: string,
     question: string,
     language: string
 ): Promise<any[]> => {
-    let doc: any = await CodingQuestionTestCaseModel.findOne({ taskId }).lean();
+    const identity = { taskId, questionId };
+    let doc: any = await CodingQuestionTestCaseModel.findOne(identity).lean();
 
     if (hasEnoughTestCases(doc)) {
         return doc.testCases;
@@ -75,7 +81,7 @@ const ensureTestCases = async (
     const waitForCompletion = async (): Promise<any[]> => {
         for (let i = 0; i < GENERATION_WAIT_ATTEMPTS; i++) {
             await wait(GENERATION_WAIT_INTERVAL_MS);
-            doc = await CodingQuestionTestCaseModel.findOne({ taskId }).lean();
+            doc = await CodingQuestionTestCaseModel.findOne(identity).lean();
             if (hasEnoughTestCases(doc)) {
                 return doc.testCases;
             }
@@ -94,7 +100,7 @@ const ensureTestCases = async (
     try {
         claim = await CodingQuestionTestCaseModel.findOneAndUpdate(
             {
-                taskId,
+                ...identity,
                 $or: [
                     { status: { $in: ['PENDING', 'FAILED'] } },
                     { status: 'COMPLETED', $expr: { $lt: [{ $size: { $ifNull: ['$testCases', []] } }, MIN_TEST_CASE_COUNT] } }
@@ -117,7 +123,7 @@ const ensureTestCases = async (
     } else {
         try {
             claim = await CodingQuestionTestCaseModel.findOneAndUpdate(
-                { taskId },
+                identity,
                 { $set: { status: 'GENERATING' }, $setOnInsert: { generatedBy: 'OpenRouter', testCases: [] } },
                 { new: true, upsert: true, setDefaultsOnInsert: true }
             );
@@ -133,19 +139,20 @@ const ensureTestCases = async (
         const generated = await generateTestCasesService.generateTestCases(userId, question, language);
 
         await CodingQuestionTestCaseModel.updateOne(
-            { taskId },
+            identity,
             { $set: { status: 'COMPLETED', testCases: generated, generatedAt: new Date() } }
         );
 
         return generated;
     } catch (error: any) {
         await CodingQuestionTestCaseModel.updateOne(
-            { taskId },
+            identity,
             { $set: { status: 'FAILED' } }
         ).catch(() => undefined);
         throw error;
     }
 };
+
 
 /**
  * The last code the employee ran or submitted, across every coding question -
@@ -165,6 +172,7 @@ const getLastSubmission = async (employeeId: string): Promise<ILastCodeSubmissio
         {
             userId: 1,
             taskId: 1,
+            questionId: 1,
             languageId: 1,
             sourceCode: 1,
             passedCount: 1,
@@ -184,7 +192,8 @@ const getLastSubmission = async (employeeId: string): Promise<ILastCodeSubmissio
 
     return {
         employeeId: String(doc.userId),
-        questionId: String(doc.taskId),
+        taskId: String(doc.taskId),
+        questionId: toQuestionIdFilter(doc.questionId),
         languageId: String(doc.languageId),
         code: doc.sourceCode,
         passedTestCases: doc.passedCount,
@@ -231,23 +240,28 @@ const resolveProgrammingLanguage = async (input: string): Promise<any | null> =>
 
 /**
  * The shared grading engine behind both Run Code and Submit Code: validates
- * the request, resolves (or generates-and-stores) the coding-question test
- * cases, runs the employee's submitted code against every test-case input on
- * Wandbox, evaluates each result (compares expected vs actual output), computes
- * the score, gathers an informational OpenRouter code-quality evaluation
- * (never overriding the execution verdicts), persists the run
- * (`type: 'run'` for a trial run, `type: 'submit'` for a final submission)
- * and returns the combined result. Submissions additionally report the last
- * code the employee ran or submitted via `lastSubmission`.
+ * the request, resolves (or generates-and-stores) the question's test cases, runs
+ * the employee's submitted code against every test-case input on Wandbox,
+ * evaluates each result (compares expected vs actual output), computes the score,
+ * gathers an informational OpenRouter code-quality evaluation (never overriding
+ * the execution verdicts), persists the run (`type: 'run'` for a trial run,
+ * `type: 'submit'` for a final submission) and returns the combined result.
+ * Submissions additionally report the last code the employee ran or submitted via
+ * `lastSubmission`, and - because a submit can only be accepted once every test
+ * case passes - drive the task-level completion of a coding task.
+ *
+ * A task holds many questions, so `questionId` selects which one is being
+ * graded. It is optional: without it the task's first active question is used.
  */
 const runCode = async (
+    taskId: string,
     questionId: string,
     languageId: string,
     code: string,
     employeeId: string,
     runType: 'run' | 'submit' = 'run'
 ): Promise<IRunCodeResponse> => {
-    const task: any = await CourseTaskModel.findById(questionId).lean();
+    const task: any = await CourseTaskModel.findById(taskId).lean();
 
     if (!task) {
         return { success: false, notFound: true };
@@ -256,6 +270,14 @@ const runCode = async (
     if (!task.isCoding) {
         return { success: false, notCodingQuestion: true };
     }
+
+    const question = resolveQuestion(task, questionId) as ICourseTaskQuestion | null;
+
+    if (!question) {
+        return { success: false, questionNotFound: true };
+    }
+
+    const resolvedQuestionId = toQuestionIdFilter(question.questionId);
 
     const parentModule: any = await CourseModuleModel.findById(task.moduleId).lean();
 
@@ -292,10 +314,12 @@ const runCode = async (
 
     const testCases = await ensureTestCases(
         String(task._id),
+        resolvedQuestionId,
         employeeId,
-        task.question || '',
+        question.question || '',
         resolvedLanguage
     );
+
 
     const results: ICodeRunTestCaseResult[] = await mapWithConcurrency(
         testCases,
@@ -326,7 +350,7 @@ const runCode = async (
     try {
         aiEvaluation = await codeQualityAnalysisService.analyzeCodeQuality({
             userId: employeeId,
-            question: task.question || '',
+            question: question.question || '',
             language: resolvedLanguage,
             code,
             results
@@ -338,7 +362,8 @@ const runCode = async (
 
     const executionRecord = {
         userId: employeeId,
-        taskId: questionId,
+        taskId,
+        questionId: resolvedQuestionId,
         languageId: resolvedLanguageId,
         sourceCode: code,
         results,
@@ -365,9 +390,18 @@ const runCode = async (
             ...executionRecord,
             type: 'submit'
         } as any);
+
+        // A submit only reaches this point when every test case passed, so this
+        // question now counts as solved and the task may have become complete.
+        await syncTaskCompletionFromSubmissions({
+            task,
+            moduleId: parentModule._id,
+            assignment,
+            employeeId
+        });
     } else {
         await CodeRunModel.findOneAndUpdate(
-            { userId: employeeId, taskId: questionId, type: 'run' },
+            { userId: employeeId, taskId, questionId: resolvedQuestionId, type: 'run' },
             { $set: { ...executionRecord, type: 'run' } },
             { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true }
         );
@@ -377,7 +411,10 @@ const runCode = async (
         success: true,
         lastSubmission,
         executionResult: {
-            questionId,
+            taskId,
+            questionId: resolvedQuestionId,
+            /** @deprecated Kept one release for clients still reading taskQuestionId. */
+            taskQuestionId: resolvedQuestionId,
             language: resolvedLanguage,
             languageId: resolvedLanguageId,
             totalTestCases: total,

@@ -34,6 +34,17 @@ const task = {
     starterCode: []
 };
 
+// A task with no questionId is a legacy single-question task, so its starter code
+// is still cached on the top-level field.
+const question = {
+    questionId: null,
+    question: 'Given an integer array nums...',
+    description: '',
+    status: 'ACTIVE',
+    order: 0,
+    starterCode: []
+};
+
 const userOpenRouterKey = { _id: '1', userId: 'u1', openrouterKey: 'sk-test' };
 
 describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
@@ -54,7 +65,7 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
     it('returns the cached writer starter without calling OpenRouter', async () => {
         resolveStarterCodeMock.mockReturnValue('function f() {}');
 
-        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, 'javascript', 'u1');
+        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'javascript', 'u1');
 
         expect(result).toBe('function f() {}');
         expect(axiosPostMock).not.toHaveBeenCalled();
@@ -67,7 +78,7 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
             data: { choices: [{ message: { content: '{"code": "var removeDuplicates = function(nums) {\\n};"}' } }] }
         });
 
-        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, 'javascript', 'u1');
+        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'javascript', 'u1');
 
         expect(axiosPostMock).toHaveBeenCalledTimes(1);
         expect(result).toContain('var removeDuplicates = function(nums)');
@@ -91,8 +102,8 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
         });
 
         const [first, second] = await Promise.all([
-            generateBoilerplateService.getOrGenerateBoilerplate(task, 'python', 'u1'),
-            generateBoilerplateService.getOrGenerateBoilerplate(task, 'python', 'u1')
+            generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'python', 'u1'),
+            generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'python', 'u1')
         ]);
 
         expect(first).toBe('class Solution {}');
@@ -105,7 +116,7 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
         resolveStarterCodeMock.mockReturnValue('');
         getUserOpenRouterKeyMock.mockRejectedValue(new Error('OPENROUTER_KEY_NOT_FOUND'));
 
-        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, 'python', 'u1');
+        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'python', 'u1');
 
         expect(result).toBe('');
         expect(courseTaskUpdateOneMock).not.toHaveBeenCalled();
@@ -115,7 +126,7 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
         resolveStarterCodeMock.mockReturnValue('');
         axiosPostMock.mockResolvedValue({ data: { choices: [{ message: { content: '' } }] } });
 
-        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, 'go', 'u1');
+        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'go', 'u1');
 
         expect(result).toBe('');
         expect(courseTaskUpdateOneMock).not.toHaveBeenCalled();
@@ -149,7 +160,7 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
             }
         });
 
-        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, 'typescript', 'u1');
+        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'typescript', 'u1');
 
         expect(result).toBe('');
         expect(courseTaskUpdateOneMock).not.toHaveBeenCalled();

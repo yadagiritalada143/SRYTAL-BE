@@ -7,6 +7,7 @@ export const CODING_QUESTION_SUCCESS_MESSAGES = {
 export const CODING_QUESTION_ERROR_MESSAGES = {
     RUN_CODE_MISSING_FIELDS_MESSAGE: 'questionId, language ID and code are required !',
     QUESTION_NOT_FOUND_MESSAGE: 'Coding question not found !',
+    TASK_QUESTION_NOT_FOUND_MESSAGE: 'The requested question does not belong to this task !',
     NOT_CODING_QUESTION_MESSAGE: 'This task is not a coding question !',
     QUESTION_NOT_ASSIGNED_MESSAGE: 'This coding question is not part of your assigned courses !',
     INVALID_LANGUAGE_MESSAGE: 'Please provide a valid programming language for this coding question !',

@@ -171,6 +171,7 @@ describe('runCodeService', () => {
     it('resolves the language ID and uses the normalized language name for execution', async () => {
         const response = await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'console.log(1);',
             employeeId
@@ -185,7 +186,7 @@ describe('runCodeService', () => {
         });
         expect(codeRunCreateMock).not.toHaveBeenCalled();
         expect(codeRunFindOneAndUpdateMock).toHaveBeenCalledWith(
-            { userId: employeeId, taskId: questionId, type: 'run' },
+            { userId: employeeId, taskId: questionId, questionId: null, type: 'run' },
             {
                 $set: expect.objectContaining({
                     languageId,
@@ -206,12 +207,14 @@ describe('runCodeService', () => {
     it('uses the same run key when code is rerun', async () => {
         await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'console.log(1);',
             employeeId
         );
         await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'console.log(2);',
             employeeId
@@ -227,6 +230,7 @@ describe('runCodeService', () => {
     it('stores a successful submission as a separate record', async () => {
         const response = await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'console.log(1);',
             employeeId,
@@ -248,6 +252,7 @@ describe('runCodeService', () => {
 
         const response = await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'console.log(1);',
             employeeId,
@@ -262,6 +267,7 @@ describe('runCodeService', () => {
     it('returns null as the last submission when the employee has never run anything', async () => {
         const response = await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'console.log(1);',
             employeeId,
@@ -288,6 +294,7 @@ describe('runCodeService', () => {
 
         const response = await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'console.log(1);',
             employeeId,
@@ -301,7 +308,8 @@ describe('runCodeService', () => {
         );
         expect(response.lastSubmission).toEqual({
             employeeId,
-            questionId: '65f1a2b3c4d5e6f7890abcd3',
+            taskId: '65f1a2b3c4d5e6f7890abcd3',
+            questionId: null,
             languageId,
             code: 'console.log(42);',
             passedTestCases: 3,
@@ -320,6 +328,7 @@ describe('runCodeService', () => {
     it('does not look up a previous run for a trial run', async () => {
         const response = await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'console.log(1);',
             employeeId
@@ -337,6 +346,7 @@ describe('runCodeService', () => {
 
         const response = await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'console.log(1);',
             employeeId,
@@ -356,6 +366,7 @@ describe('runCodeService', () => {
 
         const response = await runCodeService.runCode(
             questionId,
+            '',
             'javascript',
             'console.log(1);',
             employeeId
@@ -366,7 +377,7 @@ describe('runCodeService', () => {
         expect(programmingLanguagesFindMock).toHaveBeenCalled();
         expect(executeCodeMock).toHaveBeenCalled();
         expect(codeRunFindOneAndUpdateMock).toHaveBeenCalledWith(
-            { userId: employeeId, taskId: questionId, type: 'run' },
+            { userId: employeeId, taskId: questionId, questionId: null, type: 'run' },
             {
                 $set: expect.objectContaining({
                     languageId,
@@ -384,6 +395,7 @@ describe('runCodeService', () => {
 
         const response = await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'console.log(1);',
             employeeId
@@ -401,6 +413,7 @@ describe('runCodeService', () => {
 
         const response = await runCodeService.runCode(
             questionId,
+            '',
             languageId,
             'puts 1',
             employeeId

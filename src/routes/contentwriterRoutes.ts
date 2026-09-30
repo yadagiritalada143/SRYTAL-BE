@@ -8,6 +8,18 @@ import addCourseModuleController from '../controllers/contentwriter/addCourseMod
 import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
 import getCourseTaskContentController from '../controllers/contentwriter/getCourseTaskContentController';
 import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
+import addCourseTaskQuestionController from '../controllers/contentwriter/addCourseTaskQuestionController';
+import updateCourseTaskQuestionController from '../controllers/contentwriter/updateCourseTaskQuestionController';
+import deleteCourseTaskQuestionController from '../controllers/contentwriter/deleteCourseTaskQuestionController';
+import getCourseTaskQuestionsController from '../controllers/contentwriter/getCourseTaskQuestionsController';
+import validateRegistrationSchema from '../middlewares/validateRegistrationSchema';
+import validateParamsSchema from '../middlewares/validateParamsSchema';
+import {
+    addCourseTaskQuestionSchema,
+    updateCourseTaskQuestionSchema,
+    courseTaskIdParamsSchema,
+    courseTaskQuestionIdParamsSchema
+} from '../middlewares/schemas/courseTaskQuestionSchema';
 import updateCourseModuleController from '../controllers/contentwriter/updateCourseModuleController';
 import updateCourseController from '../controllers/contentwriter/updateCourseController';
 import multer from 'multer';
@@ -256,14 +268,35 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *                 type: boolean
  *                 description: |
  *                   Marks the task as a coding task.
- *                   When true, `question` is required and no file or link is needed.
+ *                   When true, no file or link is needed and the task can hold
+ *                   many questions, added through /addCourseTaskQuestion.
  *                 example: true
  *
  *               question:
  *                 type: string
  *                 description: |
- *                   The coding problem statement. Required when isCoding is true.
+ *                   LEGACY single question. A coding task no longer needs one up
+ *                   front - pass `questions` instead, or attach them afterwards.
  *                 example: Write a function to reverse a string.
+ *
+ *               questions:
+ *                 type: array
+ *                 description: |
+ *                   Optional. The questions of a coding task, when the writer wants
+ *                   to create them all in one request. Each one is graded
+ *                   independently. Send as a JSON array (JSON body) or as a
+ *                   JSON-encoded string (multipart form field).
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - question
+ *                   properties:
+ *                     question:
+ *                       type: string
+ *                       example: Write a function to reverse a string.
+ *                     description:
+ *                       type: string
+ *                       example: Return an empty string for an empty input.
  *
  *               taskFile:
  *                 type: string
@@ -316,6 +349,33 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *                 content:
  *                   type: string
  *                   example: LMSData/Courses/CourseTaskContent/video123.mp4
+ *                 isCoding:
+ *                   type: boolean
+ *                   example: true
+ *                 question:
+ *                   type: string
+ *                   description: LEGACY mirror of the first question
+ *                   example: Write a function to reverse a string.
+ *                 questions:
+ *                   type: array
+ *                   description: The questions created with the task
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       questionId:
+ *                         type: string
+ *                         example: 64f123456789abcdef123999
+ *                       question:
+ *                         type: string
+ *                       description:
+ *                         type: string
+ *                       status:
+ *                         type: string
+ *                       order:
+ *                         type: integer
+ *                 questionCount:
+ *                   type: integer
+ *                   example: 2
  *
  *       400:
  *         description: Invalid request or missing task content.
@@ -327,6 +387,234 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *         description: Server error.
  */
 contentwriterRouter.post('/addCourseTask', validateJWT,upload.fields([{name: 'taskFile',maxCount: 1,},{ name: 'thumbnailFile', maxCount: 1}]), addCourseTaskController.addTaskToModule);
+
+/**
+ * @swagger
+ * /contentwriter/addCourseTaskQuestion:
+ *   post:
+ *     summary: Add a question to a coding task
+ *     description: |
+ *       Attaches one more question to an existing coding task. A coding task can
+ *       hold many questions and each one is graded on its own, with its own test
+ *       cases, submissions and starter code.
+ *
+ *       Content writers send only the question text and an optional description.
+ *       There is no starter-code field here on purpose: the per-language boilerplate
+ *       is generated for the selected question and language the first time an
+ *       employee opens it. A writer who does want to hand-write a starter can add one
+ *       later through /updateCourseTaskQuestion.
+ *
+ *       This action requires authentication.
+ *     tags:
+ *       - ContentWriter
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - question
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *                 description: ID of the coding task the question belongs to
+ *                 example: 64f123456789abcdef123456
+ *               question:
+ *                 type: string
+ *                 description: The coding problem statement
+ *                 example: Write a function to reverse a string.
+ *               description:
+ *                 type: string
+ *                 description: Optional extra guidance shown with the question
+ *                 example: Return an empty string for an empty input.
+ *     responses:
+ *       201:
+ *         description: Question added to the task.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Question added to the task successfully !
+ *                 taskId:
+ *                   type: string
+ *                   example: 64f123456789abcdef123456
+ *                 questionId:
+ *                   type: string
+ *                   description: ID of the question that was created
+ *                   example: 64f123456789abcdef123999
+ *                 questionCount:
+ *                   type: integer
+ *                   description: How many questions the task holds now
+ *                   example: 3
+ *       400:
+ *         description: Invalid request, the task is not a coding task, or the question limit was reached.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Task not found.
+ *       409:
+ *         description: The task already contains this question.
+ *       500:
+ *         description: Server error.
+ */
+contentwriterRouter.post(
+    '/addCourseTaskQuestion',
+    validateJWT,
+    validateRegistrationSchema(addCourseTaskQuestionSchema),
+    addCourseTaskQuestionController.addCourseTaskQuestion
+);
+
+/**
+ * @swagger
+ * /contentwriter/getCourseTaskQuestions/{taskId}:
+ *   get:
+ *     summary: List the questions of a coding task
+ *     description: |
+ *       Returns every question of a coding task - text, description, publish state
+ *       and the per-language starters a writer supplied - for the authoring UI.
+ *     tags:
+ *       - ContentWriter
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the task
+ *     responses:
+ *       200:
+ *         description: The questions of the task.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Task not found.
+ *       500:
+ *         description: Server error.
+ */
+contentwriterRouter.get(
+    '/getCourseTaskQuestions/:taskId',
+    validateJWT,
+    validateParamsSchema(courseTaskIdParamsSchema),
+    getCourseTaskQuestionsController.getCourseTaskQuestions
+);
+
+/**
+ * @swagger
+ * /contentwriter/updateCourseTaskQuestion:
+ *   put:
+ *     summary: Update one question of a coding task
+ *     description: |
+ *       Edits a single question in place. Every field is optional, so a writer can
+ *       correct only the wording, or archive a question.
+ *       Questions other than `questionId` are never touched, and `starterCode` is
+ *       not accepted here - the boilerplate is generated and cached per question +
+ *       language on first open, so a posted starterCode is ignored.
+ *     tags:
+ *       - ContentWriter
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - questionId
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *                 example: 64f123456789abcdef123456
+ *               questionId:
+ *                 type: string
+ *                 example: 64f123456789abcdef123999
+ *               question:
+ *                 type: string
+ *                 example: Write a function to reverse a string.
+ *               description:
+ *                 type: string
+ *                 example: Return an empty string for an empty input.
+ *               status:
+ *                 type: string
+ *                 enum:
+ *                   - ACTIVE
+ *                   - ARCHIVE
+ *     responses:
+ *       200:
+ *         description: Question updated.
+ *       400:
+ *         description: Invalid request.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Task or question not found.
+ *       409:
+ *         description: Another question on the task already has this text.
+ *       500:
+ *         description: Server error.
+ */
+contentwriterRouter.put(
+    '/updateCourseTaskQuestion',
+    validateJWT,
+    validateRegistrationSchema(updateCourseTaskQuestionSchema),
+    updateCourseTaskQuestionController.updateCourseTaskQuestion
+);
+
+/**
+ * @swagger
+ * /contentwriter/deleteCourseTaskQuestion/{taskId}/{questionId}:
+ *   delete:
+ *     summary: Remove one question from a coding task
+ *     description: |
+ *       Removes a single question together with its generated test cases and every
+ *       run and submission made against it. The task and its progress record are
+ *       kept.
+ *     tags:
+ *       - ContentWriter
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the task
+ *       - in: path
+ *         name: questionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the question to remove
+ *     responses:
+ *       200:
+ *         description: Question removed.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Task or question not found.
+ *       500:
+ *         description: Server error.
+ */
+contentwriterRouter.delete(
+    '/deleteCourseTaskQuestion/:taskId/:questionId',
+    validateJWT,
+    validateParamsSchema(courseTaskQuestionIdParamsSchema),
+    deleteCourseTaskQuestionController.deleteCourseTaskQuestion
+);
 
 /**
  * @swagger

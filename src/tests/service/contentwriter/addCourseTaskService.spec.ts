@@ -85,8 +85,7 @@ describe('addCourseTaskService', () => {
             content: 'https://example.com',
             contentMimeType: '',
             contentFileName: '',
-            isCoding: false,
-            question: ''
+            isCoding: false
         });
         expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(moduleFindByIdMock).toHaveBeenCalledWith('m1');
@@ -136,7 +135,15 @@ describe('addCourseTaskService', () => {
             contentMimeType: '',
             contentFileName: '',
             isCoding: true,
-            question: 'Write a function to reverse a string.'
+            questions: [
+                {
+                    question: 'Write a function to reverse a string.',
+                    description: 'Read the docs',
+                    status: 'ACTIVE',
+                    order: 0,
+                    starterCode: []
+                }
+            ]
         });
         expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(savedTask);

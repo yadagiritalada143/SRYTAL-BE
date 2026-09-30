@@ -2,6 +2,8 @@ import axios from 'axios';
 import CourseTaskModel from '../../model/courseTaskModel';
 import getUserOpenRouterKeyService from '../useropenrouter/getUserOpenRouterKeyService';
 import { resolveStarterCode } from '../../util/languageUtils';
+import { toQuestionIdFilter } from '../../util/courseTaskQuestions';
+import { ICourseTaskQuestion } from '../../interfaces/courseTask';
 import { LANGUAGE_REGISTRY } from '../../types/languageExecutionMap';
 
 const OPENROUTER_CHAT_COMPLETIONS_URL = 'https://openrouter.ai/api/v1/chat/completions';
@@ -13,7 +15,11 @@ const OPENROUTER_MAX_TOKENS = 800;
 
 const inFlightGenerations: Record<string, Promise<string> | undefined> = {};
 
-const generationKey = (taskId: string, canonicalKey: string) => `${taskId}:${canonicalKey}`;
+// A task holds many questions and each one needs its own skeleton, so the key is
+// the question as well as the language.
+const generationKey = (taskId: string, questionId: string, canonicalKey: string) =>
+    `${taskId}:${questionId || 'default'}:${canonicalKey}`;
+
 
 const REASONING_PROSE_RE =
     /\b(we? need|the prompt|the problem|let me|but |however|could (also|be)|probably|likely|might|may|should |would |sound like|require|Requisit|here is|below is|the answer)\b/i;
@@ -63,6 +69,7 @@ const extractBoilerplateCode = (content: string): string => {
 
 const generateViaOpenRouter = async (
     task: any,
+    question: ICourseTaskQuestion,
     canonicalKey: string,
     userId: string
 ): Promise<string> => {
@@ -86,9 +93,10 @@ const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const prompt = `You generate a LeetCode-style starter skeleton (boilerplate) for a coding problem.
 
 Problem: ${task.taskName || ''}
-${task.question || ''}
-
+${question.question || ''}
+${question.description || ''}
 Language: ${displayLanguage}
+
 
 Return ONLY the starter code. Requirements:
 - Output the language's standard skeleton entry point, not just a bare signature: C needs the usual #include lines plus int main(void) { ... }, Python needs the class Solution + method, Java/C#/C++ need the class with a public static main, JavaScript/TypeScript need function or class + method.
@@ -146,49 +154,73 @@ Return ONLY the starter code. Requirements:
 
 const upsertStarterCode = async (
     task: any,
+    question: ICourseTaskQuestion,
     canonicalKey: string,
     code: string
 ): Promise<void> => {
+    const questionId = toQuestionIdFilter(question.questionId);
+
+    // LEGACY (one release): a task authored before questions[] has no subdocument
+    // to attach to, so the cache stays on the top-level field. The backfill moves
+    // it into questions[0].starterCode, after which this branch is unreachable.
+    if (!questionId) {
+        await CourseTaskModel.updateOne(
+            { _id: task._id },
+            { $pull: { starterCode: { languageName: canonicalKey } } }
+        );
+        await CourseTaskModel.updateOne(
+            { _id: task._id },
+            { $push: { starterCode: { languageName: canonicalKey, code } } }
+        );
+        return;
+    }
+
+    const arrayFilters = [{ 'questions.questionId': questionId }];
+
     await CourseTaskModel.updateOne(
         { _id: task._id },
-        { $pull: { starterCode: { languageName: canonicalKey } } }
+        { $pull: { questions: { $elemMatch: { 'starterCode.languageName': canonicalKey } } } },
+        { arrayFilters }
     );
     await CourseTaskModel.updateOne(
         { _id: task._id },
-        { $push: { starterCode: { languageName: canonicalKey, code } } }
+        { $push: { questions: { $each: [{ languageName: canonicalKey, code }] } } },
+        { arrayFilters }
     );
 };
 
 /**
- * Resolves the LeetCode-style starter skeleton for a coding question + language.
- * Writer-supplied starters (and previously AI-generated ones cached in the same
- * field) win immediately; otherwise the skeleton is generated via OpenRouter
- * and cached into task.starterCode so the next request has it instantly. Any
- * failure returns '' so the caller shows an empty editor without an error.
- * Concurrent same-key requests share a single in-flight generation.
+ * Resolves the LeetCode-style starter skeleton for one question of a coding task
+ * in one language. Writer-supplied starters (and previously AI-generated ones
+ * cached in the same question's array) win immediately; otherwise the skeleton is
+ * generated via OpenRouter from that question's text and cached against it, so
+ * the next request - for any employee - has it instantly. Any failure returns ''
+ * so the caller shows an empty editor without an error. Concurrent requests for
+ * the same question + language share a single in-flight generation.
  */
 const getOrGenerateBoilerplate = async (
     task: any,
+    question: ICourseTaskQuestion,
     canonicalKey: string,
     userId: string
 ): Promise<string> => {
-    const cached = resolveStarterCode(task, canonicalKey);
+    const cached = resolveStarterCode(question, canonicalKey);
     if (cached) {
         return cached;
     }
 
-    const key = generationKey(String(task._id), canonicalKey);
+    const key = generationKey(String(task._id), String(question.questionId || ''), canonicalKey);
     if (inFlightGenerations[key]) {
         return inFlightGenerations[key];
     }
 
     const generation = (async () => {
         try {
-            const code = await generateViaOpenRouter(task, canonicalKey, userId);
+            const code = await generateViaOpenRouter(task, question, canonicalKey, userId);
             if (!code || !looksLikeStarterCode(code)) {
                 return '';
             }
-            await upsertStarterCode(task, canonicalKey, code);
+            await upsertStarterCode(task, question, canonicalKey, code);
             return code;
         } catch (error: any) {
             console.error(`Boilerplate generation failed for '${canonicalKey}': ${error.message}`);

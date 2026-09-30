@@ -26,6 +26,7 @@ jest.mock('../../../util/manageCourseProgress', () => ({
         getActiveModulesByCourse: jest.fn(),
         getActiveTasksByModule: jest.fn(),
         getCompletedTaskIds: jest.fn(),
+        getCompletedQuestionCounts: jest.fn(),
         buildCourseModules: jest.fn(),
         summariseProgress: jest.fn(),
         deriveAssignmentStatus: jest.fn(),
@@ -38,6 +39,7 @@ const getCourseMediaSignedUrlMock = courseMedia.getCourseMediaSignedUrl as unkno
 const getActiveModulesByCourseMock = courseProgress.getActiveModulesByCourse as unknown as jest.Mock;
 const getActiveTasksByModuleMock = courseProgress.getActiveTasksByModule as unknown as jest.Mock;
 const getCompletedTaskIdsMock = courseProgress.getCompletedTaskIds as unknown as jest.Mock;
+const getCompletedQuestionCountsMock = courseProgress.getCompletedQuestionCounts as unknown as jest.Mock;
 const buildCourseModulesMock = courseProgress.buildCourseModules as unknown as jest.Mock;
 const summariseProgressMock = courseProgress.summariseProgress as unknown as jest.Mock;
 const deriveAssignmentStatusMock = courseProgress.deriveAssignmentStatus as unknown as jest.Mock;
@@ -49,6 +51,8 @@ describe('getMyAssignedCourseByIdService', () => {
         getActiveModulesByCourseMock.mockReset();
         getActiveTasksByModuleMock.mockReset();
         getCompletedTaskIdsMock.mockReset();
+        getCompletedQuestionCountsMock.mockReset();
+        getCompletedQuestionCountsMock.mockResolvedValue(new Map());
         buildCourseModulesMock.mockReset();
         summariseProgressMock.mockReset();
         deriveAssignmentStatusMock.mockReset();

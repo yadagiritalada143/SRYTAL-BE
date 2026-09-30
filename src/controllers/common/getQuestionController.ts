@@ -11,6 +11,10 @@ const getQuestion = async (req: Request, res: Response) => {
         const { id } = req.params;
         const language = String(req.query.language || '');
         const languageId = String(req.query.languageId || '');
+        // `:id` already names the question, so this is only needed by clients that
+        // still send a task id in the path and pick the question themselves.
+        const taskQuestionId = String(req.query.taskQuestionId || '');
+        const questionId = String(req.query.questionId || '') || taskQuestionId;
 
         if (!id) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
@@ -23,7 +27,8 @@ const getQuestion = async (req: Request, res: Response) => {
             id,
             language,
             req.user?.userId as string,
-            languageId
+            languageId,
+            questionId
         );
 
         if (!response.success) {
@@ -31,6 +36,13 @@ const getQuestion = async (req: Request, res: Response) => {
                 return res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
                     message: CODING_QUESTION_ERROR_MESSAGES.QUESTION_NOT_FOUND_MESSAGE
+                });
+            }
+
+            if (response.questionNotFound) {
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
+                    success: false,
+                    message: CODING_QUESTION_ERROR_MESSAGES.TASK_QUESTION_NOT_FOUND_MESSAGE
                 });
             }
 
@@ -60,12 +72,17 @@ const getQuestion = async (req: Request, res: Response) => {
             success: true,
             message: CODING_QUESTION_SUCCESS_MESSAGES.CODING_QUESTION_FETCH_SUCCESS_MESSAGE,
             questionId: response.questionId,
+            taskQuestionId: response.taskQuestionId ?? null,
+            taskName: response.taskName,
+            question: response.question,
+            description: response.description,
             allowedLanguages: response.allowedLanguages,
             language: response.language,
             languageId: response.languageId,
             starterCode: response.starterCode,
             lastSubmittedCode: response.lastSubmittedCode
         });
+
     } catch (error: any) {
         console.error(`Error in fetching coding question: ${error}`);
         return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({

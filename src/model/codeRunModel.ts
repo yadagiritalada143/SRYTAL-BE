@@ -8,6 +8,9 @@ import { ICodeRun } from '../interfaces/codeRun';
 const CodeRunSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'userModel', required: true, index: true },
     taskId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseTaskModel', required: true, index: true },
+    // Which question of the task this run/submission belongs to. Null on rows
+    // written before a task could hold more than one question.
+    questionId: { type: mongoose.Schema.Types.ObjectId, default: null },
     languageId: { type: mongoose.Schema.Types.ObjectId, ref: 'ProgrammingLanguagesSchema', required: true },
     sourceCode: { type: mongoose.Schema.Types.String, required: true },
     results: [{
@@ -36,6 +39,10 @@ const CodeRunSchema = new mongoose.Schema({
         toObject: { virtuals: true },
         toJSON: { virtuals: true }
     });
+
+// Serves the derived task-completion check: how many distinct questions of a
+// task this employee has already passed.
+CodeRunSchema.index({ userId: 1, taskId: 1, type: 1, status: 1 });
 
 const CodeRunModel = mongoose.model<ICodeRun>('CodeRunModel', CodeRunSchema);
 

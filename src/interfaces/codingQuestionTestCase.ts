@@ -9,6 +9,8 @@ export interface ITestCase {
 
 export interface ICodingQuestionTestCase extends Document {
     taskId: mongoose.Schema.Types.ObjectId;
+    /** Id of the question within the task; null on rows written before multi-question tasks. */
+    questionId?: mongoose.Schema.Types.ObjectId | null;
     status: string;
     testCases: ITestCase[];
     generatedBy: string;

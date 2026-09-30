@@ -1690,7 +1690,9 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
  *       Returns everything the editor needs for the coding question: its id, the
  *       allowed languages, and the resolved language (query param
  *       `language`, e.g. `javascript`; falls back to the first allowed language
- *       when omitted) with its id. The editor body is `lastSubmittedCode` when the
+ *       when omitted) with its id. `{id}` is the question id, so pass the
+ *       `questionId` returned here (or from the task) rather than the task id.
+ *       The editor body is `lastSubmittedCode` when the
  *       employee has already submitted that language, otherwise the starter code:
  *       writer-supplied first, then an AI-generated (cached) question + language
  *       skeleton. The question must belong to a course assigned to the
@@ -1705,7 +1707,14 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
  *         required: true
  *         schema:
  *           type: string
- *         description: ID of the coding question (course task)
+ *         description: ID of the coding question. The parent task is found automatically.
+ *         example: 6abcb39e08aa64c1ff59b1d3
+ *       - in: query
+ *         name: questionId
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: Only needed when `id` is a task id. Omit it to get the task's first active question.
  *       - in: query
  *         name: languageId
  *         required: false
@@ -1723,9 +1732,13 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
  *               properties:
  *                 success:
  *                   type: boolean
+ *                 taskId:
+ *                   type: string
+ *                   description: The coding task (course task) id
  *                 questionId:
  *                   type: string
- *                   description: The coding question (course task) id
+ *                   nullable: true
+ *                   description: The question id inside the task
  *                 allowedLanguages:
  *                   type: array
  *                   items:
@@ -1780,13 +1793,22 @@ commonRouter.get('/getquestion/:id', validateJWT, getQuestionController.getQuest
  *           schema:
  *             type: object
  *             required:
- *               - questionId
  *               - languageId
  *               - code
  *             properties:
+ *               taskId:
+ *                 type: string
+ *                 description: |
+ *                   ID of the coding task. Optional: when omitted, `questionId` is
+ *                   read as the task id, which is what older clients send.
+ *                 example: "6abb7e0f0cc4244f2bfc6bd4"
  *               questionId:
  *                 type: string
- *                 example: "66d323456789abcdef123456"
+ *                 description: |
+ *                   ID of the question inside the task. Send it together with
+ *                   `taskId` whenever the task has more than one question;
+ *                   otherwise the task's first active question is used.
+ *                 example: "6abcb39e08aa64c1ff59b1d3"
  *               languageId:
  *                 type: string
  *                 description: ID of the selected programming language
@@ -1809,8 +1831,11 @@ commonRouter.get('/getquestion/:id', validateJWT, getQuestionController.getQuest
  *                 data:
  *                   type: object
  *                   properties:
+ *                     taskId:
+ *                       type: string
  *                     questionId:
  *                       type: string
+ *                       nullable: true
  *                     languageId:
  *                       type: string
  *                     totalTestCases:
@@ -1908,13 +1933,22 @@ commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
  *           schema:
  *             type: object
  *             required:
- *               - questionId
  *               - languageId
  *               - code
  *             properties:
+ *               taskId:
+ *                 type: string
+ *                 description: |
+ *                   ID of the coding task. Optional: when omitted, `questionId` is
+ *                   read as the task id, which is what older clients send.
+ *                 example: "6abb7e0f0cc4244f2bfc6bd4"
  *               questionId:
  *                 type: string
- *                 example: "66d323456789abcdef123456"
+ *                 description: |
+ *                   ID of the question inside the task. Send it together with
+ *                   `taskId` whenever the task has more than one question;
+ *                   otherwise the task's first active question is used.
+ *                 example: "6abcb39e08aa64c1ff59b1d3"
  *               languageId:
  *                 type: string
  *                 description: ID of the selected programming language
@@ -1938,8 +1972,11 @@ commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
  *                 data:
  *                   type: object
  *                   properties:
+ *                     taskId:
+ *                       type: string
  *                     questionId:
  *                       type: string
+ *                       nullable: true
  *                     languageId:
  *                       type: string
  *                     totalTestCases:

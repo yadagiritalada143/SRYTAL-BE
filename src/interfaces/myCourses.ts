@@ -17,6 +17,12 @@ export interface IMyCourseTask {
     link?: string;
     contentMimeType?: string;
     contentFileName?: string;
+    // A coding task holds its own questions and is completed by the server once
+    // every one of them has a passing submission, never by the client.
+    isCoding?: boolean;
+    // Published questions on the task, and how many the employee has solved.
+    questionCount?: number;
+    completedQuestionCount?: number;
     isCompleted: boolean;
     completedAt?: Date | null;
 }
@@ -73,7 +79,11 @@ export interface IUpdateMyTaskProgressResponse {
     notFound?: boolean;
     // Set when the task is not part of the assigned course.
     invalidTask?: boolean;
+    // Set when the task is a coding task. Its completion is derived by the server
+    // from passing submissions, so the employee cannot tick it off by hand.
+    isCodingTask?: boolean;
     courseStatus?: string;
     progress?: IMyCourseProgress;
     task?: { taskId: string; isCompleted: boolean; completedAt?: Date | null };
 }
+

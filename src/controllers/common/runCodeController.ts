@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import runCodeService from '../../services/common/runCodeService';
+import { resolveRunScope } from '../../util/courseTaskQuestions';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
 import {
     CODING_QUESTION_SUCCESS_MESSAGES,
@@ -9,7 +10,12 @@ import {
 const runCode = async (req: Request, res: Response) => {
     try {
         const body = req.body || {};
-        const { questionId, code } = body;
+        const { code } = body;
+        // `taskId` is the coding task, `questionId` the question inside it. Both
+        // are optional so existing clients keep working: a body that only sends
+        // `questionId` is read as the pre-multi-question shape, where that field
+        // held the task id.
+        const { taskId, questionId } = resolveRunScope(body);
         // Accept the language as either `language` (documented contract, used by
         // the frontend) or `languageId` (what some clients send by mistake).
         const languageId =
@@ -19,7 +25,7 @@ const runCode = async (req: Request, res: Response) => {
                     ? body.languageId
                     : '';
 
-        if (!questionId || typeof languageId !== 'string' || languageId.trim() === '' || typeof code !== 'string' || code.trim() === '') {
+        if (!taskId || typeof languageId !== 'string' || languageId.trim() === '' || typeof code !== 'string' || code.trim() === '') {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: CODING_QUESTION_ERROR_MESSAGES.RUN_CODE_MISSING_FIELDS_MESSAGE
@@ -27,10 +33,12 @@ const runCode = async (req: Request, res: Response) => {
         }
 
         const response = await runCodeService.runCode(
+            taskId,
             questionId,
             languageId,
             code,
-            req.user?.userId as string
+            req.user?.userId as string,
+            'run'
         );
 
         if (!response.success) {
@@ -38,6 +46,13 @@ const runCode = async (req: Request, res: Response) => {
                 return res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
                     message: CODING_QUESTION_ERROR_MESSAGES.QUESTION_NOT_FOUND_MESSAGE
+                });
+            }
+
+            if (response.questionNotFound) {
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
+                    success: false,
+                    message: CODING_QUESTION_ERROR_MESSAGES.TASK_QUESTION_NOT_FOUND_MESSAGE
                 });
             }
 

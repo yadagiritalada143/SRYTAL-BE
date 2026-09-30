@@ -12,7 +12,13 @@ export interface ILastSubmittedCode {
 
 export interface IGetQuestionResponse {
     success: boolean;
-    questionId?: string;
+    taskId?: string;
+    questionId?: string | null;
+    /** @deprecated Use questionId. */
+    taskQuestionId?: string | null;
+    taskName?: string;
+    question?: string;
+    description?: string;
     allowedLanguages?: string[];
     language?: string;
     languageId?: string;
@@ -22,6 +28,8 @@ export interface IGetQuestionResponse {
     notCodingQuestion?: boolean;
     notAssigned?: boolean;
     invalidLanguage?: boolean;
+    // Set when the named question does not belong to the task.
+    questionNotFound?: boolean;
 }
 
 export interface ICodeRunTestCaseResult extends ITestCase {
@@ -49,7 +57,10 @@ export interface IAiCodeQualityEvaluation {
 }
 
 export interface IRunCodeExecutionResult {
-    questionId: string;
+    taskId: string;
+    questionId: string | null;
+    /** @deprecated Use questionId. */
+    taskQuestionId: string | null;
     language: string;
     languageId: string;
     totalTestCases: number;
@@ -66,7 +77,8 @@ export interface IRunCodeExecutionResult {
  */
 export interface ILastCodeSubmission {
     employeeId: string;
-    questionId: string;
+    taskId: string;
+    questionId: string | null;
     languageId: string;
     code: string;
     passedTestCases: number;
@@ -84,6 +96,8 @@ export interface IRunCodeResponse {
     notAssigned?: boolean;
     invalidLanguage?: boolean;
     notAllTestsPassed?: boolean;
+    // Set when the named question does not belong to the task.
+    questionNotFound?: boolean;
     executionResult?: IRunCodeExecutionResult;
     lastSubmission?: ILastCodeSubmission | null;
 }
