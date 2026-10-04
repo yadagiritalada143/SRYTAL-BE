@@ -50,11 +50,6 @@ const CourseTaskSchema = new mongoose.Schema({
     // through util/courseTaskQuestions, which only falls back to these two
     // fields for documents written before the multi-question change. They are
     // removed together with the fallback once no client depends on them.
-    question: { type: mongoose.Schema.Types.String },
-    starterCode: [{
-        languageName: { type: mongoose.Schema.Types.String },
-        code: { type: mongoose.Schema.Types.String }
-    }],
 },
     {
         collection: 'coursetask',

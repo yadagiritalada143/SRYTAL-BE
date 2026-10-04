@@ -1,237 +1,387 @@
 import axios from 'axios';
+import { Types } from 'mongoose';
 import CourseTaskModel from '../../model/courseTaskModel';
 import getUserOpenRouterKeyService from '../useropenrouter/getUserOpenRouterKeyService';
 import { resolveStarterCode } from '../../util/languageUtils';
-import { toQuestionIdFilter } from '../../util/courseTaskQuestions';
 import { ICourseTaskQuestion } from '../../interfaces/courseTask';
 import { LANGUAGE_REGISTRY } from '../../types/languageExecutionMap';
 
-const OPENROUTER_CHAT_COMPLETIONS_URL = 'https://openrouter.ai/api/v1/chat/completions';
-const OPENROUTER_BOILERPLATE_MODEL = process.env.OPENROUTER_MODEL || 'openrouter/auto';
-const OPENROUTER_TIMEOUT_MS = 30000;
-// The boilerplate is tiny; caps the reserved tokens so accounts with a small
-// balance are not rejected with a 402 "needs more credits" error.
-const OPENROUTER_MAX_TOKENS = 800;
+const OPENROUTER_CHAT_COMPLETIONS_URL =
+    'https://openrouter.ai/api/v1/chat/completions';
+
+const OPENROUTER_MODEL =
+    process.env.OPENROUTER_MODEL?.trim() || 'openrouter/free';
+
+const OPENROUTER_BOILERPLATE_TIMEOUT_MS = 60000;
+const OPENROUTER_BOILERPLATE_MAX_TOKENS = 1500;
 
 const inFlightGenerations: Record<string, Promise<string> | undefined> = {};
 
-// A task holds many questions and each one needs its own skeleton, so the key is
-// the question as well as the language.
-const generationKey = (taskId: string, questionId: string, canonicalKey: string) =>
-    `${taskId}:${questionId || 'default'}:${canonicalKey}`;
-
-
-const REASONING_PROSE_RE =
-    /\b(we? need|the prompt|the problem|let me|but |however|could (also|be)|probably|likely|might|may|should |would |sound like|require|Requisit|here is|below is|the answer)\b/i;
-
-const STARTER_SIGNATURE_RE =
-    /\b(function|def|class|public|private|package|sub|defun|defmodule|fn|func|proc|program|module|import|include|using|namespace|export|static|final|async|await)\b|#include|#import|^#!|\b(select|echo|print)\s*\(|void main|int main|main\s*\(|__name__|System\.out|Console\.|puts\(|printf\(/;
-
+/**
+ * Checks whether the generated response looks like actual source code.
+ */
 const looksLikeStarterCode = (code: string): boolean => {
-    const trimmed = (code || '').trim();
-    if (!trimmed) {
+    const value = code.trim();
+
+    if (!value) {
         return false;
     }
-    const lines = trimmed.split('\n');
-    if (lines.length > 30 || trimmed.length > 2000) {
+
+    // Reject OpenRouter safety/moderation responses
+    if (/user\s+safety\s*:/i.test(value)) {
         return false;
     }
-    if (REASONING_PROSE_RE.test(trimmed)) {
+
+    if (/^\s*\{\s*["']?(user\s+safety|safety)["']?\s*:/i.test(value)) {
         return false;
     }
-    return STARTER_SIGNATURE_RE.test(trimmed);
-};
 
-const extractBoilerplateCode = (content: string): string => {
-    let raw = (content || '').trim();
+    // Reject obvious AI explanations
+    const invalidPatterns = [
+        /^here\s+is/i,
+        /^here's/i,
+        /^sure[,!]/i,
+        /^the\s+following/i,
+        /^this\s+code/i,
+        /^explanation\s*:/i,
+    ];
 
-    const fenced = raw.match(/```(?:[a-zA-Z0-9_+-]+)?\s*([\s\S]*?)```/i);
-    if (fenced && fenced[1]) {
-        raw = fenced[1].trim();
+    if (invalidPatterns.some((pattern) => pattern.test(value))) {
+        return false;
     }
 
-    try {
-        const parsed = JSON.parse(raw);
-        if (parsed && typeof parsed === 'object') {
-            if (typeof parsed.code === 'string' && parsed.code.trim()) {
-                return parsed.code.trim();
-            }
-            if (typeof parsed.boilerplate === 'string' && parsed.boilerplate.trim()) {
-                return parsed.boilerplate.trim();
-            }
-        }
-    } catch (error) {
-        // Not JSON - the model returned the code as plain text.
-    }
+    // Basic programming-language constructs
+    const codePatterns = [
+        /\bfunction\b/,
+        /\bconst\b/,
+        /\blet\b/,
+        /\bvar\b/,
+        /\bclass\b/,
+        /\bpublic\s+class\b/,
+        /\bprivate\b/,
+        /\bpublic\b/,
+        /\bstatic\b/,
+        /\bvoid\b/,
+        /\bmain\s*\(/,
+        /#include\b/,
+        /import\s+/,
+        /using\s+namespace\b/,
+        /package\s+/,
+        /def\s+\w+\s*\(/,
+        /func\s+\w+\s*\(/,
+        /fn\s+\w+\s*\(/,
+        /=>/,
+    ];
 
-    return raw;
-};
-
-const generateViaOpenRouter = async (
-    task: any,
-    question: ICourseTaskQuestion,
-    canonicalKey: string,
-    userId: string
-): Promise<string> => {
-    const keyRecord = await getUserOpenRouterKeyService.getUserOpenRouterKeyService(userId);
-    const openRouterKey = keyRecord?.openrouterKey;
-
-    if (!openRouterKey) {
-        throw new Error('OPENROUTER_KEY_NOT_FOUND');
-    }
-
-    const displayLanguage =
-        LANGUAGE_REGISTRY[canonicalKey]?.displayName || canonicalKey;
-
-    // deepseek-v4.1-flash (what openrouter/auto resolves to here) sometimes returns
-// an empty body with its reasoning in the `reasoning` field. Retry a few times.
-const OPENROUTER_MAX_ATTEMPTS = 3;
-const OPENROUTER_RETRY_DELAY_MS = 400;
-
-const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
-
-const prompt = `You generate a LeetCode-style starter skeleton (boilerplate) for a coding problem.
-
-Problem: ${task.taskName || ''}
-${question.question || ''}
-${question.description || ''}
-Language: ${displayLanguage}
-
-
-Return ONLY the starter code. Requirements:
-- Output the language's standard skeleton entry point, not just a bare signature: C needs the usual #include lines plus int main(void) { ... }, Python needs the class Solution + method, Java/C#/C++ need the class with a public static main, JavaScript/TypeScript need function or class + method.
-- Correct function or class+method signature derived from the problem, with language-idiomatic type hints (JSDoc @param/@return for JavaScript/TypeScript, :type/:rtype docstring for Python, etc).
-- Empty body - only whitespace. Do not implement any logic.
-- No extra comments, no explanation, no reasoning, no markdown code fences - output the code only.`;
-
-    for (let attempt = 1; attempt <= OPENROUTER_MAX_ATTEMPTS; attempt++) {
-        let response: any;
-        try {
-            response = await axios.post(
-                OPENROUTER_CHAT_COMPLETIONS_URL,
-                {
-                    model: OPENROUTER_BOILERPLATE_MODEL,
-                    messages: [{ role: 'user', content: prompt }],
-                    temperature: 0,
-                    max_tokens: OPENROUTER_MAX_TOKENS
-                },
-                {
-                    headers: {
-                        Authorization: `Bearer ${openRouterKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    timeout: OPENROUTER_TIMEOUT_MS
-                }
-            );
-        } catch (error: any) {
-            const status = error.response?.status;
-            if (status === 401 || status === 403) {
-                throw new Error('OPENROUTER_KEY_INVALID');
-            }
-            if (error.code === 'ECONNABORTED' || String(error.message).includes('timeout')) {
-                throw new Error('OPENROUTER_BOILERPLATE_TIMEOUT');
-            }
-            console.error(`OpenRouter boilerplate generation error: ${error.message}`);
-            throw new Error('BOILERPLATE_GENERATION_FAILED');
-        }
-
-        const content = response.data?.choices?.[0]?.message?.content;
-
-        if (content) {
-            const code = extractBoilerplateCode(content);
-            if (code && looksLikeStarterCode(code)) {
-                return code;
-            }
-        }
-
-        if (attempt < OPENROUTER_MAX_ATTEMPTS) {
-            await wait(OPENROUTER_RETRY_DELAY_MS * attempt);
-        }
-    }
-
-    throw new Error('BOILERPLATE_EMPTY_RESPONSE');
-};
-
-const upsertStarterCode = async (
-    task: any,
-    question: ICourseTaskQuestion,
-    canonicalKey: string,
-    code: string
-): Promise<void> => {
-    const questionId = toQuestionIdFilter(question.questionId);
-
-    // LEGACY (one release): a task authored before questions[] has no subdocument
-    // to attach to, so the cache stays on the top-level field. The backfill moves
-    // it into questions[0].starterCode, after which this branch is unreachable.
-    if (!questionId) {
-        await CourseTaskModel.updateOne(
-            { _id: task._id },
-            { $pull: { starterCode: { languageName: canonicalKey } } }
-        );
-        await CourseTaskModel.updateOne(
-            { _id: task._id },
-            { $push: { starterCode: { languageName: canonicalKey, code } } }
-        );
-        return;
-    }
-
-    const arrayFilters = [{ 'questions.questionId': questionId }];
-
-    await CourseTaskModel.updateOne(
-        { _id: task._id },
-        { $pull: { questions: { $elemMatch: { 'starterCode.languageName': canonicalKey } } } },
-        { arrayFilters }
-    );
-    await CourseTaskModel.updateOne(
-        { _id: task._id },
-        { $push: { questions: { $each: [{ languageName: canonicalKey, code }] } } },
-        { arrayFilters }
-    );
+    return codePatterns.some((pattern) => pattern.test(value));
 };
 
 /**
- * Resolves the LeetCode-style starter skeleton for one question of a coding task
- * in one language. Writer-supplied starters (and previously AI-generated ones
- * cached in the same question's array) win immediately; otherwise the skeleton is
- * generated via OpenRouter from that question's text and cached against it, so
- * the next request - for any employee - has it instantly. Any failure returns ''
- * so the caller shows an empty editor without an error. Concurrent requests for
- * the same question + language share a single in-flight generation.
+ * Removes markdown fences and extracts code from JSON responses.
  */
-const getOrGenerateBoilerplate = async (
-    task: any,
-    question: ICourseTaskQuestion,
-    canonicalKey: string,
-    userId: string
-): Promise<string> => {
-    const cached = resolveStarterCode(question, canonicalKey);
-    if (cached) {
-        return cached;
+const extractBoilerplateCode = (
+    rawContent: string,
+    canonicalKey: string
+): string => {
+    if (!rawContent?.trim()) {
+        throw new Error('BOILERPLATE_EMPTY_RESPONSE');
     }
 
-    const key = generationKey(String(task._id), String(question.questionId || ''), canonicalKey);
-    if (inFlightGenerations[key]) {
-        return inFlightGenerations[key];
-    }
+    let content = rawContent.trim();
 
-    const generation = (async () => {
-        try {
-            const code = await generateViaOpenRouter(task, question, canonicalKey, userId);
-            if (!code || !looksLikeStarterCode(code)) {
-                return '';
+    // Remove markdown code fences
+    content = content
+        .replace(/^```[\w+#.-]*\s*/i, '')
+        .replace(/\s*```$/i, '')
+        .trim();
+
+    // Try JSON response
+    try {
+        const parsed = JSON.parse(content);
+
+        if (typeof parsed === 'string') {
+            content = parsed;
+        } else if (parsed && typeof parsed === 'object') {
+            const possibleCode =
+                parsed.code ??
+                parsed.starterCode ??
+                parsed.boilerplate ??
+                parsed.content;
+
+            if (typeof possibleCode === 'string') {
+                content = possibleCode.trim();
             }
-            await upsertStarterCode(task, question, canonicalKey, code);
-            return code;
-        } catch (error: any) {
-            console.error(`Boilerplate generation failed for '${canonicalKey}': ${error.message}`);
-            return '';
-        } finally {
-            delete inFlightGenerations[key];
         }
-    })();
+    } catch {
+        // Response is plain source code.
+    }
 
-    inFlightGenerations[key] = generation;
-    return generation;
+    content = content
+        .replace(/^```[\w+#.-]*\s*/i, '')
+        .replace(/\s*```$/i, '')
+        .trim();
+
+    if (!looksLikeStarterCode(content)) {
+        throw new Error(
+            `BOILERPLATE_INVALID_RESPONSE: ${canonicalKey}`
+        );
+    }
+
+    return content;
 };
 
-export default { getOrGenerateBoilerplate, extractBoilerplateCode };
+/**
+ * Generates starter code using OpenRouter.
+ */
+const generateViaOpenRouter = async (
+    userId: string,
+    canonicalKey: string,
+    question: ICourseTaskQuestion
+): Promise<string> => {
+    if (!OPENROUTER_MODEL) {
+        throw new Error('OPENROUTER_MODEL_NOT_CONFIGURED');
+    }
+
+    const apiKey =
+        await getUserOpenRouterKeyService.getUserOpenRouterKeyService(
+            userId
+        );
+
+    if (!apiKey) {
+        throw new Error('OPENROUTER_API_KEY_NOT_FOUND');
+    }
+
+    const languageConfig = LANGUAGE_REGISTRY[canonicalKey];
+
+    const languageName =
+        languageConfig?.displayName ||
+        canonicalKey;
+
+    const prompt = `
+Generate starter/boilerplate code for the following programming problem.
+
+Programming Language:
+${languageName}
+
+Problem:
+${question.question}
+
+Description:
+${question.description || ''}
+
+Requirements:
+- Return ONLY executable source code.
+- Do NOT return markdown.
+- Do NOT return explanations.
+- Do NOT return JSON.
+- Do NOT include "User Safety" or moderation text.
+- Do NOT solve the complete problem.
+- Provide only the boilerplate needed for the employee to start solving it.
+- Use the correct syntax for ${languageName}.
+- Include the required imports/includes.
+- Include the main entry point when the language normally requires one.
+- Structure the code so the employee can implement the solution.
+`;
+
+    try {
+        const response = await axios.post(
+            OPENROUTER_CHAT_COMPLETIONS_URL,
+            {
+                model: OPENROUTER_MODEL,
+                messages: [
+                    {
+                        role: 'system',
+                        content:
+                            'You generate programming starter code. Return only source code.',
+                    },
+                    {
+                        role: 'user',
+                        content: prompt,
+                    },
+                ],
+                temperature: 0,
+                max_tokens: OPENROUTER_BOILERPLATE_MAX_TOKENS,
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${apiKey}`,
+                    'Content-Type': 'application/json',
+                },
+                timeout: OPENROUTER_BOILERPLATE_TIMEOUT_MS,
+            }
+        );
+
+        const content =
+            response.data?.choices?.[0]?.message?.content;
+
+        if (!content) {
+            throw new Error('BOILERPLATE_EMPTY_RESPONSE');
+        }
+
+        return extractBoilerplateCode(
+            content,
+            canonicalKey
+        );
+    } catch (error: any) {
+        if (error?.response?.data) {
+            console.error(
+                'OpenRouter boilerplate generation failed:',
+                error.response.data
+            );
+        }
+
+        throw error;
+    }
+};
+
+/**
+ * Adds or updates starter code for a language.
+ */
+const upsertStarterCode = async (
+    taskId: string,
+    questionId: string,
+    languageName: string,
+    code: string
+): Promise<void> => {
+    const task = await CourseTaskModel.findOne({
+        _id: new Types.ObjectId(taskId),
+        'questions.questionId': new Types.ObjectId(questionId),
+    });
+
+    if (!task) {
+        throw new Error('TASK_OR_QUESTION_NOT_FOUND');
+    }
+
+    const question = task.questions?.find(
+        (item: any) =>
+            String(item.questionId) === String(questionId)
+    );
+
+    if (!question) {
+        throw new Error('QUESTION_NOT_FOUND');
+    }
+
+    if (!question.starterCode) {
+        question.starterCode = [];
+    }
+
+    const existingIndex = question.starterCode.findIndex(
+        (item: any) =>
+            item.languageName.toLowerCase() ===
+            languageName.toLowerCase()
+    );
+
+    if (existingIndex >= 0) {
+        question.starterCode[existingIndex].code = code;
+    } else {
+        question.starterCode.push({
+            languageName,
+            code,
+        });
+    }
+
+    await task.save();
+};
+
+/**
+ * Gets existing starter code or generates it using OpenRouter.
+ */
+export const getOrGenerateBoilerplate = async (
+    taskId: string,
+    questionId: string,
+    userId: string,
+    canonicalKey: string
+): Promise<string> => {
+    const task = await CourseTaskModel.findOne({
+        _id: new Types.ObjectId(taskId),
+        'questions.questionId': new Types.ObjectId(questionId),
+    }).lean();
+
+    if (!task) {
+        throw new Error('TASK_OR_QUESTION_NOT_FOUND');
+    }
+
+    const question = task.questions?.find(
+        (item: any) =>
+            String(item.questionId) === String(questionId)
+    ) as ICourseTaskQuestion | undefined;
+
+    if (!question) {
+        throw new Error('QUESTION_NOT_FOUND');
+    }
+
+    /*
+     * First check whether starter code already exists.
+     */
+    const existingStarterCode =
+        question.starterCode?.find(
+            (item: any) =>
+                item.languageName.toLowerCase() ===
+                canonicalKey.toLowerCase()
+        );
+
+    if (existingStarterCode?.code?.trim()) {
+        return existingStarterCode.code;
+    }
+
+    /*
+     * Try the existing language utility fallback.
+     */
+    const fallbackStarterCode = resolveStarterCode(
+        canonicalKey,
+        question
+    );
+
+    if (fallbackStarterCode?.trim()) {
+        await upsertStarterCode(
+            taskId,
+            questionId,
+            canonicalKey,
+            fallbackStarterCode
+        );
+
+        return fallbackStarterCode;
+    }
+
+    /*
+     * Prevent duplicate OpenRouter requests when
+     * multiple requests arrive at the same time.
+     */
+    const generationKey =
+        `${taskId}:${questionId}:${canonicalKey}`;
+
+    if (inFlightGenerations[generationKey]) {
+        return inFlightGenerations[generationKey]!;
+    }
+
+    const generationPromise = (async () => {
+        const generatedCode =
+            await generateViaOpenRouter(
+                userId,
+                canonicalKey,
+                question
+            );
+
+        await upsertStarterCode(
+            taskId,
+            questionId,
+            canonicalKey,
+            generatedCode
+        );
+
+        return generatedCode;
+    })();
+
+    inFlightGenerations[generationKey] =
+        generationPromise;
+
+    try {
+        return await generationPromise;
+    } finally {
+        delete inFlightGenerations[generationKey];
+    }
+};
+
+export default {
+    getOrGenerateBoilerplate,
+};

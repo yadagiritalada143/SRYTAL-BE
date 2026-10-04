@@ -7,7 +7,7 @@ import CodeRunModel from '../../model/codeRunModel';
 import { normalizeLanguage, isSupportedLanguage, resolveStarterCode, getFallbackLanguages } from '../../util/languageUtils';
 import { resolveQuestion, toQuestionIdFilter } from '../../util/courseTaskQuestions';
 import { ICourseTaskQuestion } from '../../interfaces/courseTask';
-import generateBoilerplateService from './generateBoilerplateService';
+import generateBoilerplateService from '../common/generateBoilerplateService';
 import { ILastSubmittedCode, IGetQuestionResponse } from '../../interfaces/codingQuestion';
 
 interface IQuestionContext {
@@ -170,12 +170,19 @@ const resolveStarterChain = async (
     task: any,
     question: ICourseTaskQuestion,
     language: string,
-    userId: string
+    userId: string,
+    languageId: string,
+    questionId: string
 ): Promise<string> => {
     let starterCode = resolveStarterCode(question, language);
     if (!starterCode && language) {
         try {
-            starterCode = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, language, userId);
+            starterCode = await generateBoilerplateService.getOrGenerateBoilerplate(
+                task,
+                question,
+                language,
+                userId
+            );
         } catch (error: any) {
             console.error(`AI starter resolution failed for '${language}': ${error.message}`);
             starterCode = '';
@@ -213,7 +220,7 @@ const getQuestion = async (
     const task = context.task;
     const taskId = String(task._id);
     const question = context.resolvedQuestion as ICourseTaskQuestion;
-    const resolvedQuestionId = context.resolvedQuestionId ?? null;
+    const resolvedQuestionId = context.resolvedQuestionId ?? '';
     const resolvedLanguage = context.resolvedLanguage || '';
     const resolvedLanguageId = context.resolvedLanguageId || '';
     const availableLanguages = context.availableLanguages || [];
@@ -235,7 +242,14 @@ const getQuestion = async (
         }
     }
 
-    const starterCode = await resolveStarterChain(task, question, resolvedLanguage, employeeId);
+    const starterCode = await resolveStarterChain(
+        task,
+        question,
+        resolvedLanguage,
+        employeeId,
+        resolvedLanguageId,
+        resolvedQuestionId
+    );
 
     return {
         success: true,
