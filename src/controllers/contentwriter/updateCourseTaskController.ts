@@ -10,7 +10,7 @@ import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../confi
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
         
-        const { id, taskName, taskDescription, status, isCoding, question } = req.body;
+        const { id, taskName, taskDescription, status } = req.body;
 
         if (!isValidStatus(status)) {
             return res.status(400).json({
@@ -19,17 +19,6 @@ const updateCourseTask = async (req: Request, res: Response) => {
             });
         }
 
-        // Coding tasks are flagged via isCoding (string from multipart form or boolean).
-        let isCodingTask: boolean | undefined;
-        if (isCoding !== undefined) {
-            isCodingTask = isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
-        }
-
-        if (isCodingTask === true) {
-            if (!question) {
-                return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE });
-            }
-        }
 
         const files = req.files as {[fieldname: string]: Express.Multer.File[]};
 
@@ -110,8 +99,6 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContent,
             newContentMimeType,
             newContentFileName,
-            isCodingTask,
-            question,
         );
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {

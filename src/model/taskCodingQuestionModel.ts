@@ -39,6 +39,11 @@ const TaskCodingQuestionSchema = new mongoose.Schema(
                 code: {
                     type: String,
                     default: ''
+                },
+
+                boilerplateVersion: {
+                    type: Number,
+                    select: false
                 }
             }
         ]

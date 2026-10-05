@@ -13,7 +13,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
     try {
 
         if (!taskId || !questionId || !languageId || !employeeId) {
-            return { success: false };
+            return { success: false, invalidRequest: true };
         }
 
         /*
@@ -24,17 +24,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
         const task: any = await CourseTaskModel.findById(taskId).lean();
 
         if (!task) {
-            return { success: false };
-        }
-
-        /*
-         * ---------------------------------------------------------
-         * 3. Verify Coding Task
-         * ---------------------------------------------------------
-         */
-
-        if (!task.isCoding) {
-            return { success: false };
+            return { success: false, notFound: true };
         }
 
         /*
@@ -46,7 +36,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
         const module: any = await CourseModuleModel.findById(task.moduleId).select('courseId').lean();
 
         if (!module?.courseId) {
-            return { success: false };
+            return { success: false, notFound: true };
         }
 
         /*
@@ -59,7 +49,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
             .findOne({ employeeId, courseId: module.courseId }).lean();
 
         if (!assignment) {
-            return { success: false };
+            return { success: false, notAssigned: true };
         }
 
         /*
@@ -206,33 +196,26 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
         }
 
         let starterCode = '';
-        const storedStarterCode =
-            Array.isArray(question.starterCode)
-                ? question.starterCode.find(
-                    (item: any) =>
-                        String(item.languageId) ===
-                        String(languageId)
-                )
-                : null;
-
-        if (storedStarterCode && typeof storedStarterCode.code === 'string' && storedStarterCode.code.trim().length > 0) {
-            starterCode = storedStarterCode.code;
-        }
-
-        if (!starterCode) {
-            try {
-                starterCode = await generateBoilerplateService.getOrGenerateBoilerplate(
-                    String(task._id),
-                    String(question._id),
-                    employeeId,
-                    resolvedLanguage,
-                    String(language._id)
-                );
-
-            } catch (error: any) {
-                console.error(`Boilerplate generation failed: ${error?.message || error}`);
-                starterCode = '';
-            }
+        let boilerplateUnavailable = false;
+        let boilerplateError: string | undefined;
+        try {
+            starterCode = await generateBoilerplateService.getOrGenerateBoilerplate(
+                String(task._id),
+                String(question._id),
+                employeeId,
+                resolvedLanguage,
+                String(language._id)
+            );
+        } catch (error: any) {
+            console.error(`Boilerplate generation failed: ${error?.message || error}`);
+            starterCode = '';
+            boilerplateUnavailable = true;
+            const errorCode = String(error?.message || '');
+            boilerplateError =
+                errorCode === 'USER_OPENROUTER_KEY_NOT_FOUND' ||
+                errorCode === 'OPENROUTER_KEY_NOT_FOUND'
+                    ? 'OPENROUTER_KEY_NOT_FOUND'
+                    : 'GENERATION_FAILED';
         }
 
         /*
@@ -251,6 +234,8 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
             language: resolvedLanguage,
             languageId: String(language._id),
             starterCode,
+            boilerplateUnavailable,
+            ...(boilerplateError ? { boilerplateError } : {}),
             lastSubmittedCode
         };
 

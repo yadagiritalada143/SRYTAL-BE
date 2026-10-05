@@ -12,6 +12,7 @@ const OPENROUTER_MODEL =
 
 const OPENROUTER_BOILERPLATE_TIMEOUT_MS = 60000;
 const OPENROUTER_BOILERPLATE_MAX_TOKENS = 1500;
+const STARTER_CODE_VERSION = 2;
 
 const inFlightGenerations: Record<string, Promise<string> | undefined> = {};
 
@@ -177,17 +178,18 @@ Description:
 ${question.description || ''}
 
 Requirements:
-- Return ONLY executable source code.
+- Return ONLY a starter-code skeleton in source code.
 - Do NOT return markdown.
 - Do NOT return explanations.
 - Do NOT return JSON.
 - Do NOT include "User Safety" or moderation text.
-- Do NOT solve the complete problem.
-- Provide only the boilerplate needed for the employee to start solving it.
+- Do NOT implement the algorithm or solve any part of the problem.
+- Provide only the required class/function signatures and empty placeholder bodies.
+- Do NOT include sample input, sample output, hardcoded demo values, print statements, or example calls.
+- Do NOT invoke the function from a main method. Include a minimal entry point only if the language requires it to compile.
 - Use the correct syntax for ${languageName}.
 - Include the required imports/includes.
-- Include the main entry point when the language normally requires one.
-- Structure the code so the employee can implement the solution.
+- Keep all implementation points clearly marked for the employee to fill in.
 `;
 
     try {
@@ -266,7 +268,8 @@ const upsertStarterCode = async (
         },
         {
             $set: {
-                'starterCode.$.code': code
+                'starterCode.$.code': code,
+                'starterCode.$.boilerplateVersion': STARTER_CODE_VERSION
             }
         }
     );
@@ -286,7 +289,8 @@ const upsertStarterCode = async (
             $push: {
                 starterCode: {
                     languageId: languageObjectId,
-                    code
+                    code,
+                    boilerplateVersion: STARTER_CODE_VERSION
                 }
             }
         }
@@ -319,7 +323,9 @@ export const getOrGenerateBoilerplate = async (
         _id: new Types.ObjectId(questionId),
         taskId: new Types.ObjectId(taskId),
         status: 'ACTIVE'
-    }).lean();
+    })
+        .select('+starterCode.boilerplateVersion')
+        .lean();
 
     if (!question) {
         throw new Error('TASK_OR_QUESTION_NOT_FOUND');
@@ -328,7 +334,8 @@ export const getOrGenerateBoilerplate = async (
     const existingStarterCode =
         question.starterCode?.find(
             (item: any) =>
-                String(item.languageId) === languageId
+                String(item.languageId) === languageId &&
+                item.boilerplateVersion === STARTER_CODE_VERSION
         );
 
     if (existingStarterCode?.code?.trim()) {

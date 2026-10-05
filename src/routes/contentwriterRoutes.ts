@@ -264,40 +264,6 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *                   Use this when taskFile is not uploaded.
  *                 example: https://www.youtube.com/watch?v=example
  *
- *               isCoding:
- *                 type: boolean
- *                 description: |
- *                   Marks the task as a coding task.
- *                   When true, no file or link is needed and the task can hold
- *                   many questions, added through /addCourseTaskQuestion.
- *                 example: true
- *
- *               question:
- *                 type: string
- *                 description: |
- *                   LEGACY single question. A coding task no longer needs one up
- *                   front - pass `questions` instead, or attach them afterwards.
- *                 example: Write a function to reverse a string.
- *
- *               questions:
- *                 type: array
- *                 description: |
- *                   Optional. The questions of a coding task, when the writer wants
- *                   to create them all in one request. Each one is graded
- *                   independently. Send as a JSON array (JSON body) or as a
- *                   JSON-encoded string (multipart form field).
- *                 items:
- *                   type: object
- *                   required:
- *                     - question
- *                   properties:
- *                     question:
- *                       type: string
- *                       example: Write a function to reverse a string.
- *                     description:
- *                       type: string
- *                       example: Return an empty string for an empty input.
- *
  *               taskFile:
  *                 type: string
  *                 format: binary
@@ -320,63 +286,6 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *     responses:
  *       201:
  *         description: Successfully added the task to the course module.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 message:
- *                   type: string
- *                   example: Course task added successfully
- *                 taskId:
- *                   type: string
- *                   example: 64f123456789abcdef123456
- *                 taskName:
- *                   type: string
- *                   example: Node.js Introduction
- *                 taskDescription:
- *                   type: string
- *                   example: Learn the fundamentals of Node.js
- *                 type:
- *                   type: string
- *                   enum:
- *                     - FILE
- *                     - LINK
- *                   example: FILE
- *                 thumbnail:
- *                   type: string
- *                   example: LMSData/Courses/CourseTaskThumbnails/abc123.png
- *                 content:
- *                   type: string
- *                   example: LMSData/Courses/CourseTaskContent/video123.mp4
- *                 isCoding:
- *                   type: boolean
- *                   example: true
- *                 question:
- *                   type: string
- *                   description: LEGACY mirror of the first question
- *                   example: Write a function to reverse a string.
- *                 questions:
- *                   type: array
- *                   description: The questions created with the task
- *                   items:
- *                     type: object
- *                     properties:
- *                       questionId:
- *                         type: string
- *                         example: 64f123456789abcdef123999
- *                       question:
- *                         type: string
- *                       description:
- *                         type: string
- *                       status:
- *                         type: string
- *                       order:
- *                         type: integer
- *                 questionCount:
- *                   type: integer
- *                   example: 2
- *
  *       400:
  *         description: Invalid request or missing task content.
  *

@@ -40,6 +40,7 @@ const question = {
 
 const mockQuestion = (result: any = question) => {
     taskQuestionFindOneMock.mockReturnValue({
+        select: jest.fn().mockReturnThis(),
         lean: jest.fn().mockResolvedValue(result)
     });
 };
@@ -69,7 +70,11 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
     it('returns cached starter code for the selected language ID', async () => {
         mockQuestion({
             ...question,
-            starterCode: [{ languageId, code: 'function f() {}' }]
+            starterCode: [{
+                languageId,
+                code: 'function f() {}',
+                boilerplateVersion: 2
+            }]
         });
 
         const result = await generateBoilerplateService.getOrGenerateBoilerplate(
@@ -81,6 +86,8 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
         );
 
         expect(result).toBe('function f() {}');
+        expect(taskQuestionFindOneMock.mock.results[0].value.select)
+            .toHaveBeenCalledWith('+starterCode.boilerplateVersion');
         expect(axiosPostMock).not.toHaveBeenCalled();
         expect(taskQuestionUpdateOneMock).not.toHaveBeenCalled();
     });
@@ -129,7 +136,12 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
                 taskId: new Types.ObjectId(taskId),
                 'starterCode.languageId': new Types.ObjectId(languageId)
             }),
-            { $set: { 'starterCode.$.code': result } }
+            {
+                $set: {
+                    'starterCode.$.code': result,
+                    'starterCode.$.boilerplateVersion': 2
+                }
+            }
         );
         expect(taskQuestionUpdateOneMock).toHaveBeenNthCalledWith(
             2,
@@ -144,11 +156,46 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
                 $push: {
                     starterCode: {
                         languageId: new Types.ObjectId(languageId),
-                        code: result
+                        code: result,
+                        boilerplateVersion: 2
                     }
                 }
             }
         );
+        const prompt = axiosPostMock.mock.calls[0][1].messages[1].content;
+        expect(prompt).toContain('Do NOT include sample input');
+        expect(prompt).toContain('Do NOT invoke the function from a main method');
+    });
+
+    it('regenerates starter code from an older cached version', async () => {
+        mockQuestion({
+            ...question,
+            starterCode: [{
+                languageId,
+                code: 'function factorial(n) { return n <= 1 ? 1 : n * factorial(n - 1); }',
+                boilerplateVersion: 1
+            }]
+        });
+        axiosPostMock.mockResolvedValue({
+            data: {
+                choices: [{
+                    message: {
+                        content: '{"code": "function factorial(n) {\\n    // TODO: implement\\n}"}'
+                    }
+                }]
+            }
+        });
+
+        const result = await generateBoilerplateService.getOrGenerateBoilerplate(
+            taskId,
+            questionId,
+            'u1',
+            'javascript',
+            languageId
+        );
+
+        expect(result).toContain('// TODO: implement');
+        expect(axiosPostMock).toHaveBeenCalledTimes(1);
     });
 
     it('deduplicates concurrent generations for the same question and language', async () => {

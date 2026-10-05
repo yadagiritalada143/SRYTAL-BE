@@ -1,4 +1,5 @@
 import CourseTaskModel from '../../model/courseTaskModel';
+import TaskCodingQuestionModel from '../../model/taskCodingQuestionModel';
 import { resolveQuestions, isQuestionActive } from '../../util/courseTaskQuestions';
 import { IFetchCourseTaskQuestionsResponse } from '../../interfaces/courseTask';
 
@@ -20,7 +21,22 @@ const getCourseTaskQuestions = async (taskId: string): Promise<IFetchCourseTaskQ
             return { success: false, notFound: true };
         }
 
-        const questions = resolveQuestions(task);
+        const persistedQuestions = await TaskCodingQuestionModel.find({
+            taskId: task._id
+        })
+            .sort({ order: 1 })
+            .lean();
+
+        const questions = persistedQuestions.length > 0
+            ? persistedQuestions.map((question: any) => ({
+                questionId: String(question._id),
+                question: question.question,
+                description: question.description || '',
+                status: question.status === 'INACTIVE' ? 'ARCHIVE' : question.status,
+                order: question.order,
+                starterCode: question.starterCode || []
+            }))
+            : resolveQuestions(task);
 
         return {
             success: true,

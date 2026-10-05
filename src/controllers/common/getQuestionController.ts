@@ -24,6 +24,34 @@ const getQuestion = async (req: Request, res: Response) => {
 
         const result = await getQuestionService.getQuestion( taskid, questionid, languageid, userId);
         if (!result.success) {
+            if (result.notFound) {
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
+                    success: false,
+                    message: CODING_QUESTION_ERROR_MESSAGES.QUESTION_NOT_FOUND_MESSAGE
+                });
+            }
+
+            if (result.questionNotFound) {
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
+                    success: false,
+                    message: CODING_QUESTION_ERROR_MESSAGES.TASK_QUESTION_NOT_FOUND_MESSAGE
+                });
+            }
+
+            if (result.notAssigned) {
+                return res.status(HTTP_STATUS.FORBIDDEN).json({
+                    success: false,
+                    message: CODING_QUESTION_ERROR_MESSAGES.QUESTION_NOT_ASSIGNED_MESSAGE
+                });
+            }
+
+            if (result.invalidLanguage) {
+                return res.status(HTTP_STATUS.BAD_REQUEST).json({
+                    success: false,
+                    message: CODING_QUESTION_ERROR_MESSAGES.INVALID_LANGUAGE_MESSAGE
+                });
+            }
+
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: CODING_QUESTION_ERROR_MESSAGES.UNABLE_TO_FETCH_CODING_QUESTION_MESSAGE
