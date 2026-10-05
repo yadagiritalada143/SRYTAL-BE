@@ -111,7 +111,8 @@ describe('runCodeController', () => {
                 questionId: '66d323456789abcdef123456',
                 language: '65f1a2b3c4d5e6f7890abcd1',
                 code: 'console.log("Hello");'
-            }
+            },
+            user: { userId: '65f1a2b3c4d5e6f7890abcd2' }
         } as unknown as Request;
         runCodeMock.mockResolvedValue({ success: false, invalidLanguage: true });
 

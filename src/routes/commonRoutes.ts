@@ -1683,48 +1683,57 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
 
 /**
  * @swagger
- * /getquestion/{id}:
+ * /getquestion/{taskid}/{questionid}/{languageid}:
  *   get:
- *     summary: Open a coding question (languages, starter, last submission)
+ *     summary: Get a coding question
  *     description: |
- *       Returns everything the editor needs for the coding question: its id, the
- *       allowed languages, and the resolved language (query param
- *       `language`, e.g. `javascript`; falls back to the first allowed language
- *       when omitted) with its id. `{id}` is the question id, so pass the
- *       `questionId` returned here (or from the task) rather than the task id.
- *       The editor body is `lastSubmittedCode` when the
- *       employee has already submitted that language, otherwise the starter code:
- *       writer-supplied first, then an AI-generated (cached) question + language
- *       skeleton. The question must belong to a course assigned to the
- *       authenticated employee.
+ *       Fetches a coding question for an assigned coding task.
+ *
+ *       The question is stored in the `task-coding-questions` collection
+ *       and is identified using both `taskId` and `questionId`.
+ *
+ *       The selected programming language is identified using `languageId`.
+ *
+ *       If starter code for the selected question and language does not
+ *       already exist, boilerplate code is generated and returned.
+ *
+ *       The API also returns the user's latest submitted code for the
+ *       selected task, question, and programming language.
+ *
  *     tags:
  *       - Coding Question
+ *
  *     security:
  *       - BearerAuth: []
+ *
  *     parameters:
  *       - in: path
- *         name: id
+ *         name: taskid
  *         required: true
+ *         description: MongoDB ObjectId of the coding task
  *         schema:
  *           type: string
- *         description: ID of the coding question. The parent task is found automatically.
- *         example: 6abcb39e08aa64c1ff59b1d3
- *       - in: query
- *         name: questionId
- *         required: false
+ *           example: "6ac0c4624e3e70ca5f8cdabb"
+ *
+ *       - in: path
+ *         name: questionid
+ *         required: true
+ *         description: MongoDB ObjectId of the coding question
  *         schema:
  *           type: string
- *         description: Only needed when `id` is a task id. Omit it to get the task's first active question.
- *       - in: query
- *         name: languageId
- *         required: false
+ *           example: "6ac0c4624e3e70ca5f8cdabc"
+ *
+ *       - in: path
+ *         name: languageid
+ *         required: true
+ *         description: MongoDB ObjectId of the selected programming language
  *         schema:
  *           type: string
- *         description: The programming-language Mongo _id. Wins over `language` when both are provided.
- *         example: 60f7a1b2c3d4e5f6a7b8c9d0
+ *           example: "6ab257338673e91df1c8ea1c"
+ *
  *     responses:
  *       200:
- *         description: Coding question fetched successfully.
+ *         description: Coding question fetched successfully
  *         content:
  *           application/json:
  *             schema:
@@ -1732,41 +1741,169 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
  *               properties:
  *                 success:
  *                   type: boolean
+ *                   example: true
+ *
+ *                 message:
+ *                   type: string
+ *                   example: "Coding question fetched successfully"
+ *
  *                 taskId:
  *                   type: string
- *                   description: The coding task (course task) id
+ *                   description: MongoDB ObjectId of the coding task
+ *                   example: "6ac0c4624e3e70ca5f8cdabb"
+ *
  *                 questionId:
  *                   type: string
- *                   nullable: true
- *                   description: The question id inside the task
+ *                   description: MongoDB ObjectId of the coding question
+ *                   example: "6ac0c4624e3e70ca5f8cdabc"
+ *
+ *                 taskName:
+ *                   type: string
+ *                   description: Name of the coding task
+ *                   example: "JavaScript Array Coding Assessment"
+ *
+ *                 question:
+ *                   type: string
+ *                   description: Coding question text
+ *                   example: "Find the maximum number in an array"
+ *
+ *                 description:
+ *                   type: string
+ *                   description: Additional question description or instructions
+ *                   example: "Given an array of numbers, return the largest number."
+ *
  *                 allowedLanguages:
  *                   type: array
+ *                   description: Programming languages available for the coding task
  *                   items:
  *                     type: string
+ *                   example:
+ *                     - JavaScript
+ *                     - TypeScript
+ *                     - Python
+ *                     - Java
+ *                     - C++
+ *
  *                 language:
  *                   type: string
+ *                   description: Canonical name of the selected programming language
+ *                   example: "javascript"
+ *
  *                 languageId:
  *                   type: string
+ *                   description: MongoDB ObjectId of the selected programming language
+ *                   example: "6ab257338673e91df1c8ea1c"
+ *
  *                 starterCode:
  *                   type: string
+ *                   description: |
+ *                     Starter/boilerplate code for the selected question and
+ *                     programming language. If it does not exist, it may be
+ *                     generated automatically and cached.
+ *                   example: |
+ *                     function findMaximum(numbers) {
+ *                         // Write your code here
+ *                     }
+ *
  *                 lastSubmittedCode:
- *                   type: object
  *                   nullable: true
+ *                   description: Latest code submitted by the authenticated user for this question and language
+ *                   type: object
  *                   properties:
  *                     language:
  *                       type: string
+ *                       example: "javascript"
  *                     code:
  *                       type: string
+ *                       example: |
+ *                         function findMaximum(numbers) {
+ *                             return Math.max(...numbers);
+ *                         }
+ *
  *       400:
- *         description: Not a coding question or invalid language.
+ *         description: Invalid request, non-coding task, or invalid programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     missingParameters:
+ *                       value: "taskId, questionId and languageId are required"
+ *                     notCodingQuestion:
+ *                       value: "This task is not a coding task"
+ *                     invalidLanguage:
+ *                       value: "Invalid programming language"
+ *                     unableToFetch:
+ *                       value: "Unable to fetch coding question"
+ *
+ *       401:
+ *         description: Authentication is required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "User authentication required"
+ *
  *       403:
- *         description: Question not part of the employee's assigned courses.
+ *         description: The authenticated user is not assigned to the course
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Question is not assigned to the user"
+ *
  *       404:
- *         description: Coding question not found.
+ *         description: Task or coding question not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     taskNotFound:
+ *                       value: "Task not found"
+ *                     questionNotFound:
+ *                       value: "Coding question not found"
+ *
  *       500:
- *         description: Server error.
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Error while fetching coding question"
  */
-commonRouter.get('/getquestion/:id', validateJWT, getQuestionController.getQuestion);
+
+commonRouter.get('/getquestion/:taskid/:questionid/:languageid', validateJWT, getQuestionController.getQuestion);
 
 /**
  * @swagger

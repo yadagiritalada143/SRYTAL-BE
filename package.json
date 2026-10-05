@@ -9,6 +9,7 @@
     "dev": "nodemon src/index.ts",
     "test": "jest",
     "coverage": "jest --coverage",
+    "migrate:coding-test-case-indexes": "node scripts/migrate-coding-task-test-case-indexes.js",
     "seed:wandbox": "node scripts/seed-wandbox-languages.js"
   },
   "keywords": [

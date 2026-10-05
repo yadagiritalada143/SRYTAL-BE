@@ -5,6 +5,7 @@ import CourseAssignment from '../../../model/courseAssignmentModel';
 import CodingQuestionTestCaseModel from '../../../model/codingQuestionTestCaseModel';
 import CodeRunModel from '../../../model/codeRunModel';
 import ProgrammingLanguages from '../../../model/programmingLanguagesModel';
+import TaskCodingQuestionModel from '../../../model/taskCodingQuestionModel';
 import getProgrammingLanguageByIdService from '../../../services/common/getProgrammingLanguageByIdService';
 import executeCodeService from '../../../services/common/executeCodeService';
 import evaluateTestCasesService from '../../../services/common/evaluateTestCasesService';
@@ -38,6 +39,11 @@ jest.mock('../../../model/codeRunModel', () => ({
 jest.mock('../../../model/programmingLanguagesModel', () => ({
     __esModule: true,
     default: { find: jest.fn() }
+}));
+
+jest.mock('../../../model/taskCodingQuestionModel', () => ({
+    __esModule: true,
+    default: { findOne: jest.fn() }
 }));
 
 jest.mock('../../../services/common/getProgrammingLanguageByIdService', () => ({
@@ -75,12 +81,14 @@ const codeRunFindOneAndUpdateMock = (CodeRunModel as unknown as { findOneAndUpda
 const codeRunFindOneMock = (CodeRunModel as unknown as { findOne: jest.Mock }).findOne;
 const getProgrammingLanguageMock = getProgrammingLanguageByIdService.getProgrammingLanguageById as unknown as jest.Mock;
 const programmingLanguagesFindMock = (ProgrammingLanguages as unknown as { find: jest.Mock }).find;
+const taskCodingQuestionFindOneMock = (TaskCodingQuestionModel as unknown as { findOne: jest.Mock }).findOne;
 const executeCodeMock = executeCodeService.executeCode as unknown as jest.Mock;
 const evaluateTestCaseMock = evaluateTestCasesService.evaluateTestCase as unknown as jest.Mock;
 const summarizeResultsMock = evaluateTestCasesService.summarizeResults as unknown as jest.Mock;
 const analyzeCodeQualityMock = codeQualityAnalysisService.analyzeCodeQuality as unknown as jest.Mock;
 
 const questionId = '66d323456789abcdef123456';
+const embeddedQuestionId = '66d323456789abcdef123499';
 const moduleId = '66d323456789abcdef123457';
 const courseId = '66d323456789abcdef123458';
 const languageId = '65f1a2b3c4d5e6f7890abcd1';
@@ -117,7 +125,11 @@ const setUpValidRequest = (): void => {
             _id: questionId,
             moduleId,
             isCoding: true,
-            question: 'Return the input.'
+            questions: [{
+                questionId: embeddedQuestionId,
+                question: 'Return the input.',
+                status: 'ACTIVE'
+            }]
         })
     });
     courseModuleFindByIdMock.mockReturnValue({
@@ -125,6 +137,10 @@ const setUpValidRequest = (): void => {
     });
     courseAssignmentFindOneMock.mockReturnValue({
         lean: jest.fn().mockResolvedValue({ _id: 'assignment' })
+    });
+    taskCodingQuestionFindOneMock.mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        lean: jest.fn().mockResolvedValue(null)
     });
     testCaseFindOneMock.mockReturnValue({
         lean: jest.fn().mockResolvedValue({
@@ -186,7 +202,7 @@ describe('runCodeService', () => {
         });
         expect(codeRunCreateMock).not.toHaveBeenCalled();
         expect(codeRunFindOneAndUpdateMock).toHaveBeenCalledWith(
-            { userId: employeeId, taskId: questionId, questionId: null, type: 'run' },
+            { userId: employeeId, taskId: questionId, questionId: embeddedQuestionId, languageId, type: 'run' },
             {
                 $set: expect.objectContaining({
                     languageId,
@@ -202,6 +218,46 @@ describe('runCodeService', () => {
             }
         );
         expect(response.executionResult?.language).toBe('javascript');
+    });
+
+    it('resolves questions from the separate task-question collection', async () => {
+        const selectedQuestionId = '66d323456789abcdef123499';
+        taskCodingQuestionFindOneMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue({
+                _id: selectedQuestionId,
+                question: 'Return the input.',
+                description: '',
+                status: 'ACTIVE',
+                order: 0
+            })
+        });
+
+        const response = await runCodeService.runCode(
+            questionId,
+            selectedQuestionId,
+            languageId,
+            'console.log(1);',
+            employeeId
+        );
+
+        expect(taskCodingQuestionFindOneMock).toHaveBeenCalledWith({
+            _id: selectedQuestionId,
+            taskId: questionId,
+            status: 'ACTIVE'
+        });
+        expect(response.success).toBe(true);
+        expect(response.executionResult?.questionId).toBe(selectedQuestionId);
+        expect(codeRunFindOneAndUpdateMock).toHaveBeenCalledWith(
+            {
+                userId: employeeId,
+                taskId: questionId,
+                questionId: selectedQuestionId,
+                languageId,
+                type: 'run'
+            },
+            expect.anything(),
+            expect.anything()
+        );
     });
 
     it('uses the same run key when code is rerun', async () => {
@@ -259,7 +315,13 @@ describe('runCodeService', () => {
             'submit'
         );
 
-        expect(response).toEqual({ success: false, notAllTestsPassed: true });
+        expect(response).toEqual(expect.objectContaining({
+            success: false,
+            notAllTestsPassed: true,
+            executionResult: expect.objectContaining({
+                questionId: embeddedQuestionId
+            })
+        }));
         expect(codeRunCreateMock).not.toHaveBeenCalled();
         expect(codeRunFindOneAndUpdateMock).not.toHaveBeenCalled();
     });
@@ -277,18 +339,19 @@ describe('runCodeService', () => {
         expect(response.lastSubmission).toBeNull();
     });
 
-    it("returns the employee's last run or submission, across all questions", async () => {
+    it("returns the employee's last submission for the selected question and language", async () => {
         const submittedAt = new Date('2026-01-05T10:00:00.000Z');
         mockLastSubmissionLookup({
             userId: employeeId,
-            taskId: '65f1a2b3c4d5e6f7890abcd3',
+            taskId: questionId,
+            questionId: embeddedQuestionId,
             languageId,
             sourceCode: 'console.log(42);',
             passedCount: 3,
             failedCount: 0,
             score: 100,
             status: 'ALL_PASSED',
-            type: 'run',
+            type: 'submit',
             updatedAt: submittedAt
         });
 
@@ -301,22 +364,26 @@ describe('runCodeService', () => {
             'submit'
         );
 
-        // No `type` filter: the lookup must consider run snapshots too.
         expect(codeRunFindOneMock).toHaveBeenCalledWith(
-            { userId: employeeId },
-            expect.objectContaining({ sourceCode: 1, type: 1, updatedAt: 1 })
+            {
+                userId: employeeId,
+                taskId: questionId,
+                questionId: embeddedQuestionId,
+                languageId,
+                type: 'submit'
+            }
         );
         expect(response.lastSubmission).toEqual({
             employeeId,
-            taskId: '65f1a2b3c4d5e6f7890abcd3',
-            questionId: null,
+            taskId: questionId,
+            questionId: embeddedQuestionId,
             languageId,
             code: 'console.log(42);',
             passedTestCases: 3,
             failedTestCases: 0,
             score: 100,
             status: 'ALL_PASSED',
-            type: 'run',
+            type: 'submit',
             submittedAt
         });
         // The previous record is read before the new one is inserted.
@@ -377,7 +444,7 @@ describe('runCodeService', () => {
         expect(programmingLanguagesFindMock).toHaveBeenCalled();
         expect(executeCodeMock).toHaveBeenCalled();
         expect(codeRunFindOneAndUpdateMock).toHaveBeenCalledWith(
-            { userId: employeeId, taskId: questionId, questionId: null, type: 'run' },
+            { userId: employeeId, taskId: questionId, questionId: embeddedQuestionId, languageId, type: 'run' },
             {
                 $set: expect.objectContaining({
                     languageId,
@@ -408,14 +475,14 @@ describe('runCodeService', () => {
     it('returns invalidLanguage when the stored language is unsupported', async () => {
         getProgrammingLanguageMock.mockResolvedValue({
             _id: languageId,
-            languageName: 'Ruby'
+            languageName: 'Fortran'
         });
 
         const response = await runCodeService.runCode(
             questionId,
             '',
             languageId,
-            'puts 1',
+            'program main',
             employeeId
         );
 

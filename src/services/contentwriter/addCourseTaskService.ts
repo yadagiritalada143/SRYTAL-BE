@@ -1,6 +1,7 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseModel from '../../model/coursesModel';
+import TaskCodingQuestionModel from '../../model/taskCodingQuestionModel';
 import { parseQuestionsField, ACTIVE_QUESTION_STATUS } from '../../util/courseTaskQuestions';
 
 const addCourseTask = async (
@@ -26,10 +27,7 @@ const addCourseTask = async (
         const preparedQuestions = isCodingTask ? parseQuestionsField(questions) : [];
 
         // Clients migrating from the single-question form still post one
-        // `question`. Normalise it into questions[0] so every new task is stored
-        // in the new shape. New tasks never write the top-level `question` or
-        // `starterCode` fields: those are only read for tasks that predate this
-        // change and go away with the legacy fallback in the next release.
+        // `question`. Normalize it into the separate question collection.
         if (isCodingTask && preparedQuestions.length === 0) {
             const singleQuestion = String(question || '').trim();
             if (singleQuestion) {
@@ -53,11 +51,23 @@ const addCourseTask = async (
             content,
             contentMimeType,
             contentFileName,
-            isCoding: isCodingTask,
-            ...(preparedQuestions.length > 0 ? { questions: preparedQuestions } : {})
+            isCoding: isCodingTask
         });
 
         const result = await taskToSave.save();
+
+        const savedQuestions = preparedQuestions.length > 0
+            ? await TaskCodingQuestionModel.create(
+                preparedQuestions.map((preparedQuestion) => ({
+                    taskId: result._id,
+                    question: preparedQuestion.question,
+                    description: preparedQuestion.description,
+                    status: preparedQuestion.status,
+                    order: preparedQuestion.order,
+                    starterCode: []
+                }))
+            )
+            : [];
 
         // Propagate activity up: touch the parent course's updatedAt.
         const module = await CourseModuleModel.findById(moduleId).lean();
@@ -65,7 +75,25 @@ const addCourseTask = async (
             await CourseModel.findByIdAndUpdate(module.courseId, { $currentDate: { updatedAt: true } });
         }
 
-        return result;
+        if (savedQuestions.length === 0) {
+            return result;
+        }
+
+        const taskResult =
+            typeof result.toObject === 'function'
+                ? result.toObject()
+                : result;
+
+        return {
+            ...taskResult,
+            questions: savedQuestions.map((savedQuestion: any) => ({
+                questionId: String(savedQuestion._id),
+                question: savedQuestion.question,
+                description: savedQuestion.description,
+                status: savedQuestion.status,
+                order: savedQuestion.order
+            }))
+        };
     } catch (error: any) {
         console.error('Error in adding course task:', error);
         return { success: false };

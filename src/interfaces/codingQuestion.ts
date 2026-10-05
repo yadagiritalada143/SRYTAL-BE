@@ -1,10 +1,6 @@
+import { Document, Types } from 'mongoose';
 import { ITestCase } from './codingQuestionTestCase';
 
-/**
- * The employee's own latest submission for a coding question, in a specific
- * language. Surfaced on `getQuestion` so the editor can restore their
- * submitted answer instead of the starter code.
- */
 export interface ILastSubmittedCode {
     language: string;
     code: string;
@@ -28,7 +24,6 @@ export interface IGetQuestionResponse {
     notCodingQuestion?: boolean;
     notAssigned?: boolean;
     invalidLanguage?: boolean;
-    // Set when the named question does not belong to the task.
     questionNotFound?: boolean;
 }
 
@@ -71,10 +66,6 @@ export interface IRunCodeExecutionResult {
     aiEvaluation: IAiCodeQualityEvaluation | null;
 }
 
-/**
- * The last code an employee ran or submitted, surfaced alongside a fresh
- * submission so the client can restore what they were working on.
- */
 export interface ILastCodeSubmission {
     employeeId: string;
     taskId: string;
@@ -96,8 +87,22 @@ export interface IRunCodeResponse {
     notAssigned?: boolean;
     invalidLanguage?: boolean;
     notAllTestsPassed?: boolean;
-    // Set when the named question does not belong to the task.
     questionNotFound?: boolean;
     executionResult?: IRunCodeExecutionResult;
     lastSubmission?: ILastCodeSubmission | null;
+}
+
+export interface IStarterCode {
+    languageId: Types.ObjectId;
+    code: string;
+}
+
+export interface ITaskCodingQuestion extends Document {
+    taskId: Types.ObjectId;
+    question: string;
+    description: string;
+    type: string;
+    status: 'ACTIVE' | 'INACTIVE';
+    order: number;
+    starterCode: IStarterCode[];
 }

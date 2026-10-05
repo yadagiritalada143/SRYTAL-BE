@@ -1,16 +1,14 @@
 import axios from 'axios';
 import { Types } from 'mongoose';
-import CourseTaskModel from '../../model/courseTaskModel';
+import TaskCodingQuestionModel from '../../model/taskCodingQuestionModel';
 import getUserOpenRouterKeyService from '../useropenrouter/getUserOpenRouterKeyService';
-import { resolveStarterCode } from '../../util/languageUtils';
-import { ICourseTaskQuestion } from '../../interfaces/courseTask';
 import { LANGUAGE_REGISTRY } from '../../types/languageExecutionMap';
 
 const OPENROUTER_CHAT_COMPLETIONS_URL =
     'https://openrouter.ai/api/v1/chat/completions';
 
 const OPENROUTER_MODEL =
-    process.env.OPENROUTER_MODEL?.trim() || 'openrouter/free';
+    process.env.OPENROUTER_MODEL?.trim() || 'openrouter/auto';
 
 const OPENROUTER_BOILERPLATE_TIMEOUT_MS = 60000;
 const OPENROUTER_BOILERPLATE_MAX_TOKENS = 1500;
@@ -81,7 +79,7 @@ const looksLikeStarterCode = (code: string): boolean => {
  */
 const extractBoilerplateCode = (
     rawContent: string,
-    canonicalKey: string
+    canonicalKey: string = ''
 ): string => {
     if (!rawContent?.trim()) {
         throw new Error('BOILERPLATE_EMPTY_RESPONSE');
@@ -136,19 +134,28 @@ const extractBoilerplateCode = (
 const generateViaOpenRouter = async (
     userId: string,
     canonicalKey: string,
-    question: ICourseTaskQuestion
+    question: { question: string; description?: string }
 ): Promise<string> => {
     if (!OPENROUTER_MODEL) {
         throw new Error('OPENROUTER_MODEL_NOT_CONFIGURED');
     }
 
-    const apiKey =
+    const keyRecord =
         await getUserOpenRouterKeyService.getUserOpenRouterKeyService(
             userId
         );
 
+    const apiKey =
+        typeof keyRecord?.openrouterKey === 'string'
+            ? keyRecord.openrouterKey.trim()
+            : '';
+
     if (!apiKey) {
         throw new Error('OPENROUTER_API_KEY_NOT_FOUND');
+    }
+
+    if (/[\r\n]/.test(apiKey)) {
+        throw new Error('OPENROUTER_API_KEY_INVALID_FORMAT');
     }
 
     const languageConfig = LANGUAGE_REGISTRY[canonicalKey];
@@ -240,47 +247,54 @@ Requirements:
 const upsertStarterCode = async (
     taskId: string,
     questionId: string,
-    languageName: string,
+    languageId: string,
     code: string
 ): Promise<void> => {
-    const task = await CourseTaskModel.findOne({
-        _id: new Types.ObjectId(taskId),
-        'questions.questionId': new Types.ObjectId(questionId),
-    });
+    const taskObjectId = new Types.ObjectId(taskId);
+    const questionObjectId = new Types.ObjectId(questionId);
+    const languageObjectId = new Types.ObjectId(languageId);
+    const questionFilter = {
+        _id: questionObjectId,
+        taskId: taskObjectId,
+        status: 'ACTIVE'
+    };
 
-    if (!task) {
+    const updatedExisting = await TaskCodingQuestionModel.updateOne(
+        {
+            ...questionFilter,
+            'starterCode.languageId': languageObjectId
+        },
+        {
+            $set: {
+                'starterCode.$.code': code
+            }
+        }
+    );
+
+    if (updatedExisting.matchedCount > 0) {
+        return;
+    }
+
+    const addedStarter = await TaskCodingQuestionModel.updateOne(
+        {
+            ...questionFilter,
+            'starterCode.languageId': {
+                $ne: languageObjectId
+            }
+        },
+        {
+            $push: {
+                starterCode: {
+                    languageId: languageObjectId,
+                    code
+                }
+            }
+        }
+    );
+
+    if (addedStarter.matchedCount === 0) {
         throw new Error('TASK_OR_QUESTION_NOT_FOUND');
     }
-
-    const question = task.questions?.find(
-        (item: any) =>
-            String(item.questionId) === String(questionId)
-    );
-
-    if (!question) {
-        throw new Error('QUESTION_NOT_FOUND');
-    }
-
-    if (!question.starterCode) {
-        question.starterCode = [];
-    }
-
-    const existingIndex = question.starterCode.findIndex(
-        (item: any) =>
-            item.languageName.toLowerCase() ===
-            languageName.toLowerCase()
-    );
-
-    if (existingIndex >= 0) {
-        question.starterCode[existingIndex].code = code;
-    } else {
-        question.starterCode.push({
-            languageName,
-            code,
-        });
-    }
-
-    await task.save();
 };
 
 /**
@@ -290,57 +304,35 @@ export const getOrGenerateBoilerplate = async (
     taskId: string,
     questionId: string,
     userId: string,
-    canonicalKey: string
+    canonicalKey: string,
+    languageId: string
 ): Promise<string> => {
-    const task = await CourseTaskModel.findOne({
-        _id: new Types.ObjectId(taskId),
-        'questions.questionId': new Types.ObjectId(questionId),
+    if (
+        !Types.ObjectId.isValid(taskId) ||
+        !Types.ObjectId.isValid(questionId) ||
+        !Types.ObjectId.isValid(languageId)
+    ) {
+        throw new Error('INVALID_BOILERPLATE_IDENTIFIERS');
+    }
+
+    const question = await TaskCodingQuestionModel.findOne({
+        _id: new Types.ObjectId(questionId),
+        taskId: new Types.ObjectId(taskId),
+        status: 'ACTIVE'
     }).lean();
 
-    if (!task) {
+    if (!question) {
         throw new Error('TASK_OR_QUESTION_NOT_FOUND');
     }
 
-    const question = task.questions?.find(
-        (item: any) =>
-            String(item.questionId) === String(questionId)
-    ) as ICourseTaskQuestion | undefined;
-
-    if (!question) {
-        throw new Error('QUESTION_NOT_FOUND');
-    }
-
-    /*
-     * First check whether starter code already exists.
-     */
     const existingStarterCode =
         question.starterCode?.find(
             (item: any) =>
-                item.languageName.toLowerCase() ===
-                canonicalKey.toLowerCase()
+                String(item.languageId) === languageId
         );
 
     if (existingStarterCode?.code?.trim()) {
         return existingStarterCode.code;
-    }
-
-    /*
-     * Try the existing language utility fallback.
-     */
-    const fallbackStarterCode = resolveStarterCode(
-        canonicalKey,
-        question
-    );
-
-    if (fallbackStarterCode?.trim()) {
-        await upsertStarterCode(
-            taskId,
-            questionId,
-            canonicalKey,
-            fallbackStarterCode
-        );
-
-        return fallbackStarterCode;
     }
 
     /*
@@ -365,7 +357,7 @@ export const getOrGenerateBoilerplate = async (
         await upsertStarterCode(
             taskId,
             questionId,
-            canonicalKey,
+            languageId,
             generatedCode
         );
 
@@ -384,4 +376,5 @@ export const getOrGenerateBoilerplate = async (
 
 export default {
     getOrGenerateBoilerplate,
+    extractBoilerplateCode,
 };

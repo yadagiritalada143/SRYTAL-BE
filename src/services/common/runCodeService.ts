@@ -6,50 +6,24 @@ import CourseAssignment from '../../model/courseAssignmentModel';
 import CodingQuestionTestCaseModel from '../../model/codingQuestionTestCaseModel';
 import CodeRunModel from '../../model/codeRunModel';
 import ProgrammingLanguages from '../../model/programmingLanguagesModel';
-
-import generateTestCasesService, {
-    MIN_TEST_CASE_COUNT
-} from './generateTestCasesService';
-
+import TaskCodingQuestionModel from '../../model/taskCodingQuestionModel';
+import generateTestCasesService, { MIN_TEST_CASE_COUNT } from './generateTestCasesService';
 import executeCodeService from './executeCodeService';
 import evaluateTestCasesService from './evaluateTestCasesService';
 import codeQualityAnalysisService from './codeQualityAnalysisService';
 import getProgrammingLanguageByIdService from './getProgrammingLanguageByIdService';
-
-import {
-    normalizeLanguage,
-    isExecutableLanguage
-} from '../../util/languageUtils';
-
-import {
-    toQuestionIdFilter,
-    resolveQuestion
-} from '../../util/courseTaskQuestions';
-
-import {
-    syncTaskCompletionFromSubmissions
-} from '../../util/syncTaskCompletion';
-
+import { normalizeLanguage, isExecutableLanguage } from '../../util/languageUtils';
+import { toQuestionIdFilter, resolveQuestion } from '../../util/courseTaskQuestions';
+import { syncTaskCompletionFromSubmissions } from '../../util/syncTaskCompletion';
 import { ICourseTaskQuestion } from '../../interfaces/courseTask';
 
-import {
-    IRunCodeResponse,
-    ICodeRunTestCaseResult,
-    IAiCodeQualityEvaluation,
-    ILastCodeSubmission
-} from '../../interfaces/codingQuestion';
-
+import { IRunCodeResponse, ICodeRunTestCaseResult, IAiCodeQualityEvaluation, ILastCodeSubmission } from '../../interfaces/codingQuestion';
 
 const GENERATION_WAIT_ATTEMPTS = 12;
 const GENERATION_WAIT_INTERVAL_MS = 250;
-
 const TEST_CASE_EXECUTION_CONCURRENCY = 2;
 
-
-const wait = (ms: number) =>
-    new Promise((resolve) => setTimeout(resolve, ms));
-
-
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 const cleanSourceCode = (code: string): string => {
     if (typeof code !== 'string') {
         return '';
@@ -117,35 +91,24 @@ const hasEnoughTestCases = (doc: any): boolean =>
  * OpenRouter receives:
  * userId + question + language
  */
-const ensureTestCases = async (
-    taskId: string,
-    questionId: string | null,
-    userId: string,
-    question: string,
-    language: string
-): Promise<any[]> => {
+const ensureTestCases = async (taskId: string, questionId: string | null, userId: string, question: string, language: string): Promise<any[]> => {
 
     if (!questionId) {
         throw new Error('QUESTION_ID_REQUIRED');
     }
 
-    const identity = {
-        taskId,
-        questionId
-    };
+    const identity = { taskId, questionId };
 
     let doc: any =
         await CodingQuestionTestCaseModel
             .findOne(identity)
             .lean();
-
     /**
      * Already generated.
      */
     if (hasEnoughTestCases(doc)) {
         return doc.testCases;
     }
-
 
     /**
      * Wait for another request that is already generating.
@@ -162,10 +125,7 @@ const ensureTestCases = async (
                 GENERATION_WAIT_INTERVAL_MS
             );
 
-            doc =
-                await CodingQuestionTestCaseModel
-                    .findOne(identity)
-                    .lean();
+            doc = await CodingQuestionTestCaseModel.findOne(identity).lean();
 
             if (hasEnoughTestCases(doc)) {
                 return doc.testCases;
@@ -179,11 +139,8 @@ const ensureTestCases = async (
             }
         }
 
-        throw new Error(
-            'TEST_CASES_GENERATION_IN_PROGRESS'
-        );
+        throw new Error('TEST_CASES_GENERATION_IN_PROGRESS');
     };
-
 
     /**
      * Another request is generating.
@@ -191,7 +148,6 @@ const ensureTestCases = async (
     if (doc?.status === 'GENERATING') {
         return waitForCompletion();
     }
-
 
     /**
      * Claim an existing document.
@@ -292,34 +248,17 @@ const ensureTestCases = async (
         return claim.testCases;
     }
 
-
     /**
      * Generate test cases using the actual question
      * and resolved programming language.
      */
     try {
 
-        const generated =
-            await generateTestCasesService
-                .generateTestCases(
-                    userId,
-                    taskId,
-                    questionId,
-                    question,
-                    language
-                );
-
-
-        if (
-            !Array.isArray(generated) ||
-            generated.length < MIN_TEST_CASE_COUNT
+        const generated = await generateTestCasesService.generateTestCases(userId, taskId, questionId, question, language);
+        if (!Array.isArray(generated) || generated.length < MIN_TEST_CASE_COUNT
         ) {
-            throw new Error(
-                'INVALID_GENERATED_TEST_CASES'
-            );
+            throw new Error('INVALID_GENERATED_TEST_CASES');
         }
-
-
         await CodingQuestionTestCaseModel.updateOne(
 
             identity,
@@ -332,14 +271,10 @@ const ensureTestCases = async (
                 }
             }
         );
-
-
         return generated;
 
     } catch (error: any) {
-
         await CodingQuestionTestCaseModel.updateOne(
-
             identity,
 
             {
@@ -354,7 +289,6 @@ const ensureTestCases = async (
     }
 };
 
-
 /**
  * Resolve programming language.
  *
@@ -363,22 +297,17 @@ const ensureTestCases = async (
  * 2. languageName
  * 3. canonicalKey
  */
-const resolveProgrammingLanguage = async (
-    input: string
-): Promise<any | null> => {
-
-    const trimmed =
-        (input || '').trim();
+const resolveProgrammingLanguage = async (input: string): Promise<any | null> => {
+    const trimmed = (input || '').trim();
 
     if (!trimmed) {
         return null;
     }
 
-
     /**
      * Try MongoDB ObjectId first.
      */
-    if (Types.ObjectId.isValid(trimmed)) {
+    if (trimmed) {
 
         const byId =
             await getProgrammingLanguageByIdService
@@ -391,20 +320,12 @@ const resolveProgrammingLanguage = async (
         }
     }
 
-
     /**
      * Try language name / canonical key.
      */
-    const wanted =
-        normalizeLanguage(trimmed) ||
-        trimmed.toLowerCase();
+    const wanted = normalizeLanguage(trimmed) || trimmed.toLowerCase();
 
-
-    const languages: any[] =
-        await ProgrammingLanguages
-            .find({})
-            .lean();
-
+    const languages: any[] = await ProgrammingLanguages.find({}).lean();
 
     return (
         languages.find((language) => {
@@ -419,7 +340,6 @@ const resolveProgrammingLanguage = async (
                     .toLowerCase()
                     .trim();
 
-
             const canonicalKey =
                 String(
                     language?.canonicalKey || ''
@@ -427,89 +347,36 @@ const resolveProgrammingLanguage = async (
                     .toLowerCase()
                     .trim();
 
-
-            return (
-                name === wanted ||
-                canonicalKey === wanted
-            );
+            return (name === wanted || canonicalKey === wanted);
 
         }) || null
     );
 };
 
-
 /**
  * Get latest submission for:
  * employee + task + question + language
  */
-const getLastSubmission = async (
-    employeeId: string,
-    taskId: string,
-    questionId: string,
-    languageId: string
-): Promise<ILastCodeSubmission | null> => {
-
+const getLastSubmission = async (employeeId: string, taskId: string, questionId: string, languageId: string): Promise<ILastCodeSubmission | null> => {
     const doc: any =
-        await CodeRunModel.findOne({
-
-            userId: employeeId,
-
-            taskId,
-
-            questionId,
-
-            languageId,
-
-            type: 'submit'
-
-        })
-            .sort({
-                updatedAt: -1
-            })
-            .lean();
-
-
+        await CodeRunModel.findOne({ userId: employeeId, taskId, questionId, languageId, type: 'submit' }).sort({updatedAt: -1}).lean();
     if (!doc) {
         return null;
     }
 
-
     return {
 
-        employeeId:
-            String(doc.userId),
-
-        taskId:
-            String(doc.taskId),
-
-        questionId:
-            toQuestionIdFilter(
-                doc.questionId
-            ),
-
-        languageId:
-            String(doc.languageId),
-
-        code:
-            doc.sourceCode,
-
-        passedTestCases:
-            doc.passedCount,
-
-        failedTestCases:
-            doc.failedCount,
-
-        score:
-            doc.score,
-
-        status:
-            doc.status,
-
-        type:
-            doc.type,
-
-        submittedAt:
-            doc.updatedAt
+        employeeId: String(doc.userId),
+        taskId: String(doc.taskId),
+        questionId: toQuestionIdFilter(doc.questionId),
+        languageId: String(doc.languageId),
+        code: doc.sourceCode,
+        passedTestCases: doc.passedCount,
+        failedTestCases: doc.failedCount,
+        score: doc.score,
+        status: doc.status,
+        type: doc.type,
+        submittedAt: doc.updatedAt
     };
 };
 
@@ -517,133 +384,107 @@ const getLastSubmission = async (
 /**
  * Main Run Code / Submit Code engine.
  */
-const runCode = async (
-    taskId: string,
-    questionId: string,
-    languageId: string,
-    code: string,
-    employeeId: string,
-    runType: 'run' | 'submit' = 'run'
-): Promise<IRunCodeResponse> => {
+const runCode = async (taskId: string, questionId: string, languageId: string, code: string, employeeId: string, runType: 'run' | 'submit' = 'run'): Promise<IRunCodeResponse> => {
 
-    /**
-     * 1. Find coding task.
-     */
-    const task: any =
-        await CourseTaskModel
-            .findById(taskId)
-            .lean();
-
+    const task: any = await CourseTaskModel.findById(taskId).lean();
 
     if (!task) {
-
-        return {
-            success: false,
-            notFound: true
-        };
+        return { success: false };
     }
-
 
     /**
      * 2. Validate coding task.
      */
     if (!task.isCoding) {
-
-        return {
-            success: false,
-            notCodingQuestion: true
-        };
+        return { success: false };
     }
-
-
     /**
      * 3. Resolve selected question.
      */
-    const question =
-        resolveQuestion(
+    let question: ICourseTaskQuestion | null = null;
+
+    if (!questionId || questionId) {
+        const questionQuery = TaskCodingQuestionModel.findOne(
+            questionId
+                ? {
+                    _id: questionId,
+                    taskId: String(task._id),
+                    status: 'ACTIVE'
+                }
+                : {
+                    taskId: String(task._id),
+                    status: 'ACTIVE'
+                }
+        );
+
+        if (!questionId) {
+            questionQuery.sort({
+                order: 1,
+                _id: 1
+            });
+        }
+
+        const storedQuestion = await questionQuery.lean();
+
+        if (storedQuestion) {
+            question = {
+                questionId: String(storedQuestion._id),
+                question: storedQuestion.question,
+                description: storedQuestion.description,
+                status: storedQuestion.status,
+                order: storedQuestion.order,
+                starterCode: []
+            };
+        }
+    }
+
+    // Keep compatibility with tasks created before questions moved into their
+    // own collection.
+    if (!question) {
+        question = resolveQuestion(
             task,
             questionId
         ) as ICourseTaskQuestion | null;
-
+    }
 
     if (!question) {
 
-        return {
-            success: false,
-            questionNotFound: true
-        };
+        return { success: false };
     }
-
-
-    const resolvedQuestionId =
-        toQuestionIdFilter(
-            question.questionId
-        );
-
+ 
+    const resolvedQuestionId = toQuestionIdFilter(question.questionId);
 
     /**
      * 4. Find parent module.
      */
-    const parentModule: any =
-        await CourseModuleModel
-            .findById(task.moduleId)
-            .lean();
-
+    const parentModule: any = await CourseModuleModel.findById(task.moduleId).lean();
 
     if (!parentModule?.courseId) {
-
-        return {
-            success: false,
-            notFound: true
-        };
+        return { success: false };
     }
-
 
     /**
      * 5. Verify employee assignment.
      */
     const assignment: any =
-        await CourseAssignment.findOne({
-
-            employeeId,
-
-            courseId:
-                parentModule.courseId
-
-        }).lean();
-
+        await CourseAssignment.findOne({ employeeId, courseId: parentModule.courseId }).lean();
 
     if (!assignment) {
-
-        return {
-            success: false,
-            notAssigned: true
-        };
+        return { success: false };
     }
 
 
     /**
      * 6. Resolve programming language.
      */
-    const programmingLanguage =
-        await resolveProgrammingLanguage(
-            languageId
-        );
-
+    const programmingLanguage = await resolveProgrammingLanguage(languageId);
 
     if (!programmingLanguage) {
-
-        return {
-            success: false,
-            invalidLanguage: true
-        };
+        return { success: false };
     }
 
 
-    const resolvedLanguageId =
-        String(
-            programmingLanguage._id
-        );
+    const resolvedLanguageId = String(programmingLanguage._id);
 
 
     const resolvedLanguage =
@@ -661,9 +502,7 @@ const runCode = async (
     /**
      * 7. Clean source code.
      */
-    const cleanedCode =
-        cleanSourceCode(code);
-
+    const cleanedCode = cleanSourceCode(code);
 
     if (!cleanedCode) {
         throw new Error('CODE_REQUIRED');
@@ -698,175 +537,74 @@ const runCode = async (
      *
      * taskId + questionId
      */
-    const testCases =
-        await ensureTestCases(
+    const testCases = await ensureTestCases(String(task._id), resolvedQuestionId, employeeId, question.question || '', resolvedLanguage);
 
-            String(task._id),
-
-            resolvedQuestionId,
-
-            employeeId,
-
-            question.question || '',
-
-            resolvedLanguage
-        );
-
-
-    if (
-        !Array.isArray(testCases) ||
-        testCases.length === 0
+    if (!Array.isArray(testCases) || testCases.length === 0
     ) {
-
-        throw new Error(
-            'INVALID_GENERATED_TEST_CASES'
-        );
+         throw new Error('INVALID_GENERATED_TEST_CASES');
     }
-
 
     /**
      * 9. Execute every test case.
      */
-    const results:
-        ICodeRunTestCaseResult[] =
-
-        await mapWithConcurrency(
-
-            testCases,
-
-            TEST_CASE_EXECUTION_CONCURRENCY,
-
+    const results: ICodeRunTestCaseResult[] = await mapWithConcurrency(testCases, TEST_CASE_EXECUTION_CONCURRENCY,
             async (testCase: any) => {
-
                 try {
-
-                    const execution =
-                        await executeCodeService
-                            .executeCode({
-
-                                language:
-                                    resolvedLanguage,
-
-                                code:
-                                    cleanedCode,
-
-                                input:
-                                    testCase.input
-                            });
-
-
-                    return evaluateTestCasesService
-                        .evaluateTestCase(
-                            testCase,
-                            execution
-                        );
+                    const execution = await executeCodeService.executeCode({ language: resolvedLanguage, code: cleanedCode, input: testCase.input });
+                    return evaluateTestCasesService.evaluateTestCase(testCase, execution);
 
                 } catch (error: any) {
 
-                    if (
-                        error?.message ===
-                        'CODE_EXECUTION_TIMEOUT'
-                    ) {
+                    if (error?.message ==='CODE_EXECUTION_TIMEOUT') {
                         throw error;
                     }
-
-
-                    throw new Error(
-                        'CODE_EXECUTION_FAILED'
-                    );
+                    throw new Error('CODE_EXECUTION_FAILED');
                 }
             }
         );
-
-
     /**
      * 10. Calculate result.
      */
-    const {
-        total,
-        passed,
-        failed,
-        score
-    } =
-        evaluateTestCasesService
-            .summarizeResults(
-                results
-            );
-
+    const { total, passed, failed, score } = evaluateTestCasesService.summarizeResults(results);
 
     /**
      * 11. Submit requires every test case to pass.
      */
-    if (
-        runType === 'submit' &&
-        failed > 0
-    ) {
-
+    if (runType === 'submit' && failed > 0) {
         return {
-
             success: false,
-
             notAllTestsPassed: true,
-
             executionResult: {
-
                 taskId,
-
-                questionId:
-                    resolvedQuestionId,
-
-                taskQuestionId:
-                    resolvedQuestionId,
-
-                language:
-                    resolvedLanguage,
-
-                languageId:
-                    resolvedLanguageId,
-
-                totalTestCases:
-                    total,
-
-                passedTestCases:
-                    passed,
-
-                failedTestCases:
-                    failed,
-
+                questionId: resolvedQuestionId,
+                taskQuestionId: resolvedQuestionId,
+                language: resolvedLanguage,
+                languageId: resolvedLanguageId,
+                totalTestCases: total,
+                passedTestCases: passed,
+                failedTestCases: failed,
                 score,
-
                 results,
-
-                aiEvaluation:
-                    null
+                aiEvaluation: null
             }
         };
     }
 
 
-    const overallStatus =
-        failed === 0
-            ? 'ALL_PASSED'
-            : 'SOME_FAILED';
-
+    const overallStatus = failed === 0 ? 'ALL_PASSED' : 'SOME_FAILED';
 
     /**
      * 12. AI code-quality analysis.
      *
      * Only run during Submit.
      */
-    let aiEvaluation:
-        IAiCodeQualityEvaluation | null = null;
-
+    let aiEvaluation: IAiCodeQualityEvaluation | null = null;
 
     if (runType === 'submit') {
 
         if (resolvedQuestionId === null) {
-            throw new Error(
-                'A question must be resolved before submitting code.'
-            );
+            throw new Error(`A question must be resolved before submitting code.`);
         }
-
 
         try {
 

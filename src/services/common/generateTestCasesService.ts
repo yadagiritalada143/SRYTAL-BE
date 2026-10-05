@@ -6,7 +6,7 @@ const OPENROUTER_CHAT_COMPLETIONS_URL =
     'https://openrouter.ai/api/v1/chat/completions';
 
 const OPENROUTER_TESTS_MODEL =
-    process.env.OPENROUTER_MODEL?.trim() || 'openrouter/free';
+    process.env.OPENROUTER_MODEL?.trim() || 'openrouter/auto';
 
 const OPENROUTER_TIMEOUT_MS = 60000;
 

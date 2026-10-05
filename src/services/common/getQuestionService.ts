@@ -1,272 +1,274 @@
-import { Types } from 'mongoose';
 import CourseTaskModel from '../../model/courseTaskModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseAssignment from '../../model/courseAssignmentModel';
+import TaskCodingQuestionModel from '../../model/taskCodingQuestionModel';
 import ProgrammingLanguages from '../../model/programmingLanguagesModel';
 import CodeRunModel from '../../model/codeRunModel';
-import { normalizeLanguage, isSupportedLanguage, resolveStarterCode, getFallbackLanguages } from '../../util/languageUtils';
-import { resolveQuestion, toQuestionIdFilter } from '../../util/courseTaskQuestions';
-import { ICourseTaskQuestion } from '../../interfaces/courseTask';
-import generateBoilerplateService from '../common/generateBoilerplateService';
-import { ILastSubmittedCode, IGetQuestionResponse } from '../../interfaces/codingQuestion';
+import generateBoilerplateService from './generateBoilerplateService';
+import { normalizeLanguage, getFallbackLanguages } from '../../util/languageUtils';
+import { ILastSubmittedCode } from '../../interfaces/codingQuestion';
 
-interface IQuestionContext {
-    success: boolean;
-    task?: any;
-    /** The question of the task being opened. */
-    resolvedQuestion?: ICourseTaskQuestion;
-    /** Normalized question identity for the satellite collections (null = legacy). */
-    resolvedQuestionId?: string | null;
-    resolvedLanguage?: string;
-    resolvedLanguageId?: string;
-    availableLanguages?: string[];
-    notFound?: boolean;
-    notCodingQuestion?: boolean;
-    notAssigned?: boolean;
-    invalidLanguage?: boolean;
-    questionNotFound?: boolean;
-}
+const getQuestion = async (taskId: string, questionId: string, languageId: string, employeeId: string): Promise<any> => {
 
-/**
- * Shared scope validation for "open coding question / fetch boilerplate": the
- * task must exist, be a coding question and belong to a course assigned to the
- * employee; the requested language must be supported. The task holds many
- * questions, so the one to open is resolved here too (falling back to the first
- * active question when the client does not name one). Also resolves the
- * canonical language key + the programming-language _id.
- */
-const resolveQuestionContext = async (
-    id: string,
-    language: string,
-    employeeId: string,
-    languageId: string = '',
-    questionId: string = ''
-): Promise<IQuestionContext> => {
-    // `id` is a question id, so the parent task is located through the embedded
-    // questions. One-release compatibility: a task id is still accepted, because
-    // clients built before the multi-question change send the task id in the path.
-    let task: any = null;
-    let idQuestionId = '';
+    try {
 
-    const trimmedId = String(id || '').trim();
-
-    if (Types.ObjectId.isValid(trimmedId)) {
-        task = await CourseTaskModel.findById(trimmedId).lean();
-    }
-
-    if (!task) {
-        const wanted = toQuestionIdFilter(trimmedId);
-
-        if (wanted) {
-            task = await CourseTaskModel.findOne({ 'questions.questionId': wanted }).lean();
-
-            if (task) {
-                idQuestionId = wanted;
-            }
+        if (!taskId || !questionId || !languageId || !employeeId) {
+            return { success: false };
         }
-    }
 
-    if (!task) {
-        return { success: false, notFound: true };
-    }
+        /*
+         * ---------------------------------------------------------
+         * 2. Find Course Task
+         * ---------------------------------------------------------
+         */
+        const task: any = await CourseTaskModel.findById(taskId).lean();
 
-    if (!task.isCoding) {
-        return { success: false, notCodingQuestion: true };
-    }
-
-    const question = resolveQuestion(task, questionId || idQuestionId);
-
-    if (!question) {
-        return { success: false, questionNotFound: true };
-    }
-
-    const resolvedQuestionId = toQuestionIdFilter(question.questionId);
-
-    const parentModule: any = await CourseModuleModel.findById(task.moduleId).lean();
-
-
-    if (!parentModule?.courseId) {
-        return { success: false, notFound: true };
-    }
-
-    const assignment: any = await CourseAssignment.findOne({ employeeId, courseId: parentModule.courseId }).lean();
-
-    if (!assignment) {
-        return { success: false, notAssigned: true };
-    }
-
-    // The client may send either a programming-language Mongo _id (`languageId`)
-    // or a friendly name / canonical key (`language`). A 24-hex id is resolved
-    // to its canonical key first so the rest of the flow stays unchanged.
-    let languageRef = language;
-    if (/^[0-9a-fA-F]{24}$/.test(languageId.trim())) {
-        const idDoc: any = await ProgrammingLanguages.findById(languageId.trim())
-            .select('_id canonicalKey languageName isActive')
-            .lean();
-        if (!idDoc || !(idDoc.isActive !== false)) {
-            return { success: false, invalidLanguage: true };
+        if (!task) {
+            return { success: false };
         }
-        languageRef = (idDoc.canonicalKey || '').trim() ||
-            normalizeLanguage(idDoc.languageName || '') ||
-            '';
-        if (!languageRef) {
-            return { success: false, invalidLanguage: true };
+
+        /*
+         * ---------------------------------------------------------
+         * 3. Verify Coding Task
+         * ---------------------------------------------------------
+         */
+
+        if (!task.isCoding) {
+            return { success: false };
         }
-    }
 
-    if (languageRef) {
-        if (!isSupportedLanguage(languageRef)) {
-            return { success: false, invalidLanguage: true };
+        /*
+         * ---------------------------------------------------------
+         * 4. Find Course Module
+         * ---------------------------------------------------------
+         */
+
+        const module: any = await CourseModuleModel.findById(task.moduleId).select('courseId').lean();
+
+        if (!module?.courseId) {
+            return { success: false };
         }
-    }
 
-    // Only active languages are offered to employees (the seed marks
-    // non-executable Wandbox labels such as CPP/OpenSSL inactive). `$ne: false`
-    // keeps legacy docs that predate the isActive field working.
-    const languageDocs: any[] = await ProgrammingLanguages.find({ isActive: { $ne: false } })
-        .select('_id languageName canonicalKey')
-        .sort({ displayOrder: 1 })
-        .lean();
-    const languageIdByCanonical: Record<string, string> = {};
-    const collectionLanguages: string[] = [];
-    for (const languageDoc of languageDocs || []) {
-        const name = (languageDoc?.languageName || '').trim();
-        if (!name) {
-            continue;
+        /*
+         * ---------------------------------------------------------
+         * 5. Verify Employee Assignment
+         * ---------------------------------------------------------
+         */
+
+        const assignment = await CourseAssignment
+            .findOne({ employeeId, courseId: module.courseId }).lean();
+
+        if (!assignment) {
+            return { success: false };
         }
-        collectionLanguages.push(name);
-        const canonicalKey = (languageDoc?.canonicalKey || '').trim();
-        const canonical = canonicalKey || normalizeLanguage(name) || name.toLowerCase();
-        languageIdByCanonical[canonical] = String(languageDoc._id);
-    }
 
-    const fallbackLanguages = getFallbackLanguages();
+        /*
+         * ---------------------------------------------------------
+         * 6. Find Question
+         *
+         * Questions are stored in:
+         *
+         * task-coding-questions
+         *
+         * taskId + questionId guarantees that the question
+         * belongs to the requested task.
+         * ---------------------------------------------------------
+         */
 
-    const availableLanguages = collectionLanguages.length > 0 ? collectionLanguages : fallbackLanguages;
+        const question: any =
+            await TaskCodingQuestionModel
+                .findOne({
+                    _id: questionId,
+                    taskId,
+                    status: 'ACTIVE'
+                })
+                .lean();
 
-    const resolvedLanguage = normalizeLanguage(languageRef) ||
-        normalizeLanguage(availableLanguages[0] || '') ||
-        availableLanguages[0] ||
-        '';
+        if (!question) {
+            return {
+                success: false,
+                questionNotFound: true
+            };
+        }
 
-    const resolvedLanguageId = languageIdByCanonical[resolvedLanguage] || '';
-    return {
-        success: true,
-        task,
-        resolvedQuestion: question,
-        resolvedQuestionId,
-        resolvedLanguage,
-        resolvedLanguageId,
-        availableLanguages
-    };
-};
+        /*
+         * ---------------------------------------------------------
+         * 7. Find Selected Programming Language
+         * ---------------------------------------------------------
+         */
 
-/**
- * Shared starter chain: 1. Writer-supplied starter (also the cache for
- * AI-generated skeletons).  2. AI-generated question + language skeleton.
- *  3. '' (empty editor) as the last resort.
- */
-const resolveStarterChain = async (
-    task: any,
-    question: ICourseTaskQuestion,
-    language: string,
-    userId: string,
-    languageId: string,
-    questionId: string
-): Promise<string> => {
-    let starterCode = resolveStarterCode(question, language);
-    if (!starterCode && language) {
-        try {
-            starterCode = await generateBoilerplateService.getOrGenerateBoilerplate(
-                task,
-                question,
-                language,
-                userId
+        const language: any =
+            await ProgrammingLanguages
+                .findOne({
+                    _id: languageId,
+                    isActive: { $ne: false }
+                })
+                .select(
+                    '_id languageName canonicalKey isActive'
+                )
+                .lean();
+
+        if (!language) {
+            return {
+                success: false,
+                invalidLanguage: true
+            };
+        }
+
+        /*
+         * ---------------------------------------------------------
+         * 8. Resolve Language
+         * ---------------------------------------------------------
+         */
+
+        const resolvedLanguage =
+            normalizeLanguage(
+                language.canonicalKey ||
+                language.languageName
             );
-        } catch (error: any) {
-            console.error(`AI starter resolution failed for '${language}': ${error.message}`);
-            starterCode = '';
+
+        if (!resolvedLanguage) {
+            return {
+                success: false,
+                invalidLanguage: true
+            };
         }
-    }
-    return starterCode;
-};
 
-/**
- * Employee-facing "open a coding question": returns the task id, the question that
- * was opened, the available languages, the starter code for the requested (or
- * first) language and the employee's last submitted source in that language.
- * Resolution order for the editor body: last submitted code first, then the
- * starter. A task holds many questions, so the request may name one with
- * `taskQuestionId`; when it does not, the task's first active question is used.
- * Scoped by employee so a user can only read questions that belong to one of
- * their assigned courses. The available languages are read from the
- * programming-languages collection so the employee can pick the language at
- * run time; the hardcoded list is only used as a fallback when the collection
- * is empty.
- */
-const getQuestion = async (
-    id: string,
-    language: string,
-    employeeId: string,
-    languageId: string = '',
-    questionId: string = ''
-): Promise<IGetQuestionResponse> => {
-    const context = await resolveQuestionContext(id, language, employeeId, languageId, questionId);
+        /*
+         * ---------------------------------------------------------
+         * 9. Get Available Languages
+         * ---------------------------------------------------------
+         *
+         * Currently returns all active programming languages.
+         * ---------------------------------------------------------
+         */
 
-    if (!context.success) {
-        return context;
-    }
+        const languageDocs: any[] =
+            await ProgrammingLanguages
+                .find({
+                    isActive: { $ne: false }
+                })
+                .select(
+                    '_id languageName canonicalKey displayOrder'
+                )
+                .sort({
+                    displayOrder: 1
+                })
+                .lean();
 
-    const task = context.task;
-    const taskId = String(task._id);
-    const question = context.resolvedQuestion as ICourseTaskQuestion;
-    const resolvedQuestionId = context.resolvedQuestionId ?? '';
-    const resolvedLanguage = context.resolvedLanguage || '';
-    const resolvedLanguageId = context.resolvedLanguageId || '';
-    const availableLanguages = context.availableLanguages || [];
+        const allowedLanguages =
+            languageDocs.length > 0
+                ? languageDocs.map(
+                    (item: any) => ({
+                        languageId: String(item._id),
+                        languageName: item.languageName,
+                        canonicalKey:
+                            item.canonicalKey || ''
+                    })
+                )
+                : getFallbackLanguages().map(
+                    (languageName: string) => ({
+                        languageId: '',
+                        languageName,
+                        canonicalKey:
+                            normalizeLanguage(languageName) || ''
+                    })
+                );
 
-    let lastSubmittedCode: ILastSubmittedCode | null = null;
-    if (resolvedLanguageId) {
-        const submission: any = await CodeRunModel.findOne({
-            taskId,
-            questionId: resolvedQuestionId,
-            userId: employeeId,
-            type: 'submit',
-            languageId: resolvedLanguageId
-        }).sort({ updatedAt: -1 }).lean();
-        if (submission && typeof submission.sourceCode === 'string' && submission.sourceCode.length > 0) {
+        /*
+         * ---------------------------------------------------------
+         * 10. Find Latest Submitted Code
+         * ---------------------------------------------------------
+         *
+         * Identity:
+         *
+         * taskId
+         * questionId
+         * employeeId
+         * languageId
+         * type = submit
+         * ---------------------------------------------------------
+         */
+
+        let lastSubmittedCode: ILastSubmittedCode | null = null;
+
+        const submission: any = await CodeRunModel.findOne({ taskId, questionId, userId: employeeId, languageId, type: 'submit' }).sort({updatedAt: -1}).lean();
+
+        if (
+            submission &&
+            typeof submission.sourceCode === 'string' &&
+            submission.sourceCode.length > 0
+        ) {
             lastSubmittedCode = {
                 language: resolvedLanguage,
                 code: submission.sourceCode
             };
         }
+
+        let starterCode = '';
+        const storedStarterCode =
+            Array.isArray(question.starterCode)
+                ? question.starterCode.find(
+                    (item: any) =>
+                        String(item.languageId) ===
+                        String(languageId)
+                )
+                : null;
+
+        if (storedStarterCode && typeof storedStarterCode.code === 'string' && storedStarterCode.code.trim().length > 0) {
+            starterCode = storedStarterCode.code;
+        }
+
+        if (!starterCode) {
+            try {
+                starterCode = await generateBoilerplateService.getOrGenerateBoilerplate(
+                    String(task._id),
+                    String(question._id),
+                    employeeId,
+                    resolvedLanguage,
+                    String(language._id)
+                );
+
+            } catch (error: any) {
+                console.error(`Boilerplate generation failed: ${error?.message || error}`);
+                starterCode = '';
+            }
+        }
+
+        /*
+         * ---------------------------------------------------------
+         * 13. Prepare Response
+         * ---------------------------------------------------------
+         */
+
+        const data = {
+            taskId: String(task._id),
+            questionId: String(question._id),
+            taskName: task.taskName || '',
+            question: question.question || '',
+            description: question.description || '',
+            allowedLanguages,
+            language: resolvedLanguage,
+            languageId: String(language._id),
+            starterCode,
+            lastSubmittedCode
+        };
+
+        /*
+         * ---------------------------------------------------------
+         * 14. Return
+         * ---------------------------------------------------------
+         */
+
+        return {
+            success: true,
+            data
+        };
+
+    } catch (error: any) {
+        console.error(`Error in getQuestion service: ${error?.message || error}`);
+       throw error;
     }
-
-    const starterCode = await resolveStarterChain(
-        task,
-        question,
-        resolvedLanguage,
-        employeeId,
-        resolvedLanguageId,
-        resolvedQuestionId
-    );
-
-    return {
-        success: true,
-        taskId,
-        questionId: resolvedQuestionId,
-        /** @deprecated Kept one release for clients still reading taskQuestionId. */
-        taskQuestionId: resolvedQuestionId,
-        taskName: task.taskName,
-        question: question.question,
-        description: question.description,
-        allowedLanguages: availableLanguages,
-        language: resolvedLanguage,
-        languageId: resolvedLanguageId,
-        starterCode,
-        lastSubmittedCode
-    };
 };
-
 
 export default { getQuestion };

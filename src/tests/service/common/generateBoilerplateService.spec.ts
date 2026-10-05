@@ -1,16 +1,16 @@
 import axios from 'axios';
+import { Types } from 'mongoose';
 import generateBoilerplateService from '../../../services/common/generateBoilerplateService';
-import CourseTaskModel from '../../../model/courseTaskModel';
+import TaskCodingQuestionModel from '../../../model/taskCodingQuestionModel';
 import getUserOpenRouterKeyService from '../../../services/useropenrouter/getUserOpenRouterKeyService';
-import { resolveStarterCode } from '../../../util/languageUtils';
 
 jest.mock('axios', () => ({
     post: jest.fn()
 }));
 
-jest.mock('../../../model/courseTaskModel', () => ({
+jest.mock('../../../model/taskCodingQuestionModel', () => ({
     __esModule: true,
-    default: { updateOne: jest.fn() }
+    default: { findOne: jest.fn(), updateOne: jest.fn() }
 }));
 
 jest.mock('../../../services/useropenrouter/getUserOpenRouterKeyService', () => ({
@@ -18,43 +18,47 @@ jest.mock('../../../services/useropenrouter/getUserOpenRouterKeyService', () => 
     default: { getUserOpenRouterKeyService: jest.fn() }
 }));
 
-jest.mock('../../../util/languageUtils', () => ({
-    resolveStarterCode: jest.fn()
-}));
+const axiosPostMock = axios.post as jest.Mock;
+const taskQuestionFindOneMock =
+    (TaskCodingQuestionModel as unknown as { findOne: jest.Mock }).findOne;
+const taskQuestionUpdateOneMock =
+    (TaskCodingQuestionModel as unknown as { updateOne: jest.Mock }).updateOne;
+const getUserOpenRouterKeyMock =
+    getUserOpenRouterKeyService.getUserOpenRouterKeyService as unknown as jest.Mock;
 
-const axiosPostMock = (axios.post as unknown as jest.Mock);
-const courseTaskUpdateOneMock = (CourseTaskModel as unknown as { updateOne: jest.Mock }).updateOne;
-const getUserOpenRouterKeyMock = getUserOpenRouterKeyService.getUserOpenRouterKeyService as unknown as jest.Mock;
-const resolveStarterCodeMock = resolveStarterCode as unknown as jest.Mock;
-
-const task = {
-    _id: '66d323456789abcdef123456',
-    taskName: 'Remove Duplicates from Sorted Array II',
-    question: 'Given an integer array nums...',
-    starterCode: []
-};
-
-// A task with no questionId is a legacy single-question task, so its starter code
-// is still cached on the top-level field.
+const taskId = '66d323456789abcdef123456';
+const questionId = '66d323456789abcdef123457';
+const languageId = '66d323456789abcdef123458';
 const question = {
-    questionId: null,
+    _id: questionId,
+    taskId,
     question: 'Given an integer array nums...',
-    description: '',
+    description: 'Return the modified array.',
     status: 'ACTIVE',
-    order: 0,
     starterCode: []
 };
 
-const userOpenRouterKey = { _id: '1', userId: 'u1', openrouterKey: 'sk-test' };
+const mockQuestion = (result: any = question) => {
+    taskQuestionFindOneMock.mockReturnValue({
+        lean: jest.fn().mockResolvedValue(result)
+    });
+};
 
 describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
     beforeEach(() => {
         axiosPostMock.mockReset();
-        courseTaskUpdateOneMock.mockReset();
+        taskQuestionFindOneMock.mockReset();
+        taskQuestionUpdateOneMock.mockReset();
         getUserOpenRouterKeyMock.mockReset();
-        resolveStarterCodeMock.mockReset();
-        getUserOpenRouterKeyMock.mockResolvedValue(userOpenRouterKey);
-        courseTaskUpdateOneMock.mockResolvedValue({});
+        mockQuestion();
+        getUserOpenRouterKeyMock.mockResolvedValue({
+            _id: '1',
+            userId: 'u1',
+            openrouterKey: 'sk-test'
+        });
+        taskQuestionUpdateOneMock
+            .mockResolvedValueOnce({ matchedCount: 0 })
+            .mockResolvedValue({ matchedCount: 1 });
         jest.spyOn(console, 'error').mockImplementation(() => {});
     });
 
@@ -62,124 +66,178 @@ describe('generateBoilerplateService.getOrGenerateBoilerplate', () => {
         jest.restoreAllMocks();
     });
 
-    it('returns the cached writer starter without calling OpenRouter', async () => {
-        resolveStarterCodeMock.mockReturnValue('function f() {}');
+    it('returns cached starter code for the selected language ID', async () => {
+        mockQuestion({
+            ...question,
+            starterCode: [{ languageId, code: 'function f() {}' }]
+        });
 
-        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'javascript', 'u1');
+        const result = await generateBoilerplateService.getOrGenerateBoilerplate(
+            taskId,
+            questionId,
+            'u1',
+            'javascript',
+            languageId
+        );
 
         expect(result).toBe('function f() {}');
         expect(axiosPostMock).not.toHaveBeenCalled();
-        expect(courseTaskUpdateOneMock).not.toHaveBeenCalled();
+        expect(taskQuestionUpdateOneMock).not.toHaveBeenCalled();
     });
 
-    it('generates a starter via OpenRouter and caches it into the task', async () => {
-        resolveStarterCodeMock.mockReturnValue('');
-        axiosPostMock.mockResolvedValue({
-            data: { choices: [{ message: { content: '{"code": "var removeDuplicates = function(nums) {\\n};"}' } }] }
-        });
-
-        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'javascript', 'u1');
-
-        expect(axiosPostMock).toHaveBeenCalledTimes(1);
-        expect(result).toContain('var removeDuplicates = function(nums)');
-        expect(courseTaskUpdateOneMock).toHaveBeenCalledTimes(2);
-        expect(courseTaskUpdateOneMock).toHaveBeenNthCalledWith(
-            1,
-            { _id: task._id },
-            { $pull: { starterCode: { languageName: 'javascript' } } }
-        );
-        expect(courseTaskUpdateOneMock).toHaveBeenNthCalledWith(
-            2,
-            { _id: task._id },
-            { $push: { starterCode: { languageName: 'javascript', code: result } } }
-        );
-    });
-
-    it('deduplicates concurrent requests for the same question + language', async () => {
-        resolveStarterCodeMock.mockReturnValue('');
-        axiosPostMock.mockResolvedValue({
-            data: { choices: [{ message: { content: '{"code": "class Solution {}"}' } }] }
-        });
-
-        const [first, second] = await Promise.all([
-            generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'python', 'u1'),
-            generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'python', 'u1')
-        ]);
-
-        expect(first).toBe('class Solution {}');
-        expect(second).toBe('class Solution {}');
-        expect(axiosPostMock).toHaveBeenCalledTimes(1);
-        expect(courseTaskUpdateOneMock).toHaveBeenCalledTimes(2);
-    });
-
-    it('returns an empty string when the OpenRouter key is missing', async () => {
-        resolveStarterCodeMock.mockReturnValue('');
-        getUserOpenRouterKeyMock.mockRejectedValue(new Error('OPENROUTER_KEY_NOT_FOUND'));
-
-        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'python', 'u1');
-
-        expect(result).toBe('');
-        expect(courseTaskUpdateOneMock).not.toHaveBeenCalled();
-    });
-
-    it('returns an empty string when OpenRouter returns no content', async () => {
-        resolveStarterCodeMock.mockReturnValue('');
-        axiosPostMock.mockResolvedValue({ data: { choices: [{ message: { content: '' } }] } });
-
-        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'go', 'u1');
-
-        expect(result).toBe('');
-        expect(courseTaskUpdateOneMock).not.toHaveBeenCalled();
-    });
-
-    it('rejects a reasoning dump that does not look like starter code', async () => {
-        resolveStarterCodeMock.mockReturnValue('');
+    it('generates and stores starter code on the separate question document', async () => {
         axiosPostMock.mockResolvedValue({
             data: {
                 choices: [{
                     message: {
-                        content: [
-                            'We need answer only JSON object with code string.',
-                            'Need infer function signature. For TypeScript, likely function reverseNumber',
-                            'The prompt says correct function signature derived from problem.',
-                            'Body empty. JSDoc types. The model should output the skeleton.',
-                            'But deepseek reasoning continues along these lines for many lines.',
-                            'Need decide function name. Common function name: reverseNumber.',
-                            'Parameter N: number. Return type: number? Probably yes.',
-                            'The instruction says no extra comments, no reasoning.',
-                            'But here is a long reasoning paragraph instead of code.',
-                            'Let me think about LeetCode style for TypeScript functions.',
-                            'Usually function reverse(x: number): number with JSDoc block above.',
-                            'The output should be a JSON object but the model ignored it.',
-                            'This text keeps going and going and is clearly not code.',
-                            'There is no function signature token anywhere in this dump.',
-                            'The guard should classify this as not starter code.'
-                        ].join('\n')
+                        content: '{"code": "var removeDuplicates = function(nums) {\\n};"}'
                     }
                 }]
             }
         });
 
-        const result = await generateBoilerplateService.getOrGenerateBoilerplate(task, question, 'typescript', 'u1');
+        const result = await generateBoilerplateService.getOrGenerateBoilerplate(
+            taskId,
+            questionId,
+            'u1',
+            'javascript',
+            languageId
+        );
 
-        expect(result).toBe('');
-        expect(courseTaskUpdateOneMock).not.toHaveBeenCalled();
+        expect(result).toContain('var removeDuplicates = function(nums)');
+        expect(axiosPostMock.mock.calls[0][1].model).toBe(
+            process.env.OPENROUTER_MODEL?.trim() || 'openrouter/auto'
+        );
+        expect(axiosPostMock).toHaveBeenCalledWith(
+            expect.any(String),
+            expect.any(Object),
+            expect.objectContaining({
+                headers: expect.objectContaining({
+                    Authorization: 'Bearer sk-test'
+                })
+            })
+        );
+        expect(taskQuestionFindOneMock).toHaveBeenCalledWith({
+            _id: new Types.ObjectId(questionId),
+            taskId: new Types.ObjectId(taskId),
+            status: 'ACTIVE'
+        });
+        expect(taskQuestionUpdateOneMock).toHaveBeenNthCalledWith(
+            1,
+            expect.objectContaining({
+                _id: new Types.ObjectId(questionId),
+                taskId: new Types.ObjectId(taskId),
+                'starterCode.languageId': new Types.ObjectId(languageId)
+            }),
+            { $set: { 'starterCode.$.code': result } }
+        );
+        expect(taskQuestionUpdateOneMock).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+                _id: new Types.ObjectId(questionId),
+                taskId: new Types.ObjectId(taskId),
+                'starterCode.languageId': {
+                    $ne: new Types.ObjectId(languageId)
+                }
+            }),
+            {
+                $push: {
+                    starterCode: {
+                        languageId: new Types.ObjectId(languageId),
+                        code: result
+                    }
+                }
+            }
+        );
+    });
+
+    it('deduplicates concurrent generations for the same question and language', async () => {
+        axiosPostMock.mockResolvedValue({
+            data: {
+                choices: [{
+                    message: {
+                        content: '{"code": "class Solution {}"}'
+                    }
+                }]
+            }
+        });
+
+        const [first, second] = await Promise.all([
+            generateBoilerplateService.getOrGenerateBoilerplate(
+                taskId, questionId, 'u1', 'python', languageId
+            ),
+            generateBoilerplateService.getOrGenerateBoilerplate(
+                taskId, questionId, 'u1', 'python', languageId
+            )
+        ]);
+
+        expect(first).toBe('class Solution {}');
+        expect(second).toBe(first);
+        expect(axiosPostMock).toHaveBeenCalledTimes(1);
+        expect(taskQuestionUpdateOneMock).toHaveBeenCalledTimes(2);
+    });
+
+    it('surfaces an OpenRouter key lookup failure without caching a result', async () => {
+        getUserOpenRouterKeyMock.mockRejectedValue(
+            new Error('OPENROUTER_KEY_NOT_FOUND')
+        );
+
+        await expect(
+            generateBoilerplateService.getOrGenerateBoilerplate(
+                taskId, questionId, 'u1', 'python', languageId
+            )
+        ).rejects.toThrow('OPENROUTER_KEY_NOT_FOUND');
+        expect(taskQuestionUpdateOneMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects an OpenRouter key containing header line breaks', async () => {
+        getUserOpenRouterKeyMock.mockResolvedValue({
+            openrouterKey: 'sk-test\r\nInjected: value'
+        });
+
+        await expect(
+            generateBoilerplateService.getOrGenerateBoilerplate(
+                taskId, questionId, 'u1', 'python', languageId
+            )
+        ).rejects.toThrow('OPENROUTER_API_KEY_INVALID_FORMAT');
+        expect(axiosPostMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects a question that does not belong to the task', async () => {
+        mockQuestion(null);
+
+        await expect(
+            generateBoilerplateService.getOrGenerateBoilerplate(
+                taskId, questionId, 'u1', 'python', languageId
+            )
+        ).rejects.toThrow('TASK_OR_QUESTION_NOT_FOUND');
+        expect(axiosPostMock).not.toHaveBeenCalled();
     });
 });
 
 describe('generateBoilerplateService.extractBoilerplateCode', () => {
     it('parses a JSON object with a code field', () => {
-        const content = '{"code": "print(1)"}';
-        expect(generateBoilerplateService.extractBoilerplateCode(content)).toBe('print(1)');
+        expect(
+            generateBoilerplateService.extractBoilerplateCode(
+                '{"code": "def f():\\n    pass"}',
+                'python'
+            )
+        ).toBe('def f():\n    pass');
     });
 
     it('strips markdown fences from the code', () => {
-        const content = '```python\nclass Solution:\n    pass\n```';
-        expect(generateBoilerplateService.extractBoilerplateCode(content)).toBe('class Solution:\n    pass');
+        expect(
+            generateBoilerplateService.extractBoilerplateCode(
+                '```python\nclass Solution:\n    pass\n```',
+                'python'
+            )
+        ).toBe('class Solution:\n    pass');
     });
 
-    it('returns plain text code as-is', () => {
-        const content = 'def f():\n    pass';
-        expect(generateBoilerplateService.extractBoilerplateCode(content)).toBe(content);
+    it('returns plain source code', () => {
+        const code = 'def f():\n    pass';
+        expect(
+            generateBoilerplateService.extractBoilerplateCode(code, 'python')
+        ).toBe(code);
     });
 });

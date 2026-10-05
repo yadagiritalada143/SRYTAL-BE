@@ -20,5 +20,8 @@ export const CODING_QUESTION_ERROR_MESSAGES = {
     CODING_QUESTION_FETCH_ERROR_MESSAGE: 'An error occurred while fetching the coding question, Please try again !',
     RUN_CODE_ERROR_MESSAGE: 'An error occurred while executing the code, Please try again !',
     SUBMIT_CODE_ERROR_MESSAGE: 'An error occurred while submitting the code, Please try again !',
-    SUBMIT_ALL_TESTS_MUST_PASS_MESSAGE: 'All test cases must pass before you can submit your code !'
+    SUBMIT_ALL_TESTS_MUST_PASS_MESSAGE: 'All test cases must pass before you can submit your code !',
+    UNABLE_TO_FETCH_CODING_QUESTION_MESSAGE: 'Unable to fetch coding question !',
+    USER_AUTHENTICATION_REQUIRED_MESSAGE: 'User authentication required !'
+
 };

@@ -392,23 +392,22 @@ contentwriterRouter.post('/addCourseTask', validateJWT,upload.fields([{name: 'ta
  * @swagger
  * /contentwriter/addCourseTaskQuestion:
  *   post:
- *     summary: Add a question to a coding task
+ *     summary: Add a coding question to a course task
  *     description: |
- *       Attaches one more question to an existing coding task. A coding task can
- *       hold many questions and each one is graded on its own, with its own test
- *       cases, submissions and starter code.
+ *       Adds a new coding question to an existing course task.
  *
- *       Content writers send only the question text and an optional description.
- *       There is no starter-code field here on purpose: the per-language boilerplate
- *       is generated for the selected question and language the first time an
- *       employee opens it. A writer who does want to hand-write a starter can add one
- *       later through /updateCourseTaskQuestion.
+ *       The question is created with ACTIVE status and an automatically
+ *       calculated order. Starter code is not generated during question
+ *       creation. It will be generated later based on the selected
+ *       programming language.
  *
- *       This action requires authentication.
+ *       Duplicate questions are checked case-insensitively within the
+ *       same task.
  *     tags:
  *       - ContentWriter
  *     security:
  *       - BearerAuth: []
+ *
  *     requestBody:
  *       required: true
  *       content:
@@ -421,19 +420,23 @@ contentwriterRouter.post('/addCourseTask', validateJWT,upload.fields([{name: 'ta
  *             properties:
  *               taskId:
  *                 type: string
- *                 description: ID of the coding task the question belongs to
- *                 example: 64f123456789abcdef123456
+ *                 description: MongoDB ObjectId of the course task
+ *                 example: "6ac0c4624e3e70ca5f8cdabb"
+ *
  *               question:
  *                 type: string
- *                 description: The coding problem statement
- *                 example: Write a function to reverse a string.
+ *                 description: Coding question text
+ *                 example: "Write a function to find the sum of two numbers."
+ *
  *               description:
  *                 type: string
- *                 description: Optional extra guidance shown with the question
- *                 example: Return an empty string for an empty input.
+ *                 description: Optional detailed description of the coding question
+ *                 example: "Given two integers, return their sum."
+ *
  *     responses:
+ *
  *       201:
- *         description: Question added to the task.
+ *         description: Coding question added successfully
  *         content:
  *           application/json:
  *             schema:
@@ -442,37 +445,85 @@ contentwriterRouter.post('/addCourseTask', validateJWT,upload.fields([{name: 'ta
  *                 success:
  *                   type: boolean
  *                   example: true
+ *
  *                 message:
  *                   type: string
- *                   example: Question added to the task successfully !
+ *                   example: "Course task question added successfully."
+ *
  *                 taskId:
  *                   type: string
- *                   example: 64f123456789abcdef123456
+ *                   example: "6ac0c4624e3e70ca5f8cdabb"
+ *
  *                 questionId:
  *                   type: string
- *                   description: ID of the question that was created
- *                   example: 64f123456789abcdef123999
+ *                   example: "6ac0c4624e3e70ca5f8cdabc"
+ *
  *                 questionCount:
  *                   type: integer
- *                   description: How many questions the task holds now
- *                   example: 3
+ *                   example: 2
+ *
  *       400:
- *         description: Invalid request, the task is not a coding task, or the question limit was reached.
- *       401:
- *         description: Unauthorized. Missing or invalid Authorization header.
+ *         description: Missing required fields or invalid request
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *
+ *                 message:
+ *                   type: string
+ *                   example: "Task ID and question are required."
+ *
  *       404:
- *         description: Task not found.
+ *         description: Course task not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *
+ *                 message:
+ *                   type: string
+ *                   example: "Course task not found."
+ *
  *       409:
- *         description: The task already contains this question.
+ *         description: Duplicate question already exists in the task
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *
+ *                 message:
+ *                   type: string
+ *                   example: "Course task question already exists."
+ *
  *       500:
- *         description: Server error.
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *
+ *                 message:
+ *                   type: string
+ *                   example: "Failed to add course task question."
  */
-contentwriterRouter.post(
-    '/addCourseTaskQuestion',
-    validateJWT,
-    validateRegistrationSchema(addCourseTaskQuestionSchema),
-    addCourseTaskQuestionController.addCourseTaskQuestion
-);
+
+contentwriterRouter.post('/addCourseTaskQuestion', validateJWT, addCourseTaskQuestionController.addCourseTaskQuestion); 
 
 /**
  * @swagger

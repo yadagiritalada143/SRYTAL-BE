@@ -41,24 +41,33 @@ afterEach(() => {
 });
 
 const QUESTION = 'Given an integer array nums, return the largest number in it.';
+const TASK_ID = 'task-1';
+const QUESTION_ID = 'question-1';
 
 it('generates test cases using only the key stored for the user', async () => {
     axiosPostMock.mockResolvedValue(contentResponse);
 
-    const result = await generateTestCasesService.generateTestCases('u1', QUESTION, 'python');
+    const result = await generateTestCasesService.generateTestCases(
+        'u1', TASK_ID, QUESTION_ID, QUESTION, 'python'
+    );
 
     expect(result).toHaveLength(3);
     expect(result[0]).toEqual({ name: 'empty', input: '[]', expectedOutput: '0', isSample: false });
     expect(axiosPostMock).toHaveBeenCalledTimes(1);
+    expect(axiosPostMock.mock.calls[0][1].model).toBe(
+        process.env.OPENROUTER_MODEL?.trim() || 'openrouter/auto'
+    );
     expect(axiosPostMock.mock.calls[0][2].headers.Authorization).toBe('Bearer sk-or-v1-userkey');
 });
 
 it('sends the question and the selected language in the prompt', async () => {
     axiosPostMock.mockResolvedValue(contentResponse);
 
-    await generateTestCasesService.generateTestCases('u1', QUESTION, 'java');
+    await generateTestCasesService.generateTestCases(
+        'u1', TASK_ID, QUESTION_ID, QUESTION, 'java'
+    );
 
-    const sent: string = axiosPostMock.mock.calls[0][1].messages[0].content;
+    const sent: string = axiosPostMock.mock.calls[0][1].messages[1].content;
     expect(sent).toContain(QUESTION);
     expect(sent).toContain('java');
 });
@@ -67,7 +76,9 @@ it('never lists or calls a free model when the stored key is rejected', async ()
     axiosPostMock.mockRejectedValue({ response: { status: 401 } });
 
     await expect(
-        generateTestCasesService.generateTestCases('u1', QUESTION, 'python')
+        generateTestCasesService.generateTestCases(
+            'u1', TASK_ID, QUESTION_ID, QUESTION, 'python'
+        )
     ).rejects.toThrow('OPENROUTER_KEY_INVALID');
 
     // No fallback: the model catalogue is never fetched and only one model is tried.
@@ -79,7 +90,9 @@ it('reports an invalid key for 403 as well', async () => {
     axiosPostMock.mockRejectedValue({ response: { status: 403 } });
 
     await expect(
-        generateTestCasesService.generateTestCases('u1', QUESTION, 'python')
+        generateTestCasesService.generateTestCases(
+            'u1', TASK_ID, QUESTION_ID, QUESTION, 'python'
+        )
     ).rejects.toThrow('OPENROUTER_KEY_INVALID');
     expect(axiosGetMock).not.toHaveBeenCalled();
 });
@@ -88,8 +101,10 @@ it('reports insufficient credits distinctly from an invalid key, with no fallbac
     axiosPostMock.mockRejectedValue({ response: { status: 402 } });
 
     await expect(
-        generateTestCasesService.generateTestCases('u1', QUESTION, 'python')
-    ).rejects.toThrow('OPENROUTER_INSUFFICIENT_CREDITS');
+        generateTestCasesService.generateTestCases(
+            'u1', TASK_ID, QUESTION_ID, QUESTION, 'python'
+        )
+    ).rejects.toThrow('OPENROUTER_ACCOUNT_LIMIT');
 
     expect(axiosGetMock).not.toHaveBeenCalled();
     expect(axiosPostMock).toHaveBeenCalledTimes(1);
@@ -99,7 +114,9 @@ it('does not fall back when the stored key is missing', async () => {
     getKeyMock.mockRejectedValue(new Error('USER_OPENROUTER_KEY_NOT_FOUND'));
 
     await expect(
-        generateTestCasesService.generateTestCases('u1', QUESTION, 'python')
+        generateTestCasesService.generateTestCases(
+            'u1', TASK_ID, QUESTION_ID, QUESTION, 'python'
+        )
     ).rejects.toThrow('USER_OPENROUTER_KEY_NOT_FOUND');
 
     expect(axiosPostMock).not.toHaveBeenCalled();
@@ -110,7 +127,9 @@ it('fails with an explicit error when the model returns no content', async () =>
     axiosPostMock.mockResolvedValue({ data: { choices: [{ message: { content: '' } }] } });
 
     await expect(
-        generateTestCasesService.generateTestCases('u1', QUESTION, 'python')
+        generateTestCasesService.generateTestCases(
+            'u1', TASK_ID, QUESTION_ID, QUESTION, 'python'
+        )
     ).rejects.toThrow('INVALID_GENERATED_TEST_CASES');
     expect(axiosGetMock).not.toHaveBeenCalled();
 });
@@ -119,17 +138,21 @@ it('fails when the response holds no usable test cases', async () => {
     axiosPostMock.mockResolvedValue({ data: { choices: [{ message: { content: 'not json at all' } }] } });
 
     await expect(
-        generateTestCasesService.generateTestCases('u1', QUESTION, 'python')
+        generateTestCasesService.generateTestCases(
+            'u1', TASK_ID, QUESTION_ID, QUESTION, 'python'
+        )
     ).rejects.toThrow('INVALID_GENERATED_TEST_CASES');
 });
 
 it('excludes reasoning so the token budget is spent on the JSON', async () => {
     axiosPostMock.mockResolvedValue(contentResponse);
 
-    await generateTestCasesService.generateTestCases('u1', QUESTION, 'python');
+    await generateTestCasesService.generateTestCases(
+        'u1', TASK_ID, QUESTION_ID, QUESTION, 'python'
+    );
 
     const payload = axiosPostMock.mock.calls[0][1];
-    expect(payload.reasoning).toEqual({ exclude: true });
+    expect(payload.reasoning).toEqual({ effort: 'low', exclude: true });
     expect(payload.response_format).toEqual({ type: 'json_object' });
-    expect(payload.max_tokens).toBeGreaterThanOrEqual(4000);
+    expect(payload.max_tokens).toBe(3000);
 });
