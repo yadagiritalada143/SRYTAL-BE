@@ -1,10 +1,8 @@
 import CourseModel from '../../model/coursesModel';
-import TaskCodingQuestionModel from '../../model/taskCodingQuestionModel';
 import { IFetchAllCoursesResponse } from '../../interfaces/courses';
 import courseMedia from '../../util/manageCourseMedia';
-import { resolveQuestions } from '../../util/courseTaskQuestions';
 
-const AllCourses = async (): Promise<IFetchAllCoursesResponse> => {
+const AllCourses = async () => {
     try {
         const courses = await CourseModel.find()
             .populate({
@@ -15,46 +13,18 @@ const AllCourses = async (): Promise<IFetchAllCoursesResponse> => {
                 }
             });
 
-        const courseDocuments = courses.map((course: any) => course.toObject());
-        const taskIds = courseDocuments.flatMap((course: any) =>
-            (course.modules || []).flatMap((module: any) =>
-                (module.tasks || []).map((task: any) => task._id)
-            )
-        );
-
-        const persistedQuestions = taskIds.length > 0
-            ? await TaskCodingQuestionModel.find({
-                taskId: { $in: taskIds }
-            })
-                .sort({ order: 1 })
-                .lean()
-            : [];
-
-        const questionsByTask = new Map<string, any[]>();
-        for (const question of persistedQuestions) {
-            const taskId = String(question.taskId);
-            const taskQuestions = questionsByTask.get(taskId) || [];
-            taskQuestions.push({
-                questionId: String(question._id),
-                question: question.question,
-                description: question.description || '',
-                status: question.status,
-                order: question.order,
-                starterCode: question.starterCode || []
-            });
-            questionsByTask.set(taskId, taskQuestions);
-        }
-
         const coursesWithThumbnailUrl = await Promise.all(
-            courseDocuments.map(async (courseData: any) => {
+            courses.map(async (course: any) => {
                 let thumbnailUrl = '';
 
-                if (courseData.thumbnail) {
+                if (course.thumbnail) {
                     thumbnailUrl =
                         await courseMedia.getCourseMediaSignedUrl(
-                            courseData.thumbnail
+                            course.thumbnail
                         );
                 }
+
+                const courseData = course.toObject();
 
                 if (Array.isArray(courseData.modules)) {
                     for (const module of courseData.modules) {
@@ -63,12 +33,6 @@ const AllCourses = async (): Promise<IFetchAllCoursesResponse> => {
                             : '';
                         if (Array.isArray(module.tasks)) {
                             for (const task of module.tasks) {
-                                const taskQuestions =
-                                    questionsByTask.get(String(task._id));
-                                task.questions = taskQuestions?.length
-                                    ? taskQuestions
-                                    : resolveQuestions(task);
-
                                 task.thumbnailUrl = task.thumbnail
                                     ? await courseMedia.getCourseMediaSignedUrl(task.thumbnail)
                                     : '';
@@ -97,7 +61,6 @@ const AllCourses = async (): Promise<IFetchAllCoursesResponse> => {
         }
 
         return {
-            success: true,
             courses: coursesWithThumbnailUrl,
             totals: { totalCourses, totalModules, totalTasks },
         };
