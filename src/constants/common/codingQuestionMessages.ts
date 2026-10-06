@@ -5,7 +5,7 @@ export const CODING_QUESTION_SUCCESS_MESSAGES = {
 };
 
 export const CODING_QUESTION_ERROR_MESSAGES = {
-    RUN_CODE_MISSING_FIELDS_MESSAGE: 'questionId, language ID and code are required !',
+    RUN_CODE_MISSING_FIELDS_MESSAGE: 'question, language  and code are required !',
     QUESTION_NOT_FOUND_MESSAGE: 'Coding question not found !',
     TASK_QUESTION_NOT_FOUND_MESSAGE: 'The requested question does not belong to this task !',
     NOT_CODING_QUESTION_MESSAGE: 'This task is not a coding question !',
@@ -23,5 +23,4 @@ export const CODING_QUESTION_ERROR_MESSAGES = {
     SUBMIT_ALL_TESTS_MUST_PASS_MESSAGE: 'All test cases must pass before you can submit your code !',
     UNABLE_TO_FETCH_CODING_QUESTION_MESSAGE: 'Unable to fetch coding question !',
     USER_AUTHENTICATION_REQUIRED_MESSAGE: 'User authentication required !'
-
 };
