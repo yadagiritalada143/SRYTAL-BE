@@ -25,7 +25,10 @@ describe('updateProgrammingLanguageService', () => {
         const result = await updateProgrammingLanguageService.updateProgrammingLanguage('65f1a2b3c4d5e6f7890abcd1', 'TypeScript');
 
         expect(updateOneMock).toHaveBeenCalledTimes(1);
-        expect(updateOneMock).toHaveBeenCalledWith({ _id: '65f1a2b3c4d5e6f7890abcd1' }, { languageName: 'TypeScript' });
+        expect(updateOneMock).toHaveBeenCalledWith(
+            { _id: '65f1a2b3c4d5e6f7890abcd1' },
+            { $set: { languageName: 'TypeScript' } }
+        );
         expect(result).toEqual(updateResult);
     });
 
@@ -35,6 +38,9 @@ describe('updateProgrammingLanguageService', () => {
         await expect(updateProgrammingLanguageService.updateProgrammingLanguage('65f1a2b3c4d5e6f7890abcd1', 'TypeScript')).rejects.toThrow('An error occurred while updating programming language.');
 
         expect(updateOneMock).toHaveBeenCalledTimes(1);
-        expect(updateOneMock).toHaveBeenCalledWith({ _id: '65f1a2b3c4d5e6f7890abcd1' }, { languageName: 'TypeScript' });
+        expect(updateOneMock).toHaveBeenCalledWith(
+            { _id: '65f1a2b3c4d5e6f7890abcd1' },
+            { $set: { languageName: 'TypeScript' } }
+        );
     });
 });

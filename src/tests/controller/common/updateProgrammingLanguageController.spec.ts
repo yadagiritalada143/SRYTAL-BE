@@ -34,7 +34,7 @@ describe('updateProgrammingLanguageController', () => {
 
         await updateProgrammingLanguageController.updateProgrammingLanguage(req, res);
 
-        expect(updateProgrammingLanguageMock).toHaveBeenCalledWith('65f1a2b3c4d5e6f7890abcd1', 'TypeScript');
+        expect(updateProgrammingLanguageMock).toHaveBeenCalledWith('65f1a2b3c4d5e6f7890abcd1', 'TypeScript', {});
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
         expect(mockJson).toHaveBeenCalledWith({ success: true, message: PROGRAMMING_LANGUAGES_SUCCESS_MESSAGES.PROGRAMMING_LANGUAGE_UPDATE_SUCCESS_MESSAGE, result: updateResult });
     });
@@ -45,7 +45,7 @@ describe('updateProgrammingLanguageController', () => {
 
         await updateProgrammingLanguageController.updateProgrammingLanguage(req, res);
 
-        expect(updateProgrammingLanguageMock).toHaveBeenCalledWith('65f1a2b3c4d5e6f7890abcd1', 'TypeScript');
+        expect(updateProgrammingLanguageMock).toHaveBeenCalledWith('65f1a2b3c4d5e6f7890abcd1', 'TypeScript', {});
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR);
         expect(mockJson).toHaveBeenCalledWith({ success: false, message: PROGRAMMING_LANGUAGES_ERROR_MESSAGES.PROGRAMMING_LANGUAGE_UPDATE_ERROR_MESSAGE });
     });
