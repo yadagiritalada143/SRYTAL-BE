@@ -1,4 +1,5 @@
 import { LANGUAGE_MAP, LANGUAGE_REGISTRY } from '../types/languageExecutionMap';
+import { ICourseTaskQuestion, ICourseTaskStarterCode } from '../interfaces/courseTask';
 
 /**
  * Maps a user-supplied language (e.g. 'JS', 'Node', 'Python3', 'C++') to the
@@ -52,13 +53,41 @@ export const getFallbackLanguages = (): string[] =>
  * cached into the same array (keyed by the canonical language key). Returns ''
  * when no entry exists so callers can trigger AI generation.
  */
-export const resolveStarterCode = (task: any, language: string): string => {
-    const normalized = normalizeLanguage(language) || '';
-    const writerStarter = ((task && task.starterCode) || []).find(
-        (item: any) =>
-            item &&
-            typeof item.languageName === 'string' &&
-            (LANGUAGE_MAP[item.languageName.trim().toLowerCase()] || item.languageName.trim().toLowerCase()) === normalized
-    );
-    return (writerStarter && writerStarter.code) || '';
+export const resolveStarterCode = (
+    question: ICourseTaskQuestion,
+    language: string
+): string => {
+    const normalized =
+        normalizeLanguage(language) || '';
+
+    const starterCodes =
+        question?.starterCode || [];
+
+    const existingStarter =
+        starterCodes.find(
+            (item: ICourseTaskStarterCode) => {
+                if (
+                    !item ||
+                    typeof item.languageName !== 'string'
+                ) {
+                    return false;
+                }
+
+                const itemLanguage =
+                    item.languageName
+                        .trim()
+                        .toLowerCase();
+
+                const canonicalLanguage =
+                    LANGUAGE_MAP[itemLanguage] ||
+                    itemLanguage;
+
+                return (
+                    canonicalLanguage ===
+                    normalized
+                );
+            }
+        );
+
+    return existingStarter?.code || '';
 };

@@ -25,7 +25,7 @@ describe('getProgrammingLanguageByIdService', () => {
         const result = await getProgrammingLanguageByIdService.getProgrammingLanguageById('65f1a2b3c4d5e6f7890abcd1');
 
         expect(findByIdMock).toHaveBeenCalledTimes(1);
-        expect(findByIdMock).toHaveBeenCalledWith({ _id: '65f1a2b3c4d5e6f7890abcd1' });
+        expect(findByIdMock).toHaveBeenCalledWith('65f1a2b3c4d5e6f7890abcd1');
         expect(result).toEqual(programmingLanguage);
     });
 
@@ -35,7 +35,7 @@ describe('getProgrammingLanguageByIdService', () => {
         const result = await getProgrammingLanguageByIdService.getProgrammingLanguageById('65f1a2b3c4d5e6f7890abcd1');
 
         expect(findByIdMock).toHaveBeenCalledTimes(1);
-        expect(findByIdMock).toHaveBeenCalledWith({ _id: '65f1a2b3c4d5e6f7890abcd1' });
+        expect(findByIdMock).toHaveBeenCalledWith('65f1a2b3c4d5e6f7890abcd1');
         expect(result).toBeNull();
     });
 
@@ -45,6 +45,6 @@ describe('getProgrammingLanguageByIdService', () => {
         await expect(getProgrammingLanguageByIdService.getProgrammingLanguageById('65f1a2b3c4d5e6f7890abcd1')).rejects.toThrow('Database failure');
 
         expect(findByIdMock).toHaveBeenCalledTimes(1);
-        expect(findByIdMock).toHaveBeenCalledWith({ _id: '65f1a2b3c4d5e6f7890abcd1' });
+        expect(findByIdMock).toHaveBeenCalledWith('65f1a2b3c4d5e6f7890abcd1');
     });
 });

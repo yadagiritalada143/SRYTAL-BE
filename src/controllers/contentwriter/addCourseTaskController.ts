@@ -4,20 +4,28 @@ import { v4 as uuidv4 } from 'uuid';
 import addNewCourseTaskService from '../../services/contentwriter/addCourseTaskService';
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
 import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../config/awsS3Config';
+import { parseQuestionsField } from '../../util/courseTaskQuestions';
+import { MAX_QUESTIONS_PER_TASK } from '../../constants/contentwriter/coursetaskQuestionMessages';
 import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../../constants/contentwriter/coursetaskMessages';
 
 const addTaskToModule = async (req: Request, res: Response) => {
     try {
-        const { moduleId, taskName, taskDescription, link, isCoding, question } = req.body;
+        const { moduleId, taskName, taskDescription, link, isCoding, question, questions } = req.body;
         const status = 'ACTIVE';
 
         // Coding tasks are flagged via isCoding (string from multipart form or boolean).
         const isCodingTask = isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
 
-        if (isCodingTask) {
-            if (!question) {
-                return res.status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE });
-            }
+        // A coding task holds its own list of questions, so it no longer needs one
+        // up front: the writer can create the task now and attach questions through
+        // /addCourseTaskQuestion, or send them all in this request.
+        const parsedQuestions = parseQuestionsField(questions);
+
+        if (isCodingTask && parsedQuestions.length > MAX_QUESTIONS_PER_TASK) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_QUESTION_LIMIT_MESSAGE
+            });
         }
 
         //get uploaded files 
@@ -80,24 +88,34 @@ const addTaskToModule = async (req: Request, res: Response) => {
             contentMimeType,
             contentFileName,
             isCodingTask,
-            isCodingTask ? question : '',
+            isCodingTask ? (question || '') : '',
+            parsedQuestions
         );
 
         if (responseAfteraddingCourseTask && responseAfteraddingCourseTask.id) {
+            const savedQuestions = Array.isArray(responseAfteraddingCourseTask.questions)
+                ? responseAfteraddingCourseTask.questions
+                : [];
+
             return res.status(201).json({
                 message: COURSE_TASK_SUCCESS_MESSAGES.COURSE_TASK_ADD_SUCCESS_MESSAGE,
                 taskId: responseAfteraddingCourseTask.id,
                 taskName: responseAfteraddingCourseTask.taskName,
                 taskDescription: responseAfteraddingCourseTask.taskDescription,
                 type: responseAfteraddingCourseTask.type,
-                content: responseAfteraddingCourseTask.content,
-                contentMimeType: responseAfteraddingCourseTask.contentMimeType,
-                contentFileName: responseAfteraddingCourseTask.contentFileName,
-                thumbnailPath: responseAfteraddingCourseTask.thumbnailPath,
-                isCoding: responseAfteraddingCourseTask.isCoding,
-                question: responseAfteraddingCourseTask.question,
+                // The ids come back so a writer can attach test cases or edit a
+                // question straight away without a second round trip.
+                questions: savedQuestions.map((entry: any) => ({
+                    questionId: String(entry.questionId),
+                    question: entry.question,
+                    description: entry.description,
+                    status: entry.status,
+                    order: entry.order
+                })),
+                questionCount: savedQuestions.length
             });
         }
+
 
         return res
             .status(400)

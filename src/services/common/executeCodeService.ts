@@ -10,6 +10,7 @@ const WANDBOX_SLOW_REQUEST_TIMEOUT_MS = 60000;
 const WANDBOX_MAX_ATTEMPTS = 3;
 const WANDBOX_RETRY_DELAY_MS = 500;
 const WANDBOX_COMPILER_CACHE_MS = 10 * 60 * 1000;
+const WANDBOX_COMPILER_LIST_MAX_ATTEMPTS = 3;
 
 /*
  * Compilers that routinely exceed the 20s default because their cold compile
@@ -25,6 +26,31 @@ const getRequestTimeoutMs = (canonicalKey: string): number =>
         : WANDBOX_REQUEST_TIMEOUT_MS;
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Whether an axios error is worth retrying. Retries are limited to transport
+ * failures and transient upstream responses — never 4xx application errors.
+ */
+const isTransientWandboxError = (error: any): boolean => {
+    if (!error) {
+        return false;
+    }
+
+    const status = error.response?.status;
+    const code = error.code;
+
+    return (
+        status === 408 ||
+        status === 429 ||
+        (typeof status === 'number' && status >= 500) ||
+        code === 'ECONNABORTED' ||
+        code === 'ECONNRESET' ||
+        code === 'ENOTFOUND' ||
+        code === 'EAI_AGAIN' ||
+        code === 'ETIMEDOUT' ||
+        String(error.message).includes('timeout')
+    );
+};
 
 /**
  * Execution runs on Wandbox, whose public API needs no API key or IP whitelist,
@@ -57,19 +83,43 @@ const getWandboxCompilers = async (): Promise<IWandboxCompiler[]> => {
         return wandboxCompilerCache;
     }
 
-    const response = await axios.get(
-        WANDBOX_COMPILER_LIST_URL,
-        { timeout: WANDBOX_REQUEST_TIMEOUT_MS }
-    );
+    let lastError: any;
+    for (let attempt = 1; attempt <= WANDBOX_COMPILER_LIST_MAX_ATTEMPTS; attempt++) {
+        try {
+            const response = await axios.get(
+                WANDBOX_COMPILER_LIST_URL,
+                { timeout: WANDBOX_REQUEST_TIMEOUT_MS }
+            );
 
-    if (!Array.isArray(response.data)) {
-        throw new Error('Invalid compiler list received from Wandbox.');
+            if (!Array.isArray(response.data)) {
+                throw new Error('Invalid compiler list received from Wandbox.');
+            }
+
+            wandboxCompilerCache = response.data;
+            wandboxCompilerCacheTime = Date.now();
+            return wandboxCompilerCache;
+        } catch (error: any) {
+            lastError = error;
+            if (
+                !isTransientWandboxError(error) ||
+                attempt === WANDBOX_COMPILER_LIST_MAX_ATTEMPTS
+            ) {
+                break;
+            }
+
+            await wait(WANDBOX_RETRY_DELAY_MS * attempt);
+        }
     }
 
-    wandboxCompilerCache = response.data;
-    wandboxCompilerCacheTime = now;
+    if (wandboxCompilerCache.length > 0) {
+        console.warn(
+            `Wandbox compiler list refresh failed; using cached list: ${lastError?.message || lastError}`
+        );
+        wandboxCompilerCacheTime = now;
+        return wandboxCompilerCache;
+    }
 
-    return wandboxCompilerCache;
+    throw lastError;
 };
 
 /*
@@ -458,33 +508,6 @@ const normalizeWandboxResponse = (
         status: 'COMPLETED',
         executionTimeMs
     };
-};
-
-/**
- * Whether an axios error is worth retrying. Retries are limited to transport
- * failures and transient upstream responses (timeouts, rate limits, and 5xx
- * gateway errors from Wandbox's Cloudflare layer) — never 4xx application
- * errors, where retrying cannot help.
- */
-const isTransientWandboxError = (error: any): boolean => {
-    if (!error) {
-        return false;
-    }
-
-    const status = error.response?.status;
-    const code = error.code;
-
-    return (
-        status === 408 ||
-        status === 429 ||
-        (typeof status === 'number' && status >= 500) ||
-        code === 'ECONNABORTED' ||
-        code === 'ECONNRESET' ||
-        code === 'ENOTFOUND' ||
-        code === 'EAI_AGAIN' ||
-        code === 'ETIMEDOUT' ||
-        String(error.message).includes('timeout')
-    );
 };
 
 export default { executeCode };

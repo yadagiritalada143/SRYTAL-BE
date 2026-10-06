@@ -28,13 +28,14 @@ describe('submitCodeController', () => {
         jest.restoreAllMocks();
     });
 
-    it('passes the selected programming language ID to the service', async () => {
-        const questionId = '66d323456789abcdef123456';
+    it('passes the task, question and language ID to the service', async () => {
+        const taskId = '66d323456789abcdef123456';
+        const questionId = '66d323456789abcdef123499';
         const languageId = '65f1a2b3c4d5e6f7890abcd1';
         const code = 'console.log("Hello");';
-        const executionResult = { questionId, language: 'javascript' };
+        const executionResult = { taskId, questionId, language: 'javascript' };
         const req = {
-            body: { questionId, language: languageId, code },
+            body: { taskId, questionId, language: languageId, code },
             user: { userId: '65f1a2b3c4d5e6f7890abcd2' }
         } as unknown as Request;
         runCodeMock.mockResolvedValue({ success: true, executionResult, lastSubmission: null });
@@ -42,6 +43,7 @@ describe('submitCodeController', () => {
         await submitCodeController.submitCode(req, res);
 
         expect(runCodeMock).toHaveBeenCalledWith(
+            taskId,
             questionId,
             languageId,
             code,
@@ -55,6 +57,27 @@ describe('submitCodeController', () => {
             data: executionResult,
             lastSubmission: null
         });
+    });
+
+    it('treats a lone questionId as the task id for pre-multi-question clients', async () => {
+        const taskId = '66d323456789abcdef123456';
+        const languageId = '65f1a2b3c4d5e6f7890abcd1';
+        const req = {
+            body: { questionId: taskId, language: languageId, code: 'console.log(1);' },
+            user: { userId: '65f1a2b3c4d5e6f7890abcd2' }
+        } as unknown as Request;
+        runCodeMock.mockResolvedValue({ success: true, executionResult: { taskId, questionId: null }, lastSubmission: null });
+
+        await submitCodeController.submitCode(req, res);
+
+        expect(runCodeMock).toHaveBeenCalledWith(
+            taskId,
+            '',
+            languageId,
+            'console.log(1);',
+            '65f1a2b3c4d5e6f7890abcd2',
+            'submit'
+        );
     });
 
     it('returns the last code the employee ran alongside the result', async () => {

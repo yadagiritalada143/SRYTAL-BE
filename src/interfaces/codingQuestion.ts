@@ -1,10 +1,6 @@
+import { Document, Types } from 'mongoose';
 import { ITestCase } from './codingQuestionTestCase';
 
-/**
- * The employee's own latest submission for a coding question, in a specific
- * language. Surfaced on `getQuestion` so the editor can restore their
- * submitted answer instead of the starter code.
- */
 export interface ILastSubmittedCode {
     language: string;
     code: string;
@@ -12,7 +8,13 @@ export interface ILastSubmittedCode {
 
 export interface IGetQuestionResponse {
     success: boolean;
-    questionId?: string;
+    taskId?: string;
+    questionId?: string | null;
+    /** @deprecated Use questionId. */
+    taskQuestionId?: string | null;
+    taskName?: string;
+    question?: string;
+    description?: string;
     allowedLanguages?: string[];
     language?: string;
     languageId?: string;
@@ -22,6 +24,7 @@ export interface IGetQuestionResponse {
     notCodingQuestion?: boolean;
     notAssigned?: boolean;
     invalidLanguage?: boolean;
+    questionNotFound?: boolean;
 }
 
 export interface ICodeRunTestCaseResult extends ITestCase {
@@ -49,7 +52,10 @@ export interface IAiCodeQualityEvaluation {
 }
 
 export interface IRunCodeExecutionResult {
-    questionId: string;
+    taskId: string;
+    questionId: string | null;
+    /** @deprecated Use questionId. */
+    taskQuestionId: string | null;
     language: string;
     languageId: string;
     totalTestCases: number;
@@ -60,13 +66,10 @@ export interface IRunCodeExecutionResult {
     aiEvaluation: IAiCodeQualityEvaluation | null;
 }
 
-/**
- * The last code an employee ran or submitted, surfaced alongside a fresh
- * submission so the client can restore what they were working on.
- */
 export interface ILastCodeSubmission {
     employeeId: string;
-    questionId: string;
+    taskId: string;
+    questionId: string | null;
     languageId: string;
     code: string;
     passedTestCases: number;
@@ -84,6 +87,22 @@ export interface IRunCodeResponse {
     notAssigned?: boolean;
     invalidLanguage?: boolean;
     notAllTestsPassed?: boolean;
+    questionNotFound?: boolean;
     executionResult?: IRunCodeExecutionResult;
     lastSubmission?: ILastCodeSubmission | null;
+}
+
+export interface IStarterCode {
+    languageId: Types.ObjectId;
+    code: string;
+}
+
+export interface ITaskCodingQuestion extends Document {
+    taskId: Types.ObjectId;
+    question: string;
+    description: string;
+    type: string;
+    status: 'ACTIVE' | 'INACTIVE';
+    order: number;
+    starterCode: IStarterCode[];
 }

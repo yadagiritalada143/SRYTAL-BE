@@ -28,13 +28,14 @@ describe('runCodeController', () => {
         jest.restoreAllMocks();
     });
 
-    it('passes the selected programming language ID to the service', async () => {
-        const questionId = '66d323456789abcdef123456';
+    it('passes the task, question and language ID to the service', async () => {
+        const taskId = '66d323456789abcdef123456';
+        const questionId = '66d323456789abcdef123499';
         const languageId = '65f1a2b3c4d5e6f7890abcd1';
         const code = 'console.log("Hello");';
-        const executionResult = { questionId, language: 'javascript' };
+        const executionResult = { taskId, questionId, language: 'javascript' };
         const req = {
-            body: { questionId, language: languageId, code },
+            body: { taskId, questionId, language: languageId, code },
             user: { userId: '65f1a2b3c4d5e6f7890abcd2' }
         } as unknown as Request;
         runCodeMock.mockResolvedValue({ success: true, executionResult });
@@ -42,10 +43,12 @@ describe('runCodeController', () => {
         await runCodeController.runCode(req, res);
 
         expect(runCodeMock).toHaveBeenCalledWith(
+            taskId,
             questionId,
             languageId,
             code,
-            '65f1a2b3c4d5e6f7890abcd2'
+            '65f1a2b3c4d5e6f7890abcd2',
+            'run'
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
         expect(mockJson).toHaveBeenCalledWith({
@@ -53,6 +56,38 @@ describe('runCodeController', () => {
             message: CODING_QUESTION_SUCCESS_MESSAGES.RUN_CODE_SUCCESS_MESSAGE,
             data: executionResult
         });
+    });
+
+    it('treats a lone questionId as the task id for pre-multi-question clients', async () => {
+        const taskId = '66d323456789abcdef123456';
+        const languageId = '65f1a2b3c4d5e6f7890abcd1';
+        const req = {
+            body: { questionId: taskId, language: languageId, code: 'console.log("Hello");' },
+            user: { userId: '65f1a2b3c4d5e6f7890abcd2' }
+        } as unknown as Request;
+        runCodeMock.mockResolvedValue({ success: true, executionResult: { taskId, questionId: null } });
+
+        await runCodeController.runCode(req, res);
+
+        expect(runCodeMock).toHaveBeenCalledWith(
+            taskId,
+            '',
+            languageId,
+            'console.log("Hello");',
+            '65f1a2b3c4d5e6f7890abcd2',
+            'run'
+        );
+    });
+
+    it('returns 400 when questionId is missing', async () => {
+        const req = {
+            body: { language: '65f1a2b3c4d5e6f7890abcd1', code: 'console.log("Hello");' }
+        } as unknown as Request;
+
+        await runCodeController.runCode(req, res);
+
+        expect(runCodeMock).not.toHaveBeenCalled();
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
     });
 
     it('returns 400 when the language ID is missing', async () => {
@@ -76,7 +111,8 @@ describe('runCodeController', () => {
                 questionId: '66d323456789abcdef123456',
                 language: '65f1a2b3c4d5e6f7890abcd1',
                 code: 'console.log("Hello");'
-            }
+            },
+            user: { userId: '65f1a2b3c4d5e6f7890abcd2' }
         } as unknown as Request;
         runCodeMock.mockResolvedValue({ success: false, invalidLanguage: true });
 

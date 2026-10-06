@@ -85,7 +85,8 @@ describe('addCourseTaskController', () => {
             '',
             '',
             false,
-            ''
+            '',
+            []
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
         expect(mockJson).toHaveBeenCalledWith({
@@ -93,7 +94,9 @@ describe('addCourseTaskController', () => {
             taskId: 't1',
             taskName: 'Read',
             taskDescription: 'Read the docs',
-            type: 'LINK'
+            type: 'LINK',
+            questions: [],
+            questionCount: 0
         });
     });
 
@@ -123,7 +126,8 @@ describe('addCourseTaskController', () => {
             'application/pdf',
             'file.pdf',
             false,
-            ''
+            '',
+            []
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
     });
@@ -154,7 +158,8 @@ describe('addCourseTaskController', () => {
             '',
             '',
             false,
-            ''
+            '',
+            []
         );
     });
 
@@ -212,27 +217,38 @@ describe('addCourseTaskController', () => {
             '',
             '',
             true,
-            'Write a function to reverse a string.'
+            'Write a function to reverse a string.',
+            []
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
     });
 
-    it('returns 400 when a coding task has no question', async () => {
+    it('allows a coding task with no question so questions can be added later', async () => {
         const req = buildReq({
             body: {
                 link: '',
                 isCoding: 'true'
             }
         });
+        addCourseTaskMock.mockResolvedValue({ id: 't1', taskName: 'Read', taskDescription: 'Read the docs', type: 'LINK' });
 
         await addCourseTaskController.addTaskToModule(req, res);
 
-        expect(addCourseTaskMock).not.toHaveBeenCalled();
-        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
-        expect(mockJson).toHaveBeenCalledWith({
-            success: false,
-            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE
-        });
+        expect(addCourseTaskMock).toHaveBeenCalledWith(
+            expect.anything(),
+            'Read',
+            'Read the docs',
+            '',
+            'ACTIVE',
+            'LINK',
+            '',
+            '',
+            '',
+            true,
+            '',
+            []
+        );
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
     });
 
     it('returns 500 when the service throws', async () => {

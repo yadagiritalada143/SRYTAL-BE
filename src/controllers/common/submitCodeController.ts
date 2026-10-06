@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import runCodeService from '../../services/common/runCodeService';
+import { resolveRunScope } from '../../util/courseTaskQuestions';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
 import {
     CODING_QUESTION_SUCCESS_MESSAGES,
@@ -7,20 +8,27 @@ import {
 } from '../../constants/common/codingQuestionMessages';
 
 /**
- * Submit Code: the employee's final answer for a coding question. Runs the
- * exact same grading engine as Run Code (generate/reuse test cases -> Wandbox
- * execution -> compare -> score -> AI quality analysis) but persists the
- * result as a `type: 'submit'` document in the code-run collection. The
- * response also carries `lastSubmission`: the last code that employee ran or
- * submitted (any coding question, newest first), or null if they have never
- * run anything. Course progress (task-completion) is intentionally NOT touched
- * here - the frontend drives that separately through the existing task-progress
- * endpoint.
+ * Submit Code: the employee's final answer for one question of a coding task.
+ * Runs the exact same grading engine as Run Code (generate/reuse test cases ->
+ * Wandbox execution -> compare -> score -> AI quality analysis) but persists the
+ * result as a `type: 'submit'` document in the code-run collection. The response
+ * also carries `lastSubmission`: the last code that employee ran or submitted
+ * (any coding question, newest first), or null if they have never run anything.
+ *
+ * A submit is only accepted once every test case passes, so a successful call is
+ * also what moves the question - and, once every question of the task has been
+ * passed, the task - to complete. The client must therefore not drive coding-task
+ * progress through /updateMyTaskProgress.
  */
 const submitCode = async (req: Request, res: Response) => {
     try {
         const body = req.body || {};
-        const { questionId, code } = body;
+        const { code } = body;
+        // `taskId` is the coding task, `questionId` the question inside it. Both
+        // are optional so existing clients keep working: a body that only sends
+        // `questionId` is read as the pre-multi-question shape, where that field
+        // held the task id.
+        const { taskId, questionId } = resolveRunScope(body);
         // Accept the language as either `language` (documented contract, used by
         // the frontend) or `languageId` (what some clients send by mistake).
         const languageId =
@@ -30,7 +38,7 @@ const submitCode = async (req: Request, res: Response) => {
                     ? body.languageId
                     : '';
 
-        if (!questionId || typeof languageId !== 'string' || languageId.trim() === '' || typeof code !== 'string' || code.trim() === '') {
+        if (!taskId || typeof languageId !== 'string' || languageId.trim() === '' || typeof code !== 'string' || code.trim() === '') {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: CODING_QUESTION_ERROR_MESSAGES.RUN_CODE_MISSING_FIELDS_MESSAGE
@@ -38,6 +46,7 @@ const submitCode = async (req: Request, res: Response) => {
         }
 
         const response = await runCodeService.runCode(
+            taskId,
             questionId,
             languageId,
             code,
@@ -50,6 +59,13 @@ const submitCode = async (req: Request, res: Response) => {
                 return res.status(HTTP_STATUS.NOT_FOUND).json({
                     success: false,
                     message: CODING_QUESTION_ERROR_MESSAGES.QUESTION_NOT_FOUND_MESSAGE
+                });
+            }
+
+            if (response.questionNotFound) {
+                return res.status(HTTP_STATUS.NOT_FOUND).json({
+                    success: false,
+                    message: CODING_QUESTION_ERROR_MESSAGES.TASK_QUESTION_NOT_FOUND_MESSAGE
                 });
             }
 

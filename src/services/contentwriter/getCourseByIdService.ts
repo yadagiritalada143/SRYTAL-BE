@@ -1,6 +1,8 @@
 import CourseModel from '../../model/coursesModel';
+import TaskCodingQuestionModel from '../../model/taskCodingQuestionModel';
 import { IFetchCourseByIdResponse } from '../../interfaces/courses';
 import courseMedia from '../../util/manageCourseMedia';
+import { resolveQuestions } from '../../util/courseTaskQuestions';
 
 const getCourseById = async (id: string): Promise<IFetchCourseByIdResponse> => {
     try {
@@ -18,6 +20,33 @@ const getCourseById = async (id: string): Promise<IFetchCourseByIdResponse> => {
 
         }
         const courseData = course.toObject() as any;
+
+        const taskIds = (courseData.modules || []).flatMap((module: any) =>
+            (module.tasks || []).map((task: any) => task._id)
+        );
+        const persistedQuestions = taskIds.length > 0
+            ? await TaskCodingQuestionModel.find({
+                taskId: { $in: taskIds }
+            })
+                .sort({ order: 1 })
+                .lean()
+            : [];
+
+        const questionsByTask = new Map<string, any[]>();
+        for (const question of persistedQuestions) {
+            const taskId = String(question.taskId);
+            const taskQuestions = questionsByTask.get(taskId) || [];
+            taskQuestions.push({
+                questionId: String(question._id),
+                question: question.question,
+                description: question.description || '',
+                status: question.status,
+                order: question.order,
+                starterCode: question.starterCode || []
+            });
+            questionsByTask.set(taskId, taskQuestions);
+        }
+
         courseData.thumbnailUrl = course.thumbnail
             ? await courseMedia.getCourseMediaSignedUrl(course.thumbnail)
             : '';
@@ -29,8 +58,14 @@ const getCourseById = async (id: string): Promise<IFetchCourseByIdResponse> => {
                     : '';
                 if (Array.isArray(module.tasks)) {
                     for (const task of module.tasks) {
-                        task.thumbnailUrl = task.thumbnail
-                            ? await courseMedia.getCourseMediaSignedUrl(task.thumbnail)
+                    const taskQuestions =
+                        questionsByTask.get(String(task._id));
+                    task.questions = taskQuestions?.length
+                        ? taskQuestions
+                        : resolveQuestions(task);
+
+                    task.thumbnailUrl = task.thumbnail
+                        ? await courseMedia.getCourseMediaSignedUrl(task.thumbnail)
                             : '';
                     }
                 }

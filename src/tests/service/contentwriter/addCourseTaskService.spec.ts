@@ -2,6 +2,7 @@ import addCourseTaskService from '../../../services/contentwriter/addCourseTaskS
 import CourseTaskModel from '../../../model/courseTaskModel';
 import CourseModuleModel from '../../../model/coursemoduleModel';
 import CourseModel from '../../../model/coursesModel';
+import TaskCodingQuestionModel from '../../../model/taskCodingQuestionModel';
 
 jest.mock('../../../model/courseTaskModel', () => ({
     __esModule: true,
@@ -18,9 +19,15 @@ jest.mock('../../../model/coursesModel', () => ({
     default: { findByIdAndUpdate: jest.fn() }
 }));
 
+jest.mock('../../../model/taskCodingQuestionModel', () => ({
+    __esModule: true,
+    default: { create: jest.fn() }
+}));
+
 const CourseTaskModelMock = CourseTaskModel as unknown as jest.Mock;
 const moduleFindByIdMock = (CourseModuleModel as unknown as { findById: jest.Mock }).findById;
 const findByIdAndUpdateMock = (CourseModel as unknown as { findByIdAndUpdate: jest.Mock }).findByIdAndUpdate;
+const taskCodingQuestionCreateMock = (TaskCodingQuestionModel as unknown as { create: jest.Mock }).create;
 
 describe('addCourseTaskService', () => {
     let saveSpy: jest.Mock;
@@ -29,6 +36,7 @@ describe('addCourseTaskService', () => {
         CourseTaskModelMock.mockReset();
         moduleFindByIdMock.mockReset();
         findByIdAndUpdateMock.mockReset();
+        taskCodingQuestionCreateMock.mockReset().mockResolvedValue([]);
         saveSpy = jest.fn();
         CourseTaskModelMock.mockReturnValue({ save: saveSpy });
         jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -85,8 +93,7 @@ describe('addCourseTaskService', () => {
             content: 'https://example.com',
             contentMimeType: '',
             contentFileName: '',
-            isCoding: false,
-            question: ''
+            isCoding: false
         });
         expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(moduleFindByIdMock).toHaveBeenCalledWith('m1');
@@ -104,6 +111,13 @@ describe('addCourseTaskService', () => {
             question: 'Write a function to reverse a string.'
         };
         saveSpy.mockResolvedValue(savedTask);
+        taskCodingQuestionCreateMock.mockResolvedValue([{
+            _id: 'q1',
+            question: 'Write a function to reverse a string.',
+            description: 'Read the docs',
+            status: 'ACTIVE',
+            order: 0
+        }]);
         moduleFindByIdMock.mockReturnValue({ lean: jest.fn().mockResolvedValue({ courseId: 'c1' }) });
         findByIdAndUpdateMock.mockResolvedValue({});
 
@@ -135,11 +149,29 @@ describe('addCourseTaskService', () => {
             content: 'https://example.com',
             contentMimeType: '',
             contentFileName: '',
-            isCoding: true,
-            question: 'Write a function to reverse a string.'
+            isCoding: true
         });
+        expect(taskCodingQuestionCreateMock).toHaveBeenCalledWith([
+            {
+                taskId: 't3',
+                question: 'Write a function to reverse a string.',
+                description: 'Read the docs',
+                status: 'ACTIVE',
+                order: 0,
+                starterCode: []
+            }
+        ]);
         expect(saveSpy).toHaveBeenCalledTimes(1);
-        expect(result).toEqual(savedTask);
+        expect(result).toEqual({
+            ...savedTask,
+            questions: [{
+                questionId: 'q1',
+                question: 'Write a function to reverse a string.',
+                description: 'Read the docs',
+                status: 'ACTIVE',
+                order: 0
+            }]
+        });
     });
 
     it('does not touch the course when the module has no courseId', async () => {
