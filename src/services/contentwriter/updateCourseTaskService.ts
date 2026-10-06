@@ -31,14 +31,6 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
                 newContentFileName;
         }
 
-        if (isCoding !== undefined) {
-            updateData.isCoding = isCoding;
-        }
-
-        if (question !== undefined) {
-            updateData.question = question;
-        }
-
         const updatedTask =
             await CourseTaskModel.findByIdAndUpdate(
                 id,

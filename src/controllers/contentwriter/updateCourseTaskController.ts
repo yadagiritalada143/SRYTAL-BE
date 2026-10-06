@@ -22,7 +22,7 @@ const uploadToS3 = async (
 
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
-        const { id, taskName, taskDescription, status, isCoding, question } = req.body;
+        const { id, taskName, taskDescription, status } = req.body;
 
         if (!isValidStatus(status)) {
             return res.status(400).json({
@@ -30,21 +30,6 @@ const updateCourseTask = async (req: Request, res: Response) => {
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_STATUS_MESSAGE,
             });
         }
-
-        // Coerce isCoding like addCourseTask does, but keep `undefined` when the
-        // field is absent so the service leaves the stored flag untouched.
-        const parsedIsCoding =
-            isCoding === undefined
-                ? undefined
-                : isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
-
-        if (parsedIsCoding && !question) {
-            return res.status(400).json({
-                success: false,
-                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE,
-            });
-        }
-
         const files = req.files as {[fieldname: string]: Express.Multer.File[]};
 
         const taskFile = files?.taskFile?.[0];
@@ -92,8 +77,6 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContent,
             newContentMimeType,
             newContentFileName,
-            parsedIsCoding,
-            question,
         );
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {
