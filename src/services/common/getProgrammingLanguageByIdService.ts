@@ -2,7 +2,7 @@ import ProgrammingLanguages from '../../model/programmingLanguagesModel';
 
 const getProgrammingLanguageById = async (id: string) => {
     try {
-        const programmingLanguage = await ProgrammingLanguages.findById({ _id: id });
+        const programmingLanguage = await ProgrammingLanguages.findById(id);
         return programmingLanguage;
 
     } catch (error: any) {

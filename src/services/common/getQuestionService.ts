@@ -196,8 +196,6 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
         }
 
         let starterCode = '';
-        let boilerplateUnavailable = false;
-        let boilerplateError: string | undefined;
         try {
             starterCode = await generateBoilerplateService.getOrGenerateBoilerplate(
                 String(task._id),
@@ -209,13 +207,6 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
         } catch (error: any) {
             console.error(`Boilerplate generation failed: ${error?.message || error}`);
             starterCode = '';
-            boilerplateUnavailable = true;
-            const errorCode = String(error?.message || '');
-            boilerplateError =
-                errorCode === 'USER_OPENROUTER_KEY_NOT_FOUND' ||
-                errorCode === 'OPENROUTER_KEY_NOT_FOUND'
-                    ? 'OPENROUTER_KEY_NOT_FOUND'
-                    : 'GENERATION_FAILED';
         }
 
         /*
@@ -234,8 +225,6 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
             language: resolvedLanguage,
             languageId: String(language._id),
             starterCode,
-            boilerplateUnavailable,
-            ...(boilerplateError ? { boilerplateError } : {}),
             lastSubmittedCode
         };
 

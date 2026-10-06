@@ -47,12 +47,10 @@ describe('getQuestionController', () => {
         });
     });
 
-    it('returns the question even when boilerplate generation is unavailable', async () => {
+    it('returns the question and starter code without boilerplate status fields', async () => {
         const data = {
             question: 'Reverse a string',
-            starterCode: '',
-            boilerplateUnavailable: true,
-            boilerplateError: 'OPENROUTER_KEY_NOT_FOUND'
+            starterCode: 'function reverse(value) {}'
         };
         getQuestionMock.mockResolvedValue({ success: true, data });
 

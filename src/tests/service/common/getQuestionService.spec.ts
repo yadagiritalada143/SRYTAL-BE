@@ -150,8 +150,7 @@ describe('getQuestionService', () => {
                 questionId,
                 question: 'Reverse a string',
                 language: 'javascript',
-                starterCode: 'function reverse(value) {}',
-                boilerplateUnavailable: false
+                starterCode: 'function reverse(value) {}'
             }
         });
         expect(questionFindOneMock).toHaveBeenCalledWith({
@@ -161,7 +160,7 @@ describe('getQuestionService', () => {
         });
     });
 
-    it('returns the question and marks boilerplate unavailable when generation fails', async () => {
+    it('returns the question without boilerplate status fields when generation fails', async () => {
         const { taskId, questionId, languageId } = setupSuccessfulQuestionLookup();
         generateBoilerplateMock.mockRejectedValue(
             new Error('USER_OPENROUTER_KEY_NOT_FOUND')
@@ -178,11 +177,11 @@ describe('getQuestionService', () => {
             success: true,
             data: {
                 question: 'Reverse a string',
-                starterCode: '',
-                boilerplateUnavailable: true,
-                boilerplateError: 'OPENROUTER_KEY_NOT_FOUND'
+                starterCode: ''
             }
         });
+        expect(result.data).not.toHaveProperty('boilerplateUnavailable');
+        expect(result.data).not.toHaveProperty('boilerplateError');
     });
 
 });

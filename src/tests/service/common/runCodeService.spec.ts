@@ -124,7 +124,6 @@ const setUpValidRequest = (): void => {
         lean: jest.fn().mockResolvedValue({
             _id: questionId,
             moduleId,
-            isCoding: true,
             questions: [{
                 questionId: embeddedQuestionId,
                 question: 'Return the input.',

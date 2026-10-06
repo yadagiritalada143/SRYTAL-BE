@@ -305,10 +305,10 @@ const resolveProgrammingLanguage = async (input: string): Promise<any | null> =>
     }
 
     /**
-     * Try MongoDB ObjectId first.
+     * Only send ObjectId-shaped values to findById. Language names such as
+     * "JavaScript" are resolved through the language-name lookup below.
      */
-    if (trimmed) {
-
+    if (Types.ObjectId.isValid(trimmed)) {
         const byId =
             await getProgrammingLanguageByIdService
                 .getProgrammingLanguageById(
@@ -389,53 +389,45 @@ const runCode = async (taskId: string, questionId: string, languageId: string, c
     const task: any = await CourseTaskModel.findById(taskId).lean();
 
     if (!task) {
-        return { success: false };
+        return { success: false, notFound: true };
     }
 
-    /**
-     * 2. Validate coding task.
-     */
-    if (!task.isCoding) {
-        return { success: false };
-    }
     /**
      * 3. Resolve selected question.
      */
     let question: ICourseTaskQuestion | null = null;
 
-    if (!questionId || questionId) {
-        const questionQuery = TaskCodingQuestionModel.findOne(
-            questionId
-                ? {
-                    _id: questionId,
-                    taskId: String(task._id),
-                    status: 'ACTIVE'
-                }
-                : {
-                    taskId: String(task._id),
-                    status: 'ACTIVE'
-                }
-        );
+    const questionQuery = TaskCodingQuestionModel.findOne(
+        questionId
+            ? {
+                _id: questionId,
+                taskId: String(task._id),
+                status: 'ACTIVE'
+            }
+            : {
+                taskId: String(task._id),
+                status: 'ACTIVE'
+            }
+    );
 
-        if (!questionId) {
-            questionQuery.sort({
-                order: 1,
-                _id: 1
-            });
-        }
+    if (!questionId) {
+        questionQuery.sort({
+            order: 1,
+            _id: 1
+        });
+    }
 
-        const storedQuestion = await questionQuery.lean();
+    const storedQuestion = await questionQuery.lean();
 
-        if (storedQuestion) {
-            question = {
-                questionId: String(storedQuestion._id),
-                question: storedQuestion.question,
-                description: storedQuestion.description,
-                status: storedQuestion.status,
-                order: storedQuestion.order,
-                starterCode: []
-            };
-        }
+    if (storedQuestion) {
+        question = {
+            questionId: String(storedQuestion._id),
+            question: storedQuestion.question,
+            description: storedQuestion.description,
+            status: storedQuestion.status,
+            order: storedQuestion.order,
+            starterCode: []
+        };
     }
 
     // Keep compatibility with tasks created before questions moved into their
@@ -448,8 +440,7 @@ const runCode = async (taskId: string, questionId: string, languageId: string, c
     }
 
     if (!question) {
-
-        return { success: false };
+        return { success: false, questionNotFound: true };
     }
  
     const resolvedQuestionId = toQuestionIdFilter(question.questionId);
@@ -460,7 +451,7 @@ const runCode = async (taskId: string, questionId: string, languageId: string, c
     const parentModule: any = await CourseModuleModel.findById(task.moduleId).lean();
 
     if (!parentModule?.courseId) {
-        return { success: false };
+        return { success: false, notFound: true };
     }
 
     /**
@@ -470,7 +461,7 @@ const runCode = async (taskId: string, questionId: string, languageId: string, c
         await CourseAssignment.findOne({ employeeId, courseId: parentModule.courseId }).lean();
 
     if (!assignment) {
-        return { success: false };
+        return { success: false, notAssigned: true };
     }
 
 
@@ -480,7 +471,7 @@ const runCode = async (taskId: string, questionId: string, languageId: string, c
     const programmingLanguage = await resolveProgrammingLanguage(languageId);
 
     if (!programmingLanguage) {
-        return { success: false };
+        return { success: false, invalidLanguage: true };
     }
 
 

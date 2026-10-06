@@ -4,10 +4,7 @@ const TaskCodingQuestionSchema = new mongoose.Schema(
     {
         taskId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseTaskModel', required: true, index: true },
 
-        question: {
-            type: String,
-            required: true,
-            trim: true
+        question: {type: String, required: true,trim: true
         },
 
         description: {

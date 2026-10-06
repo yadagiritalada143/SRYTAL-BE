@@ -287,4 +287,40 @@ describe('generateBoilerplateService.extractBoilerplateCode', () => {
             generateBoilerplateService.extractBoilerplateCode(code, 'python')
         ).toBe(code);
     });
+
+    it.each([
+        ['javascript', 'function solve(value) { return value; }'],
+        ['typescript', 'function solve(value: number): number { return value; }'],
+        ['java', 'public class Solution { public int solve(int value) { return value; } }'],
+        ['c', '#include <stdio.h>\nint solve(int value) { return value; }'],
+        ['c++', '#include <iostream>\nint solve(int value) { return value; }'],
+        ['go', 'package main\nfunc solve(value int) int { return value }'],
+        ['rust', 'fn solve(value: i32) -> i32 { value }'],
+        ['csharp', 'public class Solution { public int Solve(int value) { return value; } }'],
+        ['ruby', 'def solve(value)\n  value\nend'],
+        ['lua', 'function solve(value) return value end'],
+        ['scala', 'object Solution { def solve(value: Int): Int = ??? }'],
+        ['sql', 'CREATE FUNCTION solve(value INTEGER) RETURNS INTEGER BEGIN END'],
+        ['perl', 'use strict;\nsub solve { }'],
+        ['bash', '#!/usr/bin/env bash\necho "$1"'],
+        ['php', '<?php function solve($value) { }'],
+        ['haskell', 'solve :: Int -> Int\nsolve value = value'],
+        ['erlang', '-module(solution).\n-export([solve/1]).'],
+        ['elixir', 'defmodule Solution do\n  def solve(value), do: value\nend'],
+        ['swift', 'struct Solution { func solve(_ value: Int) -> Int { 0 } }'],
+        ['ocaml', 'let solve value = value'],
+        ['nim', 'proc solve(value: int): int = discard'],
+        ['d', 'int solve(int value) { return value; }'],
+        ['groovy', 'class Solution { def solve(value) { } }'],
+        ['pascal', 'program Solution; begin end.'],
+        ['lisp', '(defun solve (value) value)'],
+        ['r', 'solve <- function(value) { value }'],
+        ['julia', 'function solve(value)\n    return value\nend'],
+        ['zig', 'pub fn solve(value: i32) i32 { return value; }'],
+        ['vimscript', 'function! Solve(value)\n  return a:value\nendfunction']
+    ])('accepts a valid %s starter skeleton', (language, code) => {
+        expect(
+            generateBoilerplateService.extractBoilerplateCode(code, language)
+        ).toBe(code);
+    });
 });
