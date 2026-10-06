@@ -7,8 +7,7 @@ import { COURSE_TASK_QUESTION_SUCCESS_MESSAGES, COURSE_TASK_QUESTION_ERROR_MESSA
 const addCourseTaskQuestion = async (req: Request, res: Response) => {
 
     try {
-        const { taskId, question, description } = req.body ;
-        const userId = req.user?.userId;
+        const { taskId, question, description } = req.body;
 
         if (!taskId || !question) {
             return res.status(
@@ -39,20 +38,6 @@ const addCourseTaskQuestion = async (req: Request, res: Response) => {
         }
 
         /**
-         * Not a coding task
-         */
-        // if (response.notCodingTask) {
-        //     return res.status(
-        //         HTTP_STATUS.BAD_REQUEST
-        //     ).json({
-        //         success: false,
-        //         message:
-        //             COURSE_TASK_QUESTION_ERROR_MESSAGES
-        //                 .COURSE_TASK_NOT_CODING_TASK_MESSAGE
-        //     });
-        // }
-
-        /**
          * Duplicate
          */
         if (response.duplicateQuestion) {
@@ -65,20 +50,6 @@ const addCourseTaskQuestion = async (req: Request, res: Response) => {
                         .COURSE_TASK_QUESTION_DUPLICATE_MESSAGE
             });
         }
-
-        /**
-         * Maximum questions reached
-         */
-        // if (response.limitReached) {
-        //     return res.status(
-        //         HTTP_STATUS.BAD_REQUEST
-        //     ).json({
-        //         success: false,
-        //         message:
-        //             COURSE_TASK_QUESTION_ERROR_MESSAGES
-        //                 .COURSE_TASK_QUESTION_LIMIT_MESSAGE
-        //     });
-        // }
 
         /**
          * Generic failure

@@ -163,10 +163,6 @@ const generateViaOpenRouter = async (
     canonicalKey: string,
     question: { question: string; description?: string }
 ): Promise<string> => {
-    if (!OPENROUTER_MODEL) {
-        throw new Error('OPENROUTER_MODEL_NOT_CONFIGURED');
-    }
-
     const keyRecord =
         await getUserOpenRouterKeyService.getUserOpenRouterKeyService(
             userId
@@ -359,7 +355,7 @@ export const getOrGenerateBoilerplate = async (
 
     const existingStarterCode =
         question.starterCode?.find(
-            (item: any) =>
+            (item) =>
                 String(item.languageId) === languageId &&
                 item.boilerplateVersion === STARTER_CODE_VERSION
         );

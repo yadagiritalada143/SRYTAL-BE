@@ -8,6 +8,19 @@ import { parseQuestionsField } from '../../util/courseTaskQuestions';
 import { MAX_QUESTIONS_PER_TASK } from '../../constants/contentwriter/coursetaskQuestionMessages';
 import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../../constants/contentwriter/coursetaskMessages';
 
+// Uploads one multer file to the given S3 folder under a unique name and
+// returns the object key.
+const uploadToS3 = async (
+    file: Express.Multer.File,
+    folder: string
+): Promise<string> => {
+    const uniqueName = uuidv4() + path.extname(file.originalname);
+
+    await uploadThumbnailToS3.uploadThumbnailToS3(uniqueName, file.buffer, file.mimetype, folder);
+
+    return `${folder}/${uniqueName}`;
+};
+
 const addTaskToModule = async (req: Request, res: Response) => {
     try {
         const { moduleId, taskName, taskDescription, link, isCoding, question, questions } = req.body;
@@ -43,32 +56,18 @@ const addTaskToModule = async (req: Request, res: Response) => {
         let contentMimeType = '';
         let contentFileName = '';
 
-        // Thumbnail path
-
         let thumbnailPath = '';
 
         // When a file is uploaded, push it to S3 and store the object key.
         if (taskFile) {
-            const { originalname, buffer, mimetype } = taskFile;
-            const uniqueName = uuidv4() + path.extname(originalname);
-            const s3Key = `${courseTaskContentFolder}/${uniqueName}`;
-
-            await uploadThumbnailToS3.uploadThumbnailToS3(uniqueName, buffer, mimetype, courseTaskContentFolder);
-
+            content = await uploadToS3(taskFile, courseTaskContentFolder);
             type = 'FILE';
-            content = s3Key;
-            contentMimeType = mimetype;
-            contentFileName = originalname;
+            contentMimeType = taskFile.mimetype;
+            contentFileName = taskFile.originalname;
         }
 
         if (thumbnailFile) {
-            const { originalname, buffer, mimetype } = thumbnailFile;
-
-            const uniqueName = uuidv4() + path.extname(originalname);
-
-            thumbnailPath = `${courseTaskThumbnailsFolder}/${uniqueName}`;
-
-            await uploadThumbnailToS3.uploadThumbnailToS3(uniqueName, buffer, mimetype, courseTaskThumbnailsFolder);
+            thumbnailPath = await uploadToS3(thumbnailFile, courseTaskThumbnailsFolder);
         }
 
 
@@ -88,7 +87,7 @@ const addTaskToModule = async (req: Request, res: Response) => {
             contentMimeType,
             contentFileName,
             isCodingTask,
-            isCodingTask ? (question || '') : '',
+            question || '',
             parsedQuestions
         );
 
@@ -105,13 +104,7 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 type: responseAfteraddingCourseTask.type,
                 // The ids come back so a writer can attach test cases or edit a
                 // question straight away without a second round trip.
-                questions: savedQuestions.map((entry: any) => ({
-                    questionId: String(entry.questionId),
-                    question: entry.question,
-                    description: entry.description,
-                    status: entry.status,
-                    order: entry.order
-                })),
+                questions: savedQuestions,
                 questionCount: savedQuestions.length
             });
         }

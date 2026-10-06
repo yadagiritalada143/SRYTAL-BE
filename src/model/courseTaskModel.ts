@@ -15,6 +15,7 @@ const CourseTaskSchema = new mongoose.Schema({
     content: { type: mongoose.Schema.Types.String },
     contentMimeType: { type: mongoose.Schema.Types.String },
     contentFileName: { type: mongoose.Schema.Types.String },
+    isCoding: { type: mongoose.Schema.Types.Boolean, default: false },
 },
     {
         collection: 'coursetask',

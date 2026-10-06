@@ -5,10 +5,9 @@ import { CODING_QUESTION_SUCCESS_MESSAGES, CODING_QUESTION_ERROR_MESSAGES } from
 
 const getQuestion = async (req: Request, res: Response) => {
     try {
-
-        const {taskid, questionid, languageid} = req.params;
+        const { taskid, questionid, languageid } = req.params;
         const userId = req.user?.userId;
-        if(!taskid || !questionid || !languageid) {
+        if (!taskid || !questionid || !languageid) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
                 message: CODING_QUESTION_ERROR_MESSAGES.RUN_CODE_MISSING_FIELDS_MESSAGE
@@ -22,7 +21,7 @@ const getQuestion = async (req: Request, res: Response) => {
             });
         }
 
-        const result = await getQuestionService.getQuestion( taskid, questionid, languageid, userId);
+        const result = await getQuestionService.getQuestion(taskid, questionid, languageid, userId);
         if (!result.success) {
             if (result.notFound) {
                 return res.status(HTTP_STATUS.NOT_FOUND).json({
@@ -60,17 +59,17 @@ const getQuestion = async (req: Request, res: Response) => {
 
         return res.status(HTTP_STATUS.OK).json({
             success: true,
-            message: CODING_QUESTION_SUCCESS_MESSAGES .CODING_QUESTION_FETCH_SUCCESS_MESSAGE,
+            message: CODING_QUESTION_SUCCESS_MESSAGES.CODING_QUESTION_FETCH_SUCCESS_MESSAGE,
             data: result.data
         });
 
     } catch (error: any) {
         console.error(`Error fetching coding question:${error?.message || error}`);
-        return res.status( HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
+        return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
             message: CODING_QUESTION_ERROR_MESSAGES.CODING_QUESTION_FETCH_ERROR_MESSAGE
         });
     }
 };
 
-export default { getQuestion};
+export default { getQuestion };

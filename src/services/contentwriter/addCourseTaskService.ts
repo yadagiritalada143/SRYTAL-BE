@@ -41,7 +41,7 @@ const addCourseTask = async (
             }
         }
 
-        const taskToSave: any = new CourseTaskModel({
+        const taskToSave = new CourseTaskModel({
             moduleId,
             taskName,
             taskDescription,

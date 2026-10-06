@@ -7,10 +7,22 @@ import { v4 as uuidv4 } from 'uuid';
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
 import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../config/awsS3Config';
 
+// Uploads one multer file to the given S3 folder under a unique name and
+// returns the object key.
+const uploadToS3 = async (
+    file: Express.Multer.File,
+    folder: string
+): Promise<string> => {
+    const uniqueName = uuidv4() + path.extname(file.originalname);
+
+    await uploadThumbnailToS3.uploadThumbnailToS3(uniqueName, file.buffer, file.mimetype, folder);
+
+    return `${folder}/${uniqueName}`;
+};
+
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
-        
-        const { id, taskName, taskDescription, status } = req.body;
+        const { id, taskName, taskDescription, status, isCoding, question } = req.body;
 
         if (!isValidStatus(status)) {
             return res.status(400).json({
@@ -19,6 +31,19 @@ const updateCourseTask = async (req: Request, res: Response) => {
             });
         }
 
+        // Coerce isCoding like addCourseTask does, but keep `undefined` when the
+        // field is absent so the service leaves the stored flag untouched.
+        const parsedIsCoding =
+            isCoding === undefined
+                ? undefined
+                : isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
+
+        if (parsedIsCoding && !question) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE,
+            });
+        }
 
         const files = req.files as {[fieldname: string]: Express.Multer.File[]};
 
@@ -32,27 +57,9 @@ const updateCourseTask = async (req: Request, res: Response) => {
         let newThumbnail: string | undefined;
 
         if (taskFile) {
-            const {
-                originalname,
-                buffer,
-                mimetype,
-            } = taskFile;
-
-            const uniqueName =
-                uuidv4() + path.extname(originalname);
-
-            await uploadThumbnailToS3.uploadThumbnailToS3(
-                uniqueName,
-                buffer,
-                mimetype,
-                courseTaskContentFolder,
-            );
-
-            newContent =
-                `${courseTaskContentFolder}/${uniqueName}`;
-
-            newContentMimeType = mimetype;
-            newContentFileName = originalname;
+            newContent = await uploadToS3(taskFile, courseTaskContentFolder);
+            newContentMimeType = taskFile.mimetype;
+            newContentFileName = taskFile.originalname;
         }
 
         if (thumbnailFile) {
@@ -73,22 +80,8 @@ const updateCourseTask = async (req: Request, res: Response) => {
                 });
             }
 
-            const { originalname, buffer, mimetype } = thumbnailFile;
-
-            const uniqueName =
-                uuidv4() + path.extname(originalname);
-
-            await uploadThumbnailToS3.uploadThumbnailToS3(
-                uniqueName,
-                buffer,
-                mimetype,
-                courseTaskThumbnailsFolder,
-            );
-
-            newThumbnail =
-                `${courseTaskThumbnailsFolder}/${uniqueName}`;
+            newThumbnail = await uploadToS3(thumbnailFile, courseTaskThumbnailsFolder);
         }
-
 
         const updateCourseResponse = await updateCourseTaskService.updateCourseTask(
             id,
@@ -99,6 +92,8 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContent,
             newContentMimeType,
             newContentFileName,
+            parsedIsCoding,
+            question,
         );
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {
