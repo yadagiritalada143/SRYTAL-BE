@@ -24,9 +24,13 @@ const getMyAssignedCourseById = async (
 
     const course = assignment.courseId;
 
-    const [modulesByCourse, completedByAssignment] = await Promise.all([
+    const [modulesByCourse, completedByAssignment, completedQuestionsByAssignment] = await Promise.all([
         courseProgress.getActiveModulesByCourse([String(course._id)]),
-        courseProgress.getCompletedTaskIds([String(assignment._id)])
+        courseProgress.getCompletedTaskIds([String(assignment._id)]),
+        courseProgress.getCompletedQuestionCounts(
+            [String(assignment._id)],
+            new Map([[String(assignment._id), String(assignment.employeeId)]])
+        )
     ]);
 
     const courseModules = modulesByCourse.get(String(course._id)) || [];
@@ -37,8 +41,10 @@ const getMyAssignedCourseById = async (
     const modules = courseProgress.buildCourseModules(
         courseModules,
         tasksByModule,
-        completedByAssignment.get(String(assignment._id)) || new Map()
+        completedByAssignment.get(String(assignment._id)) || new Map(),
+        completedQuestionsByAssignment.get(String(assignment._id))
     );
+
     const progress = courseProgress.summariseProgress(modules);
     const status = courseProgress.deriveAssignmentStatus(progress.completedTasks, progress.totalTasks);
 

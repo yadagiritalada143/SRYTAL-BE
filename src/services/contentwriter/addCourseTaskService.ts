@@ -15,8 +15,7 @@ const addCourseTask = async (
 ) => {
     try {
 
-        let thumbnailPath = '';
-        const CoursesTaskToSave: any = new CourseTaskModel({
+        const taskToSave = new CourseTaskModel({
             moduleId,
             taskName,
             taskDescription,
@@ -25,23 +24,29 @@ const addCourseTask = async (
             type,
             content,
             contentMimeType,
-            contentFileName,
+            contentFileName
         });
-        
-        const result = await CoursesTaskToSave.save();
 
-        // Propagate activity up: touch the parent course's updatedAt.
+        const result = await taskToSave.save();
+
         const module = await CourseModuleModel.findById(moduleId).lean();
-        if (module?.courseId) {
-            await CourseModel.findByIdAndUpdate(module.courseId, { $currentDate: { updatedAt: true } });
-        }
 
-        return result;
+        if (module?.courseId) {
+            await CourseModel.findByIdAndUpdate(
+                module.courseId,
+                {
+                    $currentDate: {
+                        updatedAt: true
+                    }
+                }
+            );
+        }
+     return result;
+     
     } catch (error: any) {
-        console.error('Error in adding course task:', error);
+        console.error(`Error in adding course task: ${error}`);
         return { success: false };
     }
 };
 
 export default { addCourseTask };
-

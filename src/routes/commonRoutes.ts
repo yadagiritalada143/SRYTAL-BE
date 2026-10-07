@@ -19,8 +19,29 @@ import getMyAssignedCoursesController from '../controllers/common/getMyAssignedC
 import getMyAssignedCourseByIdController from '../controllers/common/getMyAssignedCourseByIdController';
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
 import expertConsultationController from '../controllers/common/expertConsultationController';
+import addProgrammingLanguageController from '../controllers/common/addProgrammingLanguageController';
+import updateProgrammingLanguageController from '../controllers/common/updateProgrammingLanguageController';
+import getAllProgrammingLanguagesController from '../controllers/common/getAllProgrammingLanguagesController';
+import getProgrammingLanguageByIdController from '../controllers/common/getProgrammingLanguageByIdController';
+import deleteProgrammingLanguageController from '../controllers/common/deleteProgrammingLanguageController';
+import getQuestionController from '../controllers/common/getQuestionController';
+import runCodeController from '../controllers/common/runCodeController';
+import submitCodeController from '../controllers/common/submitCodeController';
+import updateCourseController from '../controllers/contentwriter/updateCourseController';
+import updateCourseModuleController from '../controllers/contentwriter/updateCourseModuleController';
+import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
+import validateJWTForMedia from '../middlewares/validateJWTForMedia';
+import getCourseTaskContentController from '../controllers/contentwriter/getCourseTaskContentController';
+import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
+import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
+import addCourseController from '../controllers/contentwriter/addCourseController';
+import getAllCoursesController from '../controllers/contentwriter/getAllCoursesController';
+import getCourseByIdController from '../controllers/contentwriter/getCourseByIdController';
 
 const upload = multer({ storage: multer.memoryStorage() });
+
+upload.fields([{name: 'taskFile', maxCount: 1,},{ name: 'thumbnailFile', maxCount: 1,}]);
+
 
 const commonRouter: Router = express.Router();
 
@@ -1368,5 +1389,1403 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *                   example: Failed to submit expert consultation request
  */
 commonRouter.post('/expertconsultation', expertConsultationController.createExpertConsultation);
+
+/**
+ * @swagger
+ * /addprogramminglanguage:
+ *   post:
+ *     summary: Add a new programming language
+ *     description: This API allows an authenticated user to create a new programming language in the system.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - languageName
+ *             properties:
+ *               languageName:
+ *                 type: string
+ *                 example: JavaScript
+ *     responses:
+ *       200:
+ *         description: Programming language added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language added successfully !!
+ *       500:
+ *         description: Error while adding programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while adding programming language !!
+ */
+commonRouter.post('/addprogramminglanguage', validateJWT, addProgrammingLanguageController.addProgrammingLanguage);
+
+
+/**
+ * @swagger
+ * /updateprogramminglanguage:
+ *   put:
+ *     summary: Update a programming language
+ *     description: This API allows an authenticated user to update an existing programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - languageName
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
+ *               languageName:
+ *                 type: string
+ *                 example: JavaScript
+ *     responses:
+ *       200:
+ *         description: Programming language updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language updated successfully !!
+ *       500:
+ *         description: Error while updating programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while updating programming language !!
+ */
+commonRouter.put('/updateprogramminglanguage', validateJWT, updateProgrammingLanguageController.updateProgrammingLanguage);
+
+/**
+ * @swagger
+ * /getallprogramminglanguages:
+ *   get:
+ *     summary: Get all programming languages
+ *     description: This API fetches all programming languages available in the system.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Programming languages fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Fetched all programming languages successfully !!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "65f1a2b3c4d5e6f7890abcd1"
+ *                       languageName:
+ *                         type: string
+ *                         example: JavaScript
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       500:
+ *         description: Error while fetching programming languages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while fetching all programming languages !!
+ */
+commonRouter.get('/getallprogramminglanguages', validateJWT, getAllProgrammingLanguagesController.getAllProgrammingLanguages);
+
+/**
+ * @swagger
+ * /getprogramminglanguagebyid/{id}:
+ *   get:
+ *     summary: Get a programming language by ID
+ *     description: This API fetches a single programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the programming language to fetch
+ *         example: "65f1a2b3c4d5e6f7890abcd1"
+ *     responses:
+ *       200:
+ *         description: Programming language fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Fetched programming language successfully !!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "65f1a2b3c4d5e6f7890abcd1"
+ *                     languageName:
+ *                       type: string
+ *                       example: JavaScript
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       404:
+ *         description: Programming language not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Programming language not found !!
+ *       500:
+ *         description: Error while fetching programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while fetching programming language !!
+ */
+commonRouter.get('/getprogramminglanguagebyid/:id', validateJWT, getProgrammingLanguageByIdController.getProgrammingLanguageById);
+
+/**
+ * @swagger
+ * /deleteprogramminglanguage/{id}:
+ *   delete:
+ *     summary: Delete a programming language by ID
+ *     description: This API deletes a single programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the programming language to delete
+ *         example: "65f1a2b3c4d5e6f7890abcd1"
+ *     responses:
+ *       200:
+ *         description: Programming language deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language deleted successfully !!
+ *       404:
+ *         description: Programming language not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Programming language not found !!
+ *       500:
+ *         description: Error while deleting programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while deleting programming language !!
+ */
+commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgrammingLanguageController.deleteProgrammingLanguage);
+
+/**
+ * @swagger
+ * /getquestion/{taskid}/{questionid}/{languageid}:
+ *   get:
+ *     summary: Get a coding question
+ *     description: |
+ *       Fetches a coding question for an assigned coding task.
+ *
+ *       The question is stored in the `task-coding-questions` collection
+ *       and is identified using both `taskId` and `questionId`.
+ *
+ *       The selected programming language is identified using `languageId`.
+ *
+ *       If starter code for the selected question and language does not
+ *       already exist, boilerplate code is generated and returned.
+ *
+ *       The API also returns the user's latest submitted code for the
+ *       selected task, question, and programming language.
+ *
+ *     tags:
+ *       - Coding Question
+ *
+ *     security:
+ *       - BearerAuth: []
+ *
+ *     parameters:
+ *       - in: path
+ *         name: taskid
+ *         required: true
+ *         description: MongoDB ObjectId of the coding task
+ *         schema:
+ *           type: string
+ *           example: "6ac0c4624e3e70ca5f8cdabb"
+ *
+ *       - in: path
+ *         name: questionid
+ *         required: true
+ *         description: MongoDB ObjectId of the coding question
+ *         schema:
+ *           type: string
+ *           example: "6ac0c4624e3e70ca5f8cdabc"
+ *
+ *       - in: path
+ *         name: languageid
+ *         required: true
+ *         description: MongoDB ObjectId of the selected programming language
+ *         schema:
+ *           type: string
+ *           example: "6ab257338673e91df1c8ea1c"
+ *
+ *     responses:
+ *       200:
+ *         description: Coding question fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *
+ *                 message:
+ *                   type: string
+ *                   example: "Coding question fetched successfully"
+ *
+ *                 taskId:
+ *                   type: string
+ *                   description: MongoDB ObjectId of the coding task
+ *                   example: "6ac0c4624e3e70ca5f8cdabb"
+ *
+ *                 questionId:
+ *                   type: string
+ *                   description: MongoDB ObjectId of the coding question
+ *                   example: "6ac0c4624e3e70ca5f8cdabc"
+ *
+ *                 taskName:
+ *                   type: string
+ *                   description: Name of the coding task
+ *                   example: "JavaScript Array Coding Assessment"
+ *
+ *                 question:
+ *                   type: string
+ *                   description: Coding question text
+ *                   example: "Find the maximum number in an array"
+ *
+ *                 description:
+ *                   type: string
+ *                   description: Additional question description or instructions
+ *                   example: "Given an array of numbers, return the largest number."
+ *
+ *                 allowedLanguages:
+ *                   type: array
+ *                   description: Programming languages available for the coding task
+ *                   items:
+ *                     type: string
+ *                   example:
+ *                     - JavaScript
+ *                     - TypeScript
+ *                     - Python
+ *                     - Java
+ *                     - C++
+ *
+ *                 language:
+ *                   type: string
+ *                   description: Canonical name of the selected programming language
+ *                   example: "javascript"
+ *
+ *                 languageId:
+ *                   type: string
+ *                   description: MongoDB ObjectId of the selected programming language
+ *                   example: "6ab257338673e91df1c8ea1c"
+ *
+ *                 starterCode:
+ *                   type: string
+ *                   description: |
+ *                     Starter/boilerplate code for the selected question and
+ *                     programming language. If it does not exist, it may be
+ *                     generated automatically and cached.
+ *                   example: |
+ *                     function findMaximum(numbers) {
+ *                         // Write your code here
+ *                     }
+ *
+ *                 lastSubmittedCode:
+ *                   nullable: true
+ *                   description: Latest code submitted by the authenticated user for this question and language
+ *                   type: object
+ *                   properties:
+ *                     language:
+ *                       type: string
+ *                       example: "javascript"
+ *                     code:
+ *                       type: string
+ *                       example: |
+ *                         function findMaximum(numbers) {
+ *                             return Math.max(...numbers);
+ *                         }
+ *
+ *       400:
+ *         description: Invalid request, non-coding task, or invalid programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     missingParameters:
+ *                       value: "taskId, questionId and languageId are required"
+ *                     notCodingQuestion:
+ *                       value: "This task is not a coding task"
+ *                     invalidLanguage:
+ *                       value: "Invalid programming language"
+ *                     unableToFetch:
+ *                       value: "Unable to fetch coding question"
+ *
+ *       401:
+ *         description: Authentication is required
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "User authentication required"
+ *
+ *       403:
+ *         description: The authenticated user is not assigned to the course
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Question is not assigned to the user"
+ *
+ *       404:
+ *         description: Task or coding question not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   examples:
+ *                     taskNotFound:
+ *                       value: "Task not found"
+ *                     questionNotFound:
+ *                       value: "Coding question not found"
+ *
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Error while fetching coding question"
+ */
+
+commonRouter.get('/getquestion/:taskid/:questionid/:languageid', validateJWT, getQuestionController.getQuestion);
+
+/**
+ * @swagger
+ * /runcode:
+ *   post:
+ *     summary: Run employee code against a coding question
+ *     description: |
+ *       Executes the authenticated employee's submitted code for a coding
+ *       question. On the very first run for a question, test cases are generated
+ *       via OpenRouter and stored; later runs reuse them. The code is executed
+ *       against every test-case input on the Piston execution API, each test
+ *       case is reported as passed or failed (verdict always from the actual
+ *       execution, never the AI), the score is computed as
+ *       (passed / total) x 100 and an informational OpenRouter code-quality
+ *       evaluation is attached.
+ *     tags:
+ *       - Coding Question
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - languageId
+ *               - code
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *                 description: |
+ *                   ID of the coding task. Optional: when omitted, `questionId` is
+ *                   read as the task id, which is what older clients send.
+ *                 example: "6abb7e0f0cc4244f2bfc6bd4"
+ *               questionId:
+ *                 type: string
+ *                 description: |
+ *                   ID of the question inside the task. Send it together with
+ *                   `taskId` whenever the task has more than one question;
+ *                   otherwise the task's first active question is used.
+ *                 example: "6abcb39e08aa64c1ff59b1d3"
+ *               languageId:
+ *                 type: string
+ *                 description: ID of the selected programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
+ *               code:
+ *                 type: string
+ *                 example: "function isPalindrome(str) { const s = str.replace(/\\s/g, '').toLowerCase(); return s === s.split('').reverse().join(''); }"
+ *     responses:
+ *       200:
+ *         description: Code executed successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                     questionId:
+ *                       type: string
+ *                       nullable: true
+ *                     languageId:
+ *                       type: string
+ *                     totalTestCases:
+ *                       type: number
+ *                     passedTestCases:
+ *                       type: number
+ *                     failedTestCases:
+ *                       type: number
+ *                     score:
+ *                       type: number
+ *                       description: Execution score, (passed / total) x 100.
+ *                     results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                           input:
+ *                             type: string
+ *                           expectedOutput:
+ *                             type: string
+ *                           actualOutput:
+ *                             type: string
+ *                           passed:
+ *                             type: boolean
+ *                           status:
+ *                             type: string
+ *                           errorDetails:
+ *                             type: string
+ *                     aiEvaluation:
+ *                       type: object
+ *                       nullable: true
+ *                       description: Informational code-quality analysis from OpenRouter.
+ *                       properties:
+ *                         score:
+ *                           type: number
+ *                         suggestions:
+ *                           type: array
+ *                           items:
+ *                             type: string
+ *                         failedTests:
+ *                           type: array
+ *                           items:
+ *                             type: string
+ *                         codingStandards:
+ *                           type: object
+ *                           properties:
+ *                             readability:
+ *                               type: string
+ *                             efficiency:
+ *                               type: string
+ *                             errorHandling:
+ *                               type: string
+ *                             namingConventions:
+ *                               type: string
+ *                         explanation:
+ *                           type: string
+ *       400:
+ *         description: Missing fields, invalid language, or invalid generated test cases.
+ *       403:
+ *         description: Question not part of the employee's assigned courses.
+ *       404:
+ *         description: Coding question not found.
+ *       409:
+ *         description: Test cases are still being generated.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
+
+/**
+ * @swagger
+ * /submitcode:
+ *   post:
+ *     summary: Submit final code for a coding question
+ *     description: |
+ *       The employee's final answer for a coding question. Runs the same
+ *       grading engine as Run Code (generate/reuse test cases -> Piston
+ *       execution -> compare results -> score -> OpenRouter code-quality
+ *       analysis) and stores the record as a `type: 'submit'` document in the
+ *       code-run collection. A submission is only accepted when every test case
+ *       passes — otherwise 400 is returned so the employee must fix the code
+ *       and re-run. The pass/fail verdicts always come from the actual
+ *       execution, never the AI. Course progress (task completion) is handled
+ *       separately by the frontend via the existing task-progress endpoint.
+ *     tags:
+ *       - Coding Question
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - languageId
+ *               - code
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *                 description: |
+ *                   ID of the coding task. Optional: when omitted, `questionId` is
+ *                   read as the task id, which is what older clients send.
+ *                 example: "6abb7e0f0cc4244f2bfc6bd4"
+ *               questionId:
+ *                 type: string
+ *                 description: |
+ *                   ID of the question inside the task. Send it together with
+ *                   `taskId` whenever the task has more than one question;
+ *                   otherwise the task's first active question is used.
+ *                 example: "6abcb39e08aa64c1ff59b1d3"
+ *               languageId:
+ *                 type: string
+ *                 description: ID of the selected programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
+ *               code:
+ *                 type: string
+ *                 example: "function isPalindrome(str) { const s = str.replace(/\\s/g, '').toLowerCase(); return s === s.split('').reverse().join(''); }"
+ *     responses:
+ *       200:
+ *         description: Code submitted successfully (same response shape as /runcode).
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                 message:
+ *                   type: string
+ *                   example: Code submitted successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                     questionId:
+ *                       type: string
+ *                       nullable: true
+ *                     languageId:
+ *                       type: string
+ *                     totalTestCases:
+ *                       type: number
+ *                     passedTestCases:
+ *                       type: number
+ *                     failedTestCases:
+ *                       type: number
+ *                     score:
+ *                       type: number
+ *                     results:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                     aiEvaluation:
+ *                       type: object
+ *                       nullable: true
+ *                 lastSubmission:
+ *                   type: object
+ *                   nullable: true
+ *                   description: The last code this employee ran or submitted, across all coding questions. Null if they have never run anything.
+ *                   properties:
+ *                     employeeId:
+ *                       type: string
+ *                     questionId:
+ *                       type: string
+ *                     languageId:
+ *                       type: string
+ *                     code:
+ *                       type: string
+ *                     passedTestCases:
+ *                       type: number
+ *                     failedTestCases:
+ *                       type: number
+ *                     score:
+ *                       type: number
+ *                     status:
+ *                       type: string
+ *                     type:
+ *                       type: string
+ *                       enum: [run, submit]
+ *                       description: Whether this record was a trial run or a final submission.
+ *                     submittedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: Missing fields, invalid language, or invalid generated test cases.
+ *       403:
+ *         description: Question not part of the employee's assigned courses.
+ *       404:
+ *         description: Coding question not found.
+ *       409:
+ *         description: Test cases are still being generated.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.post('/submitcode', validateJWT, submitCodeController.submitCode);
+
+
+/**
+ * @swagger
+ * /getAllCourses:
+ *   get:
+ *     summary: Get all courses
+ *     description: Get all courses with their thumbnail image URLs, plus aggregate totals of courses, modules, and tasks.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully fetched all courses.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64f123456789abcdef123456"
+ *                       courseName:
+ *                         type: string
+ *                         example: "Node.js"
+ *                       courseDescription:
+ *                         type: string
+ *                         example: "Complete Node.js Backend Development Course"
+ *                       thumbnail:
+ *                         type: string
+ *                         example: "LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       thumbnailUrl:
+ *                         type: string
+ *                         format: uri
+ *                         example: "https://your-bucket.s3.amazonaws.com/LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       status:
+ *                         type: string
+ *                         example: "ACTIVE"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get('/getAllCourses', validateJWT, getAllCoursesController.getAllCourses);
+
+/**
+ * @swagger
+ * /getCourseById/{id}:
+ *   get:
+ *     summary: Get course by ID
+ *     description: Retrieve details of a single course, including its modules, by course ID.
+ *     tags:
+ *       - Content-Writer
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the course to retrieve
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the course.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 courseName:
+ *                   type: string
+ *                 courseDescription:
+ *                   type: string
+ *                 modules:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       moduleName:
+ *                         type: string
+ *                       moduleDescription:
+ *                         type: string
+ *                       courseId:
+ *                         type: string
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.get('/getCourseById/:id', validateJWT, getCourseByIdController.getCourseDetailsById);
+
+/**
+ * @swagger
+ * /addCourse:
+ *   post:
+ *     summary: Add a new course
+ *     description: Add a new course to the platform. This action requires authentication.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []  # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               courseName:
+ *                 type: string
+ *               courseDescription:
+ *                 type: string
+ *               coursethumbnail:
+ *                 type: string
+ *                 format: binary
+ *             required:
+ *               - courseName
+ *     responses:
+ *       201:
+ *         description: Successfully added the new course.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.post('/addCourse', validateJWT, upload.single('coursethumbnail'), addCourseController.addNewCourse);
+
+/**
+ * @swagger
+ * /addCourseModule:
+ *   post:
+ *     summary: Add a course module
+ *     description: Add a new module to a course. This action requires authentication.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *               moduleName:
+ *                 type: 
+ *               moduleDescription:
+ *                 type: string
+ *               coursemodulethumbnail:
+ *                 type: string
+ *                 format: binary
+ *             required:
+ *               - moduleName
+ *               - courseId
+ *     responses:
+ *       201:
+ *         description: Successfully added the course module.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemodulethumbnail'), addCourseModuleController.addModuleToCourse);
+
+/**
+ * @swagger
+ * /addcoursetask:
+ *   post:
+ *     summary: Add a new task to a course module
+ *     description: |
+ *       Creates a new task under a course module.
+ *       Supported task types are LINK, FILE, and CODE.
+ *       For LINK tasks, the link must be provided.
+ *       For FILE tasks, a taskFile must be uploaded.
+ *       A thumbnailFile can optionally be uploaded for any task type.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - moduleId
+ *               - taskName
+ *               - taskDescription
+ *               - type
+ *             properties:
+ *               moduleId:
+ *                 type: string
+ *                 description: ID of the course module to which the task will be added.
+ *                 example: 65f2a7c8e4b123456789abcd
+ *               taskName:
+ *                 type: string
+ *                 description: Name of the course task.
+ *                 example: Introduction to JavaScript
+ *               taskDescription:
+ *                 type: string
+ *                 description: Description of the course task.
+ *                 example: Learn the basics of JavaScript programming.
+ *               type:
+ *                 type: string
+ *                 enum:
+ *                   - LINK
+ *                   - FILE
+ *                   - CODE
+ *                 description: Type of the course task.
+ *                 example: LINK
+ *               link:
+ *                 type: string
+ *                 description: URL for LINK task type.
+ *                 example: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+ *               taskFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: File for FILE task type.
+ *               thumbnailFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional thumbnail image for the task.
+ *     responses:
+ *       201:
+ *         description: Course task added successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Course task added successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
+ *       400:
+ *         description: Invalid request or missing task content.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Course task content is required
+ *       500:
+ *         description: Internal server error while adding the course task.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add course task
+ */
+commonRouter.post('/addcoursetask', validateJWT, upload.fields([{name: 'taskFile',maxCount: 1,},{ name: 'thumbnailFile', maxCount: 1}]), addCourseTaskController.addTaskToModule);
+
+/**
+ * @swagger
+ * /getCourseTaskContent/{id}:
+ *   get:
+ *     summary: Get a task's content (for viewing in a new tab)
+ *     description: |
+ *       Serves the content of a course task. For tasks of type `LINK` this
+ *       redirects (302) to the stored external URL; for type `FILE` it streams
+ *       the file from S3 inline so the browser renders or downloads it.
+ *       The JWT may be supplied via the `auth_token` header or query parameter
+ *       (so the URL can be opened directly in a new browser tab).
+ *     tags:
+ *       - Content-Writer
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the task whose content to serve
+ *       - in: query
+ *         name: auth_token
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: JWT token (alternative to the auth_token header)
+ *     responses:
+ *       200:
+ *         description: File content streamed inline.
+ *       302:
+ *         description: Redirect to the external link.
+ *       401:
+ *         description: Unauthorized. Missing or invalid token.
+ *       404:
+ *         description: Task or content not found.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCourseTaskContentController.getCourseTaskContent);
+
+/**
+ * @swagger
+ * /updatecoursetask:
+ *   put:
+ *     summary: Update a course task
+ *     description: |
+ *       Update an existing course task as a Content Writer.
+ *       The task name, description, status, and task type can be updated.
+ *       A new task file or thumbnail can optionally be uploaded.
+ *       For LINK tasks, provide the link.
+ *       For FILE tasks, provide the taskFile.
+ *       For CODE tasks, no file or link is required.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - moduleId
+ *               - taskName
+ *               - taskDescription
+ *               - status
+ *               - type
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course task to update.
+ *                 example: 64f123456789abcdef123456
+ *               moduleId:
+ *                 type: string
+ *                 description: ID of the course module associated with the task.
+ *                 example: 64f123456789abcdef654321
+ *               taskName:
+ *                 type: string
+ *                 description: Updated name of the course task.
+ *                 example: Node.js Introduction
+ *               taskDescription:
+ *                 type: string
+ *                 description: Updated description of the course task.
+ *                 example: Learn the fundamentals of Node.js
+ *               status:
+ *                 type: string
+ *                 enum:
+ *                   - ACTIVE
+ *                   - ARCHIVE
+ *                 description: Updated status of the course task.
+ *                 example: ACTIVE
+ *               type:
+ *                 type: string
+ *                 enum:
+ *                   - LINK
+ *                   - FILE
+ *                   - CODE
+ *                 description: Type of the course task.
+ *                 example: CODE
+ *               link:
+ *                 type: string
+ *                 description: External link for LINK task type.
+ *                 example: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+ *               taskFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: |
+ *                   Optional task content file.
+ *                   Required when the task type is FILE and new file content is being uploaded.
+ *               thumbnailFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: |
+ *                   Optional task thumbnail image.
+ *                   Supported formats are JPG, JPEG, PNG, and WEBP.
+ *     responses:
+ *       200:
+ *         description: Course task updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterUpdate:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 64f123456789abcdef123456
+ *                     moduleId:
+ *                       type: string
+ *                       example: 64f123456789abcdef654321
+ *                     taskName:
+ *                       type: string
+ *                       example: Node.js Introduction
+ *                     taskDescription:
+ *                       type: string
+ *                       example: Learn the fundamentals of Node.js
+ *                     thumbnail:
+ *                       type: string
+ *                       example: LMSData/Courses/CourseTaskThumbnails/abc123.png
+ *                     status:
+ *                       type: string
+ *                       example: ACTIVE
+ *                     type:
+ *                       type: string
+ *                       enum:
+ *                         - LINK
+ *                         - FILE
+ *                         - CODE
+ *                       example: FILE
+ *                     content:
+ *                       type: string
+ *                       example: LMSData/Courses/CourseTaskContent/video123.mp4
+ *                     contentMimeType:
+ *                       type: string
+ *                       example: video/mp4
+ *                     contentFileName:
+ *                       type: string
+ *                       example: nodejs-tutorial.mp4
+ *       400:
+ *         description: Invalid input, status, type, or thumbnail type.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid course task details.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to update course task.
+ */
+
+commonRouter.put('/updatecoursetask',validateJWT, upload.fields([{name: 'taskFile', maxCount: 1},{name: 'thumbnailFile', maxCount: 1,}]), updateCourseTaskController.updateCourseTask);
+
+/**
+ * @swagger
+ * /updatecoursemodule:
+ *   put:
+ *     summary: Update a course module by content writer
+ *     tags: 
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - courseId
+ *               - moduleName
+ *               - moduleDescription
+ *               - status
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course module
+ *               courseId:
+ *                 type: string
+ *                 description: ID of the course 
+ *               moduleName:
+ *                 type: string
+ *                 description: Updated module name
+ *               moduleDescription:
+ *                 type: string
+ *                 description: Updated module description
+ *               thumbnail:
+ *                 type: string
+ *                 format: binary
+ *                 description: Updated module thumbnail image (optional)
+ *               status:
+ *                 type: string
+ *                 description: Updated status of the module ("ACTIVE" or "ARCHIVE")
+ *     responses:
+ *       200:
+ *         description: Module updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Invalid input or status provided
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.put('/updatecoursemodule', validateJWT, upload.single('thumbnail'), updateCourseModuleController.updateCourseModule);
+
+/**
+ * @swagger
+ * /updatecourse:
+ *   put:
+ *     summary: Update course details (name, description, and status) 
+ *     description: Allows a content writer to update a course by providing its ID along with new values for name, description, and status.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - courseName
+ *               - courseDescription
+ *               - status
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course
+ *               courseName:
+ *                 type: string
+ *                 description: Updated course name
+ *               courseDescription:
+ *                 type: string
+ *                 description: Updated course description
+ *               thumbnail:
+ *                 type: string
+ *                 format: binary
+ *                 description: Updated course thumbnail image (optional)
+ *               status:
+ *                 type: string
+ *                 enum:
+ *                   - ACTIVE
+ *                   - ARCHIVE
+ *                 description: Updated status of the course ("ACTIVE" or "ARCHIVE")
+ *     responses:
+ *       200:
+ *         description: Course updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Invalid input or status provided
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.put('/updatecourse', validateJWT, upload.single('thumbnail'), updateCourseController.updateCourse);
 
 export default commonRouter;

@@ -7,9 +7,21 @@ import { v4 as uuidv4 } from 'uuid';
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
 import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../config/awsS3Config';
 
+// Uploads one multer file to the given S3 folder under a unique name and
+// returns the object key.
+const uploadToS3 = async (
+    file: Express.Multer.File,
+    folder: string
+): Promise<string> => {
+    const uniqueName = uuidv4() + path.extname(file.originalname);
+
+    await uploadThumbnailToS3.uploadThumbnailToS3(uniqueName, file.buffer, file.mimetype, folder);
+
+    return `${folder}/${uniqueName}`;
+};
+
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
-        
         const { id, taskName, taskDescription, status } = req.body;
 
         if (!isValidStatus(status)) {
@@ -18,7 +30,6 @@ const updateCourseTask = async (req: Request, res: Response) => {
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_STATUS_MESSAGE,
             });
         }
-
         const files = req.files as {[fieldname: string]: Express.Multer.File[]};
 
         const taskFile = files?.taskFile?.[0];
@@ -31,27 +42,9 @@ const updateCourseTask = async (req: Request, res: Response) => {
         let newThumbnail: string | undefined;
 
         if (taskFile) {
-            const {
-                originalname,
-                buffer,
-                mimetype,
-            } = taskFile;
-
-            const uniqueName =
-                uuidv4() + path.extname(originalname);
-
-            await uploadThumbnailToS3.uploadThumbnailToS3(
-                uniqueName,
-                buffer,
-                mimetype,
-                courseTaskContentFolder,
-            );
-
-            newContent =
-                `${courseTaskContentFolder}/${uniqueName}`;
-
-            newContentMimeType = mimetype;
-            newContentFileName = originalname;
+            newContent = await uploadToS3(taskFile, courseTaskContentFolder);
+            newContentMimeType = taskFile.mimetype;
+            newContentFileName = taskFile.originalname;
         }
 
         if (thumbnailFile) {
@@ -72,22 +65,8 @@ const updateCourseTask = async (req: Request, res: Response) => {
                 });
             }
 
-            const { originalname, buffer, mimetype } = thumbnailFile;
-
-            const uniqueName =
-                uuidv4() + path.extname(originalname);
-
-            await uploadThumbnailToS3.uploadThumbnailToS3(
-                uniqueName,
-                buffer,
-                mimetype,
-                courseTaskThumbnailsFolder,
-            );
-
-            newThumbnail =
-                `${courseTaskThumbnailsFolder}/${uniqueName}`;
+            newThumbnail = await uploadToS3(thumbnailFile, courseTaskThumbnailsFolder);
         }
-
 
         const updateCourseResponse = await updateCourseTaskService.updateCourseTask(
             id,
@@ -98,6 +77,7 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContent,
             newContentMimeType,
             newContentFileName,
+
         );
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {

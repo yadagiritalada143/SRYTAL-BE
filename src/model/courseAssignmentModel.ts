@@ -11,6 +11,7 @@ const CourseAssignmentSchema = new mongoose.Schema({
     dueDate: { type: Date,  default: Date.now, required: true },
     completedAt: { type: Date, default: null },
     lastReminderSentAt: { type: Date, default: null },
+    reminderScheduleStartDate: { type: Date, default: null },
     createdAt: { type: Date, default: Date.now },
     updatedAt: { type: Date, default: Date.now },
 },
