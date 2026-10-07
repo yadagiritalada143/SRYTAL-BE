@@ -2518,7 +2518,7 @@ commonRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCourseTask
  *     summary: Update a course task
  *     description: |
  *       Update an existing course task as a Content Writer.
- *       The task name, description, status, and task content can be updated.
+ *       The task name, description, status, and task type can be updated.
  *       A new task file or thumbnail can optionally be uploaded.
  *       For LINK tasks, provide the link.
  *       For FILE tasks, provide the taskFile.
@@ -2622,6 +2622,10 @@ commonRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCourseTask
  *                       example: ACTIVE
  *                     type:
  *                       type: string
+ *                       enum:
+ *                         - LINK
+ *                         - FILE
+ *                         - CODE
  *                       example: FILE
  *                     content:
  *                       type: string
@@ -2661,6 +2665,7 @@ commonRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCourseTask
  *                   type: string
  *                   example: Failed to update course task.
  */
+
 commonRouter.put('/updatecoursetask',validateJWT, upload.fields([{name: 'taskFile', maxCount: 1},{name: 'thumbnailFile', maxCount: 1,}]), updateCourseTaskController.updateCourseTask);
 
 /**
@@ -2760,6 +2765,9 @@ commonRouter.put('/updatecoursemodule', validateJWT, upload.single('thumbnail'),
  *                 description: Updated course thumbnail image (optional)
  *               status:
  *                 type: string
+ *                 enum:
+ *                   - ACTIVE
+ *                   - ARCHIVE
  *                 description: Updated status of the course ("ACTIVE" or "ARCHIVE")
  *     responses:
  *       200:
