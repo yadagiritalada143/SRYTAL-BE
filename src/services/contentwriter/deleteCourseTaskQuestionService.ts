@@ -1,4 +1,5 @@
 import CourseTaskModel from '../../model/courseTaskModel';
+import TaskCodingQuestionModel from '../../model/taskCodingQuestionModel';
 import CodingQuestionTestCaseModel from '../../model/codingQuestionTestCaseModel';
 import CodeRunModel from '../../model/codeRunModel';
 import { toQuestionIdFilter } from '../../util/courseTaskQuestions';
@@ -20,7 +21,7 @@ const deleteCourseTaskQuestion = async (
     const trimmedQuestionId = toQuestionIdFilter(questionId);
 
     try {
-        const task: any = await CourseTaskModel.findById(trimmedTaskId).lean();
+        const task = await CourseTaskModel.findById(trimmedTaskId).lean();
 
         if (!task) {
             return { success: false, notFound: true };
@@ -34,13 +35,12 @@ const deleteCourseTaskQuestion = async (
             return { success: false, questionNotFound: true };
         }
 
-        const updatedTask: any = await CourseTaskModel.findOneAndUpdate(
-            { _id: trimmedTaskId, isCoding: true, 'questions.questionId': trimmedQuestionId },
-            { $pull: { questions: { questionId: trimmedQuestionId } } },
-            { new: true }
-        );
+        const deletedQuestion = await TaskCodingQuestionModel.findOneAndDelete({
+            _id: trimmedQuestionId,
+            taskId: trimmedTaskId
+        });
 
-        if (!updatedTask) {
+        if (!deletedQuestion) {
             return { success: false, questionNotFound: true };
         }
 
@@ -53,22 +53,16 @@ const deleteCourseTaskQuestion = async (
             console.error(`Cleanup of removed question ${trimmedQuestionId} was incomplete: ${error?.message || error}`);
         });
 
-        const remaining = Array.isArray(updatedTask.questions) ? updatedTask.questions : [];
-
-        // Older tasks may still carry a top-level `question` that is the fallback
-        // read for a task with no questions[]. Only clear it - never write a new
-        // mirror - otherwise a deleted question would silently reappear through the
-        // legacy fallback after the last question is removed.
-        await CourseTaskModel.updateOne(
-            { _id: trimmedTaskId, question: { $exists: true, $nin: [null, ''] } },
-            { $set: { question: '' } }
-        ).catch(() => undefined);
+        const questionCount = await TaskCodingQuestionModel.countDocuments({
+            taskId: trimmedTaskId,
+            status: { $ne: 'INACTIVE' }
+        });
 
         return {
             success: true,
             taskId: trimmedTaskId,
             questionId: trimmedQuestionId,
-            questionCount: remaining.length
+            questionCount
         };
     } catch (error: any) {
         console.error(`Error in removing question ${questionId} from course task ${taskId}: ${error}`);

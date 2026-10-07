@@ -211,26 +211,19 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
 
 /**
  * @swagger
- * /contentwriter/addCourseTask:
+ * /contentwriter/addcoursetask:
  *   post:
- *     summary: Add a task to a course module
+ *     summary: Add a new task to a course module
  *     description: |
- *       Add a new task to an existing course module.
- *
- *       A task can contain either:
- *       - An uploaded task file such as PDF, Word document, video, etc.
- *       - An external link such as YouTube or a blog URL.
- *
- *       A thumbnail can optionally be uploaded for the task.
- *
- *       This action requires authentication.
- *
+ *       Creates a new task under a course module.
+ *       Supported task types are LINK, FILE, and CODE.
+ *       For LINK tasks, the link must be provided.
+ *       For FILE tasks, a taskFile must be uploaded.
+ *       A thumbnailFile can optionally be uploaded for any task type.
  *     tags:
  *       - ContentWriter
- *
  *     security:
  *       - BearerAuth: []
- *
  *     requestBody:
  *       required: true
  *       content:
@@ -238,64 +231,88 @@ contentwriterRouter.post('/addCourseModule', upload.single('coursemodulethumbnai
  *           schema:
  *             type: object
  *             required:
- *               - taskName
  *               - moduleId
+ *               - taskName
+ *               - taskDescription
+ *               - type
  *             properties:
- *               taskName:
- *                 type: string
- *                 description: Name of the task
- *                 example: Node.js Introduction
- *
- *               taskDescription:
- *                 type: string
- *                 description: Description of the task
- *                 example: Learn the fundamentals of Node.js
- *
  *               moduleId:
  *                 type: string
- *                 description: ID of the course module
- *                 example: 64f123456789abcdef123456
- *
+ *                 description: ID of the course module to which the task will be added.
+ *                 example: 65f2a7c8e4b123456789abcd
+ *               taskName:
+ *                 type: string
+ *                 description: Name of the course task.
+ *                 example: Introduction to JavaScript
+ *               taskDescription:
+ *                 type: string
+ *                 description: Description of the course task.
+ *                 example: Learn the basics of JavaScript programming.
+ *               type:
+ *                 type: string
+ *                 enum:
+ *                   - LINK
+ *                   - FILE
+ *                   - CODE
+ *                 description: Type of the course task.
+ *                 example: LINK
  *               link:
  *                 type: string
- *                 format: uri
- *                 description: |
- *                   External content URL.
- *                   Use this when taskFile is not uploaded.
- *                 example: https://www.youtube.com/watch?v=example
- *
+ *                 description: URL for LINK task type.
+ *                 example: https://developer.mozilla.org/en-US/docs/Web/JavaScript
  *               taskFile:
  *                 type: string
  *                 format: binary
- *                 description: |
- *                   Optional task content file.
- *
- *                   Supported content can include:
- *                   PDF, DOC, DOCX, PPT, PPTX, MP4,
- *                   WebM, and other supported file types.
- *
+ *                 description: File for FILE task type.
  *               thumbnailFile:
  *                 type: string
  *                 format: binary
- *                 description: |
- *                   Optional task thumbnail image.
- *
- *                   Supported formats:
- *                   JPG, JPEG, PNG, WEBP.
- *
+ *                 description: Optional thumbnail image for the task.
  *     responses:
  *       201:
- *         description: Successfully added the task to the course module.
+ *         description: Course task added successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Course task added successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
  *       400:
  *         description: Invalid request or missing task content.
- *
- *       401:
- *         description: Unauthorized. Missing or invalid Authorization header.
- *
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Course task content is required
  *       500:
- *         description: Server error.
+ *         description: Internal server error while adding the course task.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add course task
  */
-contentwriterRouter.post('/addCourseTask', validateJWT,upload.fields([{name: 'taskFile',maxCount: 1,},{ name: 'thumbnailFile', maxCount: 1}]), addCourseTaskController.addTaskToModule);
+contentwriterRouter.post('/addcoursetask', validateJWT,upload.fields([{name: 'taskFile',maxCount: 1,},{ name: 'thumbnailFile', maxCount: 1}]), addCourseTaskController.addTaskToModule);
 
 /**
  * @swagger
@@ -623,8 +640,11 @@ contentwriterRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCou
  *     summary: Update a course task
  *     description: |
  *       Update an existing course task as a Content Writer.
- *       The task name, description, and status can be updated.
+ *       The task name, description, status, and task content can be updated.
  *       A new task file or thumbnail can optionally be uploaded.
+ *       For LINK tasks, provide the link.
+ *       For FILE tasks, provide the taskFile.
+ *       For CODE tasks, no file or link is required.
  *     tags:
  *       - ContentWriter
  *     security:
@@ -641,60 +661,58 @@ contentwriterRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCou
  *               - taskName
  *               - taskDescription
  *               - status
+ *               - type
  *             properties:
  *               id:
  *                 type: string
- *                 description: ID of the course task to update
+ *                 description: ID of the course task to update.
  *                 example: 64f123456789abcdef123456
  *               moduleId:
  *                 type: string
- *                 description: ID of the course module associated with the task
+ *                 description: ID of the course module associated with the task.
  *                 example: 64f123456789abcdef654321
  *               taskName:
  *                 type: string
- *                 description: Updated name of the course task
+ *                 description: Updated name of the course task.
  *                 example: Node.js Introduction
  *               taskDescription:
  *                 type: string
- *                 description: Updated description of the course task
+ *                 description: Updated description of the course task.
  *                 example: Learn the fundamentals of Node.js
  *               status:
  *                 type: string
  *                 enum:
  *                   - ACTIVE
  *                   - ARCHIVE
- *                 description: Updated status of the course task
+ *                 description: Updated status of the course task.
  *                 example: ACTIVE
+ *               type:
+ *                 type: string
+ *                 enum:
+ *                   - LINK
+ *                   - FILE
+ *                   - CODE
+ *                 description: Type of the course task.
+ *                 example: CODE
+ *               link:
+ *                 type: string
+ *                 description: External link for LINK task type.
+ *                 example: https://developer.mozilla.org/en-US/docs/Web/JavaScript
  *               taskFile:
  *                 type: string
  *                 format: binary
  *                 description: |
  *                   Optional task content file.
- *                   Can be a PDF, Word document, video,
- *                   or other supported content file.
+ *                   Required when the task type is FILE and new file content is being uploaded.
  *               thumbnailFile:
  *                 type: string
  *                 format: binary
  *                 description: |
  *                   Optional task thumbnail image.
  *                   Supported formats are JPG, JPEG, PNG, and WEBP.
- *               link:
- *                 type: string
- *                 description: Optional external link for the task content (used when no file is uploaded)
- *               isCoding:
- *                 type: boolean
- *                 description: |
- *                   Marks the task as a coding task.
- *                   When true, `question` is required.
- *                 example: true
- *               question:
- *                 type: string
- *                 description: |
- *                   The coding problem statement. Required when isCoding is true.
- *                 example: Write a function to reverse a string.
  *     responses:
  *       200:
- *         description: Course task updated successfully
+ *         description: Course task updated successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -736,18 +754,34 @@ contentwriterRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCou
  *                     contentFileName:
  *                       type: string
  *                       example: nodejs-tutorial.mp4
- *                     isCoding:
- *                       type: boolean
- *                       example: true
- *                     question:
- *                       type: string
- *                       example: Write a function to reverse a string.
  *       400:
- *         description: Invalid input, status, or thumbnail type
+ *         description: Invalid input, status, type, or thumbnail type.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid course task details.
  *       401:
  *         description: Unauthorized. Missing or invalid Authorization header.
  *       500:
- *         description: Internal server error
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to update course task.
  */
 contentwriterRouter.put('/updatecoursetask',validateJWT, upload.fields([{name: 'taskFile', maxCount: 1},{name: 'thumbnailFile', maxCount: 1,}]), updateCourseTaskController.updateCourseTask);
 

@@ -21,7 +21,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
          * 2. Find Course Task
          * ---------------------------------------------------------
          */
-        const task: any = await CourseTaskModel.findById(taskId).lean();
+        const task = await CourseTaskModel.findById(taskId).lean();
 
         if (!task) {
             return { success: false, notFound: true };
@@ -33,7 +33,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
          * ---------------------------------------------------------
          */
 
-        const module: any = await CourseModuleModel.findById(task.moduleId).select('courseId').lean();
+        const module = await CourseModuleModel.findById(task.moduleId).select('courseId').lean();
 
         if (!module?.courseId) {
             return { success: false, notFound: true };
@@ -65,7 +65,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
          * ---------------------------------------------------------
          */
 
-        const question: any =
+        const question =
             await TaskCodingQuestionModel
                 .findOne({
                     _id: questionId,
@@ -87,7 +87,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
          * ---------------------------------------------------------
          */
 
-        const language: any =
+        const language =
             await ProgrammingLanguages
                 .findOne({
                     _id: languageId,
@@ -133,7 +133,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
          * ---------------------------------------------------------
          */
 
-        const languageDocs: any[] =
+        const languageDocs =
             await ProgrammingLanguages
                 .find({
                     isActive: { $ne: false }
@@ -149,7 +149,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
         const allowedLanguages =
             languageDocs.length > 0
                 ? languageDocs.map(
-                    (item: any) => ({
+                    (item) => ({
                         languageId: String(item._id),
                         languageName: item.languageName,
                         canonicalKey:
@@ -182,7 +182,7 @@ const getQuestion = async (taskId: string, questionId: string, languageId: strin
 
         let lastSubmittedCode: ILastSubmittedCode | null = null;
 
-        const submission: any = await CodeRunModel.findOne({ taskId, questionId, userId: employeeId, languageId, type: 'submit' }).sort({updatedAt: -1}).lean();
+        const submission = await CodeRunModel.findOne({ taskId, questionId, userId: employeeId, languageId, type: 'submit' }).sort({updatedAt: -1}).lean();
 
         if (
             submission &&

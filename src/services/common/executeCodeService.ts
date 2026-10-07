@@ -83,7 +83,7 @@ const getWandboxCompilers = async (): Promise<IWandboxCompiler[]> => {
         return wandboxCompilerCache;
     }
 
-    let lastError: any;
+    let lastError;
     for (let attempt = 1; attempt <= WANDBOX_COMPILER_LIST_MAX_ATTEMPTS; attempt++) {
         try {
             const response = await axios.get(
@@ -372,7 +372,7 @@ const executeOnWandbox = async ({
         wandboxCode = transpilation.code;
     }
 
-    let lastError: any = null;
+    let lastError = null;
 
     for (let attempt = 1; attempt <= WANDBOX_MAX_ATTEMPTS; attempt++) {
         try {
@@ -385,7 +385,7 @@ const executeOnWandbox = async ({
                     'compiler-option-raw': '',
                     save: false
                 },
-{ timeout: getRequestTimeoutMs(language) }
+                { timeout: getRequestTimeoutMs(language) }
             );
 
             const executionTimeMs = Date.now() - startedAt;

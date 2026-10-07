@@ -32,16 +32,11 @@ export interface ICourseTask extends Document {
     taskName: string;
     taskDescription: string;
     thumbnail?: string;
-    type: string;
+    type?: string;
     status?: string;
     content?: string;
     contentMimeType?: string;
     contentFileName?: string;
-    isCoding?: boolean;
-    questions?: ICourseTaskQuestion[];
-    // LEGACY (one release) - see model/courseTaskModel.
-    question?: string;
-    starterCode?: ICourseTaskStarterCode[];
 }
 
 export interface IFetchCourseTaskContentResponse {

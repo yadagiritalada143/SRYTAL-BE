@@ -297,7 +297,7 @@ const ensureTestCases = async (taskId: string, questionId: string | null, userId
  * 2. languageName
  * 3. canonicalKey
  */
-const resolveProgrammingLanguage = async (input: string): Promise<any | null> => {
+const resolveProgrammingLanguage = async (input: string): Promise<any> => {
     const trimmed = (input || '').trim();
 
     if (!trimmed) {
@@ -325,7 +325,7 @@ const resolveProgrammingLanguage = async (input: string): Promise<any | null> =>
      */
     const wanted = normalizeLanguage(trimmed) || trimmed.toLowerCase();
 
-    const languages: any[] = await ProgrammingLanguages.find({}).lean();
+    const languages = await ProgrammingLanguages.find({}).lean();
 
     return (
         languages.find((language) => {
@@ -386,7 +386,7 @@ const getLastSubmission = async (employeeId: string, taskId: string, questionId:
  */
 const runCode = async (taskId: string, questionId: string, languageId: string, code: string, employeeId: string, runType: 'run' | 'submit' = 'run'): Promise<IRunCodeResponse> => {
 
-    const task: any = await CourseTaskModel.findById(taskId).lean();
+    const task = await CourseTaskModel.findById(taskId).lean();
 
     if (!task) {
         return { success: false, notFound: true };
@@ -442,7 +442,7 @@ const runCode = async (taskId: string, questionId: string, languageId: string, c
     if (!question) {
         return { success: false, questionNotFound: true };
     }
- 
+
     const resolvedQuestionId = toQuestionIdFilter(question.questionId);
 
     /**
@@ -457,7 +457,7 @@ const runCode = async (taskId: string, questionId: string, languageId: string, c
     /**
      * 5. Verify employee assignment.
      */
-    const assignment: any =
+    const assignment =
         await CourseAssignment.findOne({ employeeId, courseId: parentModule.courseId }).lean();
 
     if (!assignment) {
@@ -539,14 +539,14 @@ const runCode = async (taskId: string, questionId: string, languageId: string, c
      * 9. Execute every test case.
      */
     const results: ICodeRunTestCaseResult[] = await mapWithConcurrency(testCases, TEST_CASE_EXECUTION_CONCURRENCY,
-            async (testCase: any) => {
+            async (testCase) => {
                 try {
                     const execution = await executeCodeService.executeCode({ language: resolvedLanguage, code: cleanedCode, input: testCase.input });
                     return evaluateTestCasesService.evaluateTestCase(testCase, execution);
 
                 } catch (error: any) {
 
-                    if (error?.message ==='CODE_EXECUTION_TIMEOUT') {
+                    if (error?.message === 'CODE_EXECUTION_TIMEOUT') {
                         throw error;
                     }
                     throw new Error('CODE_EXECUTION_FAILED');
@@ -618,8 +618,7 @@ const runCode = async (taskId: string, questionId: string, languageId: string, c
                         results
                     });
 
-        } catch (error: any) {
-
+        } catch {
             aiEvaluation = null;
         }
     }
@@ -689,8 +688,7 @@ const runCode = async (taskId: string, questionId: string, languageId: string, c
                     );
             }
 
-        } catch (error: any) {
-
+        } catch {
             lastSubmission = null;
         }
 

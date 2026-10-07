@@ -3,10 +3,7 @@ import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseModel from '../../model/coursesModel';
 import TaskCodingQuestionModel from '../../model/taskCodingQuestionModel';
 
-import { MAX_QUESTIONS_PER_TASK } from '../../constants/contentwriter/coursetaskQuestionMessages';
-
 import {
-    IAddCourseTaskQuestionInput,
     IAddCourseTaskQuestionResponse
 } from '../../interfaces/courseTask';
 
@@ -104,7 +101,7 @@ const addCourseTaskQuestion = async ( taskId: string, question: string, descript
          * ---------------------------------------------------------
          */
 
-        const newQuestion =  await TaskCodingQuestionModel.create({ taskId, question, description, status: 'ACTIVE', order, starterCode: []});
+        const newQuestion = await TaskCodingQuestionModel.create({ taskId, question, description, status: 'ACTIVE', order, starterCode: []});
 
         /**
          * ---------------------------------------------------------

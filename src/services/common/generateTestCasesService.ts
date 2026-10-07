@@ -10,7 +10,7 @@ const OPENROUTER_TESTS_MODEL =
 
 const OPENROUTER_TIMEOUT_MS = 60000;
 
-const OPENROUTER_MAX_TOKENS = 3000;
+const OPENROUTER_MAX_TOKENS = 8000;
 
 const DEFAULT_TEST_CASE_COUNT = 3;
 
@@ -262,52 +262,65 @@ const generateTestCases = async (
     /**
      * OpenRouter prompt.
      */
-    const prompt = `
-You are a test-case generator for programming problems.
+    const prompt = `Generate programming test cases strictly based on the coding question provided below.
 
-Generate exactly ${DEFAULT_TEST_CASE_COUNT} test cases for the following coding question.
+IMPORTANT RULES:
+
+1. Carefully read and understand the coding question before generating test cases.
+2. Generate test cases ONLY based on the requirements, input format, constraints, and expected behavior explicitly mentioned in the coding question.
+3. Do NOT invent additional requirements, restrictions, assumptions, or constraints that are not mentioned in the coding question.
+4. Follow the exact input format specified in the coding question.
+5. Follow the exact expected output format specified in the coding question.
+6. Generate exactly 3 test cases.
+7. Include normal/common cases and relevant edge cases when applicable.
+8. Consider zero, negative values, positive values, boundary values, empty values, duplicate values, or other edge cases ONLY when they are valid for the given coding question.
+9. If the coding question allows negative numbers, negative numbers MUST be treated as valid input.
+10. NEVER reject negative values just because they are negative. Reject them ONLY when the coding question explicitly states that only positive numbers, non-negative numbers, or another restricted range is allowed.
+11. Do NOT change the meaning or requirements of the coding question when creating test cases.
+12. Every input must be valid according to the coding question.
+13. Every expectedOutput must be the correct result for its corresponding input.
+14. Do NOT generate duplicate test cases.
+15. Keep each test case input and expectedOutput reasonably small.
+16. Do NOT generate huge arrays, matrices, strings, or datasets.
+17. Maximum 50 elements for arrays unless the coding question specifically requires more.
+18. Keep strings reasonably short unless the coding question specifically requires a longer string.
+19. Keep matrices reasonably small unless the coding question specifically requires a larger matrix.
+20. Do NOT generate unnecessarily large numbers or outputs.
+21. Test cases must be practical and suitable for actual code execution.
+22. Do NOT include explanations, reasoning, comments, markdown, or any text outside the JSON response.
+23. Return ONLY valid JSON.
+24. Return exactly 3 objects inside the "testCases" array.
+
+Return the response in exactly this format:
+
+{
+  "testCases": [
+    {
+      "testCaseName": "sample_1",
+      "input": "...",
+      "expectedOutput": "...",
+      "isHidden": false
+    },
+    {
+      "testCaseName": "sample_2",
+      "input": "...",
+      "expectedOutput": "...",
+      "isHidden": true
+    },
+    {
+      "testCaseName": "sample_3",
+      "input": "...",
+      "expectedOutput": "...",
+      "isHidden": true
+    }
+  ]
+}
 
 CODING QUESTION:
 ${question}
 
 PROGRAMMING LANGUAGE:
 ${language}
-
-REQUIREMENTS:
-- Generate exactly ${DEFAULT_TEST_CASE_COUNT} different test cases.
-- Include normal/common cases.
-- Include appropriate edge cases.
-- Consider empty input where applicable.
-- Consider zero values where applicable.
-- Consider negative values where applicable.
-- Consider boundary values where applicable.
-- Consider large values where applicable.
-- Each test case must have a unique name.
-- Do not generate duplicate test cases.
-- The input must be valid for the coding question.
-- The expectedOutput must be correct.
-- Do not invent requirements that are not present in the question.
-
-IMPORTANT:
-- Return ONLY valid JSON.
-- Do NOT return markdown.
-- Do NOT return code fences.
-- Do NOT return explanations.
-- Do NOT return comments.
-- Do NOT return any text before or after the JSON.
-
-Return exactly:
-
-{
-  "testCases": [
-    {
-      "name": "test case name",
-      "input": "input value",
-      "expectedOutput": "expected output",
-      "isSample": false
-    }
-  ]
-}
 `;
 
     let response: any;
