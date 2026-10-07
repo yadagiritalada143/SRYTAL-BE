@@ -29,7 +29,13 @@ describe('addProgrammingLanguageService', () => {
         const result = await addProgrammingLanguageService.addProgrammingLanguage('JavaScript');
 
         expect(ProgrammingLanguagesMock).toHaveBeenCalledTimes(1);
-        expect(ProgrammingLanguagesMock).toHaveBeenCalledWith({ languageName: 'JavaScript' });
+        // canonicalKey/wandboxLabel are derived from the display name when the
+        // caller only provides languageName.
+        expect(ProgrammingLanguagesMock).toHaveBeenCalledWith({
+            languageName: 'JavaScript',
+            canonicalKey: 'javascript',
+            wandboxLabel: 'JavaScript'
+        });
         expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(result).toEqual(savedLanguage);
     });
@@ -40,7 +46,11 @@ describe('addProgrammingLanguageService', () => {
         await expect(addProgrammingLanguageService.addProgrammingLanguage('JavaScript')).rejects.toThrow('An error occurred while adding programming language.');
 
         expect(ProgrammingLanguagesMock).toHaveBeenCalledTimes(1);
-        expect(ProgrammingLanguagesMock).toHaveBeenCalledWith({ languageName: 'JavaScript' });
+        expect(ProgrammingLanguagesMock).toHaveBeenCalledWith({
+            languageName: 'JavaScript',
+            canonicalKey: 'javascript',
+            wandboxLabel: 'JavaScript'
+        });
         expect(saveSpy).toHaveBeenCalledTimes(1);
     });
 });

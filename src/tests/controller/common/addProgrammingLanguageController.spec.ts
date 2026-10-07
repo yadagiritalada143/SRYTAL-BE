@@ -33,7 +33,7 @@ describe('addProgrammingLanguageController', () => {
 
         await addProgrammingLanguageController.addProgrammingLanguage(req, res);
 
-        expect(addProgrammingLanguageMock).toHaveBeenCalledWith('JavaScript');
+        expect(addProgrammingLanguageMock).toHaveBeenCalledWith('JavaScript', {});
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
         expect(mockJson).toHaveBeenCalledWith({ success: true, message: PROGRAMMING_LANGUAGES_SUCCESS_MESSAGES.PROGRAMMING_LANGUAGE_ADD_SUCCESS_MESSAGE });
     });
@@ -44,7 +44,7 @@ describe('addProgrammingLanguageController', () => {
 
         await addProgrammingLanguageController.addProgrammingLanguage(req, res);
 
-        expect(addProgrammingLanguageMock).toHaveBeenCalledWith('JavaScript');
+        expect(addProgrammingLanguageMock).toHaveBeenCalledWith('JavaScript', {});
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.INTERNAL_SERVER_ERROR);
         expect(mockJson).toHaveBeenCalledWith({ success: false, message: PROGRAMMING_LANGUAGES_ERROR_MESSAGES.PROGRAMMING_LANGUAGE_ADD_ERROR_MESSAGE });
     });

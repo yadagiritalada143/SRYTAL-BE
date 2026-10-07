@@ -9,8 +9,10 @@ const createTransportMock = nodemailer.createTransport as unknown as jest.Mock;
 
 describe('sendContactUsMailService', () => {
     let sendMailMock: jest.Mock;
+    const originalAdminEmail = process.env.ADMIN_EMAIL_ABOUT_CUSTOMER;
 
     beforeEach(() => {
+        process.env.ADMIN_EMAIL_ABOUT_CUSTOMER = 'admin@x.com';
         sendMailMock = jest.fn();
         createTransportMock.mockReset();
         createTransportMock.mockReturnValue({ sendMail: sendMailMock });
@@ -19,6 +21,11 @@ describe('sendContactUsMailService', () => {
     });
 
     afterEach(() => {
+        if (originalAdminEmail === undefined) {
+            delete process.env.ADMIN_EMAIL_ABOUT_CUSTOMER;
+        } else {
+            process.env.ADMIN_EMAIL_ABOUT_CUSTOMER = originalAdminEmail;
+        }
         jest.restoreAllMocks();
     });
 
@@ -37,7 +44,7 @@ describe('sendContactUsMailService', () => {
         expect(createTransportMock).toHaveBeenCalledTimes(1);
         expect(sendMailMock).toHaveBeenCalledTimes(1);
         expect(sendMailMock.mock.calls[0][0]).toMatchObject({
-            to: expect.anything(),
+            to: 'admin@x.com',
             subject: 'Consultation',
             html: expect.stringContaining('Acme')
         });

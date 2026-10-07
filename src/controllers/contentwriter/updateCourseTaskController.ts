@@ -77,6 +77,7 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContent,
             newContentMimeType,
             newContentFileName,
+
         );
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {
