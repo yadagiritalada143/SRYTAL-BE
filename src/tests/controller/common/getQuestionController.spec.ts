@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import getQuestionController from '../../../controllers/common/getQuestionController';
-import getQuestionService from '../../../services/common/getQuestionService';
+import getQuestionController from '../../../controllers/common/getCodingTaskController';
+import getQuestionService from '../../../services/common/getCodingTaskService';
 import { HTTP_STATUS } from '../../../constants/commonErrorMessages';
 import { CODING_QUESTION_ERROR_MESSAGES } from '../../../constants/common/codingQuestionMessages';
 

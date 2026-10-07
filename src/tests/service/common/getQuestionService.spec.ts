@@ -1,4 +1,4 @@
-import getQuestionService from '../../../services/common/getQuestionService';
+import getQuestionService from '../../../services/common/getCodingTaskService';
 import CourseTaskModel from '../../../model/courseTaskModel';
 import CourseModuleModel from '../../../model/coursemoduleModel';
 import CourseAssignment from '../../../model/courseAssignmentModel';
