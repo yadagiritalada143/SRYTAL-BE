@@ -27,8 +27,21 @@ import deleteProgrammingLanguageController from '../controllers/common/deletePro
 import getQuestionController from '../controllers/common/getQuestionController';
 import runCodeController from '../controllers/common/runCodeController';
 import submitCodeController from '../controllers/common/submitCodeController';
+import updateCourseController from '../controllers/contentwriter/updateCourseController';
+import updateCourseModuleController from '../controllers/contentwriter/updateCourseModuleController';
+import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
+import validateJWTForMedia from '../middlewares/validateJWTForMedia';
+import getCourseTaskContentController from '../controllers/contentwriter/getCourseTaskContentController';
+import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
+import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
+import addCourseController from '../controllers/contentwriter/addCourseController';
+import getAllCoursesController from '../controllers/contentwriter/getAllCoursesController';
+import getCourseByIdController from '../controllers/contentwriter/getCourseByIdController';
 
 const upload = multer({ storage: multer.memoryStorage() });
+
+upload.fields([{name: 'taskFile', maxCount: 1,},{ name: 'thumbnailFile', maxCount: 1,}]);
+
 
 const commonRouter: Router = express.Router();
 
@@ -2171,5 +2184,608 @@ commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
  *         description: Server error.
  */
 commonRouter.post('/submitcode', validateJWT, submitCodeController.submitCode);
+
+
+/**
+ * @swagger
+ * /getAllCourses:
+ *   get:
+ *     summary: Get all courses
+ *     description: Get all courses with their thumbnail image URLs, plus aggregate totals of courses, modules, and tasks.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully fetched all courses.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64f123456789abcdef123456"
+ *                       courseName:
+ *                         type: string
+ *                         example: "Node.js"
+ *                       courseDescription:
+ *                         type: string
+ *                         example: "Complete Node.js Backend Development Course"
+ *                       thumbnail:
+ *                         type: string
+ *                         example: "LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       thumbnailUrl:
+ *                         type: string
+ *                         format: uri
+ *                         example: "https://your-bucket.s3.amazonaws.com/LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       status:
+ *                         type: string
+ *                         example: "ACTIVE"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get('/getAllCourses', validateJWT, getAllCoursesController.getAllCourses);
+
+/**
+ * @swagger
+ * /getCourseById/{id}:
+ *   get:
+ *     summary: Get course by ID
+ *     description: Retrieve details of a single course, including its modules, by course ID.
+ *     tags:
+ *       - Content-Writer
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the course to retrieve
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the course.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 courseName:
+ *                   type: string
+ *                 courseDescription:
+ *                   type: string
+ *                 modules:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       moduleName:
+ *                         type: string
+ *                       moduleDescription:
+ *                         type: string
+ *                       courseId:
+ *                         type: string
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.get('/getCourseById/:id', validateJWT, getCourseByIdController.getCourseDetailsById);
+
+/**
+ * @swagger
+ * /addCourse:
+ *   post:
+ *     summary: Add a new course
+ *     description: Add a new course to the platform. This action requires authentication.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []  # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               courseName:
+ *                 type: string
+ *               courseDescription:
+ *                 type: string
+ *               coursethumbnail:
+ *                 type: string
+ *                 format: binary
+ *             required:
+ *               - courseName
+ *     responses:
+ *       201:
+ *         description: Successfully added the new course.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.post('/addCourse', validateJWT, upload.single('coursethumbnail'), addCourseController.addNewCourse);
+
+/**
+ * @swagger
+ * /addCourseModule:
+ *   post:
+ *     summary: Add a course module
+ *     description: Add a new module to a course. This action requires authentication.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *               moduleName:
+ *                 type: 
+ *               moduleDescription:
+ *                 type: string
+ *               coursemodulethumbnail:
+ *                 type: string
+ *                 format: binary
+ *             required:
+ *               - moduleName
+ *               - courseId
+ *     responses:
+ *       201:
+ *         description: Successfully added the course module.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemodulethumbnail'), addCourseModuleController.addModuleToCourse);
+
+/**
+ * @swagger
+ * /addcoursetask:
+ *   post:
+ *     summary: Add a new task to a course module
+ *     description: |
+ *       Creates a new task under a course module.
+ *       Supported task types are LINK, FILE, and CODE.
+ *       For LINK tasks, the link must be provided.
+ *       For FILE tasks, a taskFile must be uploaded.
+ *       A thumbnailFile can optionally be uploaded for any task type.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - moduleId
+ *               - taskName
+ *               - taskDescription
+ *               - type
+ *             properties:
+ *               moduleId:
+ *                 type: string
+ *                 description: ID of the course module to which the task will be added.
+ *                 example: 65f2a7c8e4b123456789abcd
+ *               taskName:
+ *                 type: string
+ *                 description: Name of the course task.
+ *                 example: Introduction to JavaScript
+ *               taskDescription:
+ *                 type: string
+ *                 description: Description of the course task.
+ *                 example: Learn the basics of JavaScript programming.
+ *               type:
+ *                 type: string
+ *                 enum:
+ *                   - LINK
+ *                   - FILE
+ *                   - CODE
+ *                 description: Type of the course task.
+ *                 example: LINK
+ *               link:
+ *                 type: string
+ *                 description: URL for LINK task type.
+ *                 example: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+ *               taskFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: File for FILE task type.
+ *               thumbnailFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional thumbnail image for the task.
+ *     responses:
+ *       201:
+ *         description: Course task added successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Course task added successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
+ *       400:
+ *         description: Invalid request or missing task content.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Course task content is required
+ *       500:
+ *         description: Internal server error while adding the course task.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add course task
+ */
+commonRouter.post('/addcoursetask', validateJWT, upload.fields([{name: 'taskFile',maxCount: 1,},{ name: 'thumbnailFile', maxCount: 1}]), addCourseTaskController.addTaskToModule);
+
+/**
+ * @swagger
+ * /getCourseTaskContent/{id}:
+ *   get:
+ *     summary: Get a task's content (for viewing in a new tab)
+ *     description: |
+ *       Serves the content of a course task. For tasks of type `LINK` this
+ *       redirects (302) to the stored external URL; for type `FILE` it streams
+ *       the file from S3 inline so the browser renders or downloads it.
+ *       The JWT may be supplied via the `auth_token` header or query parameter
+ *       (so the URL can be opened directly in a new browser tab).
+ *     tags:
+ *       - Content-Writer
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the task whose content to serve
+ *       - in: query
+ *         name: auth_token
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: JWT token (alternative to the auth_token header)
+ *     responses:
+ *       200:
+ *         description: File content streamed inline.
+ *       302:
+ *         description: Redirect to the external link.
+ *       401:
+ *         description: Unauthorized. Missing or invalid token.
+ *       404:
+ *         description: Task or content not found.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCourseTaskContentController.getCourseTaskContent);
+
+/**
+ * @swagger
+ * /updatecoursetask:
+ *   put:
+ *     summary: Update a course task
+ *     description: |
+ *       Update an existing course task as a Content Writer.
+ *       The task name, description, status, and task type can be updated.
+ *       A new task file or thumbnail can optionally be uploaded.
+ *       For LINK tasks, provide the link.
+ *       For FILE tasks, provide the taskFile.
+ *       For CODE tasks, no file or link is required.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - moduleId
+ *               - taskName
+ *               - taskDescription
+ *               - status
+ *               - type
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course task to update.
+ *                 example: 64f123456789abcdef123456
+ *               moduleId:
+ *                 type: string
+ *                 description: ID of the course module associated with the task.
+ *                 example: 64f123456789abcdef654321
+ *               taskName:
+ *                 type: string
+ *                 description: Updated name of the course task.
+ *                 example: Node.js Introduction
+ *               taskDescription:
+ *                 type: string
+ *                 description: Updated description of the course task.
+ *                 example: Learn the fundamentals of Node.js
+ *               status:
+ *                 type: string
+ *                 enum:
+ *                   - ACTIVE
+ *                   - ARCHIVE
+ *                 description: Updated status of the course task.
+ *                 example: ACTIVE
+ *               type:
+ *                 type: string
+ *                 enum:
+ *                   - LINK
+ *                   - FILE
+ *                   - CODE
+ *                 description: Type of the course task.
+ *                 example: CODE
+ *               link:
+ *                 type: string
+ *                 description: External link for LINK task type.
+ *                 example: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+ *               taskFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: |
+ *                   Optional task content file.
+ *                   Required when the task type is FILE and new file content is being uploaded.
+ *               thumbnailFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: |
+ *                   Optional task thumbnail image.
+ *                   Supported formats are JPG, JPEG, PNG, and WEBP.
+ *     responses:
+ *       200:
+ *         description: Course task updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterUpdate:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 64f123456789abcdef123456
+ *                     moduleId:
+ *                       type: string
+ *                       example: 64f123456789abcdef654321
+ *                     taskName:
+ *                       type: string
+ *                       example: Node.js Introduction
+ *                     taskDescription:
+ *                       type: string
+ *                       example: Learn the fundamentals of Node.js
+ *                     thumbnail:
+ *                       type: string
+ *                       example: LMSData/Courses/CourseTaskThumbnails/abc123.png
+ *                     status:
+ *                       type: string
+ *                       example: ACTIVE
+ *                     type:
+ *                       type: string
+ *                       enum:
+ *                         - LINK
+ *                         - FILE
+ *                         - CODE
+ *                       example: FILE
+ *                     content:
+ *                       type: string
+ *                       example: LMSData/Courses/CourseTaskContent/video123.mp4
+ *                     contentMimeType:
+ *                       type: string
+ *                       example: video/mp4
+ *                     contentFileName:
+ *                       type: string
+ *                       example: nodejs-tutorial.mp4
+ *       400:
+ *         description: Invalid input, status, type, or thumbnail type.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid course task details.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to update course task.
+ */
+
+commonRouter.put('/updatecoursetask',validateJWT, upload.fields([{name: 'taskFile', maxCount: 1},{name: 'thumbnailFile', maxCount: 1,}]), updateCourseTaskController.updateCourseTask);
+
+/**
+ * @swagger
+ * /updatecoursemodule:
+ *   put:
+ *     summary: Update a course module by content writer
+ *     tags: 
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - courseId
+ *               - moduleName
+ *               - moduleDescription
+ *               - status
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course module
+ *               courseId:
+ *                 type: string
+ *                 description: ID of the course 
+ *               moduleName:
+ *                 type: string
+ *                 description: Updated module name
+ *               moduleDescription:
+ *                 type: string
+ *                 description: Updated module description
+ *               thumbnail:
+ *                 type: string
+ *                 format: binary
+ *                 description: Updated module thumbnail image (optional)
+ *               status:
+ *                 type: string
+ *                 description: Updated status of the module ("ACTIVE" or "ARCHIVE")
+ *     responses:
+ *       200:
+ *         description: Module updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Invalid input or status provided
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.put('/updatecoursemodule', validateJWT, upload.single('thumbnail'), updateCourseModuleController.updateCourseModule);
+
+/**
+ * @swagger
+ * /updatecourse:
+ *   put:
+ *     summary: Update course details (name, description, and status) 
+ *     description: Allows a content writer to update a course by providing its ID along with new values for name, description, and status.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - courseName
+ *               - courseDescription
+ *               - status
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course
+ *               courseName:
+ *                 type: string
+ *                 description: Updated course name
+ *               courseDescription:
+ *                 type: string
+ *                 description: Updated course description
+ *               thumbnail:
+ *                 type: string
+ *                 format: binary
+ *                 description: Updated course thumbnail image (optional)
+ *               status:
+ *                 type: string
+ *                 enum:
+ *                   - ACTIVE
+ *                   - ARCHIVE
+ *                 description: Updated status of the course ("ACTIVE" or "ARCHIVE")
+ *     responses:
+ *       200:
+ *         description: Course updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Invalid input or status provided
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.put('/updatecourse', validateJWT, upload.single('thumbnail'), updateCourseController.updateCourse);
 
 export default commonRouter;
