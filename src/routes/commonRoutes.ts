@@ -10,6 +10,8 @@ import getMyNavMenuController from '../controllers/common/getMyNavMenuController
 import uploadProfileImageController from '../controllers/common/uploadProfileImageController';
 import getProfileImageController from '../controllers/common/getProfileImageController';
 import validateJWT from '../middlewares/validateJWT';
+import validateAddCourseTask from '../middlewares/validateAddCourseTask';
+import addCourseTaskSchenm from '../middlewares/schemas/addCourseTaskSchema';
 import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
 import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
@@ -1440,7 +1442,6 @@ commonRouter.post('/expertconsultation', expertConsultationController.createExpe
  */
 commonRouter.post('/addprogramminglanguage', validateJWT, addProgrammingLanguageController.addProgrammingLanguage);
 
-
 /**
  * @swagger
  * /updateprogramminglanguage:
@@ -1950,7 +1951,7 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                       type: boolean
  *                       example: true
  *       400:
- *         description: Invalid request, missing coding question, or missing/invalid OpenRouter API key.
+ *         description: Invalid task fields or missing content/upload, coding question, or valid OpenRouter API key.
  *         content:
  *           application/json:
  *             schema:
@@ -1961,7 +1962,13 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: Course task content is required
+ *                   example: Invalid course task request.
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example:
+ *                     - A valid HTTP or HTTPS link is required for LINK tasks.
  *       502:
  *         description: OpenRouter failed to generate the coding task boilerplate.
  *         content:
@@ -1978,7 +1985,16 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *       500:
  *         description: Internal server error while adding the course task.
  */
-commonRouter.post('/addcoursetask', validateJWT, upload.fields([{name: 'taskFile',maxCount: 1,},{ name: 'thumbnailFile', maxCount: 1}]), addCourseTaskController.addTaskToModule);
+commonRouter.post(
+    '/addcoursetask',
+    validateJWT,
+    upload.fields([
+        { name: 'taskFile', maxCount: 1 },
+        { name: 'thumbnailFile', maxCount: 1 }
+    ]),
+    validateAddCourseTask,
+    addCourseTaskController.addTaskToModule
+);
 
 /**
  * @swagger

@@ -170,7 +170,6 @@ const addTaskToModule = async (req: Request, res: Response) => {
             responseAfteraddingCourseTask.success === false;
 
         if (responseAfteraddingCourseTask && !serviceReturnedFailure) {
-            
             return res.status(201).json({
                 message: COURSE_TASK_SUCCESS_MESSAGES.COURSE_TASK_ADD_SUCCESS_MESSAGE,
                 data: responseAfteraddingCourseTask

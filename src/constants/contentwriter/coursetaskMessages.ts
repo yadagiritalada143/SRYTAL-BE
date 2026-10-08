@@ -18,5 +18,6 @@ export const COURSE_TASK_ERRORS_MESSAGES = {
     COURSE_TASK_OPENROUTER_KEY_INVALID_MESSAGE: 'Invalid OpenRouter API key. Please check your key and try again !',
     COURSE_TASK_AUTHENTICATION_REQUIRED_MESSAGE: 'Authentication is required to access this resource. Please log in and try again !',
     COURSE_TASK_NAME_REQUIRED_MESSAGE: 'Please provide the task name !',
+    COURSE_TASK_VALIDATION_ERROR_MESSAGE: 'Invalid course task request.',
     
 };
