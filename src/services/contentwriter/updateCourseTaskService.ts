@@ -16,6 +16,12 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
             taskDescription,
             status,
         };
+        const codingQuestionChanged =
+            String(existingTask.type || '').toUpperCase() === 'CODE' &&
+            existingTask.taskDescription !== taskDescription;
+        if (codingQuestionChanged) {
+            updateData.starterCode = [];
+        }
 
         if (newThumbnail) {
             updateData.thumbnail = newThumbnail;
@@ -36,6 +42,9 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
                 id,
                 {
                     $set: updateData,
+                    ...(codingQuestionChanged
+                        ? { $unset: { baseBoilerplate: 1 } }
+                        : {})
                 },
                 {
                     new: true,

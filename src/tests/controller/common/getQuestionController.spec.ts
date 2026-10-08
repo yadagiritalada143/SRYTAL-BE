@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import getQuestionController from '../../../controllers/common/getCodingTaskController';
 import getQuestionService from '../../../services/common/getCodingTaskService';
 import { HTTP_STATUS } from '../../../constants/commonErrorMessages';
-import { CODING_QUESTION_ERROR_MESSAGES } from '../../../constants/common/codingQuestionMessages';
+import { CODING_QUESTION_ERROR_MESSAGES } from '../../../constants/common/codingTaskMessages';
 
 jest.mock('../../../services/common/getQuestionService', () => ({
     __esModule: true,

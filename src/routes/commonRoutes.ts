@@ -29,6 +29,7 @@ import updateCourseModuleController from '../controllers/contentwriter/updateCou
 import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
 import validateJWTForMedia from '../middlewares/validateJWTForMedia';
 import getCourseTaskContentController from '../controllers/contentwriter/getCourseTaskContentController';
+import getCourseTaskBoilerplateController from '../controllers/common/getCourseTaskBoilerplateController';
 import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
 import addCourseController from '../controllers/contentwriter/addCourseController';
@@ -1881,6 +1882,7 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *       Supported task types are LINK, FILE, and CODE.
  *       For LINK tasks, the link must be provided.
  *       For FILE tasks, a taskFile must be uploaded.
+ *       For CODE tasks, taskDescription is the coding question and the authenticated writer must have a valid OpenRouter API key.
  *       A thumbnailFile can optionally be uploaded for any task type.
  *     tags:
  *       - Content-Writer
@@ -1908,7 +1910,7 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                 example: Introduction to JavaScript
  *               taskDescription:
  *                 type: string
- *                 description: Description of the course task.
+ *                 description: Task description; provide the coding question for CODE tasks.
  *                 example: Learn the basics of JavaScript programming.
  *               type:
  *                 type: string
@@ -1948,7 +1950,7 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                       type: boolean
  *                       example: true
  *       400:
- *         description: Invalid request or missing task content.
+ *         description: Invalid request, missing coding question, or missing/invalid OpenRouter API key.
  *         content:
  *           application/json:
  *             schema:
@@ -1960,8 +1962,8 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                 message:
  *                   type: string
  *                   example: Course task content is required
- *       500:
- *         description: Internal server error while adding the course task.
+ *       502:
+ *         description: OpenRouter failed to generate the coding task boilerplate.
  *         content:
  *           application/json:
  *             schema:
@@ -1973,6 +1975,8 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                 message:
  *                   type: string
  *                   example: Failed to add course task
+ *       500:
+ *         description: Internal server error while adding the course task.
  */
 commonRouter.post('/addcoursetask', validateJWT, upload.fields([{name: 'taskFile',maxCount: 1,},{ name: 'thumbnailFile', maxCount: 1}]), addCourseTaskController.addTaskToModule);
 
@@ -2015,6 +2019,42 @@ commonRouter.post('/addcoursetask', validateJWT, upload.fields([{name: 'taskFile
  *         description: Server error
  */
 commonRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCourseTaskContentController.getCourseTaskContent);
+
+/**
+ * @swagger
+ * /getCourseTaskBoilerplate/{taskId}/{languageId}:
+ *   get:
+ *     summary: Get language-specific starter code for an assigned coding task
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: languageId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Starter code for the selected language
+ *       403:
+ *         description: The task is not part of the authenticated user's assigned courses
+ *       404:
+ *         description: Task or programming language not found
+ *       502:
+ *         description: Starter code generation failed
+ */
+commonRouter.get(
+    '/getCourseTaskBoilerplate/:taskId/:languageId',
+    validateJWT,
+    getCourseTaskBoilerplateController.getCourseTaskBoilerplate
+);
 
 /**
  * @swagger

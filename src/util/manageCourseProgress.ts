@@ -1,9 +1,7 @@
 import CourseModuleModel from '../model/coursemoduleModel';
 import CourseTaskModel from '../model/courseTaskModel';
 import TaskProgressModel from '../model/taskProgressModel';
-import CodeRunModel from '../model/codeRunModel';
 import { COURSE_ASSIGNMENT_STATUS } from '../types/courseAssignmentStatusValues';
-import { resolveQuestions, isQuestionActive } from './courseTaskQuestions';
 import { IMyCourseModule, IMyCourseProgress, IMyCourseTask } from '../interfaces/myCourses';
 
 /**
@@ -16,12 +14,7 @@ import { IMyCourseModule, IMyCourseProgress, IMyCourseTask } from '../interfaces
 /** Only published content is ever shown to an employee. */
 const ACTIVE_STATUS = 'ACTIVE';
 
-/** A question is solved only by a final submission that passed every test case. */
-const SOLVED_SUBMISSION_TYPE = 'submit';
-const SOLVED_SUBMISSION_STATUS = 'ALL_PASSED';
-
 const isActive = (status?: string) => (status || ACTIVE_STATUS).toUpperCase() === ACTIVE_STATUS;
-
 
 export const percentOf = (completedTasks: number, totalTasks: number): number =>
     totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
@@ -91,69 +84,8 @@ const getCompletedTaskIds = async (courseAssignmentIds: string[]) => {
     return completedByAssignment;
 };
 
-/**
- * Per assignment, how many of each task's questions the employee has already
- * passed. Used only to render "3 of 5 answered" next to a coding task - the
- * completion decision itself lives in syncTaskCompletion, which re-reads the
- * submission rows at the moment a submission lands.
- */
-export const getCompletedQuestionCounts = async (
-    courseAssignmentIds: string[],
-    employeeIdByAssignment: Map<string, string>
-): Promise<Map<string, Map<string, number>>> => {
-    const employeeIds = Array.from(new Set(Array.from(employeeIdByAssignment.values()).filter(Boolean)));
-
-    if (employeeIds.length === 0) {
-        return new Map();
-    }
-
-    const solvedSubmissions: any[] = await CodeRunModel.find({
-        userId: { $in: employeeIds },
-        type: SOLVED_SUBMISSION_TYPE,
-        status: SOLVED_SUBMISSION_STATUS
-    })
-        .select('userId taskId questionId')
-        .lean();
-
-    const assignmentByEmployee = new Map<string, string>();
-    employeeIdByAssignment.forEach((employeeId, courseAssignmentId) => {
-        assignmentByEmployee.set(String(employeeId), String(courseAssignmentId));
-    });
-
-    const counts = new Map<string, Map<string, number>>();
-    const seen = new Set<string>();
-
-    for (const submission of solvedSubmissions || []) {
-        const courseAssignmentId = assignmentByEmployee.get(String(submission?.userId));
-        if (!courseAssignmentId) {
-            continue;
-        }
-
-        // A question is counted once no matter how many times it was submitted.
-        const pair = `${String(submission?.taskId)}::${String(submission?.questionId)}`;
-        if (seen.has(pair)) {
-            continue;
-        }
-        seen.add(pair);
-
-        const taskId = String(submission?.taskId);
-        const byTask = counts.get(courseAssignmentId) || new Map<string, number>();
-        byTask.set(taskId, (byTask.get(taskId) || 0) + 1);
-        counts.set(courseAssignmentId, byTask);
-    }
-
-    return counts;
-};
-
-const toMyCourseTask = (
-    task: any,
-    completedTasks: Map<string, Date | null>,
-    completedQuestions?: Map<string, number>
-): IMyCourseTask => {
+const toMyCourseTask = (task: any, completedTasks: Map<string, Date | null>): IMyCourseTask => {
     const isCompleted = completedTasks.has(String(task._id));
-    const isCoding = Boolean(task.isCoding);
-    const questions = resolveQuestions(task);
-    const activeQuestionCount = questions.filter(isQuestionActive).length;
 
     return {
         _id: String(task._id),
@@ -161,31 +93,16 @@ const toMyCourseTask = (
         taskDescription: task.taskDescription,
         status: task.status,
         type: task.type,
+        isCoding: String(task.type || '').toUpperCase() === 'CODE',
         // 'FILE' content is an S3 key, which is useless (and private) to the
         // client — those tasks are streamed through the content proxy instead.
         link: task.type === 'LINK' ? task.content : undefined,
         contentMimeType: task.contentMimeType,
         contentFileName: task.contentFileName,
-        isCoding,
-        questionCount: activeQuestionCount,
-        // Capped at the active count so an archived-then-solved question cannot
-        // make a task look more than fully answered.
-        completedQuestionCount: isCoding
-            ? Math.min(activeQuestionCount, completedQuestions?.get(String(task._id)) || 0)
-            : undefined,
         isCompleted,
         completedAt: isCompleted ? completedTasks.get(String(task._id)) : null
     };
 };
-
-/**
- * A coding task with no published questions can never be completed, so it is
- * left out of the module's totalTasks. It is still returned in `tasks` so the
- * employee can see it; excluding it only stops it from blocking course
- * completion while a content writer is still filling it in.
- */
-const isTrackable = (task: any): boolean =>
-    !(task.isCoding && resolveQuestions(task).filter(isQuestionActive).length === 0);
 
 /**
  * Builds the module -> task tree for one course together with the employee's
@@ -195,16 +112,11 @@ const isTrackable = (task: any): boolean =>
 export const buildCourseModules = (
     modules: any[],
     tasksByModule: Map<string, any[]>,
-    completedTasks: Map<string, Date | null>,
-    completedQuestionsByTask?: Map<string, number>
+    completedTasks: Map<string, Date | null>
 ): IMyCourseModule[] =>
     modules.map((module: any) => {
-        const rawTasks = tasksByModule.get(String(module._id)) || [];
-        const trackableTaskIds = new Set(
-            rawTasks.filter(isTrackable).map((task: any) => String(task._id))
-        );
-        const tasks = rawTasks.map((task: any) =>
-            toMyCourseTask(task, completedTasks, completedQuestionsByTask)
+        const tasks = (tasksByModule.get(String(module._id)) || []).map(task =>
+            toMyCourseTask(task, completedTasks)
         );
 
         return {
@@ -213,12 +125,10 @@ export const buildCourseModules = (
             moduleDescription: module.moduleDescription,
             status: module.status,
             tasks,
-            totalTasks: trackableTaskIds.size,
-            completedTasks: tasks.filter(task => task.isCompleted && trackableTaskIds.has(task._id)).length
+            totalTasks: tasks.length,
+            completedTasks: tasks.filter(task => task.isCompleted).length
         };
     });
-
-
 
 export const summariseProgress = (modules: IMyCourseModule[]): IMyCourseProgress => {
     const totalTasks = modules.reduce((sum, module) => sum + module.totalTasks, 0);
@@ -231,7 +141,6 @@ export default {
     getActiveModulesByCourse,
     getActiveTasksByModule,
     getCompletedTaskIds,
-    getCompletedQuestionCounts,
     buildCourseModules,
     summariseProgress,
     deriveAssignmentStatus,

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import runCodeController from '../../../controllers/common/runCodeController';
 import runCodeService from '../../../services/common/runCodeService';
 import { HTTP_STATUS } from '../../../constants/commonErrorMessages';
-import { CODING_QUESTION_ERROR_MESSAGES, CODING_QUESTION_SUCCESS_MESSAGES } from '../../../constants/common/codingQuestionMessages';
+import { CODING_QUESTION_ERROR_MESSAGES, CODING_QUESTION_SUCCESS_MESSAGES } from '../../../constants/common/codingTaskMessages';
 
 jest.mock('../../../services/common/runCodeService', () => ({
     __esModule: true,
