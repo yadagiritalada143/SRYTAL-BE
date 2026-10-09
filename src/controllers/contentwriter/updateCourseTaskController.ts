@@ -6,6 +6,7 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
 import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../config/awsS3Config';
+import { isAllowedCourseTaskFile } from '../../util/validateCourseTaskFile';
 
 // Uploads one multer file to the given S3 folder under a unique name and
 // returns the object key.
@@ -52,6 +53,13 @@ const updateCourseTask = async (req: Request, res: Response) => {
         let newThumbnail: string | undefined;
 
         if (taskFile) {
+            if (!isAllowedCourseTaskFile(taskFile)) {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_FILE_TYPE_MESSAGE,
+                });
+            }
+
             newContent = await uploadToS3(taskFile, courseTaskContentFolder);
             newContentMimeType = taskFile.mimetype;
             newContentFileName = taskFile.originalname;

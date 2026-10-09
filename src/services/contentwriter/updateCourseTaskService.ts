@@ -1,5 +1,6 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 import { IUpdateCourseTaskResponse } from '../../interfaces/courseTask';
+import { stripHtmlTags } from '../../util/stripHtmlTags';
 
 const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string, executionMode?: 'CALLABLE' | 'STDIN') : Promise<IUpdateCourseTaskResponse> => {
     try {
@@ -11,9 +12,11 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
             };
         }
 
+        const cleanTaskDescription = stripHtmlTags(taskDescription);
+
         const updateData: any = {
             taskName,
-            taskDescription,
+            taskDescription: cleanTaskDescription,
             status,
         };
         if (executionMode) {
@@ -24,7 +27,7 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
         }
         const codingQuestionChanged =
             String(existingTask.type || '').toUpperCase() === 'CODE' &&
-            existingTask.taskDescription !== taskDescription;
+            existingTask.taskDescription !== cleanTaskDescription;
         if (codingQuestionChanged) {
             updateData.starterCode = [];
         }

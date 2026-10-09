@@ -7,7 +7,9 @@ const CoursesSchema = new mongoose.Schema({
     courseName: { type: mongoose.Schema.Types.String, unique: true },
     courseDescription: { type: mongoose.Schema.Types.String },
     thumbnail: { type: mongoose.Schema.Types.String },
-    status: { type: mongoose.Schema.Types.String },
+    status: { type: mongoose.Schema.Types.String, enum: ["ACTIVE", "ARCHIVE"] },
+    totalArchivedCourses: { type: mongoose.Schema.Types.String },
+
 },
     {
         collection: 'courses',

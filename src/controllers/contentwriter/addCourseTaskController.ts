@@ -5,6 +5,7 @@ import addNewCourseTaskService from '../../services/contentwriter/addCourseTaskS
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
 import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../config/awsS3Config';
 import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../../constants/contentwriter/coursetaskMessages';
+import { isAllowedCourseTaskFile } from '../../util/validateCourseTaskFile';
 
 
 /**
@@ -112,6 +113,14 @@ const addTaskToModule = async (req: Request, res: Response) => {
                     success: false,
                     message:
                         COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_CONTENT_MESSAGE
+                });
+            }
+
+            if (!isAllowedCourseTaskFile(taskFile)) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_FILE_TYPE_MESSAGE
                 });
             }
 

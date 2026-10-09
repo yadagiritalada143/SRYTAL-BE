@@ -10,6 +10,7 @@ export const COURSE_TASK_ERRORS_MESSAGES = {
     COURSE_TASK_CONTENT_FETCH_ERROR_MESSAGE: 'Error occured while fetching the task content !',
     COURSE_TASK_NOT_FOUND_MESSAGE: 'Task not found !',
     COURSE_TASK_INVALID_THUMBNAIL_TYPE_MESSAGE: 'Invalid thumbnail type. Supported types are JPG, JPEG, PNG, and WEBP.',
+    COURSE_TASK_INVALID_FILE_TYPE_MESSAGE: 'Invalid file type. Supported types are PDF, DOC, DOCX, PPT, PPTX, XLS, XLSX, TXT, CSV, PNG, JPG, JPEG, and WEBP.',
     COURSE_TASK_INVALID_TYPE_MESSAGE: 'Invalid course task type. Allowed values are LINK, FILE, CODE, QUIZ !',
     COURSE_TASK_MISSING_CODING_QUESTION_MESSAGE: 'Please provide the coding question in the task description !',
     COURSE_TASK_OPENROUTER_KEY_MISSING_MESSAGE: 'Please add your OpenRouter API key before creating a coding task !',

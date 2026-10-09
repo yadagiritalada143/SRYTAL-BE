@@ -5,6 +5,7 @@ export interface ICourses extends Document {
     courseDescription: string;
     thumbnail?: string;
     status?: string;
+    totalArchivedCourses: string,
     createdAt?: Date;
     updatedAt?: Date;
 }
@@ -16,6 +17,12 @@ export interface IFetchAllCoursesResponse {
         totalCourses: number;
         totalModules: number;
         totalTasks: number;
+        totalActiveCourses: number;
+        totalArchivedCourses: number;
+        totalActiveModules: number;
+        totalArchivedModules: number;
+        totalActiveTasks: number;
+        totalInactiveTasks: number;
     };
 }
 

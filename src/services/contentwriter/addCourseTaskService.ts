@@ -2,6 +2,7 @@ import CourseTaskModel from '../../model/courseTaskModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseModel from '../../model/coursesModel';
 import courseTaskBoilerplateService from '../common/courseTaskBoilerplateService';
+import { stripHtmlTags } from '../../util/stripHtmlTags';
 
 const addCourseTask = async (
     moduleId: string,
@@ -16,12 +17,13 @@ const addCourseTask = async (
     userId: string,
 ) => {
     const isCodingTask = String(type || '').toUpperCase() === 'CODE';
+    const cleanTaskDescription = stripHtmlTags(taskDescription);
 
     try {
         let baseBoilerplate: string | undefined;
         if (isCodingTask) {
             try {
-                baseBoilerplate = await courseTaskBoilerplateService.generateBaseBoilerplate(taskDescription, userId);
+                baseBoilerplate = await courseTaskBoilerplateService.generateBaseBoilerplate(cleanTaskDescription, userId);
             } catch (error: any) {
                 const errorCode = String(error?.message || '');
                 console.error(`Error generating coding task boilerplate: ${errorCode}`);
@@ -41,7 +43,7 @@ const addCourseTask = async (
         const taskToSave = new CourseTaskModel({
             moduleId,
             taskName,
-            taskDescription,
+            taskDescription: cleanTaskDescription,
             thumbnail,
             status,
             type,
