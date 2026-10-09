@@ -5,13 +5,15 @@ export const CODING_TASK_SUCCESS_MESSAGES = {
     BOILERPLATE_FETCH_SUCCESS_MESSAGE: 'Coding task boilerplate generated successfully !',
     TEST_CASES_GENERATED_SUCCESS_MESSAGE: 'Coding task test cases generated successfully.',
     TEST_CASES_REUSED_SUCCESS_MESSAGE: 'Existing coding task test cases reused.',
-    TEST_CASES_FETCH_SUCCESS_MESSAGE: 'Coding task test cases fetched successfully.'
+    TEST_CASES_FETCH_SUCCESS_MESSAGE: 'Coding task test cases fetched successfully.',
+    SUBMIT_COURSE_TASK_SUCCESS_MESSAGE: 'Coding task submitted successfully.'
 };
 
 export const CODING_TASK_ERROR_MESSAGES = {
     RUN_CODE_MISSING_FIELDS_MESSAGE: 'Task, language and code are required !',
     COURSE_TASK_NOT_FOUND_MESSAGE: 'Coding task not found !',
     NOT_CODING_TASK_MESSAGE: 'This task is not a coding task !',
+    CODING_TASK_NAME_REQUIRED_MESSAGE: 'Please provide a task name for this coding task !',
     CODING_TASK_DESCRIPTION_REQUIRED_MESSAGE: 'Please provide a coding question for this task !',
     INVALID_LANGUAGE_MESSAGE: 'Please provide a valid programming language for this coding question !',
     BOILERPLATE_GENERATION_FAILED_MESSAGE: 'Unable to generate coding task boilerplate. Please try again !',
@@ -29,6 +31,9 @@ export const CODING_TASK_ERROR_MESSAGES = {
     RUN_CODE_ERROR_MESSAGE: 'An error occurred while executing the code, Please try again !',
     SUBMIT_CODE_ERROR_MESSAGE: 'An error occurred while submitting the code, Please try again !',
     SUBMIT_ALL_TESTS_MUST_PASS_MESSAGE: 'Please fix the failed test cases before submitting.',
+    SUBMIT_COMPILE_FAILED_MESSAGE: 'Please fix the compilation errors before submitting.',
+    SUBMIT_RUN_REQUIRED_MESSAGE: 'Please run the code against the test cases before submitting.',
+    SUBMIT_RESULTS_MISMATCH_MESSAGE: 'Your latest execution results do not match this submission. Please run the code again.',
     INVALID_SOURCE_CODE_MESSAGE: 'Please provide valid source code.',
     USER_AUTHENTICATION_REQUIRED_MESSAGE: 'User authentication required !'
 };

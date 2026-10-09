@@ -33,6 +33,8 @@ import validateJWTForMedia from '../middlewares/validateJWTForMedia';
 import getCourseTaskContentController from '../controllers/contentwriter/getCourseTaskContentController';
 import getCourseTaskBoilerplateController from '../controllers/common/getCourseTaskBoilerplateController';
 import generateCourseTaskTestCasesController from '../controllers/common/generateCourseTaskTestCasesController';
+import runCourseTaskCodeController from '../controllers/common/runCourseTaskCodeController';
+import submitCodeController from '../controllers/common/submitCodeController';
 import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
 import addCourseController from '../controllers/contentwriter/addCourseController';
@@ -2078,7 +2080,7 @@ commonRouter.get(
  * /generateCourseTaskTestCases:
  *   post:
  *     summary: Generate or reuse test cases for a coding course task
- *     description: Generates test cases from the task statement using the authenticated user's saved OpenRouter key. Existing cases are reused unless forceRegenerate is true.
+ *     description: Generates test cases from the coding task description using the authenticated user's saved OpenRouter key. Existing cases are reused unless forceRegenerate is true.
  *     tags:
  *       - Common
  *     security:
@@ -2115,6 +2117,49 @@ commonRouter.post(
     '/generateCourseTaskTestCases',
     validateJWT,
     generateCourseTaskTestCasesController.generateCourseTaskTestCases
+);
+
+/**
+ * @swagger
+ * /runCourseTaskCode:
+ *   post:
+ *     summary: Run code against all saved test cases and get AI feedback
+ *     description: Executes the latest source code against every saved test case for a CODE task sequentially on the backend and compares each actual output with its saved expected output, returning per-case and aggregate results. Every Run/Re-run also returns fresh advisory AI evaluation feedback for the submitted source and these execution results. Hidden test-case inputs and expected outputs are never sent to the AI provider or returned to the client. Test cases are generated on first use and reused afterwards.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - languageId
+ *               - sourceCode
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               languageId:
+ *                 type: string
+ *               sourceCode:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Code executed and compared against every saved test case
+ *       400:
+ *         description: Invalid input, task type, or language
+ *       403:
+ *         description: Task is not part of the user's assigned courses
+ *       404:
+ *         description: Course task not found or test cases not generated
+ */
+commonRouter.post(
+    '/runCourseTaskCode',
+    validateJWT,
+    runCourseTaskCodeController.runCourseTaskCode
 );
 
 
@@ -2156,6 +2201,11 @@ commonRouter.post(
  *       404:
  *         description: Coding task not found
  */
+commonRouter.post(
+    '/submitCourseTaskCode',
+    validateJWT,
+    submitCodeController.submitCode
+);
 
 /**
  * @swagger

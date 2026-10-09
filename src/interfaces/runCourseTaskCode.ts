@@ -12,9 +12,18 @@ export interface IRunCourseTaskCodeTestResult {
         | 'TIMEOUT'
         | 'EXECUTION_ERROR';
     passed: boolean;
-    expectedOutput: string;
-    actualOutput: string;
-    error: string | null;
+    /**
+     * `true` for hidden test cases. Sensitive fields (`expectedOutput`,
+     * `actualOutput`, detailed `error`) are omitted for hidden cases.
+     * Undefined is treated as visible.
+     */
+    isHidden?: boolean;
+    /** Only present for visible test cases. */
+    expectedOutput?: string;
+    /** Only present for visible test cases. */
+    actualOutput?: string;
+    /** Only present for visible test cases. */
+    error?: string | null;
     skipped?: boolean;
 }
 

@@ -1,0 +1,323 @@
+FAIL src/tests/service/common/generateTestCasesService.spec.ts
+  ● Test suite failed to run
+
+    [96msrc/tests/service/common/generateTestCasesService.spec.ts[0m:[93m2[0m:[93m38[0m - [91merror[0m[90m TS2307: [0mCannot find module '../../../services/common/generateTestCasesService' or its corresponding type declarations.
+
+    [7m2[0m import generateTestCasesService from '../../../services/common/generateTestCasesService';
+    [7m [0m [91m                                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+PASS src/tests/service/common/updateProgrammingLanguageService.spec.ts (93.653 s)
+FAIL src/tests/service/common/getAllCoursesService.spec.ts
+  ● Test suite failed to run
+
+    [96msrc/tests/service/common/getAllCoursesService.spec.ts[0m:[93m3[0m:[93m37[0m - [91merror[0m[90m TS2307: [0mCannot find module '../../../model/taskCodingQuestionModel' or its corresponding type declarations.
+
+    [7m3[0m import TaskCodingQuestionModel from '../../../model/taskCodingQuestionModel';
+    [7m [0m [91m                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+PASS src/tests/service/common/addProgrammingLanguageService.spec.ts (97.169 s)
+FAIL src/tests/controller/common/addCourseTaskController.spec.ts (97.797 s)
+  ● addCourseTaskController › returns 201 when a task is added with a link
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "m1", "Read", "Read the docs", "", "ACTIVE", "LINK", "https://example.com", "", "", false, "", []
+
+    Number of calls: 0
+
+    [0m [90m 75 |[39m
+     [90m 76 |[39m         expect(uploadThumbnailToS3Mock)[33m.[39mnot[33m.[39mtoHaveBeenCalled()[33m;[39m
+    [31m[1m>[22m[39m[90m 77 |[39m         expect(addCourseTaskMock)[33m.[39mtoHaveBeenCalledWith(
+     [90m    |[39m                                   [31m[1m^[22m[39m
+     [90m 78 |[39m             [32m'm1'[39m[33m,[39m
+     [90m 79 |[39m             [32m'Read'[39m[33m,[39m
+     [90m 80 |[39m             [32m'Read the docs'[39m[33m,[39m[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseTaskController.spec.ts:77:35)
+
+  ● addCourseTaskController › returns 201 and uploads the content when a task file is provided
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: Any<String>, {"data": [100, 97, 116, 97], "type": "Buffer"}, "application/pdf", "LMSData/Courses/CourseTaskContent"
+
+    Number of calls: 0
+
+    [0m [90m 110 |[39m         [36mawait[39m addCourseTaskController[33m.[39maddTaskToModule(req[33m,[39m res)[33m;[39m
+     [90m 111 |[39m
+    [31m[1m>[22m[39m[90m 112 |[39m         expect(uploadThumbnailToS3Mock)[33m.[39mtoHaveBeenCalledWith(
+     [90m     |[39m                                         [31m[1m^[22m[39m
+     [90m 113 |[39m             expect[33m.[39many([33mString[39m)[33m,[39m
+     [90m 114 |[39m             [33mBuffer[39m[33m.[39m[36mfrom[39m([32m'data'[39m)[33m,[39m
+     [90m 115 |[39m             [32m'application/pdf'[39m[33m,[39m[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseTaskController.spec.ts:112:41)
+
+  ● addCourseTaskController › uploads the thumbnail and passes its path when a thumbnail file is provided
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: Any<String>, {"data": [100, 97, 116, 97], "type": "Buffer"}, "image/png", "LMSData/Courses/CourseTaskThumbnails"
+
+    Number of calls: 0
+
+    [0m [90m 142 |[39m         [36mawait[39m addCourseTaskController[33m.[39maddTaskToModule(req[33m,[39m res)[33m;[39m
+     [90m 143 |[39m
+    [31m[1m>[22m[39m[90m 144 |[39m         expect(uploadThumbnailToS3Mock)[33m.[39mtoHaveBeenCalledWith(
+     [90m     |[39m                                         [31m[1m^[22m[39m
+     [90m 145 |[39m             expect[33m.[39many([33mString[39m)[33m,[39m
+     [90m 146 |[39m             [33mBuffer[39m[33m.[39m[36mfrom[39m([32m'data'[39m)[33m,[39m
+     [90m 147 |[39m             [32m'image/png'[39m[33m,[39m[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseTaskController.spec.ts:144:41)
+
+  ● addCourseTaskController › returns 400 when there is no content
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    -   "message": "Please provide a file or a link or code for the task content !",
+    +   "message": "Invalid course task type. Allowed values are LINK, FILE, CODE, QUIZ !",
+        "success": false,
+      },
+
+    Number of calls: 1
+
+    [0m [90m 171 |[39m         expect(addCourseTaskMock)[33m.[39mnot[33m.[39mtoHaveBeenCalled()[33m;[39m
+     [90m 172 |[39m         expect(mockStatus)[33m.[39mtoHaveBeenCalledWith([33mHTTP_STATUS[39m[33m.[39m[33mBAD_REQUEST[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 173 |[39m         expect(mockJson)[33m.[39mtoHaveBeenCalledWith({
+     [90m     |[39m                          [31m[1m^[22m[39m
+     [90m 174 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 175 |[39m             message[33m:[39m [33mCOURSE_TASK_ERRORS_MESSAGES[39m[33m.[39m[33mCOURSE_TASK_MISSING_CONTENT_MESSAGE[39m
+     [90m 176 |[39m         })[33m;[39m[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseTaskController.spec.ts:173:26)
+
+  ● addCourseTaskController › returns 400 when the service returns a falsy result
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    -   "message": "Error occured while adding Task to Module !",
+    +   "message": "Invalid course task type. Allowed values are LINK, FILE, CODE, QUIZ !",
+    +   "success": false,
+      },
+
+    Number of calls: 1
+
+    [0m [90m 184 |[39m
+     [90m 185 |[39m         expect(mockStatus)[33m.[39mtoHaveBeenCalledWith([33mHTTP_STATUS[39m[33m.[39m[33mBAD_REQUEST[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 186 |[39m         expect(mockJson)[33m.[39mtoHaveBeenCalledWith({
+     [90m     |[39m                          [31m[1m^[22m[39m
+     [90m 187 |[39m             message[33m:[39m [33mCOURSE_TASK_ERRORS_MESSAGES[39m[33m.[39m[33mCOURSE_TASK_ADD_ERROR_MESSAGE[39m
+     [90m 188 |[39m         })[33m;[39m
+     [90m 189 |[39m     })[33m;[39m[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseTaskController.spec.ts:186:26)
+
+  ● addCourseTaskController › returns 201 and saves a coding task with a question
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: "m1", "Read", "Read the docs", "", "ACTIVE", "LINK", "", "", "", true, "Write a function to reverse a string.", []
+
+    Number of calls: 0
+
+    [0m [90m 207 |[39m
+     [90m 208 |[39m         expect(uploadThumbnailToS3Mock)[33m.[39mnot[33m.[39mtoHaveBeenCalled()[33m;[39m
+    [31m[1m>[22m[39m[90m 209 |[39m         expect(addCourseTaskMock)[33m.[39mtoHaveBeenCalledWith(
+     [90m     |[39m                                   [31m[1m^[22m[39m
+     [90m 210 |[39m             [32m'm1'[39m[33m,[39m
+     [90m 211 |[39m             [32m'Read'[39m[33m,[39m
+     [90m 212 |[39m             [32m'Read the docs'[39m[33m,[39m[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseTaskController.spec.ts:209:35)
+
+  ● addCourseTaskController › allows a coding task with no question so questions can be added later
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: Anything, "Read", "Read the docs", "", "ACTIVE", "LINK", "", "", "", true, "", []
+
+    Number of calls: 0
+
+    [0m [90m 235 |[39m         [36mawait[39m addCourseTaskController[33m.[39maddTaskToModule(req[33m,[39m res)[33m;[39m
+     [90m 236 |[39m
+    [31m[1m>[22m[39m[90m 237 |[39m         expect(addCourseTaskMock)[33m.[39mtoHaveBeenCalledWith(
+     [90m     |[39m                                   [31m[1m^[22m[39m
+     [90m 238 |[39m             expect[33m.[39manything()[33m,[39m
+     [90m 239 |[39m             [32m'Read'[39m[33m,[39m
+     [90m 240 |[39m             [32m'Read the docs'[39m[33m,[39m[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseTaskController.spec.ts:237:35)
+
+  ● addCourseTaskController › returns 500 when the service throws
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    Expected: 500
+    Received: 400
+
+    Number of calls: 1
+
+    [0m [90m 258 |[39m         [36mawait[39m addCourseTaskController[33m.[39maddTaskToModule(req[33m,[39m res)[33m;[39m
+     [90m 259 |[39m
+    [31m[1m>[22m[39m[90m 260 |[39m         expect(mockStatus)[33m.[39mtoHaveBeenCalledWith([33mHTTP_STATUS[39m[33m.[39m[33mINTERNAL_SERVER_ERROR[39m)[33m;[39m
+     [90m     |[39m                            [31m[1m^[22m[39m
+     [90m 261 |[39m         expect(mockJson)[33m.[39mtoHaveBeenCalledWith({
+     [90m 262 |[39m             success[33m:[39m [36mfalse[39m[33m,[39m
+     [90m 263 |[39m             message[33m:[39m [33mCOURSE_TASK_ERRORS_MESSAGES[39m[33m.[39m[33mCOURSE_TASK_ADD_ERROR_MESSAGE[39m[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseTaskController.spec.ts:260:28)
+
+PASS src/tests/controller/common/updateProgrammingLanguageController.spec.ts (98.564 s)
+PASS src/tests/controller/common/addProgrammingLanguageController.spec.ts (98.669 s)
+PASS src/tests/controller/common/getCourseTaskContentController.spec.ts (14.31 s)
+PASS src/tests/controller/common/updateCourseModuleController.spec.ts (12.074 s)
+PASS src/tests/controller/common/updateCourseController.spec.ts (10.561 s)
+FAIL src/tests/controller/common/addCourseModuleController.spec.ts (10.725 s)
+  ● addCourseModuleController › returns 201 when the module is added without a thumbnail
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    +   "data": Object {
+    +     "_id": "m1",
+    +   },
+        "message": "New Module added to Course Successfully !",
+      },
+
+    Number of calls: 1
+
+    [0m [90m 53 |[39m         expect(uploadThumbnailToS3Mock)[33m.[39mnot[33m.[39mtoHaveBeenCalled()[33m;[39m
+     [90m 54 |[39m         expect(mockStatus)[33m.[39mtoHaveBeenCalledWith([33mHTTP_STATUS[39m[33m.[39m[33mCREATED[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 55 |[39m         expect(mockJson)[33m.[39mtoHaveBeenCalledWith({ message[33m:[39m [33mCOURSE_MODULE_SUCCESS_MESSAGES[39m[33m.[39m[33mCOURSE_MODULE_ADD_SUCCESS_MESSAGE[39m })[33m;[39m
+     [90m    |[39m                          [31m[1m^[22m[39m
+     [90m 56 |[39m     })[33m;[39m
+     [90m 57 |[39m
+     [90m 58 |[39m     it([32m'uploads the thumbnail and returns 201 with the generated key'[39m[33m,[39m [36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseModuleController.spec.ts:55:26)
+
+  ● addCourseModuleController › uploads the thumbnail and returns 201 with the generated key
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    +   "data": Object {
+    +     "_id": "m1",
+    +   },
+        "message": "New Module added to Course Successfully !",
+      },
+
+    Number of calls: 1
+
+    [0m [90m 74 |[39m         expect(addNewCourseModuleMock)[33m.[39mtoHaveBeenCalledWith([32m'c1'[39m[33m,[39m [32m'Intro'[39m[33m,[39m [32m'First module'[39m[33m,[39m [32m'module-thumb-key'[39m[33m,[39m [32m'ACTIVE'[39m)[33m;[39m
+     [90m 75 |[39m         expect(mockStatus)[33m.[39mtoHaveBeenCalledWith([33mHTTP_STATUS[39m[33m.[39m[33mCREATED[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 76 |[39m         expect(mockJson)[33m.[39mtoHaveBeenCalledWith({ message[33m:[39m [33mCOURSE_MODULE_SUCCESS_MESSAGES[39m[33m.[39m[33mCOURSE_MODULE_ADD_SUCCESS_MESSAGE[39m })[33m;[39m
+     [90m    |[39m                          [31m[1m^[22m[39m
+     [90m 77 |[39m     })[33m;[39m
+     [90m 78 |[39m
+     [90m 79 |[39m     it([32m'returns 500 when the service throws'[39m[33m,[39m [36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseModuleController.spec.ts:76:26)
+
+FAIL src/tests/service/common/getCourseByIdService.spec.ts
+  ● Test suite failed to run
+
+    [96msrc/tests/service/common/getCourseByIdService.spec.ts[0m:[93m3[0m:[93m37[0m - [91merror[0m[90m TS2307: [0mCannot find module '../../../model/taskCodingQuestionModel' or its corresponding type declarations.
+
+    [7m3[0m import TaskCodingQuestionModel from '../../../model/taskCodingQuestionModel';
+    [7m [0m [91m                                    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~[0m
+
+PASS src/tests/service/common/updateCourseModuleService.spec.ts (16.027 s)
+PASS src/tests/service/common/updateCourseService.spec.ts (16.294 s)
+FAIL src/tests/controller/common/addCourseController.spec.ts (12.231 s)
+  ● addCourseController › returns 201 when the course is added without a thumbnail
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    +   "data": Object {
+    +     "_id": "c1",
+    +   },
+        "message": "New Course added Successfully !",
+      },
+
+    Number of calls: 1
+
+    [0m [90m 51 |[39m         expect(uploadThumbnailToS3Mock)[33m.[39mnot[33m.[39mtoHaveBeenCalled()[33m;[39m
+     [90m 52 |[39m         expect(mockStatus)[33m.[39mtoHaveBeenCalledWith([33mHTTP_STATUS[39m[33m.[39m[33mCREATED[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 53 |[39m         expect(mockJson)[33m.[39mtoHaveBeenCalledWith({ message[33m:[39m [33mCOURSE_SUCCESS_MESSAGES[39m[33m.[39m[33mCOURSE_ADD_SUCCESS_MESSAGE[39m })[33m;[39m
+     [90m    |[39m                          [31m[1m^[22m[39m
+     [90m 54 |[39m     })[33m;[39m
+     [90m 55 |[39m
+     [90m 56 |[39m     it([32m'uploads the thumbnail and returns 201 with the generated key'[39m[33m,[39m [36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseController.spec.ts:53:26)
+
+  ● addCourseController › uploads the thumbnail and returns 201 with the generated key
+
+    expect(jest.fn()).toHaveBeenCalledWith(...expected)
+
+    - Expected
+    + Received
+
+      Object {
+    +   "data": Object {
+    +     "_id": "c1",
+    +   },
+        "message": "New Course added Successfully !",
+      },
+
+    Number of calls: 1
+
+    [0m [90m 72 |[39m         expect(addCourseMock)[33m.[39mtoHaveBeenCalledWith([32m'React'[39m[33m,[39m [32m'Frontend'[39m[33m,[39m [32m'thumb-key'[39m[33m,[39m [32m'ACTIVE'[39m)[33m;[39m
+     [90m 73 |[39m         expect(mockStatus)[33m.[39mtoHaveBeenCalledWith([33mHTTP_STATUS[39m[33m.[39m[33mCREATED[39m)[33m;[39m
+    [31m[1m>[22m[39m[90m 74 |[39m         expect(mockJson)[33m.[39mtoHaveBeenCalledWith({ message[33m:[39m [33mCOURSE_SUCCESS_MESSAGES[39m[33m.[39m[33mCOURSE_ADD_SUCCESS_MESSAGE[39m })[33m;[39m
+     [90m    |[39m                          [31m[1m^[22m[39m
+     [90m 75 |[39m     })[33m;[39m
+     [90m 76 |[39m
+     [90m 77 |[39m     it([32m'returns 500 when the service throws'[39m[33m,[39m [36masync[39m () [33m=>[39m {[0m
+
+      at Object.<anonymous> (src/tests/controller/common/addCourseController.spec.ts:74:26)
+
+PASS src/tests/service/common/generateCourseTaskTestCasesService.spec.ts
+PASS src/tests/service/common/runCourseTaskCodeStep4.spec.ts
+PASS src/tests/controller/common/getCourseByIdController.spec.ts (13.046 s)
+PASS src/tests/service/common/submitCourseTaskCodeService.spec.ts
+PASS src/tests/service/common/addCourseModuleService.spec.ts (19.198 s)
+PASS src/tests/service/common/runCourseTaskCodeService.spec.ts (5.296 s)
+PASS src/tests/service/common/wandboxExecutionService.spec.ts
+PASS src/tests/service/common/reviewCourseTaskCodeService.spec.ts
+PASS src/tests/controller/common/runCourseTaskCodeController.spec.ts (8.062 s)
+
+
+#
+# Fatal process out of memory: Zone
+#
+
+
+#
+# Fatal process out of memory: Zone
+#
+----- Native stack trace -----
+
+----- Native stack trace -----
+
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  

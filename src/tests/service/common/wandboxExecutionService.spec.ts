@@ -204,6 +204,80 @@ describe('wandboxExecutionService', () => {
         }
     });
 
+    it('never treats a non-zero compiler status with no diagnostics as success', async () => {
+        axiosPostMock.mockResolvedValue({
+            data: {
+                status: '1',
+                compiler_error: '',
+                compiler_output: '',
+                program_output: '',
+                program_error: '',
+                program_status: null,
+                exit_code: null
+            }
+        });
+
+        const result = await wandboxExecutionService.executeCode(
+            'javascript',
+            'invalid source'
+        );
+
+        expect(result).toMatchObject({
+            success: false,
+            actualOutput: '',
+            error: 'Program execution failed.',
+            compileError: null,
+            serviceError: null
+        });
+        expect(result.runtimeError).toBeTruthy();
+    });
+
+    it('treats a successful run that produces no output as success', async () => {
+        axiosPostMock.mockResolvedValue({
+            data: {
+                status: '0',
+                program_status: '0',
+                program_output: '',
+                program_error: ''
+            }
+        });
+
+        const result = await wandboxExecutionService.executeCode(
+            'python',
+            'pass'
+        );
+
+        expect(result).toMatchObject({
+            success: true,
+            actualOutput: '',
+            error: null,
+            compileError: null,
+            runtimeError: null,
+            serviceError: null
+        });
+    });
+
+    it('treats a zero compiler status without a program status and empty output as success', async () => {
+        axiosPostMock.mockResolvedValue({
+            data: {
+                status: '0',
+                program_output: ''
+            }
+        });
+
+        const result = await wandboxExecutionService.executeCode(
+            'python',
+            'pass'
+        );
+
+        expect(result).toMatchObject({
+            success: true,
+            actualOutput: '',
+            runtimeError: null,
+            serviceError: null
+        });
+    });
+
     it('captures compiler errors in the normalized result', async () => {
         axiosPostMock.mockResolvedValue({
             data: {

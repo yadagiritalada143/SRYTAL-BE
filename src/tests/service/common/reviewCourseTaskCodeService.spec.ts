@@ -74,6 +74,24 @@ describe('reviewCourseTaskCodeService', () => {
         expect(result).toEqual({ feedback: review, error: null });
     });
 
+    it('instructs the model to cover correctness, edge cases, complexity and untrusted input', async () => {
+        await reviewCourseTaskCodeService.reviewCourseTaskCode(
+            'Output the given value.',
+            'python',
+            'print(1)',
+            [],
+            userId
+        );
+
+        const systemPrompt = axiosPostMock.mock.calls[0][1].messages[0]
+            .content as string;
+        expect(systemPrompt).toContain('untrusted');
+        expect(systemPrompt).toContain('edge cases');
+        expect(systemPrompt).toContain('time and space complexity');
+        expect(systemPrompt).toContain('illustration');
+        expect(systemPrompt).toContain('hidden');
+    });
+
     it('returns unavailable feedback instead of throwing for malformed model output', async () => {
         axiosPostMock.mockResolvedValue({
             data: { choices: [{ message: { content: '{"score": 101}' } }] }
@@ -170,6 +188,71 @@ describe('reviewCourseTaskCodeService', () => {
                 score: 70
             }))
         ).toThrow('INVALID_CODE_REVIEW_RESPONSE');
+    });
+
+    it('returns unavailable feedback when the model returns empty content', async () => {
+        axiosPostMock.mockResolvedValue({
+            data: { choices: [{ message: { content: '   ' } }] }
+        });
+        const errorSpy = jest.spyOn(console, 'error').mockImplementation();
+        const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
+
+        const result = await reviewCourseTaskCodeService.reviewCourseTaskCode(
+            'task',
+            'python',
+            'print(1)',
+            [],
+            userId
+        );
+
+        expect(result).toEqual({
+            feedback: null,
+            error: 'Code review feedback is temporarily unavailable.'
+        });
+        errorSpy.mockRestore();
+        warnSpy.mockRestore();
+    });
+
+    it('returns unavailable feedback for a network timeout without leaking the key', async () => {
+        const timeoutError = Object.assign(new Error('timeout'), {
+            code: 'ECONNABORTED'
+        });
+        axiosPostMock.mockRejectedValue(timeoutError);
+        isAxiosErrorMock.mockReturnValue(true);
+        const errorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+        const result = await reviewCourseTaskCodeService.reviewCourseTaskCode(
+            'task',
+            'python',
+            'print(1)',
+            [],
+            userId
+        );
+
+        expect(result).toEqual({
+            feedback: null,
+            error: 'Code review feedback is temporarily unavailable.'
+        });
+        expect(JSON.stringify(result)).not.toContain(apiKey);
+        errorSpy.mockRestore();
+    });
+
+    it('returns unavailable feedback when the key lookup itself fails', async () => {
+        getKeyMock.mockRejectedValue(new Error('USER_OPENROUTER_KEY_NOT_FOUND'));
+        const errorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+        const result = await reviewCourseTaskCodeService.reviewCourseTaskCode(
+            'task',
+            'python',
+            'print(1)',
+            [],
+            userId
+        );
+
+        expect(axiosPostMock).not.toHaveBeenCalled();
+        expect(result.feedback).toBeNull();
+        expect(result.error).toBeTruthy();
+        errorSpy.mockRestore();
     });
 
     it('rejects valid-looking JSON when the provider reports output truncation', async () => {

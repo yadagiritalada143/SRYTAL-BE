@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { createHash } from 'crypto';
 import { Types } from 'mongoose';
 import CourseAssignment from '../../model/courseAssignmentModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
@@ -16,9 +17,9 @@ const OPENROUTER_CHAT_COMPLETIONS_URL =
 const OPENROUTER_TIMEOUT_MS = 30000;
 
 const MIN_TEST_CASES = 3;
-const MAX_TEST_CASES = 6;
+const MAX_TEST_CASES = 5;
 
-const OPENROUTER_MAX_TOKENS = 10000;
+const OPENROUTER_MAX_TOKENS = 60000;
 
 const STALE_GENERATION_LOCK_MS = 2 * 60 * 1000;
 
@@ -237,6 +238,7 @@ const parseGeneratedTestCases = (
             );
 
             if (
+                !expectedOutput.trim() ||
                 input.length > 10000 ||
                 expectedOutput.length > 10000
             ) {
@@ -308,6 +310,7 @@ const parseGeneratedTestCases = (
  * Generate test cases using the user's stored OpenRouter API key.
  */
 const requestGeneratedTestCases = async (
+    taskName: string,
     taskDescription: string,
     userId: string
 ): Promise<ICodingTaskTestCase[]> => {
@@ -380,7 +383,10 @@ const requestGeneratedTestCases = async (
                             'Do not add any additional top-level fields.',
 
                             '',
-                            'CODING TASK:',
+                            'CODING TASK NAME:',
+                            taskName.trim(),
+                            '',
+                            'CODING TASK DESCRIPTION (includes any examples and constraints):',
                             taskDescription.trim()
                         ].join('\n')
                     }
@@ -517,16 +523,18 @@ const requestGeneratedTestCases = async (
 };
 
 /**
- * Generate test cases ONLY when no completed test cases exist.
+ * Generate, persist and reuse coding-task test cases.
  *
  * IMPORTANT:
- * - No forceRegenerate.
- * - Once COMPLETED, always reuse the same test cases.
- * - Student code changes do not cause test-case regeneration.
+ * - A COMPLETED set for the SAME task description is reused without another
+ *   OpenRouter request.
+ * - forceRegenerate, or a changed task description, triggers regeneration.
+ * - Student source-code changes do not cause test-case regeneration.
  */
 const generateCourseTaskTestCases = async (
     taskId: string,
-    userId: string
+    userId: string,
+    forceRegenerate = false
 ): Promise<IGenerateCourseTaskTestCasesResult> => {
     if (!Types.ObjectId.isValid(taskId)) {
         throw new Error('INVALID_TASK_ID');
@@ -555,14 +563,22 @@ const generateCourseTaskTestCases = async (
         throw new Error('NOT_CODING_TASK');
     }
 
+    const taskName = String(task.taskName || '').trim();
     const taskDescription =
         String(task.taskDescription || '').trim();
+
+    if (!taskName) {
+        throw new Error('CODING_TASK_NAME_REQUIRED');
+    }
 
     if (!taskDescription) {
         throw new Error(
             'CODING_TASK_DESCRIPTION_REQUIRED'
         );
     }
+    const taskDescriptionHash = createHash('sha256')
+        .update(taskDescription)
+        .digest('hex');
 
     const parentModule =
         await CourseModuleModel.findById(task.moduleId)
@@ -588,30 +604,23 @@ const generateCourseTaskTestCases = async (
     /**
      * Check whether test cases already exist.
      *
-     * If they are COMPLETED, ALWAYS reuse them.
-     * There is intentionally NO forceRegenerate option.
+     * A COMPLETED set is reused only when it is still valid and was generated
+     * for the exact same task description. forceRegenerate always bypasses
+     * reuse so an authorized caller can request fresh cases.
      */
     let existing =
         await CodingTaskTestCaseModel.findOne({
             taskId
         }).lean();
 
-    if (existing?.status === 'COMPLETED') {
+    if (existing?.status === 'COMPLETED' && !forceRegenerate) {
         const storedCases = Array.isArray(
             existing.testCases
         )
             ? existing.testCases
             : [];
 
-        if (
-            storedCases.length < MIN_TEST_CASES ||
-            storedCases.length > MAX_TEST_CASES
-        ) {
-            throw new Error(
-                'STORED_TEST_CASES_INVALID'
-            );
-        }
-
+        let storedCasesAreValid = false;
         try {
             parseGeneratedTestCases(
                 JSON.stringify({
@@ -619,20 +628,23 @@ const generateCourseTaskTestCases = async (
                 }),
                 MIN_TEST_CASES
             );
+            storedCasesAreValid = storedCases.length <= MAX_TEST_CASES;
         } catch {
-            throw new Error(
-                'STORED_TEST_CASES_INVALID'
-            );
+            storedCasesAreValid = false;
         }
 
-        return {
-            taskId,
-            generated: false,
-            reused: true,
-            testCaseCount: storedCases.length,
-            generatedAt:
-                existing.generatedAt || null
-        };
+        if (
+            storedCasesAreValid &&
+            existing.taskDescriptionHash === taskDescriptionHash
+        ) {
+            return {
+                taskId,
+                generated: false,
+                reused: true,
+                testCaseCount: storedCases.length,
+                generatedAt: existing.generatedAt || null
+            };
+        }
     }
 
     /**
@@ -660,6 +672,7 @@ const generateCourseTaskTestCases = async (
         try {
             await CodingTaskTestCaseModel.create({
                 taskId,
+                taskDescriptionHash,
                 status: 'GENERATING',
                 testCases: [],
                 generatedBy: 'OpenRouter'
@@ -698,11 +711,13 @@ const generateCourseTaskTestCases = async (
             await CodingTaskTestCaseModel.findOneAndUpdate(
                 {
                     _id: existing._id,
+                    taskId,
                     ...statusFilter
                 },
                 {
                     $set: {
-                        status: 'GENERATING'
+                        status: 'GENERATING',
+                        taskDescriptionHash
                     }
                 },
                 {
@@ -721,11 +736,12 @@ const generateCourseTaskTestCases = async (
 
     try {
         /**
-         * Generate test cases ONLY because no completed
-         * test suite currently exists.
+         * Generate fresh test cases only after the generation lock has been
+         * claimed and no reusable completed set was found.
          */
         const testCases =
             await requestGeneratedTestCases(
+                taskName,
                 taskDescription,
                 userId
             );
@@ -735,11 +751,13 @@ const generateCourseTaskTestCases = async (
         await CodingTaskTestCaseModel.updateOne(
             {
                 taskId,
+                taskDescriptionHash,
                 status: 'GENERATING'
             },
             {
                 $set: {
                     status: 'COMPLETED',
+                    taskDescriptionHash,
                     testCases,
                     generatedBy: 'OpenRouter',
                     generatedAt
@@ -765,6 +783,7 @@ const generateCourseTaskTestCases = async (
         await CodingTaskTestCaseModel.updateOne(
             {
                 taskId,
+                taskDescriptionHash,
                 status: 'GENERATING'
             },
             {

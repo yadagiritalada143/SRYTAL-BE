@@ -7,6 +7,7 @@ const CodingTaskTestCaseSchema = new mongoose.Schema(
         name: { type: String, required: true },
         input: { type: String, default: '' },
         expectedOutput: { type: String, default: '' },
+        isHidden: { type: Boolean, default: false },
         category: {
             type: String,
             enum: [
@@ -37,6 +38,7 @@ const CodingTaskTestCaseSetSchema = new mongoose.Schema(
             required: true,
             unique: true
         },
+        taskDescriptionHash: { type: String },
         status: {
             type: String,
             enum: ['PENDING', 'GENERATING', 'COMPLETED', 'FAILED'],

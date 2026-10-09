@@ -13,6 +13,7 @@ export interface ICourseTask extends Document {
     thumbnail?: string;
     type?: string;
     status?: string;
+    executionMode?: 'CALLABLE' | 'STDIN' | 'UNCONFIGURED';
     content?: string;
     contentMimeType?: string;
     contentFileName?: string;

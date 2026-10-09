@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { createHash } from 'crypto';
 import CourseAssignment from '../../../model/courseAssignmentModel';
 import CourseModuleModel from '../../../model/coursemoduleModel';
 import CourseTaskModel from '../../../model/courseTaskModel';
@@ -9,7 +10,10 @@ import getUserOpenRouterKeyService from '../../../services/useropenrouter/getUse
 jest.mock('axios', () => ({
     __esModule: true,
     default: {
-        post: jest.fn()
+        post: jest.fn(),
+        isAxiosError: jest.fn((error: unknown) =>
+            Boolean(error && typeof error === 'object' && 'isAxiosError' in error)
+        )
     }
 }));
 jest.mock('../../../model/courseAssignmentModel', () => ({
@@ -40,19 +44,27 @@ jest.mock('../../../services/useropenrouter/getUserOpenRouterKeyService', () => 
 
 const taskId = '66d323456789abcdef123456';
 const userId = '65f1a2b3c4d5e6f7890abcd2';
+const taskName = 'Square a number';
+const taskDescription = 'Read an integer and output its square.';
+const taskDescriptionHash = createHash('sha256')
+    .update(taskDescription)
+    .digest('hex');
 const savedKey = 'sk-or-saved-secret';
-const generatedCases = Array.from({ length: 5 }, (_, index) => ({
+const testCases = Array.from({ length: 4 }, (_, index) => ({
     id: `TC${String(index + 1).padStart(3, '0')}`,
-    name: `Case ${index + 1}`,
+    name: `Input ${index + 1}`,
     input: String(index + 1),
-    expectedOutput: String(index + 1),
+    expectedOutput: String((index + 1) ** 2),
     category: index === 0 ? 'basic' : 'edge'
 }));
-const openRouterContent = JSON.stringify({ testCases: generatedCases });
+const openRouterContent = JSON.stringify({ testCases });
 
-const taskFindByIdMock = (CourseTaskModel as unknown as { findById: jest.Mock }).findById;
-const moduleFindByIdMock = (CourseModuleModel as unknown as { findById: jest.Mock }).findById;
-const assignmentFindOneMock = (CourseAssignment as unknown as { findOne: jest.Mock }).findOne;
+const taskFindByIdMock =
+    (CourseTaskModel as unknown as { findById: jest.Mock }).findById;
+const moduleFindByIdMock =
+    (CourseModuleModel as unknown as { findById: jest.Mock }).findById;
+const assignmentFindOneMock =
+    (CourseAssignment as unknown as { findOne: jest.Mock }).findOne;
 const testCaseFindOneMock =
     (CodingTaskTestCaseModel as unknown as { findOne: jest.Mock }).findOne;
 const testCaseFindOneAndUpdateMock =
@@ -62,45 +74,47 @@ const testCaseCreateMock =
 const testCaseUpdateOneMock =
     (CodingTaskTestCaseModel as unknown as { updateOne: jest.Mock }).updateOne;
 const axiosPostMock = axios.post as jest.Mock;
-const getKeyMock = getUserOpenRouterKeyService.getUserOpenRouterKeyService as jest.Mock;
+const getKeyMock =
+    getUserOpenRouterKeyService.getUserOpenRouterKeyService as jest.Mock;
 
-const setTaskAccessMocks = (): void => {
-    taskFindByIdMock.mockReturnValue({
-        lean: jest.fn().mockResolvedValue({
-            _id: taskId,
-            type: 'CODE',
-            taskDescription: 'Read an integer and output its square.',
-            moduleId: '66d323456789abcdef123457'
-        })
-    });
-    moduleFindByIdMock.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-            lean: jest.fn().mockResolvedValue({ courseId: '66d323456789abcdef123458' })
-        })
-    });
-    assignmentFindOneMock.mockReturnValue({
-        select: jest.fn().mockReturnValue({
-            lean: jest.fn().mockResolvedValue({ _id: 'assignment-1' })
-        })
+const setExistingSet = (result: unknown): void => {
+    testCaseFindOneMock.mockReturnValue({
+        lean: jest.fn().mockResolvedValue(result)
     });
 };
 
 describe('generateCourseTaskTestCasesService', () => {
     beforeEach(() => {
         jest.clearAllMocks();
-        setTaskAccessMocks();
-        getKeyMock.mockResolvedValue({ openrouterKey: savedKey });
-        testCaseFindOneMock.mockReturnValue({
-            lean: jest.fn().mockResolvedValue(null)
+        taskFindByIdMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue({
+                _id: taskId,
+                type: 'CODE',
+                taskName,
+                taskDescription,
+                moduleId: '66d323456789abcdef123457'
+            })
         });
+        moduleFindByIdMock.mockReturnValue({
+            select: jest.fn().mockReturnValue({
+                lean: jest.fn().mockResolvedValue({ courseId: '66d323456789abcdef123458' })
+            })
+        });
+        assignmentFindOneMock.mockReturnValue({
+            select: jest.fn().mockReturnValue({
+                lean: jest.fn().mockResolvedValue({ _id: 'assignment-1' })
+            })
+        });
+        setExistingSet(null);
         testCaseCreateMock.mockResolvedValue({});
-        testCaseUpdateOneMock.mockResolvedValue({});
+        testCaseUpdateOneMock.mockResolvedValue({ matchedCount: 1 });
+        getKeyMock.mockResolvedValue({ openrouterKey: savedKey });
         axiosPostMock.mockResolvedValue({
             data: { choices: [{ message: { content: openRouterContent } }] }
         });
     });
 
-    it('generates and stores 5 validated test cases using the saved user key', async () => {
+    it('uses the task description and saved per-user key, validates, and stores cases', async () => {
         const result =
             await generateCourseTaskTestCasesService.generateCourseTaskTestCases(
                 taskId,
@@ -109,26 +123,24 @@ describe('generateCourseTaskTestCasesService', () => {
 
         expect(getKeyMock).toHaveBeenCalledWith(userId);
         expect(axiosPostMock).toHaveBeenCalledTimes(1);
-        expect(axiosPostMock.mock.calls[0][1].max_tokens).toBe(10000);
-        expect(axiosPostMock.mock.calls[0][2].headers.Authorization).toBe(`Bearer ${savedKey}`);
         const prompt = axiosPostMock.mock.calls[0][1].messages[1].content;
-        const systemPrompt = axiosPostMock.mock.calls[0][1].messages[0].content;
-        expect(systemPrompt).toContain('ONLY the supplied coding-task statement');
-        expect(prompt).toContain('Read an integer and output its square.');
-        expect(prompt).not.toContain('submitted code');
-
+        expect(prompt).toContain(taskDescription);
+        expect(axiosPostMock.mock.calls[0][2].headers.Authorization)
+            .toBe(`Bearer ${savedKey}`);
+        expect(prompt).toContain(taskName);
+        expect(JSON.stringify(result)).not.toContain(savedKey);
         expect(testCaseCreateMock).toHaveBeenCalledWith(expect.objectContaining({
             taskId,
-            status: 'GENERATING',
-            testCases: []
+            taskDescriptionHash,
+            status: 'GENERATING'
         }));
         expect(testCaseUpdateOneMock).toHaveBeenCalledWith(
-            { taskId, status: 'GENERATING' },
+            { taskId, taskDescriptionHash, status: 'GENERATING' },
             {
                 $set: expect.objectContaining({
                     status: 'COMPLETED',
-                    testCases: generatedCases,
-                    generatedBy: 'OpenRouter'
+                    taskDescriptionHash,
+                    testCases
                 })
             }
         );
@@ -136,19 +148,15 @@ describe('generateCourseTaskTestCasesService', () => {
             taskId,
             generated: true,
             reused: false,
-            testCaseCount: 5
+            testCaseCount: 4
         });
-        expect(result).not.toHaveProperty('testCases');
-        expect(JSON.stringify(result)).not.toContain(savedKey);
     });
 
-    it('reuses valid legacy generated sets with fewer than five cases', async () => {
-        testCaseFindOneMock.mockReturnValue({
-            lean: jest.fn().mockResolvedValue({
-                status: 'COMPLETED',
-                testCases: generatedCases.slice(0, 3),
-                generatedAt: new Date('2026-10-01T00:00:00Z')
-            })
+    it('reuses valid test cases for an unchanged task without another OpenRouter request', async () => {
+        setExistingSet({
+            status: 'COMPLETED',
+            testCases,
+            taskDescriptionHash
         });
 
         const result =
@@ -157,45 +165,18 @@ describe('generateCourseTaskTestCasesService', () => {
                 userId
             );
 
-        expect(axiosPostMock).not.toHaveBeenCalled();
-        expect(result).toMatchObject({
-            generated: false,
-            reused: true,
-            testCaseCount: 3
-        });
-    });
-
-    it('reuses stored cases without calling OpenRouter', async () => {
-        testCaseFindOneMock.mockReturnValue({
-            lean: jest.fn().mockResolvedValue({
-                status: 'COMPLETED',
-                testCases: generatedCases,
-                generatedAt: new Date('2026-10-01T00:00:00Z')
-            })
-        });
-
-        const result =
-            await generateCourseTaskTestCasesService.generateCourseTaskTestCases(
-                taskId,
-                userId
-            );
-
-        expect(axiosPostMock).not.toHaveBeenCalled();
+        expect(result).toMatchObject({ generated: false, reused: true, testCaseCount: 4 });
         expect(getKeyMock).not.toHaveBeenCalled();
-        expect(result).toMatchObject({
-            generated: false,
-            reused: true,
-            testCaseCount: 5
-        });
+        expect(axiosPostMock).not.toHaveBeenCalled();
+        expect(testCaseCreateMock).not.toHaveBeenCalled();
     });
 
-    it('only regenerates existing completed cases when explicitly requested', async () => {
-        testCaseFindOneMock.mockReturnValue({
-            lean: jest.fn().mockResolvedValue({
-                _id: 'case-set-id',
-                status: 'COMPLETED',
-                testCases: generatedCases
-            })
+    it('regenerates when forceRegenerate is true', async () => {
+        setExistingSet({
+            _id: 'case-set-id',
+            status: 'COMPLETED',
+            testCases,
+            taskDescriptionHash
         });
         testCaseFindOneAndUpdateMock.mockReturnValue({
             lean: jest.fn().mockResolvedValue({ status: 'GENERATING' })
@@ -213,94 +194,312 @@ describe('generateCourseTaskTestCasesService', () => {
         expect(result).toMatchObject({ generated: true, reused: false });
     });
 
-    it('rejects a generated set below the configured minimum count', () => {
-        expect(() =>
-            generateCourseTaskTestCasesService.parseGeneratedTestCases(
-                JSON.stringify({ testCases: generatedCases.slice(0, 2) })
-            )
-        ).toThrow('INVALID_GENERATED_TEST_CASES');
-    });
-
-    it('rejects entries missing required input or output fields', () => {
-        const malformedCases = generatedCases.map((testCase) => ({ ...testCase }));
-        delete (malformedCases[0] as Partial<typeof malformedCases[number]>).expectedOutput;
-        expect(() =>
-            generateCourseTaskTestCasesService.parseGeneratedTestCases(
-                JSON.stringify({ testCases: malformedCases })
-            )
-        ).toThrow('INVALID_GENERATED_TEST_CASES');
-    });
-
-    it('normalizes model-generated IDs, category aliases, scalar outputs, and extra fields', () => {
-        const cases = generatedCases.map((testCase, index) => ({
-            ...testCase,
-            id: `case-${index}`,
-            input: index,
-            expectedOutput: index * index,
-            category: 'normal_case',
-            modelNote: 'ignored'
-        }));
-
-        const parsed = generateCourseTaskTestCasesService.parseGeneratedTestCases(
-            `Generated JSON follows:\n${JSON.stringify({ testCases: cases })}`,
-        );
-
-        expect(parsed[0]).toEqual({
-            id: 'TC001',
-            name: 'Case 1',
-            input: '0',
-            expectedOutput: '0',
-            category: 'basic'
+    it('regenerates when the coding task description changes', async () => {
+        const changedDescription = `${taskDescription} Return the result as an integer.`;
+        const changedHash = createHash('sha256').update(changedDescription).digest('hex');
+        taskFindByIdMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue({
+                _id: taskId,
+                type: 'CODE',
+                taskName,
+                taskDescription: changedDescription,
+                moduleId: '66d323456789abcdef123457'
+            })
         });
-    });
+        setExistingSet({
+            _id: 'case-set-id',
+            status: 'COMPLETED',
+            testCases,
+            taskDescriptionHash
+        });
+        testCaseFindOneAndUpdateMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue({ status: 'GENERATING' })
+        });
 
-    it('accepts the configured upper bound of 6 cases and generates sequential IDs', () => {
-        const sixCases = Array.from({ length: 6 }, (_, index) => ({
-            ...generatedCases[index % generatedCases.length],
-            id: `TC${String(index + 1).padStart(3, '0')}`,
-            name: `Case ${index + 1}`,
-            input: String(index + 1),
-            expectedOutput: String((index + 1) * (index + 1))
-        }));
-        const parsed = generateCourseTaskTestCasesService.parseGeneratedTestCases(
-            JSON.stringify({ testCases: sixCases })
+        await generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId);
+
+        expect(axiosPostMock.mock.calls[0][1].messages[1].content)
+            .toContain(changedDescription);
+        expect(testCaseFindOneAndUpdateMock.mock.calls[0][0]).toEqual(
+            expect.objectContaining({ taskId, status: 'COMPLETED' })
         );
-
-        expect(parsed).toHaveLength(6);
-        expect(parsed[5].id).toBe('TC006');
+        expect(testCaseFindOneAndUpdateMock.mock.calls[0][1].$set)
+            .toEqual(expect.objectContaining({ taskDescriptionHash: changedHash }));
     });
 
-    it('rejects a generated set above the configured maximum count', () => {
-        const sevenCases = Array.from({ length: 7 }, (_, index) => ({
-            ...generatedCases[index % generatedCases.length],
-            id: `TC${String(index + 1).padStart(3, '0')}`,
-            name: `Case ${index + 1}`,
-            input: String(index + 1),
-            expectedOutput: String((index + 1) * (index + 1))
-        }));
+    it('rejects a missing task description before calling OpenRouter', async () => {
+        taskFindByIdMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue({
+                _id: taskId,
+                type: 'CODE',
+                taskName,
+                taskDescription: ' ',
+                moduleId: '66d323456789abcdef123457'
+            })
+        });
 
-        expect(() =>
-            generateCourseTaskTestCasesService.parseGeneratedTestCases(
-                JSON.stringify({ testCases: sevenCases })
-            )
-        ).toThrow('INVALID_GENERATED_TEST_CASES');
+        await expect(
+            generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId)
+        ).rejects.toThrow('CODING_TASK_DESCRIPTION_REQUIRED');
+        expect(axiosPostMock).not.toHaveBeenCalled();
     });
 
-    it('rejects a response that OpenRouter reports as truncated', async () => {
+    it('rejects a missing task name before calling OpenRouter', async () => {
+        taskFindByIdMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue({
+                _id: taskId,
+                type: 'CODE',
+                taskName: ' ',
+                taskDescription,
+                moduleId: '66d323456789abcdef123457'
+            })
+        });
+
+        await expect(
+            generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId)
+        ).rejects.toThrow('CODING_TASK_NAME_REQUIRED');
+        expect(axiosPostMock).not.toHaveBeenCalled();
+    });
+
+    it.each([
+        ['malformed JSON', '{"testCases": ['],
+        ['blank expected output', JSON.stringify({
+            testCases: testCases.map((testCase, index) => ({
+                ...testCase,
+                expectedOutput: index === 0 ? '' : testCase.expectedOutput
+            }))
+        })]
+    ])('rejects %s and marks generation failed', async (_caseName, responseContent) => {
         axiosPostMock.mockResolvedValue({
-            data: {
-                choices: [{
-                    finish_reason: 'length',
-                    message: { content: openRouterContent }
-                }]
-            }
+            data: { choices: [{ message: { content: responseContent } }] }
         });
 
         await expect(
             generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId)
         ).rejects.toThrow('INVALID_GENERATED_TEST_CASES');
         expect(testCaseUpdateOneMock).toHaveBeenCalledWith(
-            { taskId, status: 'GENERATING' },
+            { taskId, taskDescriptionHash, status: 'GENERATING' },
+            { $set: { status: 'FAILED' } }
+        );
+    });
+
+    it('surfaces an invalid OpenRouter key and marks generation failed', async () => {
+        const error = Object.assign(new Error('Unauthorized'), {
+            isAxiosError: true,
+            response: { status: 401 }
+        });
+        axiosPostMock.mockRejectedValueOnce(error);
+
+        await expect(
+            generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId)
+        ).rejects.toThrow('OPENROUTER_KEY_INVALID');
+        expect(testCaseUpdateOneMock).toHaveBeenCalledWith(
+            { taskId, taskDescriptionHash, status: 'GENERATING' },
+            { $set: { status: 'FAILED' } }
+        );
+    });
+
+    it('rejects blank expected output during validation', () => {
+        const invalid = testCases.map((testCase, index) => ({
+            ...testCase,
+            expectedOutput: index === 0 ? '  ' : testCase.expectedOutput
+        }));
+
+        expect(() =>
+            generateCourseTaskTestCasesService.parseGeneratedTestCases(
+                JSON.stringify({ testCases: invalid })
+            )
+        ).toThrow('INVALID_GENERATED_TEST_CASES');
+    });
+
+    it('rejects a concurrent generation when the unique lock row already exists', async () => {
+        setExistingSet(null);
+        testCaseCreateMock.mockRejectedValueOnce(
+            Object.assign(new Error('E11000 duplicate key'), { code: 11000 })
+        );
+
+        await expect(
+            generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId)
+        ).rejects.toThrow('TEST_CASES_GENERATION_IN_PROGRESS');
+
+        expect(axiosPostMock).not.toHaveBeenCalled();
+        expect(testCaseUpdateOneMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects while a fresh generation lock is still held', async () => {
+        setExistingSet({
+            status: 'GENERATING',
+            updatedAt: new Date(),
+            testCases: []
+        });
+
+        await expect(
+            generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId)
+        ).rejects.toThrow('TEST_CASES_GENERATION_IN_PROGRESS');
+
+        expect(axiosPostMock).not.toHaveBeenCalled();
+        expect(testCaseFindOneAndUpdateMock).not.toHaveBeenCalled();
+    });
+
+    it('reclaims a stale generation lock and generates new cases', async () => {
+        setExistingSet({
+            _id: 'case-set-id',
+            status: 'GENERATING',
+            updatedAt: new Date(Date.now() - 5 * 60 * 1000),
+            testCases: [],
+            taskDescriptionHash
+        });
+        testCaseFindOneAndUpdateMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue({ status: 'GENERATING' })
+        });
+
+        const result =
+            await generateCourseTaskTestCasesService.generateCourseTaskTestCases(
+                taskId,
+                userId
+            );
+
+        expect(result).toMatchObject({ generated: true, reused: false, testCaseCount: 4 });
+        expect(axiosPostMock).toHaveBeenCalledTimes(1);
+        const [claimFilter] = testCaseFindOneAndUpdateMock.mock.calls[0];
+        expect(claimFilter).toEqual(
+            expect.objectContaining({ taskId, status: 'GENERATING' })
+        );
+        expect(claimFilter.updatedAt).toEqual({ $lt: expect.any(Date) });
+    });
+
+    it('regenerates when the stored completed set is incomplete', async () => {
+        setExistingSet({
+            _id: 'case-set-id',
+            status: 'COMPLETED',
+            testCases: [testCases[0]],
+            taskDescriptionHash
+        });
+        testCaseFindOneAndUpdateMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue({ status: 'GENERATING' })
+        });
+
+        const result =
+            await generateCourseTaskTestCasesService.generateCourseTaskTestCases(
+                taskId,
+                userId
+            );
+
+        expect(result).toMatchObject({ generated: true, reused: false });
+        expect(axiosPostMock).toHaveBeenCalledTimes(1);
+        expect(testCaseUpdateOneMock).toHaveBeenCalledWith(
+            { taskId, taskDescriptionHash, status: 'GENERATING' },
+            {
+                $set: expect.objectContaining({
+                    status: 'COMPLETED',
+                    testCases
+                })
+            }
+        );
+    });
+
+    it('regenerates after a previous failed generation', async () => {
+        setExistingSet({
+            _id: 'case-set-id',
+            status: 'FAILED',
+            testCases: [],
+            taskDescriptionHash
+        });
+        testCaseFindOneAndUpdateMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue({ status: 'GENERATING' })
+        });
+
+        const result =
+            await generateCourseTaskTestCasesService.generateCourseTaskTestCases(
+                taskId,
+                userId
+            );
+
+        expect(result).toMatchObject({ generated: true, reused: false });
+        expect(testCaseFindOneAndUpdateMock).toHaveBeenCalledWith(
+            expect.objectContaining({ taskId, status: 'FAILED' }),
+            { $set: expect.objectContaining({ status: 'GENERATING' }) },
+            { new: true }
+        );
+    });
+
+    it('does not write or call OpenRouter when a valid set is reused', async () => {
+        setExistingSet({
+            status: 'COMPLETED',
+            testCases,
+            taskDescriptionHash,
+            generatedAt: new Date('2026-01-01T00:00:00.000Z')
+        });
+
+        const result =
+            await generateCourseTaskTestCasesService.generateCourseTaskTestCases(
+                taskId,
+                userId
+            );
+
+        expect(result).toMatchObject({
+            generated: false,
+            reused: true,
+            testCaseCount: 4
+        });
+        expect(testCaseUpdateOneMock).not.toHaveBeenCalled();
+        expect(testCaseFindOneAndUpdateMock).not.toHaveBeenCalled();
+        expect(testCaseCreateMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects when the coding task cannot be found', async () => {
+        taskFindByIdMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue(null)
+        });
+
+        await expect(
+            generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId)
+        ).rejects.toThrow('COURSE_TASK_NOT_FOUND');
+        expect(axiosPostMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects a task that is not a coding task', async () => {
+        taskFindByIdMock.mockReturnValue({
+            lean: jest.fn().mockResolvedValue({
+                _id: taskId,
+                type: 'VIDEO',
+                taskName,
+                taskDescription,
+                moduleId: '66d323456789abcdef123457'
+            })
+        });
+
+        await expect(
+            generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId)
+        ).rejects.toThrow('NOT_CODING_TASK');
+        expect(axiosPostMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects when the user is not assigned to the course', async () => {
+        assignmentFindOneMock.mockReturnValue({
+            select: jest.fn().mockReturnValue({
+                lean: jest.fn().mockResolvedValue(null)
+            })
+        });
+
+        await expect(
+            generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId)
+        ).rejects.toThrow('TASK_NOT_ASSIGNED');
+        expect(axiosPostMock).not.toHaveBeenCalled();
+    });
+
+    it('marks generation failed and stores nothing when no OpenRouter key is saved', async () => {
+        getKeyMock.mockResolvedValue(null);
+        setExistingSet(null);
+        testCaseCreateMock.mockResolvedValue({});
+
+        await expect(
+            generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId)
+        ).rejects.toThrow('OPENROUTER_KEY_INVALID');
+
+        expect(axiosPostMock).not.toHaveBeenCalled();
+        expect(testCaseUpdateOneMock).toHaveBeenCalledWith(
+            { taskId, taskDescriptionHash, status: 'GENERATING' },
             { $set: { status: 'FAILED' } }
         );
     });

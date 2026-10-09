@@ -34,8 +34,9 @@ const CourseTaskCodeSubmissionSchema = new mongoose.Schema(
                 required: true
             },
             passed: { type: Boolean, required: true },
-            expectedOutput: { type: String, required: true },
-            actualOutput: { type: String, required: true },
+            isHidden: { type: Boolean, default: false },
+            expectedOutput: { type: String, default: '' },
+            actualOutput: { type: String, default: '' },
             error: { type: String, default: null }
         }],
         score: { type: Number, default: null },

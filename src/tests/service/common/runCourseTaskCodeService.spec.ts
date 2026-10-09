@@ -8,18 +8,13 @@ import wandboxExecutionService from '../../../services/common/wandboxExecutionSe
 import reviewCourseTaskCodeService from '../../../services/common/reviewCourseTaskCodeService';
 import runCourseTaskCodeService from '../../../services/common/runCourseTaskCodeService';
 
+/**
+ * Step 4 scope: multi-case execution only. Code review (Step 5) and submission
+ * are intentionally not exercised here.
+ */
 jest.mock('../../../model/courseAssignmentModel', () => ({
     __esModule: true,
     default: { findOne: jest.fn() }
-}));
-jest.mock('../../../services/common/reviewCourseTaskCodeService', () => ({
-    __esModule: true,
-    default: {
-        reviewCourseTaskCode: jest.fn().mockResolvedValue({
-            feedback: null,
-            error: 'Code review feedback is temporarily unavailable.'
-        })
-    }
 }));
 jest.mock('../../../model/coursemoduleModel', () => ({
     __esModule: true,
@@ -44,6 +39,10 @@ jest.mock('../../../services/common/generateCourseTaskTestCasesService', () => (
 jest.mock('../../../services/common/wandboxExecutionService', () => ({
     __esModule: true,
     default: { executeCode: jest.fn() }
+}));
+jest.mock('../../../services/common/reviewCourseTaskCodeService', () => ({
+    __esModule: true,
+    default: { reviewCourseTaskCode: jest.fn() }
 }));
 
 const taskId = '66d323456789abcdef123456';
@@ -75,7 +74,20 @@ const programmingLanguageFindOneMock =
 const generateMock =
     generateCourseTaskTestCasesService.generateCourseTaskTestCases as jest.Mock;
 const executeMock = wandboxExecutionService.executeCode as jest.Mock;
-const reviewMock = reviewCourseTaskCodeService.reviewCourseTaskCode as jest.Mock;
+const reviewMock =
+    reviewCourseTaskCodeService.reviewCourseTaskCode as jest.Mock;
+
+const reviewFeedback = {
+    score: 88,
+    suggestions: ['Consider the negative-value edge case.'],
+    codingStandards: {
+        readability: 'clear',
+        efficiency: 'O(n) time, O(1) space',
+        errorHandling: 'adequate',
+        namingConventions: 'good'
+    },
+    explanation: 'Mostly correct; review the failing visible case.'
+};
 
 const queryResult = (result: unknown): { select: jest.Mock } => ({
     select: jest.fn().mockReturnValue({
@@ -124,6 +136,7 @@ describe('runCourseTaskCodeService', () => {
             status: 'COMPLETED',
             testCases
         }));
+        reviewMock.mockResolvedValue({ feedback: reviewFeedback, error: null });
     });
 
     it('runs every stored case and compares output on the backend', async () => {
@@ -151,13 +164,6 @@ describe('runCourseTaskCodeService', () => {
                 testCaseId: 'TC001',
                 testCaseInput: '2'
             }
-        );
-        expect(reviewMock).toHaveBeenCalledWith(
-            'Read an integer and output its square.',
-            'c++',
-            'int main() {}',
-            result.execution,
-            userId
         );
         expect(result).toEqual({
             codingTaskId: taskId,
@@ -191,10 +197,11 @@ describe('runCourseTaskCodeService', () => {
                     }
                 ]
             },
-            evaluation: null,
-            evaluationError: 'Code review feedback is temporarily unavailable.',
+            evaluation: reviewFeedback,
+            evaluationError: null,
             canSubmit: true
         });
+        expect(reviewMock).toHaveBeenCalledTimes(1);
     });
 
     it('runs legacy callable tasks without an execution mode', async () => {
@@ -465,20 +472,6 @@ describe('runCourseTaskCodeService', () => {
     });
 
     it('does not generate again when completed cases already exist', async () => {
-        reviewMock.mockResolvedValueOnce({
-            feedback: {
-                score: 100,
-                suggestions: [],
-                codingStandards: {
-                    readability: 'excellent',
-                    efficiency: 'excellent',
-                    errorHandling: 'excellent',
-                    namingConventions: 'excellent'
-                },
-                explanation: 'Everything looks perfect.'
-            },
-            error: null
-        });
         executeMock
             .mockResolvedValueOnce(executionResult('wrong'))
             .mockResolvedValueOnce(executionResult('wrong'));
@@ -495,7 +488,8 @@ describe('runCourseTaskCodeService', () => {
         expect(result.execution.failedTests).toBe(2);
         expect(result.execution.allTestsPassed).toBe(false);
         expect(result.canSubmit).toBe(false);
-        expect(result.evaluation?.score).toBe(100);
+        expect(result.evaluation).toEqual(reviewFeedback);
+        expect(result.evaluationError).toBeNull();
     });
 
     it('does not submit more code after a compilation failure', async () => {
@@ -521,6 +515,8 @@ describe('runCourseTaskCodeService', () => {
         expect(result.execution.testResults[1].error).toContain('failed to compile');
         expect(result.execution.testResults[1].status).toBe('COMPILE_ERROR');
         expect(result.canSubmit).toBe(false);
+        expect(reviewMock).toHaveBeenCalledTimes(1);
+        expect(result.evaluation).toEqual(reviewFeedback);
     });
 
     it('continues to subsequent cases after a runtime error', async () => {
@@ -562,13 +558,12 @@ describe('runCourseTaskCodeService', () => {
         );
 
         expect(executeMock).toHaveBeenCalledTimes(1);
-        expect(reviewMock).not.toHaveBeenCalled();
         expect(result.execution.infrastructureError).toContain('rate limited');
         expect(result.execution.testResults[0].skipped).toBe(true);
         expect(result.execution.testResults[0].status).toBe('REQUEST_ERROR');
         expect(result.execution.testResults[1].skipped).toBe(true);
         expect(result.canSubmit).toBe(false);
-        expect(result.evaluation).toBeNull();
+        expect(result.evaluation).toEqual(reviewFeedback);
     });
 
     it('rejects a language outside the execution whitelist', async () => {
@@ -581,6 +576,236 @@ describe('runCourseTaskCodeService', () => {
             )
         ).rejects.toThrow('INVALID_LANGUAGE');
         expect(taskFindByIdMock).not.toHaveBeenCalled();
+    });
+
+    it('resolves an active database language and runs the saved cases', async () => {
+        executeMock.mockResolvedValue(executionResult('4'));
+
+        const result = await runCourseTaskCodeService.runCourseTaskCode(
+            taskId,
+            'python',
+            'print(4)',
+            userId
+        );
+
+        expect(programmingLanguageFindOneMock).toHaveBeenCalledWith({
+            canonicalKey: 'python',
+            isActive: true
+        });
+        expect(taskFindByIdMock).toHaveBeenCalled();
+        expect(result.execution.totalTests).toBe(2);
+    });
+
+    it('rejects a language that is inactive in the database', async () => {
+        programmingLanguageFindOneMock.mockReturnValue(queryResult(null));
+
+        await expect(
+            runCourseTaskCodeService.runCourseTaskCode(
+                taskId,
+                'python',
+                'print(4)',
+                userId
+            )
+        ).rejects.toThrow('INVALID_LANGUAGE');
+
+        expect(taskFindByIdMock).not.toHaveBeenCalled();
+        expect(executeMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects a language that has no database record at all', async () => {
+        programmingLanguageFindOneMock.mockReturnValue(queryResult(null));
+
+        await expect(
+            runCourseTaskCodeService.runCourseTaskCode(
+                taskId,
+                'cpp',
+                'int main() {}',
+                userId
+            )
+        ).rejects.toThrow('INVALID_LANGUAGE');
+
+        expect(executeMock).not.toHaveBeenCalled();
+    });
+
+    it('returns AI evaluation feedback when the review succeeds', async () => {
+        executeMock.mockResolvedValue(executionResult('4'));
+
+        const result = await runCourseTaskCodeService.runCourseTaskCode(
+            taskId,
+            'python',
+            'print(4)',
+            userId
+        );
+
+        expect(reviewMock).toHaveBeenCalledTimes(1);
+        expect(reviewMock.mock.calls[0][0]).toContain('TASK DESCRIPTION:');
+        expect(reviewMock.mock.calls[0][1]).toBe('python');
+        expect(reviewMock.mock.calls[0][2]).toBe('print(4)');
+        expect(result.evaluation).toEqual(reviewFeedback);
+        expect(result.evaluationError).toBeNull();
+    });
+
+    it('reviews every run with the latest source code and latest execution results', async () => {
+        executeMock
+            .mockResolvedValueOnce(executionResult('wrong'))
+            .mockResolvedValueOnce(executionResult('9'))
+            .mockResolvedValueOnce(executionResult('4'))
+            .mockResolvedValueOnce(executionResult('9'));
+        reviewMock
+            .mockResolvedValueOnce({
+                feedback: { ...reviewFeedback, score: 40 },
+                error: null
+            })
+            .mockResolvedValueOnce({
+                feedback: { ...reviewFeedback, score: 90 },
+                error: null
+            });
+
+        const firstRun = await runCourseTaskCodeService.runCourseTaskCode(
+            taskId,
+            'python',
+            'print("version 1")',
+            userId
+        );
+        const secondRun = await runCourseTaskCodeService.runCourseTaskCode(
+            taskId,
+            'python',
+            'print("version 2")',
+            userId
+        );
+
+        expect(generateMock).not.toHaveBeenCalled();
+        expect(reviewMock).toHaveBeenCalledTimes(2);
+
+        const [, firstLanguage, firstSource, firstResults] =
+            reviewMock.mock.calls[0];
+        expect(firstLanguage).toBe('python');
+        expect(firstSource).toBe('print("version 1")');
+        expect(
+            (firstResults as { passed: boolean }[]).map(({ passed }) => passed)
+        ).toEqual([false, true]);
+
+        const [, secondLanguage, secondSource, secondResults] =
+            reviewMock.mock.calls[1];
+        expect(secondLanguage).toBe('python');
+        expect(secondSource).toBe('print("version 2")');
+        expect(
+            (secondResults as { passed: boolean }[]).map(({ passed }) => passed)
+        ).toEqual([true, true]);
+
+        expect(firstRun.evaluation?.score).toBe(40);
+        expect(secondRun.evaluation?.score).toBe(90);
+        expect(firstRun.execution.passedTests).toBe(1);
+        expect(secondRun.execution.passedTests).toBe(2);
+    });
+
+    it('preserves execution results when the AI review is unavailable', async () => {
+        executeMock
+            .mockResolvedValueOnce(executionResult('4'))
+            .mockResolvedValueOnce(executionResult('9'));
+        reviewMock.mockResolvedValueOnce({
+            feedback: null,
+            error: 'Code review feedback is temporarily unavailable.'
+        });
+
+        const result = await runCourseTaskCodeService.runCourseTaskCode(
+            taskId,
+            'python',
+            'print(4)',
+            userId
+        );
+
+        expect(result.execution).toMatchObject({
+            totalTests: 2,
+            passedTests: 2,
+            failedTests: 0,
+            allTestsPassed: true
+        });
+        expect(result.evaluation).toBeNull();
+        expect(result.evaluationError).toBe(
+            'Code review feedback is temporarily unavailable.'
+        );
+        expect(result.canSubmit).toBe(true);
+    });
+
+    it('never sends hidden inputs or expected outputs to the AI provider', async () => {
+        testCaseFindOneMock.mockReturnValue(queryResult({
+            taskId,
+            status: 'COMPLETED',
+            testCases: [
+                {
+                    id: 'TC001',
+                    name: 'Visible',
+                    input: '2',
+                    expectedOutput: '4',
+                    category: 'basic'
+                },
+                {
+                    id: 'H1',
+                    name: 'Secret overflow case',
+                    input: '2147483647',
+                    expectedOutput: '2147483648',
+                    category: 'boundary',
+                    isHidden: true
+                }
+            ]
+        }));
+        executeMock
+            .mockResolvedValueOnce(executionResult('4'))
+            .mockResolvedValueOnce(executionResult('0'));
+
+        await runCourseTaskCodeService.runCourseTaskCode(
+            taskId,
+            'python',
+            'print(4)',
+            userId
+        );
+
+        const reviewPayload = JSON.stringify(reviewMock.mock.calls[0][3]);
+        expect(reviewPayload).not.toContain('2147483647');
+        expect(reviewPayload).not.toContain('2147483648');
+        expect(reviewPayload).not.toContain('Secret overflow case');
+        expect(reviewMock.mock.calls[0][3]).toEqual([
+            {
+                testCaseId: 'TC001',
+                name: 'Visible',
+                status: 'PASSED',
+                passed: true,
+                expectedOutput: '4',
+                actualOutput: '4',
+                error: null
+            },
+            {
+                testCaseId: 'H1',
+                name: 'Hidden test case',
+                status: 'WRONG_OUTPUT',
+                passed: false,
+                isHidden: true
+            }
+        ]);
+    });
+
+    it('never lets AI feedback override actual test results', async () => {
+        executeMock.mockResolvedValue(executionResult('wrong'));
+        reviewMock.mockResolvedValueOnce({
+            feedback: { ...reviewFeedback, score: 100 },
+            error: null
+        });
+
+        const result = await runCourseTaskCodeService.runCourseTaskCode(
+            taskId,
+            'python',
+            'print(0)',
+            userId
+        );
+
+        expect(result.evaluation?.score).toBe(100);
+        expect(result.execution).toMatchObject({
+            passedTests: 0,
+            failedTests: 2,
+            allTestsPassed: false
+        });
+        expect(result.canSubmit).toBe(false);
     });
 
     it('preserves meaningful output whitespace while tolerating one trailing newline', () => {

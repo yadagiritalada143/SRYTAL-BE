@@ -222,11 +222,17 @@ const normalizeWandboxResponse = (
     }
 
     const processStatus = response.program_status ?? response.exit_code;
+    const processStatusMissing =
+        processStatus === undefined || processStatus === null;
+    /**
+     * A missing program status is only success when Wandbox also reported a
+     * zero compiler status. A missing exit status combined with a non-zero
+     * compiler status must be treated as a failure, otherwise empty diagnostic
+     * fields would silently turn a failed run into `success: true`.
+     */
     const nonZeroExit =
-        processStatus !== undefined &&
-        processStatus !== null &&
-        String(processStatus) !== '0' ||
-        (processStatus === undefined && wandboxStatus !== '0');
+        (!processStatusMissing && String(processStatus) !== '0') ||
+        (processStatusMissing && wandboxStatus !== '0');
     const timeout = /timed?\s*out|time.?limit|timeout/i.test(stderr) ||
         (typeof response.signal === 'string' && /timeout|killed/i.test(response.signal));
     const terminated = response.signal !== undefined &&
@@ -294,7 +300,7 @@ const getTransportFailure = (
             code: axiosError.code,
             status: axiosError.response?.status,
             statusText: axiosError.response?.statusText,
-            data: axiosError.response?.data
+            hasResponseData: axiosError.response?.data !== undefined
         });
         if (
             axiosError.code === 'ECONNABORTED' ||
@@ -445,7 +451,8 @@ const executeCode = async (
         languageName: context?.languageName || languageEntry.displayName,
         wandboxCompiler: compiler.name,
         testCaseId: context?.testCaseId,
-        testInput: context?.testCaseInput,
+        testInputLength: context?.testCaseInput?.length ?? 0,
+        stdinLength: requestPayload.stdin.length,
         generatedRunner: Boolean(javaRunnerSource),
         runnerClassName: javaRunnerSource ? 'Main' : null,
         entryPointClass: canonicalLanguage === 'java' ? 'prog' : null,
@@ -458,6 +465,7 @@ const executeCode = async (
         method: 'POST',
         request: {
             ...requestPayload,
+            stdin: '[omitted]',
             code: '[omitted]',
             ...(requestPayload.codes
                 ? {
@@ -470,7 +478,6 @@ const executeCode = async (
                 }
                 : {})
         },
-        stdin: requestPayload.stdin,
         code: '[omitted]',
         codeLength: sourceCode.length,
         codeHash: createHash('sha256').update(sourceCode).digest('hex'),
@@ -494,9 +501,20 @@ const executeCode = async (
             languageName: context?.languageName || languageEntry.displayName,
             wandboxCompiler: compiler.name,
             testCaseId: context?.testCaseId,
-            status: response.status,
-            statusText: response.statusText,
-            data: response.data
+            httpStatus: response.status,
+            httpStatusText: response.statusText,
+            compileStatus: response.data?.status ?? null,
+            programStatus:
+                response.data?.program_status ??
+                response.data?.exit_code ??
+                null,
+            signal: response.data?.signal ?? null,
+            hasCompilerError: Boolean(response.data?.compiler_error),
+            hasProgramError: Boolean(response.data?.program_error),
+            programOutputLength:
+                typeof response.data?.program_output === 'string'
+                    ? response.data.program_output.length
+                    : 0
         });
         return normalizeWandboxResponse(response.data || {}, Date.now() - startedAt);
     } catch (error: unknown) {
