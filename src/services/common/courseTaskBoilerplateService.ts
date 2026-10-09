@@ -90,7 +90,7 @@ const extractCode = (content: string): string => {
 
 const generateBaseBoilerplate = async (taskDescription: string, userId: string): Promise<any> => {
     if (!taskDescription.trim()) {
-        throw new Error('TASK_DESCRIPTION_REQUIRED');
+        throw new Error('CODING_TASK_DESCRIPTION_REQUIRED');
     }
 
     const response = await requestOpenRouter( userId,
@@ -120,7 +120,7 @@ const generateLanguageBoilerplate = async (
     userId: string
 ): Promise<string> => {
     if (!taskDescription.trim()) {
-        throw new Error('CODING_QUESTION_REQUIRED');
+        throw new Error('CODING_TASK_DESCRIPTION_REQUIRED');
     }
 
     const response = await requestOpenRouter(
@@ -172,7 +172,7 @@ const getOrGenerateCourseTaskBoilerplate = async (
         throw new Error('NOT_CODING_TASK');
     }
     if (!String(task.taskDescription || '').trim()) {
-        throw new Error('CODING_QUESTION_REQUIRED');
+        throw new Error('CODING_TASK_DESCRIPTION_REQUIRED');
     }
 
     const [parentModule, language] = await Promise.all([

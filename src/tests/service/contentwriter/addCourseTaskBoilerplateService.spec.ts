@@ -82,6 +82,7 @@ describe('addCourseTaskService coding boilerplate', () => {
                 moduleId: 'module-id',
                 taskDescription: 'Return the supplied value.',
                 type: 'CODE',
+                executionMode: 'CALLABLE',
                 baseBoilerplate: 'function solve(value) { /* TODO */ }'
             })
         );

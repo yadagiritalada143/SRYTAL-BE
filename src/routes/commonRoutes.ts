@@ -32,6 +32,7 @@ import updateCourseTaskController from '../controllers/contentwriter/updateCours
 import validateJWTForMedia from '../middlewares/validateJWTForMedia';
 import getCourseTaskContentController from '../controllers/contentwriter/getCourseTaskContentController';
 import getCourseTaskBoilerplateController from '../controllers/common/getCourseTaskBoilerplateController';
+import generateCourseTaskTestCasesController from '../controllers/common/generateCourseTaskTestCasesController';
 import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
 import addCourseController from '../controllers/contentwriter/addCourseController';
@@ -2071,6 +2072,90 @@ commonRouter.get(
     validateJWT,
     getCourseTaskBoilerplateController.getCourseTaskBoilerplate
 );
+
+/**
+ * @swagger
+ * /generateCourseTaskTestCases:
+ *   post:
+ *     summary: Generate or reuse test cases for a coding course task
+ *     description: Generates test cases from the task statement using the authenticated user's saved OpenRouter key. Existing cases are reused unless forceRegenerate is true.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               forceRegenerate:
+ *                 type: boolean
+ *                 default: false
+ *     responses:
+ *       200:
+ *         description: Test cases generated or reused
+ *       400:
+ *         description: Invalid input, task type, or OpenRouter key
+ *       403:
+ *         description: Task is not part of the user's assigned courses
+ *       404:
+ *         description: Course task not found
+ *       409:
+ *         description: Test cases are currently being generated
+ *       502:
+ *         description: Test-case generation failed
+ */
+commonRouter.post(
+    '/generateCourseTaskTestCases',
+    validateJWT,
+    generateCourseTaskTestCasesController.generateCourseTaskTestCases
+);
+
+
+
+/**
+ * @swagger
+ * /submitCourseTaskCode:
+ *   post:
+ *     summary: Submit a coding-task solution
+ *     description: Re-executes the submitted source against the task's saved mandatory test cases and stores a submission only when compilation and every test pass. Any canSubmit value sent by the client is ignored.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - codingTaskId
+ *               - language
+ *               - sourceCode
+ *             properties:
+ *               codingTaskId:
+ *                 type: string
+ *               language:
+ *                 type: string
+ *               sourceCode:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Submission saved, or rejected because test cases failed
+ *       400:
+ *         description: Invalid submission request
+ *       403:
+ *         description: Coding task is not assigned to the current user
+ *       404:
+ *         description: Coding task not found
+ */
 
 /**
  * @swagger

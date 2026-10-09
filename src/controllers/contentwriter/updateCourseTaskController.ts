@@ -22,12 +22,22 @@ const uploadToS3 = async (
 
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
-        const { id, taskName, taskDescription, status } = req.body;
+        const { id, taskName, taskDescription, status, executionMode } = req.body;
 
         if (!isValidStatus(status)) {
             return res.status(400).json({
                 success: false,
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_STATUS_MESSAGE,
+            });
+        }
+        if (
+            executionMode !== undefined &&
+            executionMode !== 'CALLABLE' &&
+            executionMode !== 'STDIN'
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'Execution mode must be CALLABLE or STDIN.'
             });
         }
         const files = req.files as {[fieldname: string]: Express.Multer.File[]};
@@ -77,6 +87,9 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContent,
             newContentMimeType,
             newContentFileName,
+            undefined,
+            undefined,
+            executionMode
 
         );
         res.status(200).json(updateCourseResponse);

@@ -9,6 +9,11 @@ const CourseTaskSchema = new mongoose.Schema({
     thumbnail: { type: mongoose.Schema.Types.String },
     status: { type: mongoose.Schema.Types.String, enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' },
     type: { type: mongoose.Schema.Types.String, enum: ['CODE', 'QUIZ', 'LINK', 'FILE'] },
+    executionMode: {
+        type: mongoose.Schema.Types.String,
+        enum: ['CALLABLE', 'STDIN', 'UNCONFIGURED'],
+        default: 'UNCONFIGURED'
+    },
     // Reference to the task content. For type 'LINK' this is the external URL
     // (YouTube, blog, etc). For type 'FILE' this is the S3 object key of the
     // uploaded file (pdf/word/any). Served back via /getCourseTaskContent/:id.

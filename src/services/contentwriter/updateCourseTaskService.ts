@@ -1,7 +1,7 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 import { IUpdateCourseTaskResponse } from '../../interfaces/courseTask';
 
-const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string): Promise<IUpdateCourseTaskResponse> => {
+const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string, executionMode?: 'CALLABLE' | 'STDIN') : Promise<IUpdateCourseTaskResponse> => {
     try {
         const existingTask = await CourseTaskModel.findById(id);
 
@@ -16,6 +16,12 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
             taskDescription,
             status,
         };
+        if (executionMode) {
+            if (String(existingTask.type || '').toUpperCase() !== 'CODE') {
+                throw new Error('EXECUTION_MODE_REQUIRES_CODING_TASK');
+            }
+            updateData.executionMode = executionMode;
+        }
         const codingQuestionChanged =
             String(existingTask.type || '').toUpperCase() === 'CODE' &&
             existingTask.taskDescription !== taskDescription;

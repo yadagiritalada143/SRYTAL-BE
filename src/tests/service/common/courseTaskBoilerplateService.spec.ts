@@ -105,6 +105,13 @@ describe('courseTaskBoilerplateService', () => {
             .toBe('Bearer sk-test');
     });
 
+    it('reports a missing coding description with the API-recognized error code', async () => {
+        await expect(
+            courseTaskBoilerplateService.generateBaseBoilerplate('', userId)
+        ).rejects.toThrow('CODING_TASK_DESCRIPTION_REQUIRED');
+        expect(axiosPostMock).not.toHaveBeenCalled();
+    });
+
     it('returns cached starter code for the requested language ID', async () => {
         setLeanResult(taskFindByIdMock, {
             _id: taskId,
@@ -122,6 +129,25 @@ describe('courseTaskBoilerplateService', () => {
             );
 
         expect(result).toBe('function solve(value) {}');
+        expect(axiosPostMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects a coding task with no description before generating language code', async () => {
+        setLeanResult(taskFindByIdMock, {
+            _id: taskId,
+            type: 'CODE',
+            taskDescription: '',
+            starterCode: [],
+            moduleId: '66d323456789abcdef123457'
+        });
+
+        await expect(
+            courseTaskBoilerplateService.getOrGenerateCourseTaskBoilerplate(
+                taskId,
+                languageId,
+                userId
+            )
+        ).rejects.toThrow('CODING_TASK_DESCRIPTION_REQUIRED');
         expect(axiosPostMock).not.toHaveBeenCalled();
     });
 
