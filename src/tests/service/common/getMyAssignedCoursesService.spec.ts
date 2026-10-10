@@ -100,6 +100,28 @@ describe('getMyAssignedCoursesService', () => {
         expect(result).toEqual({ success: true, courses: [] });
     });
 
+    it('excludes assignments whose course is archived', async () => {
+        mockFindChain([
+            {
+                _id: 'assign1',
+                courseId: {
+                    _id: 'course1',
+                    courseName: 'React',
+                    courseDescription: 'Frontend',
+                    status: 'ARCHIVE'
+                },
+                assignedAt: new Date('2026-07-01T00:00:00Z'),
+                dueDate: null,
+                completedAt: null,
+                status: 'Assigned'
+            }
+        ]);
+
+        const result = await getMyAssignedCoursesService.getMyAssignedCourses('emp1');
+
+        expect(result).toEqual({ success: true, courses: [] });
+    });
+
     it('returns the course summaries including progress and signing status', async () => {
         const now = new Date();
         mockFindChain([

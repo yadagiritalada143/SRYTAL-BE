@@ -18,7 +18,13 @@ const getMyAssignedCourseById = async (
         .populate({ path: 'courseId', model: CourseModel })
         .lean();
 
-    if (!assignment || !assignment.courseId) {
+    // Archived courses (and assignments whose course was deleted) are not made
+    // available to employees.
+    if (
+        !assignment ||
+        !assignment.courseId ||
+        String(assignment.courseId.status || '').toUpperCase() === 'ARCHIVE'
+    ) {
         return { success: false };
     }
 

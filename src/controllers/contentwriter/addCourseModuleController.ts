@@ -11,6 +11,20 @@ const addModuleToCourse = async (req: Request, res: Response) => {
         const { courseId, moduleName, moduleDescription } = req.body;
         let uniqueThumbnailKey: string = '';
 
+        if (!String(courseId || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_COURSE_ID_REQUIRED_MESSAGE
+            });
+        }
+
+        if (!String(moduleName || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_NAME_REQUIRED_MESSAGE
+            });
+        }
+
         // Code to upload the thumbnail to AWS S3 //
         if (req.file) {
             const { originalname, buffer, mimetype } = req.file;

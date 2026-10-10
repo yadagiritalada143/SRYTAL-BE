@@ -40,18 +40,19 @@ const addCourseTaskSchema = Joi.object({
             'string.empty': 'Task type is required.',
             'any.only': 'Task type must be LINK, FILE, or CODE.'
         }),
-    link: Joi.string()
-        .trim()
-        .uri({ scheme: ['http', 'https'] })
-        .when('type', {
-            is: 'LINK',
-            then: Joi.required().messages({
+    link: Joi.when('type', {
+        is: 'LINK',
+        then: Joi.string()
+            .trim()
+            .uri({ scheme: ['http', 'https'] })
+            .required()
+            .messages({
                 'any.required': 'A valid HTTP or HTTPS link is required for LINK tasks.',
                 'string.empty': 'A valid HTTP or HTTPS link is required for LINK tasks.',
                 'string.uri': 'A valid HTTP or HTTPS link is required for LINK tasks.'
             }),
-            otherwise: Joi.optional()
-        }),
+        otherwise: Joi.string().trim().allow('', null).optional()
+    }),
     taskFileUploaded: Joi.boolean()
         .when('type', {
             is: 'FILE',
