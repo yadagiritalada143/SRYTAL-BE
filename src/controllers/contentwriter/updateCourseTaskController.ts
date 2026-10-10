@@ -6,6 +6,7 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
 import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../config/awsS3Config';
+import { isAllowedCourseTaskFile } from '../../util/validateCourseTaskFile';
 
 // Uploads one multer file to the given S3 folder under a unique name and
 // returns the object key.
@@ -22,12 +23,22 @@ const uploadToS3 = async (
 
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
-        const { id, taskName, taskDescription, status } = req.body;
+        const { id, taskName, taskDescription, status, executionMode } = req.body;
 
         if (!isValidStatus(status)) {
             return res.status(400).json({
                 success: false,
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_STATUS_MESSAGE,
+            });
+        }
+        if (
+            executionMode !== undefined &&
+            executionMode !== 'CALLABLE' &&
+            executionMode !== 'STDIN'
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'Execution mode must be CALLABLE or STDIN.'
             });
         }
         const files = req.files as {[fieldname: string]: Express.Multer.File[]};
@@ -42,6 +53,13 @@ const updateCourseTask = async (req: Request, res: Response) => {
         let newThumbnail: string | undefined;
 
         if (taskFile) {
+            if (!isAllowedCourseTaskFile(taskFile)) {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_FILE_TYPE_MESSAGE,
+                });
+            }
+
             newContent = await uploadToS3(taskFile, courseTaskContentFolder);
             newContentMimeType = taskFile.mimetype;
             newContentFileName = taskFile.originalname;
@@ -77,6 +95,9 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContent,
             newContentMimeType,
             newContentFileName,
+            undefined,
+            undefined,
+            executionMode
 
         );
         res.status(200).json(updateCourseResponse);

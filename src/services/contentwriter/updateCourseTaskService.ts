@@ -1,7 +1,8 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 import { IUpdateCourseTaskResponse } from '../../interfaces/courseTask';
+import { stripHtmlTags } from '../../util/stripHtmlTags';
 
-const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string): Promise<IUpdateCourseTaskResponse> => {
+const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string, executionMode?: 'CALLABLE' | 'STDIN') : Promise<IUpdateCourseTaskResponse> => {
     try {
         const existingTask = await CourseTaskModel.findById(id);
 
@@ -11,11 +12,25 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
             };
         }
 
+        const cleanTaskDescription = stripHtmlTags(taskDescription);
+
         const updateData: any = {
             taskName,
-            taskDescription,
+            taskDescription: cleanTaskDescription,
             status,
         };
+        if (executionMode) {
+            if (String(existingTask.type || '').toUpperCase() !== 'CODE') {
+                throw new Error('EXECUTION_MODE_REQUIRES_CODING_TASK');
+            }
+            updateData.executionMode = executionMode;
+        }
+        const codingQuestionChanged =
+            String(existingTask.type || '').toUpperCase() === 'CODE' &&
+            existingTask.taskDescription !== cleanTaskDescription;
+        if (codingQuestionChanged) {
+            updateData.starterCode = [];
+        }
 
         if (newThumbnail) {
             updateData.thumbnail = newThumbnail;
@@ -36,6 +51,9 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
                 id,
                 {
                     $set: updateData,
+                    ...(codingQuestionChanged
+                        ? { $unset: { baseBoilerplate: 1 } }
+                        : {})
                 },
                 {
                     new: true,

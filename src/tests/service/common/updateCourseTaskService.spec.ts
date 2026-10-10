@@ -117,6 +117,48 @@ describe('updateCourseTaskService', () => {
         expect(result).toEqual({ success: true, responseAfterUpdate: updatedTask });
     });
 
+    it('sets the execution mode for an existing coding task', async () => {
+        findByIdMock.mockResolvedValue({
+            _id: 't1',
+            type: 'CODE',
+            taskDescription: 'Return the supplied value.',
+            thumbnail: null,
+            content: null
+        });
+        findByIdAndUpdateMock.mockResolvedValue({
+            _id: 't1',
+            type: 'CODE',
+            executionMode: 'CALLABLE'
+        });
+
+        await updateCourseTaskService.updateCourseTask(
+            't1',
+            'Function task',
+            'Return the supplied value.',
+            undefined,
+            'ACTIVE',
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            'CALLABLE'
+        );
+
+        expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
+            't1',
+            {
+                $set: {
+                    taskName: 'Function task',
+                    taskDescription: 'Return the supplied value.',
+                    status: 'ACTIVE',
+                    executionMode: 'CALLABLE'
+                }
+            },
+            { new: true, runValidators: true }
+        );
+    });
+
     it('does not touch coding fields when not provided', async () => {
         findByIdMock.mockResolvedValue({ _id: 't1', thumbnail: null, content: null, isCoding: true, question: 'old question' });
         const updatedTask = { _id: 't1', taskName: 'Read', status: 'ARCHIVE' };

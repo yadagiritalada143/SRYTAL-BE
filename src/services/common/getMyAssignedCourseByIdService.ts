@@ -18,19 +18,21 @@ const getMyAssignedCourseById = async (
         .populate({ path: 'courseId', model: CourseModel })
         .lean();
 
-    if (!assignment || !assignment.courseId) {
+    // Archived courses (and assignments whose course was deleted) are not made
+    // available to employees.
+    if (
+        !assignment ||
+        !assignment.courseId ||
+        String(assignment.courseId.status || '').toUpperCase() === 'ARCHIVE'
+    ) {
         return { success: false };
     }
 
     const course = assignment.courseId;
 
-    const [modulesByCourse, completedByAssignment, completedQuestionsByAssignment] = await Promise.all([
+    const [modulesByCourse, completedByAssignment] = await Promise.all([
         courseProgress.getActiveModulesByCourse([String(course._id)]),
-        courseProgress.getCompletedTaskIds([String(assignment._id)]),
-        courseProgress.getCompletedQuestionCounts(
-            [String(assignment._id)],
-            new Map([[String(assignment._id), String(assignment.employeeId)]])
-        )
+        courseProgress.getCompletedTaskIds([String(assignment._id)])
     ]);
 
     const courseModules = modulesByCourse.get(String(course._id)) || [];
@@ -41,8 +43,7 @@ const getMyAssignedCourseById = async (
     const modules = courseProgress.buildCourseModules(
         courseModules,
         tasksByModule,
-        completedByAssignment.get(String(assignment._id)) || new Map(),
-        completedQuestionsByAssignment.get(String(assignment._id))
+        completedByAssignment.get(String(assignment._id)) || new Map()
     );
 
     const progress = courseProgress.summariseProgress(modules);

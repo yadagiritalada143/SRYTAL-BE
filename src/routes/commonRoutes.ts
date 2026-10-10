@@ -10,6 +10,8 @@ import getMyNavMenuController from '../controllers/common/getMyNavMenuController
 import uploadProfileImageController from '../controllers/common/uploadProfileImageController';
 import getProfileImageController from '../controllers/common/getProfileImageController';
 import validateJWT from '../middlewares/validateJWT';
+import validateAddCourseTask from '../middlewares/validateAddCourseTask';
+import addCourseTaskSchenm from '../middlewares/schemas/addCourseTaskSchema';
 import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
 import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
@@ -24,14 +26,15 @@ import updateProgrammingLanguageController from '../controllers/common/updatePro
 import getAllProgrammingLanguagesController from '../controllers/common/getAllProgrammingLanguagesController';
 import getProgrammingLanguageByIdController from '../controllers/common/getProgrammingLanguageByIdController';
 import deleteProgrammingLanguageController from '../controllers/common/deleteProgrammingLanguageController';
-import getQuestionController from '../controllers/common/getQuestionController';
-import runCodeController from '../controllers/common/runCodeController';
-import submitCodeController from '../controllers/common/submitCodeController';
 import updateCourseController from '../controllers/contentwriter/updateCourseController';
 import updateCourseModuleController from '../controllers/contentwriter/updateCourseModuleController';
 import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
 import validateJWTForMedia from '../middlewares/validateJWTForMedia';
 import getCourseTaskContentController from '../controllers/contentwriter/getCourseTaskContentController';
+import getCourseTaskBoilerplateController from '../controllers/common/getCourseTaskBoilerplateController';
+import generateCourseTaskTestCasesController from '../controllers/common/generateCourseTaskTestCasesController';
+import runCourseTaskCodeController from '../controllers/common/runCourseTaskCodeController';
+import submitCodeController from '../controllers/common/submitCodeController';
 import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
 import addCourseController from '../controllers/contentwriter/addCourseController';
@@ -1442,7 +1445,6 @@ commonRouter.post('/expertconsultation', expertConsultationController.createExpe
  */
 commonRouter.post('/addprogramminglanguage', validateJWT, addProgrammingLanguageController.addProgrammingLanguage);
 
-
 /**
  * @swagger
  * /updateprogramminglanguage:
@@ -1696,498 +1698,6 @@ commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT, deleteProgram
 
 /**
  * @swagger
- * /getquestion/{taskid}/{questionid}/{languageid}:
- *   get:
- *     summary: Get a coding question
- *     description: |
- *       Fetches a coding question for an assigned coding task.
- *
- *       The question is stored in the `task-coding-questions` collection
- *       and is identified using both `taskId` and `questionId`.
- *
- *       The selected programming language is identified using `languageId`.
- *
- *       If starter code for the selected question and language does not
- *       already exist, boilerplate code is generated and returned.
- *
- *       The API also returns the user's latest submitted code for the
- *       selected task, question, and programming language.
- *
- *     tags:
- *       - Coding Question
- *
- *     security:
- *       - BearerAuth: []
- *
- *     parameters:
- *       - in: path
- *         name: taskid
- *         required: true
- *         description: MongoDB ObjectId of the coding task
- *         schema:
- *           type: string
- *           example: "6ac0c4624e3e70ca5f8cdabb"
- *
- *       - in: path
- *         name: questionid
- *         required: true
- *         description: MongoDB ObjectId of the coding question
- *         schema:
- *           type: string
- *           example: "6ac0c4624e3e70ca5f8cdabc"
- *
- *       - in: path
- *         name: languageid
- *         required: true
- *         description: MongoDB ObjectId of the selected programming language
- *         schema:
- *           type: string
- *           example: "6ab257338673e91df1c8ea1c"
- *
- *     responses:
- *       200:
- *         description: Coding question fetched successfully
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: true
- *
- *                 message:
- *                   type: string
- *                   example: "Coding question fetched successfully"
- *
- *                 taskId:
- *                   type: string
- *                   description: MongoDB ObjectId of the coding task
- *                   example: "6ac0c4624e3e70ca5f8cdabb"
- *
- *                 questionId:
- *                   type: string
- *                   description: MongoDB ObjectId of the coding question
- *                   example: "6ac0c4624e3e70ca5f8cdabc"
- *
- *                 taskName:
- *                   type: string
- *                   description: Name of the coding task
- *                   example: "JavaScript Array Coding Assessment"
- *
- *                 question:
- *                   type: string
- *                   description: Coding question text
- *                   example: "Find the maximum number in an array"
- *
- *                 description:
- *                   type: string
- *                   description: Additional question description or instructions
- *                   example: "Given an array of numbers, return the largest number."
- *
- *                 allowedLanguages:
- *                   type: array
- *                   description: Programming languages available for the coding task
- *                   items:
- *                     type: string
- *                   example:
- *                     - JavaScript
- *                     - TypeScript
- *                     - Python
- *                     - Java
- *                     - C++
- *
- *                 language:
- *                   type: string
- *                   description: Canonical name of the selected programming language
- *                   example: "javascript"
- *
- *                 languageId:
- *                   type: string
- *                   description: MongoDB ObjectId of the selected programming language
- *                   example: "6ab257338673e91df1c8ea1c"
- *
- *                 starterCode:
- *                   type: string
- *                   description: |
- *                     Starter/boilerplate code for the selected question and
- *                     programming language. If it does not exist, it may be
- *                     generated automatically and cached.
- *                   example: |
- *                     function findMaximum(numbers) {
- *                         // Write your code here
- *                     }
- *
- *                 lastSubmittedCode:
- *                   nullable: true
- *                   description: Latest code submitted by the authenticated user for this question and language
- *                   type: object
- *                   properties:
- *                     language:
- *                       type: string
- *                       example: "javascript"
- *                     code:
- *                       type: string
- *                       example: |
- *                         function findMaximum(numbers) {
- *                             return Math.max(...numbers);
- *                         }
- *
- *       400:
- *         description: Invalid request, non-coding task, or invalid programming language
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   examples:
- *                     missingParameters:
- *                       value: "taskId, questionId and languageId are required"
- *                     notCodingQuestion:
- *                       value: "This task is not a coding task"
- *                     invalidLanguage:
- *                       value: "Invalid programming language"
- *                     unableToFetch:
- *                       value: "Unable to fetch coding question"
- *
- *       401:
- *         description: Authentication is required
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: "User authentication required"
- *
- *       403:
- *         description: The authenticated user is not assigned to the course
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: "Question is not assigned to the user"
- *
- *       404:
- *         description: Task or coding question not found
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   examples:
- *                     taskNotFound:
- *                       value: "Task not found"
- *                     questionNotFound:
- *                       value: "Coding question not found"
- *
- *       500:
- *         description: Internal server error
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                   example: false
- *                 message:
- *                   type: string
- *                   example: "Error while fetching coding question"
- */
-
-commonRouter.get('/getquestion/:taskid/:questionid/:languageid', validateJWT, getQuestionController.getQuestion);
-
-/**
- * @swagger
- * /runcode:
- *   post:
- *     summary: Run employee code against a coding question
- *     description: |
- *       Executes the authenticated employee's submitted code for a coding
- *       question. On the very first run for a question, test cases are generated
- *       via OpenRouter and stored; later runs reuse them. The code is executed
- *       against every test-case input on the Piston execution API, each test
- *       case is reported as passed or failed (verdict always from the actual
- *       execution, never the AI), the score is computed as
- *       (passed / total) x 100 and an informational OpenRouter code-quality
- *       evaluation is attached.
- *     tags:
- *       - Coding Question
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - languageId
- *               - code
- *             properties:
- *               taskId:
- *                 type: string
- *                 description: |
- *                   ID of the coding task. Optional: when omitted, `questionId` is
- *                   read as the task id, which is what older clients send.
- *                 example: "6abb7e0f0cc4244f2bfc6bd4"
- *               questionId:
- *                 type: string
- *                 description: |
- *                   ID of the question inside the task. Send it together with
- *                   `taskId` whenever the task has more than one question;
- *                   otherwise the task's first active question is used.
- *                 example: "6abcb39e08aa64c1ff59b1d3"
- *               languageId:
- *                 type: string
- *                 description: ID of the selected programming language
- *                 example: "65f1a2b3c4d5e6f7890abcd1"
- *               code:
- *                 type: string
- *                 example: "function isPalindrome(str) { const s = str.replace(/\\s/g, '').toLowerCase(); return s === s.split('').reverse().join(''); }"
- *     responses:
- *       200:
- *         description: Code executed successfully.
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
- *                 data:
- *                   type: object
- *                   properties:
- *                     taskId:
- *                       type: string
- *                     questionId:
- *                       type: string
- *                       nullable: true
- *                     languageId:
- *                       type: string
- *                     totalTestCases:
- *                       type: number
- *                     passedTestCases:
- *                       type: number
- *                     failedTestCases:
- *                       type: number
- *                     score:
- *                       type: number
- *                       description: Execution score, (passed / total) x 100.
- *                     results:
- *                       type: array
- *                       items:
- *                         type: object
- *                         properties:
- *                           name:
- *                             type: string
- *                           input:
- *                             type: string
- *                           expectedOutput:
- *                             type: string
- *                           actualOutput:
- *                             type: string
- *                           passed:
- *                             type: boolean
- *                           status:
- *                             type: string
- *                           errorDetails:
- *                             type: string
- *                     aiEvaluation:
- *                       type: object
- *                       nullable: true
- *                       description: Informational code-quality analysis from OpenRouter.
- *                       properties:
- *                         score:
- *                           type: number
- *                         suggestions:
- *                           type: array
- *                           items:
- *                             type: string
- *                         failedTests:
- *                           type: array
- *                           items:
- *                             type: string
- *                         codingStandards:
- *                           type: object
- *                           properties:
- *                             readability:
- *                               type: string
- *                             efficiency:
- *                               type: string
- *                             errorHandling:
- *                               type: string
- *                             namingConventions:
- *                               type: string
- *                         explanation:
- *                           type: string
- *       400:
- *         description: Missing fields, invalid language, or invalid generated test cases.
- *       403:
- *         description: Question not part of the employee's assigned courses.
- *       404:
- *         description: Coding question not found.
- *       409:
- *         description: Test cases are still being generated.
- *       500:
- *         description: Server error.
- */
-commonRouter.post('/runcode', validateJWT, runCodeController.runCode);
-
-/**
- * @swagger
- * /submitcode:
- *   post:
- *     summary: Submit final code for a coding question
- *     description: |
- *       The employee's final answer for a coding question. Runs the same
- *       grading engine as Run Code (generate/reuse test cases -> Piston
- *       execution -> compare results -> score -> OpenRouter code-quality
- *       analysis) and stores the record as a `type: 'submit'` document in the
- *       code-run collection. A submission is only accepted when every test case
- *       passes — otherwise 400 is returned so the employee must fix the code
- *       and re-run. The pass/fail verdicts always come from the actual
- *       execution, never the AI. Course progress (task completion) is handled
- *       separately by the frontend via the existing task-progress endpoint.
- *     tags:
- *       - Coding Question
- *     security:
- *       - BearerAuth: []
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             required:
- *               - languageId
- *               - code
- *             properties:
- *               taskId:
- *                 type: string
- *                 description: |
- *                   ID of the coding task. Optional: when omitted, `questionId` is
- *                   read as the task id, which is what older clients send.
- *                 example: "6abb7e0f0cc4244f2bfc6bd4"
- *               questionId:
- *                 type: string
- *                 description: |
- *                   ID of the question inside the task. Send it together with
- *                   `taskId` whenever the task has more than one question;
- *                   otherwise the task's first active question is used.
- *                 example: "6abcb39e08aa64c1ff59b1d3"
- *               languageId:
- *                 type: string
- *                 description: ID of the selected programming language
- *                 example: "65f1a2b3c4d5e6f7890abcd1"
- *               code:
- *                 type: string
- *                 example: "function isPalindrome(str) { const s = str.replace(/\\s/g, '').toLowerCase(); return s === s.split('').reverse().join(''); }"
- *     responses:
- *       200:
- *         description: Code submitted successfully (same response shape as /runcode).
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 success:
- *                   type: boolean
- *                 message:
- *                   type: string
- *                   example: Code submitted successfully !
- *                 data:
- *                   type: object
- *                   properties:
- *                     taskId:
- *                       type: string
- *                     questionId:
- *                       type: string
- *                       nullable: true
- *                     languageId:
- *                       type: string
- *                     totalTestCases:
- *                       type: number
- *                     passedTestCases:
- *                       type: number
- *                     failedTestCases:
- *                       type: number
- *                     score:
- *                       type: number
- *                     results:
- *                       type: array
- *                       items:
- *                         type: object
- *                     aiEvaluation:
- *                       type: object
- *                       nullable: true
- *                 lastSubmission:
- *                   type: object
- *                   nullable: true
- *                   description: The last code this employee ran or submitted, across all coding questions. Null if they have never run anything.
- *                   properties:
- *                     employeeId:
- *                       type: string
- *                     questionId:
- *                       type: string
- *                     languageId:
- *                       type: string
- *                     code:
- *                       type: string
- *                     passedTestCases:
- *                       type: number
- *                     failedTestCases:
- *                       type: number
- *                     score:
- *                       type: number
- *                     status:
- *                       type: string
- *                     type:
- *                       type: string
- *                       enum: [run, submit]
- *                       description: Whether this record was a trial run or a final submission.
- *                     submittedAt:
- *                       type: string
- *                       format: date-time
- *       400:
- *         description: Missing fields, invalid language, or invalid generated test cases.
- *       403:
- *         description: Question not part of the employee's assigned courses.
- *       404:
- *         description: Coding question not found.
- *       409:
- *         description: Test cases are still being generated.
- *       500:
- *         description: Server error.
- */
-commonRouter.post('/submitcode', validateJWT, submitCodeController.submitCode);
-
-
-/**
- * @swagger
  * /getAllCourses:
  *   get:
  *     summary: Get all courses
@@ -2376,6 +1886,7 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *       Supported task types are LINK, FILE, and CODE.
  *       For LINK tasks, the link must be provided.
  *       For FILE tasks, a taskFile must be uploaded.
+ *       For CODE tasks, taskDescription is the coding question and the authenticated writer must have a valid OpenRouter API key.
  *       A thumbnailFile can optionally be uploaded for any task type.
  *     tags:
  *       - Content-Writer
@@ -2403,7 +1914,7 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                 example: Introduction to JavaScript
  *               taskDescription:
  *                 type: string
- *                 description: Description of the course task.
+ *                 description: Task description; provide the coding question for CODE tasks.
  *                 example: Learn the basics of JavaScript programming.
  *               type:
  *                 type: string
@@ -2443,7 +1954,7 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                       type: boolean
  *                       example: true
  *       400:
- *         description: Invalid request or missing task content.
+ *         description: Invalid task fields or missing content/upload, coding question, or valid OpenRouter API key.
  *         content:
  *           application/json:
  *             schema:
@@ -2454,9 +1965,15 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                   example: false
  *                 message:
  *                   type: string
- *                   example: Course task content is required
- *       500:
- *         description: Internal server error while adding the course task.
+ *                   example: Invalid course task request.
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example:
+ *                     - A valid HTTP or HTTPS link is required for LINK tasks.
+ *       502:
+ *         description: OpenRouter failed to generate the coding task boilerplate.
  *         content:
  *           application/json:
  *             schema:
@@ -2468,8 +1985,19 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                 message:
  *                   type: string
  *                   example: Failed to add course task
+ *       500:
+ *         description: Internal server error while adding the course task.
  */
-commonRouter.post('/addcoursetask', validateJWT, upload.fields([{name: 'taskFile',maxCount: 1,},{ name: 'thumbnailFile', maxCount: 1}]), addCourseTaskController.addTaskToModule);
+commonRouter.post(
+    '/addcoursetask',
+    validateJWT,
+    upload.fields([
+        { name: 'taskFile', maxCount: 1 },
+        { name: 'thumbnailFile', maxCount: 1 }
+    ]),
+    validateAddCourseTask,
+    addCourseTaskController.addTaskToModule
+);
 
 /**
  * @swagger
@@ -2510,6 +2038,174 @@ commonRouter.post('/addcoursetask', validateJWT, upload.fields([{name: 'taskFile
  *         description: Server error
  */
 commonRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCourseTaskContentController.getCourseTaskContent);
+
+/**
+ * @swagger
+ * /getCourseTaskBoilerplate/{taskId}/{languageId}:
+ *   get:
+ *     summary: Get language-specific starter code for an assigned coding task
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: languageId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Starter code for the selected language
+ *       403:
+ *         description: The task is not part of the authenticated user's assigned courses
+ *       404:
+ *         description: Task or programming language not found
+ *       502:
+ *         description: Starter code generation failed
+ */
+commonRouter.get(
+    '/getCourseTaskBoilerplate/:taskId/:languageId',
+    validateJWT,
+    getCourseTaskBoilerplateController.getCourseTaskBoilerplate
+);
+
+/**
+ * @swagger
+ * /generateCourseTaskTestCases:
+ *   post:
+ *     summary: Generate or reuse test cases for a coding course task
+ *     description: Generates test cases from the coding task description using the authenticated user's saved OpenRouter key. Existing cases are reused unless forceRegenerate is true.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               forceRegenerate:
+ *                 type: boolean
+ *                 default: false
+ *     responses:
+ *       200:
+ *         description: Test cases generated or reused
+ *       400:
+ *         description: Invalid input, task type, or OpenRouter key
+ *       403:
+ *         description: Task is not part of the user's assigned courses
+ *       404:
+ *         description: Course task not found
+ *       409:
+ *         description: Test cases are currently being generated
+ *       502:
+ *         description: Test-case generation failed
+ */
+commonRouter.post(
+    '/generateCourseTaskTestCases',
+    validateJWT,
+    generateCourseTaskTestCasesController.generateCourseTaskTestCases
+);
+
+/**
+ * @swagger
+ * /runCourseTaskCode:
+ *   post:
+ *     summary: Run code against all saved test cases and get AI feedback
+ *     description: Executes the latest source code against every saved test case for a CODE task sequentially on the backend and compares each actual output with its saved expected output, returning per-case and aggregate results. Every Run/Re-run also returns fresh advisory AI evaluation feedback for the submitted source and these execution results. Hidden test-case inputs and expected outputs are never sent to the AI provider or returned to the client. Test cases are generated on first use and reused afterwards.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - languageId
+ *               - sourceCode
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               languageId:
+ *                 type: string
+ *               sourceCode:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Code executed and compared against every saved test case
+ *       400:
+ *         description: Invalid input, task type, or language
+ *       403:
+ *         description: Task is not part of the user's assigned courses
+ *       404:
+ *         description: Course task not found or test cases not generated
+ */
+commonRouter.post(
+    '/runCourseTaskCode',
+    validateJWT,
+    runCourseTaskCodeController.runCourseTaskCode
+);
+
+
+
+/**
+ * @swagger
+ * /submitCourseTaskCode:
+ *   post:
+ *     summary: Submit a coding-task solution
+ *     description: Re-executes the submitted source against the task's saved mandatory test cases and stores a submission only when compilation and every test pass. Any canSubmit value sent by the client is ignored.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - codingTaskId
+ *               - language
+ *               - sourceCode
+ *             properties:
+ *               codingTaskId:
+ *                 type: string
+ *               language:
+ *                 type: string
+ *               sourceCode:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Submission saved, or rejected because test cases failed
+ *       400:
+ *         description: Invalid submission request
+ *       403:
+ *         description: Coding task is not assigned to the current user
+ *       404:
+ *         description: Coding task not found
+ */
+commonRouter.post(
+    '/submitCourseTaskCode',
+    validateJWT,
+    submitCodeController.submitCode
+);
 
 /**
  * @swagger
