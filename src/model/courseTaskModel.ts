@@ -7,7 +7,7 @@ const CourseTaskSchema = new mongoose.Schema({
     taskName: { type: mongoose.Schema.Types.String, required: true, unique: true },
     taskDescription: { type: mongoose.Schema.Types.String },
     thumbnail: { type: mongoose.Schema.Types.String },
-    status: { type: mongoose.Schema.Types.String, enum: ['ACTIVE', 'INACTIVE'], default: 'ACTIVE' },
+    status: { type: mongoose.Schema.Types.String, enum: ['ACTIVE', 'ARCHIVE'], default: 'ACTIVE' },
     type: { type: mongoose.Schema.Types.String, enum: ['CODE', 'QUIZ', 'LINK', 'FILE'] },
     executionMode: {
         type: mongoose.Schema.Types.String,

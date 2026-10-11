@@ -54,7 +54,7 @@ const AllCourses = async () => {
         let totalActiveModules = 0;
         let totalArchivedModules = 0;
         let totalActiveTasks = 0;
-        let totalInactiveTasks = 0;
+        let totalArchivedTasks = 0;
         const totalActiveCourses = coursesWithThumbnailUrl.filter( (course: any) => course.status?.toUpperCase() === 'ACTIVE' ).length; 
         const totalArchivedCourses = coursesWithThumbnailUrl.filter( (course: any) => course.status?.toUpperCase() === 'ARCHIVE' ).length; 
         for (const course of coursesWithThumbnailUrl) { 
@@ -67,7 +67,7 @@ const AllCourses = async () => {
                 totalTasks += tasks.length; 
                 for (const task of tasks) { 
                     if (task.status?.toUpperCase() === 'ACTIVE') totalActiveTasks++; 
-                    else if (task.status?.toUpperCase() === 'INACTIVE') totalInactiveTasks++; 
+                    else if (task.status?.toUpperCase() === 'ARCHIVE') totalArchivedTasks++; 
                 } 
             } 
         } 
@@ -81,7 +81,7 @@ const AllCourses = async () => {
                         totalActiveModules, 
                         totalArchivedModules, 
                         totalActiveTasks, 
-                        totalInactiveTasks 
+                        totalArchivedTasks 
                     } 
                 };   
                  

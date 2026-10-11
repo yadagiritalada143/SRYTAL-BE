@@ -65,16 +65,16 @@ describe('updateCourseTaskSchema', () => {
         const { error, value } = updateCourseTaskSchema.validate({
             id: objectId,
             taskName: 'Read',
-            status: 'inactive',
+            status: 'archive',
             executionMode: 'stdin'
         });
         expect(error).toBeUndefined();
-        expect(value.status).toBe('INACTIVE');
+        expect(value.status).toBe('ARCHIVE');
         expect(value.executionMode).toBe('STDIN');
     });
 
     it('rejects invalid status, execution mode and id', () => {
-        expect(updateCourseTaskSchema.validate({ id: objectId, taskName: 'Read', status: 'ARCHIVE' }).error).toBeDefined();
+        expect(updateCourseTaskSchema.validate({ id: objectId, taskName: 'Read', status: 'INACTIVE' }).error).toBeDefined();
         expect(updateCourseTaskSchema.validate({ id: objectId, taskName: 'Read', status: 'ACTIVE', executionMode: 'RUN' }).error).toBeDefined();
         expect(updateCourseTaskSchema.validate({ id: 'bad', taskName: 'Read', status: 'ACTIVE' }).error).toBeDefined();
     });

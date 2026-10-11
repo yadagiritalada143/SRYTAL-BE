@@ -28,7 +28,7 @@ const updateCourseTaskSchema = Joi.object({
     status: Joi.string()
         .trim()
         .uppercase()
-        .valid('ACTIVE', 'INACTIVE')
+        .valid('ACTIVE', 'ARCHIVE')
         .required()
         .messages({
             'any.required': 'Please provide valid status !',

@@ -1,3 +1,3 @@
-export const validCourseTaskStatusValues: string[] = ['ACTIVE', 'INACTIVE'];
+export const validCourseTaskStatusValues: string[] = ['ACTIVE', 'ARCHIVE'];
 
 export default validCourseTaskStatusValues;

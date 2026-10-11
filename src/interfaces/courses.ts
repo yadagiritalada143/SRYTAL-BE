@@ -22,7 +22,7 @@ export interface IFetchAllCoursesResponse {
         totalActiveModules: number;
         totalArchivedModules: number;
         totalActiveTasks: number;
-        totalInactiveTasks: number;
+        totalArchivedTasks: number;
     };
 }
 
