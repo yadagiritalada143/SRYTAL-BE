@@ -7,5 +7,6 @@ export const COURSE_ERROR_MESSAGES = {
     COURSE_FETCH_ERROR_MESSAGE: 'Error in fetching course details !',
     COURSE_UPDATE_ERROR_MESSAGE: 'Error occurred while updating the Course !',
     COURSE_INVALID_STATUS_MESSAGE: 'Please provide valid status !',
+    COURSE_VALIDATION_ERROR_MESSAGE: 'Invalid course details.',
 
 };
