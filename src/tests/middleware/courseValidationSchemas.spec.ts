@@ -47,6 +47,21 @@ describe('addCourseModuleSchema', () => {
         expect(addCourseModuleSchema.validate({ courseId: 'nope', moduleName: 'Basics' }).error).toBeDefined();
         expect(addCourseModuleSchema.validate({ courseId: objectId }).error).toBeDefined();
     });
+
+    it('accepts an optional acknowledgementText and trims it', () => {
+        const { error, value } = addCourseModuleSchema.validate({
+            courseId: objectId,
+            moduleName: 'Basics',
+            acknowledgementText: '  I have read and understood.  '
+        });
+        expect(error).toBeUndefined();
+        expect(value.acknowledgementText).toBe('I have read and understood.');
+    });
+
+    it('allows an empty acknowledgementText and omitting the field', () => {
+        expect(addCourseModuleSchema.validate({ courseId: objectId, moduleName: 'Basics', acknowledgementText: '' }).error).toBeUndefined();
+        expect(addCourseModuleSchema.validate({ courseId: objectId, moduleName: 'Basics' }).error).toBeUndefined();
+    });
 });
 
 describe('updateCourseModuleSchema', () => {
@@ -57,6 +72,37 @@ describe('updateCourseModuleSchema', () => {
 
     it('rejects a missing module name', () => {
         expect(updateCourseModuleSchema.validate({ id: objectId, status: 'ACTIVE' }).error).toBeDefined();
+    });
+
+    it('accepts an optional acknowledgementText and trims it', () => {
+        const { error, value } = updateCourseModuleSchema.validate({
+            id: objectId,
+            moduleName: 'Basics',
+            status: 'ACTIVE',
+            acknowledgementText: '  Updated acknowledgement.  '
+        });
+        expect(error).toBeUndefined();
+        expect(value.acknowledgementText).toBe('Updated acknowledgement.');
+    });
+
+    it('allows clearing the acknowledgementText with an empty value', () => {
+        const { error, value } = updateCourseModuleSchema.validate({
+            id: objectId,
+            moduleName: 'Basics',
+            status: 'ACTIVE',
+            acknowledgementText: ''
+        });
+        expect(error).toBeUndefined();
+        expect(value.acknowledgementText).toBe('');
+    });
+
+    it('rejects a non-string acknowledgementText', () => {
+        expect(updateCourseModuleSchema.validate({
+            id: objectId,
+            moduleName: 'Basics',
+            status: 'ACTIVE',
+            acknowledgementText: 123
+        }).error).toBeDefined();
     });
 });
 

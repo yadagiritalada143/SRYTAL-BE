@@ -1875,6 +1875,9 @@ commonRouter.post(
  *                 type: 
  *               moduleDescription:
  *                 type: string
+ *               acknowledgementText:
+ *                 type: string
+ *                 description: Optional acknowledgement text shown to employees for this module
  *               coursemodulethumbnail:
  *                 type: string
  *                 format: binary
@@ -2428,6 +2431,9 @@ commonRouter.put(
  *               moduleDescription:
  *                 type: string
  *                 description: Updated module description
+ *               acknowledgementText:
+ *                 type: string
+ *                 description: Updated acknowledgement text shown to employees for this module (optional)
  *               thumbnail:
  *                 type: string
  *                 format: binary

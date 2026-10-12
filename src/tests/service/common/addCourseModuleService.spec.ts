@@ -43,12 +43,37 @@ describe('addCourseModuleService', () => {
             moduleName: 'Intro',
             moduleDescription: 'First module',
             thumbnail: 'thumb.png',
-            status: 'ACTIVE'
+            status: 'ACTIVE',
+            acknowledgementText: ''
         });
         expect(saveSpy).toHaveBeenCalledTimes(1);
         expect(findByIdAndUpdateMock).toHaveBeenCalledTimes(1);
         expect(findByIdAndUpdateMock).toHaveBeenCalledWith('c1', { $currentDate: { updatedAt: true } });
         expect(result).toEqual(savedModule);
+    });
+
+    it('persists and sanitizes the provided acknowledgement text', async () => {
+        const savedModule = { _id: 'm1', courseId: 'c1', moduleName: 'Intro' };
+        saveSpy.mockResolvedValue(savedModule);
+        findByIdAndUpdateMock.mockResolvedValue({});
+
+        await addCourseModuleService.addNewCourseModule(
+            'c1',
+            'Intro',
+            'First module',
+            'thumb.png',
+            'ACTIVE',
+            '  I have <b>read</b> &amp; understood.  '
+        );
+
+        expect(CourseModuleModelMock).toHaveBeenCalledWith({
+            courseId: 'c1',
+            moduleName: 'Intro',
+            moduleDescription: 'First module',
+            thumbnail: 'thumb.png',
+            status: 'ACTIVE',
+            acknowledgementText: 'I have read & understood.'
+        });
     });
 
     it('returns { success: false } when saving throws', async () => {
