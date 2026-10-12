@@ -1,12 +1,7 @@
 import Joi from 'joi';
 
 const addCourseSchema = Joi.object({
-    courseName: Joi.string()
-        .trim()
-        .min(1)
-        .max(150)
-        .required()
-        .messages({
+    courseName: Joi.string().trim().min(1).max(150).required().messages({
             'any.required': 'Course name is required.',
             'string.empty': 'Course name is required.',
             'string.min': 'Course name is required.',
