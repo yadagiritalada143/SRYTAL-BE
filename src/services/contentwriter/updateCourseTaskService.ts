@@ -20,7 +20,20 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
             status,
         };
         if (acknowledgementText !== undefined) {
-            updateData.acknowledgementText = stripHtmlTags(acknowledgementText);
+            const cleanAcknowledgementText = stripHtmlTags(acknowledgementText);
+            // Acknowledgement copy only applies to FILE tasks: flag non-empty
+            // copy on any other task type as a validation error instead of
+            // silently persisting copy that would never be displayed.
+            if (
+                cleanAcknowledgementText &&
+                String(existingTask.type || '').toUpperCase() !== 'FILE'
+            ) {
+                return {
+                    success: false,
+                    responseAfterUpdate: new Error('COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY')
+                };
+            }
+            updateData.acknowledgementText = cleanAcknowledgementText;
         }
         if (executionMode) {
             if (String(existingTask.type || '').toUpperCase() !== 'CODE') {

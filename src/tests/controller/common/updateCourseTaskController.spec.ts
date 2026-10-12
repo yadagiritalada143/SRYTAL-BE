@@ -169,6 +169,25 @@ describe('updateCourseTaskController', () => {
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
     });
 
+    it('returns 400 when the service rejects the acknowledgement text for a non-FILE task', async () => {
+        isValidStatusMock.mockReturnValue(true);
+        const req = buildReq({
+            body: { acknowledgementText: 'I have read and understood.' }
+        });
+        updateCourseTaskMock.mockResolvedValue({
+            success: false,
+            responseAfterUpdate: new Error('COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY')
+        });
+
+        await updateCourseTaskController.updateCourseTask(req, res);
+
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+        expect(mockJson).toHaveBeenCalledWith({
+            success: false,
+            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
+        });
+    });
+
     it('returns 400 when the thumbnail type is invalid', async () => {
         isValidStatusMock.mockReturnValue(true);
         const req = buildReq({

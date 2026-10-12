@@ -101,6 +101,19 @@ const updateCourseTask = async (req: Request, res: Response) => {
             acknowledgementText
 
         );
+
+        if (
+            updateCourseResponse &&
+            updateCourseResponse.success === false &&
+            String(updateCourseResponse.responseAfterUpdate?.message || '') ===
+                'COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY'
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
+            });
+        }
+
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {
         console.error(`Error in updating course task: ${error}`);

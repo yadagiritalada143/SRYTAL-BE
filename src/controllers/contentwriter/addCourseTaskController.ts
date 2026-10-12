@@ -57,6 +57,16 @@ const addTaskToModule = async (req: Request, res: Response) => {
             });
         }
 
+        // Acknowledgement copy is only ever shown to employees for FILE tasks.
+        // Reject it up front when authoring any other task type instead of
+        // silently persisting copy that would never be displayed.
+        if (taskType !== 'FILE' && String(acknowledgementText || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
+            });
+        }
+
         /**
          * ---------------------------------------------------------
          * Uploaded files

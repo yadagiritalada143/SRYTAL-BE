@@ -154,6 +154,21 @@ describe('addCourseTaskController', () => {
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
     });
 
+    it('returns 400 when the acknowledgement text is supplied for a non-FILE task', async () => {
+        const req = buildReq({
+            body: { type: 'LINK', acknowledgementText: 'I have read and understood.' }
+        });
+
+        await addCourseTaskController.addTaskToModule(req, res);
+
+        expect(addCourseTaskMock).not.toHaveBeenCalled();
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+        expect(mockJson).toHaveBeenCalledWith({
+            success: false,
+            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
+        });
+    });
+
     it('uploads the thumbnail and passes its path when a thumbnail file is provided', async () => {
         const req = buildReq({
             files: { thumbnailFile: [buildFile({ originalname: 'thumb.png', mimetype: 'image/png' })] }
