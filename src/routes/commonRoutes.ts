@@ -11,7 +11,16 @@ import uploadProfileImageController from '../controllers/common/uploadProfileIma
 import getProfileImageController from '../controllers/common/getProfileImageController';
 import validateJWT from '../middlewares/validateJWT';
 import validateAddCourseTask from '../middlewares/validateAddCourseTask';
+import validateBody from '../middlewares/validateBody';
 import addCourseTaskSchenm from '../middlewares/schemas/addCourseTaskSchema';
+import addCourseSchema from '../middlewares/schemas/addCourseSchema';
+import updateCourseSchema from '../middlewares/schemas/updateCourseSchema';
+import addCourseModuleSchema from '../middlewares/schemas/addCourseModuleSchema';
+import updateCourseModuleSchema from '../middlewares/schemas/updateCourseModuleSchema';
+import updateCourseTaskSchema from '../middlewares/schemas/updateCourseTaskSchema';
+import { COURSE_ERROR_MESSAGES } from '../constants/contentwriter/courseMessages';
+import { COURSE_MODULE_ERRORS_MESSAGES } from '../constants/contentwriter/coursemoduleMessages';
+import { COURSE_TASK_ERRORS_MESSAGES } from '../constants/contentwriter/coursetaskMessages';
 import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
 import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
@@ -1835,7 +1844,13 @@ commonRouter.get('/getCourseById/:id', validateJWT, getCourseByIdController.getC
  *       500:
  *         description: Server error
  */
-commonRouter.post('/addCourse', validateJWT, upload.single('coursethumbnail'), addCourseController.addNewCourse);
+commonRouter.post(
+    '/addCourse',
+    validateJWT,
+    upload.single('coursethumbnail'),
+    validateBody(addCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE),
+    addCourseController.addNewCourse
+);
 
 /**
  * @swagger
@@ -1874,7 +1889,13 @@ commonRouter.post('/addCourse', validateJWT, upload.single('coursethumbnail'), a
  *       500:
  *         description: Server error
  */
-commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemodulethumbnail'), addCourseModuleController.addModuleToCourse);
+commonRouter.post(
+    '/addCourseModule',
+    validateJWT,
+    upload.single('coursemodulethumbnail'),
+    validateBody(addCourseModuleSchema, COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_VALIDATION_ERROR_MESSAGE),
+    addCourseModuleController.addModuleToCourse
+);
 
 /**
  * @swagger
@@ -2362,7 +2383,16 @@ commonRouter.post(
  *                   example: Failed to update course task.
  */
 
-commonRouter.put('/updatecoursetask',validateJWT, upload.fields([{name: 'taskFile', maxCount: 1},{name: 'thumbnailFile', maxCount: 1,}]), updateCourseTaskController.updateCourseTask);
+commonRouter.put(
+    '/updatecoursetask',
+    validateJWT,
+    upload.fields([
+        { name: 'taskFile', maxCount: 1 },
+        { name: 'thumbnailFile', maxCount: 1 }
+    ]),
+    validateBody(updateCourseTaskSchema, COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_VALIDATION_ERROR_MESSAGE),
+    updateCourseTaskController.updateCourseTask
+);
 
 /**
  * @swagger
@@ -2422,7 +2452,13 @@ commonRouter.put('/updatecoursetask',validateJWT, upload.fields([{name: 'taskFil
  *       500:
  *         description: Internal server error
  */
-commonRouter.put('/updatecoursemodule', validateJWT, upload.single('thumbnail'), updateCourseModuleController.updateCourseModule);
+commonRouter.put(
+    '/updatecoursemodule',
+    validateJWT,
+    upload.single('thumbnail'),
+    validateBody(updateCourseModuleSchema, COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_VALIDATION_ERROR_MESSAGE),
+    updateCourseModuleController.updateCourseModule
+);
 
 /**
  * @swagger
@@ -2482,6 +2518,12 @@ commonRouter.put('/updatecoursemodule', validateJWT, upload.single('thumbnail'),
  *       500:
  *         description: Internal server error
  */
-commonRouter.put('/updatecourse', validateJWT, upload.single('thumbnail'), updateCourseController.updateCourse);
+commonRouter.put(
+    '/updatecourse',
+    validateJWT,
+    upload.single('thumbnail'),
+    validateBody(updateCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE),
+    updateCourseController.updateCourse
+);
 
 export default commonRouter;

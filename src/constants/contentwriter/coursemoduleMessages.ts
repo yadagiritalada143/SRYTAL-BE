@@ -9,4 +9,5 @@ export const COURSE_MODULE_ERRORS_MESSAGES = {
     COURSE_MODULE_NAME_REQUIRED_MESSAGE: 'Module Name is required !',
     COURSE_MODULE_COURSE_ID_REQUIRED_MESSAGE: 'Course id is required !',
     COURSE_MODULE_INVALID_THUMBNAIL_TYPE_MESSAGE: 'Invalid thumbnail type. Supported types are PNG, SVG, JPG, and JPEG.',
+    COURSE_MODULE_VALIDATION_ERROR_MESSAGE: 'Invalid course module details.',
 };

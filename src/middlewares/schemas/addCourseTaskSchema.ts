@@ -19,16 +19,13 @@ const addCourseTaskSchema = Joi.object({
             'string.empty': 'Task name is required.',
             'string.min': 'Task name is required.'
         }),
-    taskDescription: Joi.string()
-        .trim()
-        .when('type', {
+    taskDescription: Joi.string().trim().when('type', {
             is: 'CODE',
-            then: Joi.string().trim().min(1).required().messages({
+            then: Joi.string().trim().min(1).allow('').optional().messages({
                 'any.required': 'Task description is required for coding tasks.',
                 'string.empty': 'Task description is required for coding tasks.',
                 'string.min': 'Task description is required for coding tasks.'
             }),
-            otherwise: Joi.string().trim().allow('').optional()
         }),
     type: Joi.string()
         .trim()

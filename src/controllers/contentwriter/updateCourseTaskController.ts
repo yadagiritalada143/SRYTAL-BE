@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import updateCourseTaskService from '../../services/contentwriter/updateCourseTaskService';
 import { COURSE_TASK_ERRORS_MESSAGES } from '../../constants/contentwriter/coursetaskMessages';
-import isValidStatus from '../../util/validateCourseStatusTypesUtil';
+import isValidCourseTaskStatus from '../../util/validateCourseTaskStatusTypesUtil';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
@@ -25,7 +25,7 @@ const updateCourseTask = async (req: Request, res: Response) => {
     try {
         const { id, taskName, taskDescription, status, executionMode } = req.body;
 
-        if (!isValidStatus(status)) {
+        if (!isValidCourseTaskStatus(status)) {
             return res.status(400).json({
                 success: false,
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_STATUS_MESSAGE,
