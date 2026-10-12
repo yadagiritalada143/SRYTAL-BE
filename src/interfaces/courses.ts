@@ -29,4 +29,12 @@ export interface IFetchAllCoursesResponse {
 export interface IFetchCourseByIdResponse {
     success: boolean;
     coursedata?: any;
+    totals?: {
+        totalModules: number;
+        totalTasks: number;
+        totalActiveModules: number;
+        totalArchivedModules: number;
+        totalActiveTasks: number;
+        totalArchivedTasks: number;
+    };
 }
