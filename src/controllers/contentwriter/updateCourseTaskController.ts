@@ -23,7 +23,7 @@ const uploadToS3 = async (
 
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
-        const { id, taskName, taskDescription, status, executionMode } = req.body;
+        const { id, taskName, taskDescription, status, executionMode, acknowledgementText } = req.body;
 
         if (!isValidCourseTaskStatus(status)) {
             return res.status(400).json({
@@ -97,7 +97,8 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContentFileName,
             undefined,
             undefined,
-            executionMode
+            executionMode,
+            acknowledgementText
 
         );
         res.status(200).json(updateCourseResponse);

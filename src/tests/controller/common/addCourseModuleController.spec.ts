@@ -49,37 +49,13 @@ describe('addCourseModuleController', () => {
 
         await addCourseModuleController.addModuleToCourse(req, res);
 
-        expect(addNewCourseModuleMock).toHaveBeenCalledWith('c1', 'Intro', 'First module', '', 'ACTIVE', undefined);
+        expect(addNewCourseModuleMock).toHaveBeenCalledWith('c1', 'Intro', 'First module', '', 'ACTIVE');
         expect(uploadThumbnailToS3Mock).not.toHaveBeenCalled();
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
         expect(mockJson).toHaveBeenCalledWith({
             message: COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE,
             data: { _id: 'm1' }
         });
-    });
-
-    it('forwards the acknowledgement text to the service', async () => {
-        const req = {
-            body: {
-                courseId: 'c1',
-                moduleName: 'Intro',
-                moduleDescription: 'First module',
-                acknowledgementText: 'I have read and understood.'
-            }
-        } as unknown as Request;
-        addNewCourseModuleMock.mockResolvedValue({ _id: 'm1' });
-
-        await addCourseModuleController.addModuleToCourse(req, res);
-
-        expect(addNewCourseModuleMock).toHaveBeenCalledWith(
-            'c1',
-            'Intro',
-            'First module',
-            '',
-            'ACTIVE',
-            'I have read and understood.'
-        );
-        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
     });
 
     it('uploads the thumbnail and returns 201 with the generated key', async () => {
@@ -98,7 +74,7 @@ describe('addCourseModuleController', () => {
             'image/png',
             courseModuleThumbnailsFolder
         );
-        expect(addNewCourseModuleMock).toHaveBeenCalledWith('c1', 'Intro', 'First module', 'module-thumb-key', 'ACTIVE', undefined);
+        expect(addNewCourseModuleMock).toHaveBeenCalledWith('c1', 'Intro', 'First module', 'module-thumb-key', 'ACTIVE');
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
         expect(mockJson).toHaveBeenCalledWith({
             message: COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE,

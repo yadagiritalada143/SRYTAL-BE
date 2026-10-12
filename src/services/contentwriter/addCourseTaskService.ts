@@ -15,9 +15,11 @@ const addCourseTask = async (
     contentMimeType: string,
     contentFileName: string,
     userId: string,
+    acknowledgementText?: string,
 ) => {
     const isCodingTask = String(type || '').toUpperCase() === 'CODE';
     const cleanTaskDescription = stripHtmlTags(taskDescription);
+    const cleanAcknowledgementText = stripHtmlTags(acknowledgementText ?? '');
 
     try {
         let baseBoilerplate: string | undefined;
@@ -50,6 +52,7 @@ const addCourseTask = async (
             content,
             contentMimeType,
             contentFileName,
+            ...(cleanAcknowledgementText ? { acknowledgementText: cleanAcknowledgementText } : {}),
             ...(baseBoilerplate ? { baseBoilerplate } : {})
         });
 

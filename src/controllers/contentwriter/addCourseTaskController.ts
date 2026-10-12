@@ -28,7 +28,7 @@ const uploadToS3 = async ( file: Express.Multer.File, folder: string): Promise<s
 
 const addTaskToModule = async (req: Request, res: Response) => {
     try {
-        const { moduleId, taskName, taskDescription, link, type } = req.body;
+        const { moduleId, taskName, taskDescription, link, type, acknowledgementText } = req.body;
 
         const status = 'ACTIVE';
 
@@ -165,7 +165,8 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 content,
                 contentMimeType,
                 contentFileName,
-                req.user?.userId || ''
+                req.user?.userId || '',
+                acknowledgementText
             );
 
         /**

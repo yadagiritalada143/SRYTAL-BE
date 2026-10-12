@@ -70,57 +70,6 @@ describe('updateCourseModuleService', () => {
         expect(result).toEqual({ success: true, responseAfterModuleUpdate: { modifiedCount: 1 } });
     });
 
-    it('updates the acknowledgement text when provided', async () => {
-        findByIdMock.mockResolvedValue({ _id: 'm1', thumbnail: null });
-        updateOneMock.mockResolvedValue({ modifiedCount: 1 });
-
-        const result = await updateCourseModuleService.updateCourseModule(
-            'm1',
-            'Intro',
-            'First module',
-            undefined,
-            'ACTIVE',
-            '  I have <b>read</b> &amp; understood.  '
-        );
-
-        expect(updateOneMock).toHaveBeenCalledWith(
-            { _id: 'm1' },
-            {
-                moduleName: 'Intro',
-                moduleDescription: 'First module',
-                status: 'ACTIVE',
-                acknowledgementText: 'I have read & understood.'
-            }
-        );
-        expect(result).toEqual({ success: true, responseAfterModuleUpdate: { modifiedCount: 1 } });
-    });
-
-    it('preserves the acknowledgement text when the field is omitted', async () => {
-        findByIdMock.mockResolvedValue({ _id: 'm1', thumbnail: null });
-        updateOneMock.mockResolvedValue({ modifiedCount: 1 });
-
-        await updateCourseModuleService.updateCourseModule('m1', 'Intro', 'First module', undefined, 'ACTIVE');
-
-        expect(updateOneMock).toHaveBeenCalledWith(
-            { _id: 'm1' },
-            { moduleName: 'Intro', moduleDescription: 'First module', status: 'ACTIVE' }
-        );
-        const updateArg = updateOneMock.mock.calls[0][1];
-        expect(updateArg).not.toHaveProperty('acknowledgementText');
-    });
-
-    it('allows clearing the acknowledgement text with an empty value', async () => {
-        findByIdMock.mockResolvedValue({ _id: 'm1', thumbnail: null });
-        updateOneMock.mockResolvedValue({ modifiedCount: 1 });
-
-        await updateCourseModuleService.updateCourseModule('m1', 'Intro', 'First module', undefined, 'ACTIVE', '');
-
-        expect(updateOneMock).toHaveBeenCalledWith(
-            { _id: 'm1' },
-            { moduleName: 'Intro', moduleDescription: 'First module', status: 'ACTIVE', acknowledgementText: '' }
-        );
-    });
-
     it('survives a failed thumbnail deletion', async () => {
         findByIdMock.mockResolvedValue({ _id: 'm1', thumbnail: 'oldThumb.png' });
         deleteObjectMock.mockReturnValue({ promise: jest.fn().mockRejectedValue(new Error('S3 down')) });

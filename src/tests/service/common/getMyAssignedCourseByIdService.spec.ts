@@ -53,9 +53,7 @@ describe('getMyAssignedCourseByIdService', () => {
         getCompletedTaskIdsMock.mockReset();
         buildCourseModulesMock.mockReset();
         withAcknowledgementStateMock.mockReset();
-        withAcknowledgementStateMock.mockImplementation((modules: any[]) =>
-            modules.map((m: any) => ({ ...m, acknowledged: false, acknowledgedAt: null }))
-        );
+        withAcknowledgementStateMock.mockImplementation((modules: any[]) => modules);
         summariseProgressMock.mockReset();
         deriveAssignmentStatusMock.mockReset();
     });
@@ -78,9 +76,26 @@ describe('getMyAssignedCourseByIdService', () => {
             {
                 _id: 'module1',
                 moduleName: 'Intro',
-                acknowledgementText: 'I have read and understood.',
-                tasks: [],
-                totalTasks: 0,
+                tasks: [
+                    {
+                        _id: 'file1',
+                        taskName: 'Policy',
+                        taskDescription: 'Read it',
+                        type: 'FILE',
+                        acknowledgementText: 'I have read and understood.',
+                        isCompleted: false,
+                        completedAt: null
+                    },
+                    {
+                        _id: 'link1',
+                        taskName: 'Docs',
+                        taskDescription: 'Read it',
+                        type: 'LINK',
+                        isCompleted: false,
+                        completedAt: null
+                    }
+                ],
+                totalTasks: 2,
                 completedTasks: 0
             }
         ]);
@@ -143,19 +158,34 @@ describe('getMyAssignedCourseByIdService', () => {
                     {
                         _id: 'module1',
                         moduleName: 'Intro',
-                        acknowledgementText: 'I have read and understood.',
-                        tasks: [],
-                        totalTasks: 0,
-                        completedTasks: 0,
-                        acknowledged: false,
-                        acknowledgedAt: null
+                        tasks: [
+                            {
+                                _id: 'file1',
+                                taskName: 'Policy',
+                                taskDescription: 'Read it',
+                                type: 'FILE',
+                                acknowledgementText: 'I have read and understood.',
+                                isCompleted: false,
+                                completedAt: null
+                            },
+                            {
+                                _id: 'link1',
+                                taskName: 'Docs',
+                                taskDescription: 'Read it',
+                                type: 'LINK',
+                                isCompleted: false,
+                                completedAt: null
+                            }
+                        ],
+                        totalTasks: 2,
+                        completedTasks: 0
                     }
                 ]
             }
         });
     });
 
-    it('marks a module acknowledged when an acknowledgement record exists for the employee', async () => {
+    it('feeds the task acknowledgement records into the state helper', async () => {
         const acknowledgedAt = new Date('2026-07-05T10:00:00Z');
         mockFindOneChain({
             _id: 'assign1',
@@ -165,7 +195,7 @@ describe('getMyAssignedCourseByIdService', () => {
                 courseDescription: 'Frontend',
                 thumbnail: 'thumb1.png'
             },
-            moduleAcknowledgements: [{ moduleId: 'module1', acknowledged: true, acknowledgedAt }],
+            taskAcknowledgements: [{ taskId: 'file1', acknowledged: true, acknowledgedAt }],
             assignedAt: new Date('2026-07-01T00:00:00Z'),
             dueDate: new Date('2099-01-01T00:00:00Z'),
             completedAt: null
@@ -175,28 +205,48 @@ describe('getMyAssignedCourseByIdService', () => {
             {
                 _id: 'module1',
                 moduleName: 'Intro',
-                acknowledgementText: 'I have read and understood.',
-                tasks: [],
-                totalTasks: 0,
-                completedTasks: 0,
-                acknowledged: true,
-                acknowledgedAt
+                tasks: [
+                    {
+                        _id: 'file1',
+                        taskName: 'Policy',
+                        taskDescription: 'Read it',
+                        type: 'FILE',
+                        acknowledgementText: 'I have read and understood.',
+                        acknowledged: true,
+                        acknowledgedAt,
+                        isCompleted: false,
+                        completedAt: null
+                    },
+                    {
+                        _id: 'link1',
+                        taskName: 'Docs',
+                        taskDescription: 'Read it',
+                        type: 'LINK',
+                        isCompleted: false,
+                        completedAt: null
+                    }
+                ],
+                totalTasks: 2,
+                completedTasks: 0
             }
         ]);
         getCourseMediaSignedUrlMock.mockResolvedValue('https://signed/url');
 
         const result = await getMyAssignedCourseByIdService.getMyAssignedCourseById('assign1', 'emp1');
 
-        expect(result.course?.modules?.[0]).toEqual(
-            expect.objectContaining({ _id: 'module1', acknowledged: true, acknowledgedAt })
+        expect(withAcknowledgementStateMock).toHaveBeenCalledWith(
+            expect.anything(),
+            [{ taskId: 'file1', acknowledged: true, acknowledgedAt }]
         );
+        const fileTask = result.course?.modules?.[0]?.tasks?.find((task: any) => task._id === 'file1');
+        expect(fileTask).toEqual(expect.objectContaining({ _id: 'file1', acknowledged: true, acknowledgedAt }));
     });
 
     it('does not write any acknowledgement record during the GET (read-only)', async () => {
         mockFindOneChain({
             _id: 'assign1',
             courseId: { _id: 'course1', courseName: 'React', courseDescription: 'Frontend' },
-            moduleAcknowledgements: [],
+            taskAcknowledgements: [],
             assignedAt: null,
             dueDate: null,
             completedAt: null

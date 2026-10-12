@@ -1,16 +1,16 @@
 import { Request, Response } from 'express';
-import updateMyModuleAcknowledgementService from '../../services/common/updateMyModuleAcknowledgementService';
+import updateMyTaskAcknowledgementService from '../../services/common/updateMyTaskAcknowledgementService';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
 import { MY_COURSES_ERROR_MESSAGES, MY_COURSES_SUCCESS_MESSAGES } from '../../constants/common/myCoursesMessages';
 
-const updateMyModuleAcknowledgement = async (req: Request, res: Response) => {
+const updateMyTaskAcknowledgement = async (req: Request, res: Response) => {
     try {
-        const { courseAssignmentId, moduleId, acknowledged } = req.body;
+        const { courseAssignmentId, taskId, acknowledged } = req.body;
 
         const acknowledgementResponse =
-            await updateMyModuleAcknowledgementService.updateMyModuleAcknowledgement(
+            await updateMyTaskAcknowledgementService.updateMyTaskAcknowledgement(
                 courseAssignmentId,
-                moduleId,
+                taskId,
                 acknowledged,
                 req.user?.userId as string
             );
@@ -22,37 +22,44 @@ const updateMyModuleAcknowledgement = async (req: Request, res: Response) => {
             });
         }
 
-        if (acknowledgementResponse.invalidModule) {
+        if (acknowledgementResponse.invalidTask) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
-                message: MY_COURSES_ERROR_MESSAGES.MODULE_NOT_IN_COURSE_MESSAGE
+                message: MY_COURSES_ERROR_MESSAGES.TASK_NOT_IN_ASSIGNED_COURSE_MESSAGE
+            });
+        }
+
+        if (acknowledgementResponse.notFileTask) {
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
+                success: false,
+                message: MY_COURSES_ERROR_MESSAGES.TASK_ACKNOWLEDGEMENT_APPLIES_TO_FILE_MESSAGE
             });
         }
 
         if (acknowledgementResponse.revocationNotAllowed) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
-                message: MY_COURSES_ERROR_MESSAGES.MODULE_ACKNOWLEDGEMENT_REVOCATION_NOT_ALLOWED_MESSAGE
+                message: MY_COURSES_ERROR_MESSAGES.TASK_ACKNOWLEDGEMENT_REVOCATION_NOT_ALLOWED_MESSAGE
             });
         }
 
         return res.status(HTTP_STATUS.OK).json({
             success: true,
-            message: MY_COURSES_SUCCESS_MESSAGES.MODULE_ACKNOWLEDGEMENT_UPDATE_SUCCESS_MESSAGE,
+            message: MY_COURSES_SUCCESS_MESSAGES.TASK_ACKNOWLEDGEMENT_UPDATE_SUCCESS_MESSAGE,
             data: {
                 courseAssignmentId: acknowledgementResponse.courseAssignmentId,
-                moduleId: acknowledgementResponse.moduleId,
+                taskId: acknowledgementResponse.taskId,
                 acknowledged: acknowledgementResponse.acknowledged,
                 acknowledgedAt: acknowledgementResponse.acknowledgedAt
             }
         });
     } catch (error: any) {
-        console.error(`Error in updating module acknowledgement: ${error}`);
+        console.error(`Error in updating task acknowledgement: ${error}`);
         return res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
             success: false,
-            message: MY_COURSES_ERROR_MESSAGES.MODULE_ACKNOWLEDGEMENT_UPDATE_ERROR_MESSAGE
+            message: MY_COURSES_ERROR_MESSAGES.TASK_ACKNOWLEDGEMENT_UPDATE_ERROR_MESSAGE
         });
     }
 };
 
-export default { updateMyModuleAcknowledgement };
+export default { updateMyTaskAcknowledgement };

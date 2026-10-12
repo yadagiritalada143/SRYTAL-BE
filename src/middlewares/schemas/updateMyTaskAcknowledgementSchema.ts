@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-const updateMyModuleAcknowledgementSchema = Joi.object({
+const updateMyTaskAcknowledgementSchema = Joi.object({
     courseAssignmentId: Joi.string()
         .hex()
         .length(24)
@@ -10,14 +10,14 @@ const updateMyModuleAcknowledgementSchema = Joi.object({
             'string.hex': 'Course assignment id must be a valid ID.',
             'string.length': 'Course assignment id must be a valid ID.'
         }),
-    moduleId: Joi.string()
+    taskId: Joi.string()
         .hex()
         .length(24)
         .required()
         .messages({
-            'any.required': 'Module id is required !',
-            'string.hex': 'Module id must be a valid ID.',
-            'string.length': 'Module id must be a valid ID.'
+            'any.required': 'Task id is required !',
+            'string.hex': 'Task id must be a valid ID.',
+            'string.length': 'Task id must be a valid ID.'
         }),
     acknowledged: Joi.boolean()
         .required()
@@ -27,4 +27,4 @@ const updateMyModuleAcknowledgementSchema = Joi.object({
         })
 }).required();
 
-export default updateMyModuleAcknowledgementSchema;
+export default updateMyTaskAcknowledgementSchema;

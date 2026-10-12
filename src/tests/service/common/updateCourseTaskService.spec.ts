@@ -83,9 +83,9 @@ describe('updateCourseTaskService', () => {
         expect(result).toEqual({ success: true, responseAfterUpdate: updatedTask });
     });
 
-    it('updates the coding task fields when provided', async () => {
+    it('updates the acknowledgement text when provided', async () => {
         findByIdMock.mockResolvedValue({ _id: 't1', thumbnail: null, content: null });
-        const updatedTask = { _id: 't1', taskName: 'Read', status: 'ACTIVE', isCoding: true, question: 'Reverse a string.' };
+        const updatedTask = { _id: 't1', taskName: 'Read', status: 'ACTIVE', acknowledgementText: 'I have read and understood.' };
         findByIdAndUpdateMock.mockResolvedValue(updatedTask);
 
         const result = await updateCourseTaskService.updateCourseTask(
@@ -97,8 +97,10 @@ describe('updateCourseTaskService', () => {
             undefined,
             undefined,
             undefined,
-            true,
-            'Reverse a string.'
+            undefined,
+            undefined,
+            undefined,
+            '  I have <b>read</b> &amp; understood.  '
         );
 
         expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
@@ -108,8 +110,7 @@ describe('updateCourseTaskService', () => {
                     taskName: 'Read',
                     taskDescription: 'Description',
                     status: 'ACTIVE',
-                    isCoding: true,
-                    question: 'Reverse a string.'
+                    acknowledgementText: 'I have read & understood.'
                 }
             },
             { new: true, runValidators: true }
