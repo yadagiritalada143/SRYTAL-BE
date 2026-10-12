@@ -9,6 +9,11 @@ export interface ICourseAssignment  extends Document {
     assignedAt: Date;
     dueDate: Date;
     completedAt?: Date | null;
+    moduleAcknowledgements?: {
+        moduleId: mongoose.Schema.Types.ObjectId;
+        acknowledged: boolean;
+        acknowledgedAt?: Date | null;
+    }[];
     lastReminderSentAt?: Date | null;
     reminderScheduleStartDate?: Date | null;
     createdAt: Date;

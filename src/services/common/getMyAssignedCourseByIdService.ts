@@ -40,10 +40,15 @@ const getMyAssignedCourseById = async (
         courseModules.map((module: any) => String(module._id))
     );
 
-    const modules = courseProgress.buildCourseModules(
-        courseModules,
-        tasksByModule,
-        completedByAssignment.get(String(assignment._id)) || new Map()
+    // Acknowledgement is stored on the assignment (already scoped to this
+    // employee). The GET is read-only: it never writes an acknowledgement record.
+    const modules = courseProgress.withAcknowledgementState(
+        courseProgress.buildCourseModules(
+            courseModules,
+            tasksByModule,
+            completedByAssignment.get(String(assignment._id)) || new Map()
+        ),
+        assignment.moduleAcknowledgements
     );
 
     const progress = courseProgress.summariseProgress(modules);

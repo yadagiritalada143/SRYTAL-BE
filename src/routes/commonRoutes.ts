@@ -21,6 +21,7 @@ import updateCourseTaskSchema from '../middlewares/schemas/updateCourseTaskSchem
 import { COURSE_ERROR_MESSAGES } from '../constants/contentwriter/courseMessages';
 import { COURSE_MODULE_ERRORS_MESSAGES } from '../constants/contentwriter/coursemoduleMessages';
 import { COURSE_TASK_ERRORS_MESSAGES } from '../constants/contentwriter/coursetaskMessages';
+import { MY_COURSES_ERROR_MESSAGES } from '../constants/common/myCoursesMessages';
 import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
 import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
@@ -29,6 +30,8 @@ import downloadSalarySlipController from '../controllers/common/downloadSalarySl
 import getMyAssignedCoursesController from '../controllers/common/getMyAssignedCoursesController';
 import getMyAssignedCourseByIdController from '../controllers/common/getMyAssignedCourseByIdController';
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
+import updateMyModuleAcknowledgementController from '../controllers/common/updateMyModuleAcknowledgementController';
+import updateMyModuleAcknowledgementSchema from '../middlewares/schemas/updateMyModuleAcknowledgementSchema';
 import expertConsultationController from '../controllers/common/expertConsultationController';
 import addProgrammingLanguageController from '../controllers/common/addProgrammingLanguageController';
 import updateProgrammingLanguageController from '../controllers/common/updateProgrammingLanguageController';
@@ -1197,6 +1200,17 @@ commonRouter.get('/getMyAssignedCourses', validateJWT, getMyAssignedCoursesContr
  *                             type: string
  *                           moduleDescription:
  *                             type: string
+ *                           acknowledgementText:
+ *                             type: string
+ *                             description: Shared acknowledgement text the employee must accept for this module.
+ *                           acknowledged:
+ *                             type: boolean
+ *                             description: Whether the authenticated employee has acknowledged this module.
+ *                           acknowledgedAt:
+ *                             type: string
+ *                             format: date-time
+ *                             nullable: true
+ *                             description: When the employee acknowledged the module, or null if not yet acknowledged.
  *                           totalTasks:
  *                             type: integer
  *                           completedTasks:
@@ -1329,6 +1343,88 @@ commonRouter.get(
  *         description: Server error.
  */
 commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressController.updateMyTaskProgress);
+
+/**
+ * @swagger
+ * /updateMyModuleAcknowledgement:
+ *   put:
+ *     summary: Acknowledge a module of an assigned course
+ *     description: |
+ *       Records the authenticated employee's acknowledgement for one module of one
+ *       assigned course. The acknowledgement is scoped to the employee, the course
+ *       assignment and the module. Once a module is acknowledged the record is
+ *       immutable: sending `acknowledged: false` is rejected, and retrying with
+ *       `acknowledged: true` never creates a duplicate or resets the original
+ *       `acknowledgedAt`.
+ *     tags:
+ *       - My Courses
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseAssignmentId
+ *               - moduleId
+ *               - acknowledged
+ *             properties:
+ *               courseAssignmentId:
+ *                 type: string
+ *                 example: "66d123456789abcdef123456"
+ *               moduleId:
+ *                 type: string
+ *                 example: "66d323456789abcdef123456"
+ *               acknowledged:
+ *                 type: boolean
+ *                 example: true
+ *     responses:
+ *       200:
+ *         description: Module acknowledged successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Module acknowledged successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     courseAssignmentId:
+ *                       type: string
+ *                     moduleId:
+ *                       type: string
+ *                     acknowledged:
+ *                       type: boolean
+ *                       example: true
+ *                     acknowledgedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: The module does not belong to the assigned course.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Course assignment not found for this employee.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.put(
+    '/updateMyModuleAcknowledgement',
+    validateJWT,
+    validateBody(
+        updateMyModuleAcknowledgementSchema,
+        MY_COURSES_ERROR_MESSAGES.MODULE_ACKNOWLEDGEMENT_MISSING_FIELDS_MESSAGE
+    ),
+    updateMyModuleAcknowledgementController.updateMyModuleAcknowledgement
+);
 
 /**
  * @swagger
@@ -1875,6 +1971,9 @@ commonRouter.post(
  *                 type: 
  *               moduleDescription:
  *                 type: string
+ *               acknowledgementText:
+ *                 type: string
+ *                 description: Optional acknowledgement text shown to employees for this module
  *               coursemodulethumbnail:
  *                 type: string
  *                 format: binary
@@ -2428,6 +2527,9 @@ commonRouter.put(
  *               moduleDescription:
  *                 type: string
  *                 description: Updated module description
+ *               acknowledgementText:
+ *                 type: string
+ *                 description: Updated acknowledgement text shown to employees for this module (optional)
  *               thumbnail:
  *                 type: string
  *                 format: binary

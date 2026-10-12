@@ -5,9 +5,14 @@ export const MY_COURSES_ERROR_MESSAGES = {
     TASK_PROGRESS_MISSING_FIELDS_MESSAGE: 'courseAssignmentId, taskId and isCompleted are required !',
     TASK_NOT_IN_COURSE_MESSAGE: 'This task does not belong to the assigned course !',
     CODING_TASK_PROGRESS_SERVER_DRIVEN_MESSAGE: 'A coding task is completed automatically once every one of its questions has been solved !',
-    TASK_PROGRESS_UPDATE_ERROR_MESSAGE: 'An error occurred while updating your progress, Please try again !'
+    TASK_PROGRESS_UPDATE_ERROR_MESSAGE: 'An error occurred while updating your progress, Please try again !',
+    MODULE_ACKNOWLEDGEMENT_MISSING_FIELDS_MESSAGE: 'courseAssignmentId, moduleId and acknowledged are required !',
+    MODULE_NOT_IN_COURSE_MESSAGE: 'This module does not belong to the assigned course !',
+    MODULE_ACKNOWLEDGEMENT_REVOCATION_NOT_ALLOWED_MESSAGE: 'Module acknowledgement cannot be revoked !',
+    MODULE_ACKNOWLEDGEMENT_UPDATE_ERROR_MESSAGE: 'An error occurred while saving your acknowledgement, Please try again !'
 };
 
 export const MY_COURSES_SUCCESS_MESSAGES = {
-    TASK_PROGRESS_UPDATE_SUCCESS_MESSAGE: 'Progress updated successfully !'
+    TASK_PROGRESS_UPDATE_SUCCESS_MESSAGE: 'Progress updated successfully !',
+    MODULE_ACKNOWLEDGEMENT_UPDATE_SUCCESS_MESSAGE: 'Module acknowledged successfully !'
 };
