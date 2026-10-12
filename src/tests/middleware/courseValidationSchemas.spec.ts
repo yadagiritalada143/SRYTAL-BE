@@ -3,6 +3,7 @@ import updateCourseSchema from '../../middlewares/schemas/updateCourseSchema';
 import addCourseModuleSchema from '../../middlewares/schemas/addCourseModuleSchema';
 import updateCourseModuleSchema from '../../middlewares/schemas/updateCourseModuleSchema';
 import updateCourseTaskSchema from '../../middlewares/schemas/updateCourseTaskSchema';
+import updateMyModuleAcknowledgementSchema from '../../middlewares/schemas/updateMyModuleAcknowledgementSchema';
 
 const objectId = '66d323456789abcdef123456';
 
@@ -123,5 +124,26 @@ describe('updateCourseTaskSchema', () => {
         expect(updateCourseTaskSchema.validate({ id: objectId, taskName: 'Read', status: 'INACTIVE' }).error).toBeDefined();
         expect(updateCourseTaskSchema.validate({ id: objectId, taskName: 'Read', status: 'ACTIVE', executionMode: 'RUN' }).error).toBeDefined();
         expect(updateCourseTaskSchema.validate({ id: 'bad', taskName: 'Read', status: 'ACTIVE' }).error).toBeDefined();
+    });
+});
+
+describe('updateMyModuleAcknowledgementSchema', () => {
+    it('accepts a valid acknowledgement request', () => {
+        const { error, value } = updateMyModuleAcknowledgementSchema.validate({
+            courseAssignmentId: objectId,
+            moduleId: objectId,
+            acknowledged: true
+        });
+        expect(error).toBeUndefined();
+        expect(value.acknowledged).toBe(true);
+    });
+
+    it('rejects missing or malformed ids, a missing acknowledged, and a non-boolean acknowledged', () => {
+        expect(updateMyModuleAcknowledgementSchema.validate({ moduleId: objectId, acknowledged: true }).error).toBeDefined();
+        expect(updateMyModuleAcknowledgementSchema.validate({ courseAssignmentId: objectId, acknowledged: true }).error).toBeDefined();
+        expect(updateMyModuleAcknowledgementSchema.validate({ courseAssignmentId: 'bad', moduleId: objectId, acknowledged: true }).error).toBeDefined();
+        expect(updateMyModuleAcknowledgementSchema.validate({ courseAssignmentId: objectId, moduleId: 'bad', acknowledged: true }).error).toBeDefined();
+        expect(updateMyModuleAcknowledgementSchema.validate({ courseAssignmentId: objectId, moduleId: objectId }).error).toBeDefined();
+        expect(updateMyModuleAcknowledgementSchema.validate({ courseAssignmentId: objectId, moduleId: objectId, acknowledged: 'yes' }).error).toBeDefined();
     });
 });

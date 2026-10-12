@@ -32,6 +32,8 @@ export interface IMyCourseModule {
     moduleName: string;
     moduleDescription: string;
     status?: string;
+    acknowledged?: boolean;
+    acknowledgedAt?: Date | null;
     tasks: IMyCourseTask[];
     totalTasks: number;
     completedTasks: number;
@@ -85,5 +87,19 @@ export interface IUpdateMyTaskProgressResponse {
     courseStatus?: string;
     progress?: IMyCourseProgress;
     task?: { taskId: string; isCompleted: boolean; completedAt?: Date | null };
+}
+
+export interface IUpdateMyModuleAcknowledgementResponse {
+    success: boolean;
+    // Set when the assignment could not be found for this employee.
+    notFound?: boolean;
+    // Set when the module does not belong to the assigned course.
+    invalidModule?: boolean;
+    // Set when the client tries to revoke an acknowledgement with acknowledged: false.
+    revocationNotAllowed?: boolean;
+    courseAssignmentId?: string;
+    moduleId?: string;
+    acknowledged?: boolean;
+    acknowledgedAt?: Date | null;
 }
 

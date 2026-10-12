@@ -26,8 +26,8 @@ jest.mock('../../../util/manageCourseProgress', () => ({
         getActiveModulesByCourse: jest.fn(),
         getActiveTasksByModule: jest.fn(),
         getCompletedTaskIds: jest.fn(),
-        getCompletedQuestionCounts: jest.fn(),
         buildCourseModules: jest.fn(),
+        withAcknowledgementState: jest.fn(),
         summariseProgress: jest.fn(),
         deriveAssignmentStatus: jest.fn(),
         percentOf: jest.fn()
@@ -39,8 +39,8 @@ const getCourseMediaSignedUrlMock = courseMedia.getCourseMediaSignedUrl as unkno
 const getActiveModulesByCourseMock = courseProgress.getActiveModulesByCourse as unknown as jest.Mock;
 const getActiveTasksByModuleMock = courseProgress.getActiveTasksByModule as unknown as jest.Mock;
 const getCompletedTaskIdsMock = courseProgress.getCompletedTaskIds as unknown as jest.Mock;
-const getCompletedQuestionCountsMock = courseProgress.getCompletedQuestionCounts as unknown as jest.Mock;
 const buildCourseModulesMock = courseProgress.buildCourseModules as unknown as jest.Mock;
+const withAcknowledgementStateMock = courseProgress.withAcknowledgementState as unknown as jest.Mock;
 const summariseProgressMock = courseProgress.summariseProgress as unknown as jest.Mock;
 const deriveAssignmentStatusMock = courseProgress.deriveAssignmentStatus as unknown as jest.Mock;
 
@@ -51,9 +51,11 @@ describe('getMyAssignedCourseByIdService', () => {
         getActiveModulesByCourseMock.mockReset();
         getActiveTasksByModuleMock.mockReset();
         getCompletedTaskIdsMock.mockReset();
-        getCompletedQuestionCountsMock.mockReset();
-        getCompletedQuestionCountsMock.mockResolvedValue(new Map());
         buildCourseModulesMock.mockReset();
+        withAcknowledgementStateMock.mockReset();
+        withAcknowledgementStateMock.mockImplementation((modules: any[]) =>
+            modules.map((m: any) => ({ ...m, acknowledged: false, acknowledgedAt: null }))
+        );
         summariseProgressMock.mockReset();
         deriveAssignmentStatusMock.mockReset();
     });
@@ -73,7 +75,14 @@ describe('getMyAssignedCourseByIdService', () => {
         getCompletedTaskIdsMock.mockResolvedValue(new Map([['assign1', new Map()]]));
         getActiveTasksByModuleMock.mockResolvedValue(new Map());
         buildCourseModulesMock.mockReturnValue([
-            { _id: 'module1', moduleName: 'Intro', tasks: [], totalTasks: 0, completedTasks: 0 }
+            {
+                _id: 'module1',
+                moduleName: 'Intro',
+                acknowledgementText: 'I have read and understood.',
+                tasks: [],
+                totalTasks: 0,
+                completedTasks: 0
+            }
         ]);
         summariseProgressMock.mockReturnValue({ totalTasks: 0, completedTasks: 0, percentComplete: 0 });
         deriveAssignmentStatusMock.mockReturnValue(COURSE_ASSIGNMENT_STATUS.ASSIGNED);
@@ -131,10 +140,72 @@ describe('getMyAssignedCourseByIdService', () => {
                 totalModules: 1,
                 progress: { totalTasks: 0, completedTasks: 0, percentComplete: 0 },
                 modules: [
-                    { _id: 'module1', moduleName: 'Intro', tasks: [], totalTasks: 0, completedTasks: 0 }
+                    {
+                        _id: 'module1',
+                        moduleName: 'Intro',
+                        acknowledgementText: 'I have read and understood.',
+                        tasks: [],
+                        totalTasks: 0,
+                        completedTasks: 0,
+                        acknowledged: false,
+                        acknowledgedAt: null
+                    }
                 ]
             }
         });
+    });
+
+    it('marks a module acknowledged when an acknowledgement record exists for the employee', async () => {
+        const acknowledgedAt = new Date('2026-07-05T10:00:00Z');
+        mockFindOneChain({
+            _id: 'assign1',
+            courseId: {
+                _id: 'course1',
+                courseName: 'React',
+                courseDescription: 'Frontend',
+                thumbnail: 'thumb1.png'
+            },
+            moduleAcknowledgements: [{ moduleId: 'module1', acknowledged: true, acknowledgedAt }],
+            assignedAt: new Date('2026-07-01T00:00:00Z'),
+            dueDate: new Date('2099-01-01T00:00:00Z'),
+            completedAt: null
+        });
+        mockProgress();
+        withAcknowledgementStateMock.mockReturnValue([
+            {
+                _id: 'module1',
+                moduleName: 'Intro',
+                acknowledgementText: 'I have read and understood.',
+                tasks: [],
+                totalTasks: 0,
+                completedTasks: 0,
+                acknowledged: true,
+                acknowledgedAt
+            }
+        ]);
+        getCourseMediaSignedUrlMock.mockResolvedValue('https://signed/url');
+
+        const result = await getMyAssignedCourseByIdService.getMyAssignedCourseById('assign1', 'emp1');
+
+        expect(result.course?.modules?.[0]).toEqual(
+            expect.objectContaining({ _id: 'module1', acknowledged: true, acknowledgedAt })
+        );
+    });
+
+    it('does not write any acknowledgement record during the GET (read-only)', async () => {
+        mockFindOneChain({
+            _id: 'assign1',
+            courseId: { _id: 'course1', courseName: 'React', courseDescription: 'Frontend' },
+            moduleAcknowledgements: [],
+            assignedAt: null,
+            dueDate: null,
+            completedAt: null
+        });
+        mockProgress();
+
+        await getMyAssignedCourseByIdService.getMyAssignedCourseById('assign1', 'emp1');
+
+        expect(CourseAssignment).not.toHaveProperty('updateOne');
     });
 
     it('returns an empty thumbnail url when signing the thumbnail fails', async () => {

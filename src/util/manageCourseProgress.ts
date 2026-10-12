@@ -124,11 +124,38 @@ export const buildCourseModules = (
             moduleName: module.moduleName,
             moduleDescription: module.moduleDescription,
             status: module.status,
+            acknowledgementText: module.acknowledgementText || '',
             tasks,
             totalTasks: tasks.length,
             completedTasks: tasks.filter(task => task.isCompleted).length
         };
     });
+
+/**
+ * Merges the per-employee acknowledgement state stored on a course assignment
+ * into a built module list. Modules without a matching record are returned as
+ * not acknowledged. Never writes acknowledgement records — read only.
+ */
+export const withAcknowledgementState = (
+    modules: IMyCourseModule[],
+    moduleAcknowledgements: any[]
+): IMyCourseModule[] => {
+    const acknowledgedByModule = new Map<string, Date | null>();
+    (moduleAcknowledgements || []).forEach((record: any) => {
+        if (record && record.moduleId) {
+            acknowledgedByModule.set(String(record.moduleId), record.acknowledgedAt || null);
+        }
+    });
+
+    return modules.map((module) => {
+        const acknowledged = acknowledgedByModule.has(String(module._id));
+        return {
+            ...module,
+            acknowledged,
+            acknowledgedAt: acknowledged ? acknowledgedByModule.get(String(module._id)) || null : null
+        };
+    });
+};
 
 export const summariseProgress = (modules: IMyCourseModule[]): IMyCourseProgress => {
     const totalTasks = modules.reduce((sum, module) => sum + module.totalTasks, 0);
@@ -142,6 +169,7 @@ export default {
     getActiveTasksByModule,
     getCompletedTaskIds,
     buildCourseModules,
+    withAcknowledgementState,
     summariseProgress,
     deriveAssignmentStatus,
     percentOf
