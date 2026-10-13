@@ -8,7 +8,7 @@ const getAllActiveCourses = async (req: Request, res: Response) => {
 
         return res.status(200).json({
             success: true,
-            message: COURSE_SUCCESS_MESSAGES.ACTIVE_COURSES_FETCH__SUCCESS_MESSAGE,
+            message: COURSE_SUCCESS_MESSAGES.ACTIVE_COURSES_FETCH_SUCCESS_MESSAGE,
             courses: data.courses,
             totalActiveCourses: data.totalActiveCourses,
         });
