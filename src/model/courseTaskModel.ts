@@ -20,6 +20,7 @@ const CourseTaskSchema = new mongoose.Schema({
     content: { type: mongoose.Schema.Types.String },
     contentMimeType: { type: mongoose.Schema.Types.String },
     contentFileName: { type: mongoose.Schema.Types.String },
+    acknowledgementText: { type: mongoose.Schema.Types.String, trim: true },
     baseBoilerplate: { type: mongoose.Schema.Types.String },
     starterCode: [{
         languageId: {

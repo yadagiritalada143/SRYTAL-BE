@@ -5,7 +5,6 @@ export interface ICourseModule extends Document {
     moduleDescription: string;
     courseId: mongoose.Schema.Types.ObjectId;
     thumbnail?: string;
-    acknowledgementText?: string;
 }
 
 export interface IUpdateCourseModuleResponse {

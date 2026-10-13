@@ -10,10 +10,10 @@ const CourseAssignmentSchema = new mongoose.Schema({
     assignedAt: { type: Date, default: Date.now, required: true },
     dueDate: { type: Date,  default: Date.now, required: true },
     completedAt: { type: Date, default: null },
-    moduleAcknowledgements: {
+    taskAcknowledgements: {
         type: [
             {
-                moduleId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseModule', required: true },
+                taskId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseTaskModel', required: true },
                 acknowledged: { type: Boolean, default: true },
                 acknowledgedAt: { type: Date, default: null }
             }

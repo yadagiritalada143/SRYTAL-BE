@@ -25,6 +25,13 @@ const updateCourseTaskSchema = Joi.object({
         .trim()
         .allow('')
         .optional(),
+    acknowledgementText: Joi.string()
+        .trim()
+        .allow('')
+        .optional()
+        .messages({
+            'string.base': 'Acknowledgement text must be a string.'
+        }),
     status: Joi.string()
         .trim()
         .uppercase()

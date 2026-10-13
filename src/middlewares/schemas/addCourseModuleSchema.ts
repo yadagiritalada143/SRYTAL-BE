@@ -24,10 +24,6 @@ const addCourseModuleSchema = Joi.object({
     moduleDescription: Joi.string()
         .trim()
         .allow('')
-        .optional(),
-    acknowledgementText: Joi.string()
-        .trim()
-        .allow('')
         .optional()
 }).required();
 

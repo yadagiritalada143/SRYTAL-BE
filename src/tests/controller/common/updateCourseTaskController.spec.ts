@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import updateCourseTaskController from '../../../controllers/contentwriter/updateCourseTaskController';
 import updateCourseTaskService from '../../../services/contentwriter/updateCourseTaskService';
-import isValidStatus from '../../../util/validateCourseStatusTypesUtil';
+import isValidStatus from '../../../util/validateCourseTaskStatusTypesUtil';
 import uploadThumbnailToS3 from '../../../util/manageCourseMedia';
 import { COURSE_TASK_ERRORS_MESSAGES } from '../../../constants/contentwriter/coursetaskMessages';
 import { HTTP_STATUS } from '../../../constants/commonErrorMessages';
@@ -11,7 +11,7 @@ jest.mock('../../../services/contentwriter/updateCourseTaskService', () => ({
     default: { updateCourseTask: jest.fn() }
 }));
 
-jest.mock('../../../util/validateCourseStatusTypesUtil', () => ({
+jest.mock('../../../util/validateCourseTaskStatusTypesUtil', () => ({
     __esModule: true,
     default: jest.fn()
 }));
@@ -99,6 +99,8 @@ describe('updateCourseTaskController', () => {
             undefined,
             undefined,
             undefined,
+            undefined,
+            undefined,
             undefined
         );
         expect(uploadThumbnailToS3Mock).not.toHaveBeenCalled();
@@ -133,18 +135,17 @@ describe('updateCourseTaskController', () => {
             'application/pdf',
             'file.pdf',
             undefined,
+            undefined,
+            undefined,
             undefined
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
     });
 
-    it('updates the coding task fields when a coding task is provided', async () => {
+    it('forwards the acknowledgement text to the service', async () => {
         isValidStatusMock.mockReturnValue(true);
         const req = buildReq({
-            body: {
-                isCoding: 'true',
-                question: 'Write a function to reverse a string.'
-            }
+            body: { acknowledgementText: 'I have read and understood.' }
         });
         const updateResponse = { success: true, responseAfterUpdate: { modifiedCount: 1 } };
         updateCourseTaskMock.mockResolvedValue(updateResponse);
@@ -160,27 +161,30 @@ describe('updateCourseTaskController', () => {
             undefined,
             undefined,
             undefined,
-            true,
-            'Write a function to reverse a string.'
+            undefined,
+            undefined,
+            undefined,
+            'I have read and understood.'
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
     });
 
-    it('returns 400 when a coding task has no question', async () => {
+    it('returns 400 when the service rejects the acknowledgement text for a non-FILE task', async () => {
         isValidStatusMock.mockReturnValue(true);
         const req = buildReq({
-            body: {
-                isCoding: 'true'
-            }
+            body: { acknowledgementText: 'I have read and understood.' }
+        });
+        updateCourseTaskMock.mockResolvedValue({
+            success: false,
+            responseAfterUpdate: new Error('COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY')
         });
 
         await updateCourseTaskController.updateCourseTask(req, res);
 
-        expect(updateCourseTaskMock).not.toHaveBeenCalled();
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
         expect(mockJson).toHaveBeenCalledWith({
             success: false,
-            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE
+            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
         });
     });
 
@@ -224,6 +228,8 @@ describe('updateCourseTaskController', () => {
             'Read the docs',
             expect.stringContaining('LMSData/Courses/CourseTaskThumbnails/'),
             'ACTIVE',
+            undefined,
+            undefined,
             undefined,
             undefined,
             undefined,

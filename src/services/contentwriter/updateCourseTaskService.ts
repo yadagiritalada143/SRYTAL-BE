@@ -2,7 +2,7 @@ import CourseTaskModel from '../../model/courseTaskModel';
 import { IUpdateCourseTaskResponse } from '../../interfaces/courseTask';
 import { stripHtmlTags } from '../../util/stripHtmlTags';
 
-const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string, executionMode?: 'CALLABLE' | 'STDIN') : Promise<IUpdateCourseTaskResponse> => {
+const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string, executionMode?: 'CALLABLE' | 'STDIN', acknowledgementText?: string) : Promise<IUpdateCourseTaskResponse> => {
     try {
         const existingTask = await CourseTaskModel.findById(id);
 
@@ -19,6 +19,22 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
             taskDescription: cleanTaskDescription,
             status,
         };
+        if (acknowledgementText !== undefined) {
+            const cleanAcknowledgementText = stripHtmlTags(acknowledgementText);
+            // Acknowledgement copy only applies to FILE tasks: flag non-empty
+            // copy on any other task type as a validation error instead of
+            // silently persisting copy that would never be displayed.
+            if (
+                cleanAcknowledgementText &&
+                String(existingTask.type || '').toUpperCase() !== 'FILE'
+            ) {
+                return {
+                    success: false,
+                    responseAfterUpdate: new Error('COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY')
+                };
+            }
+            updateData.acknowledgementText = cleanAcknowledgementText;
+        }
         if (executionMode) {
             if (String(existingTask.type || '').toUpperCase() !== 'CODE') {
                 throw new Error('EXECUTION_MODE_REQUIRES_CODING_TASK');

@@ -25,10 +25,6 @@ const updateCourseModuleSchema = Joi.object({
         .trim()
         .allow('')
         .optional(),
-    acknowledgementText: Joi.string()
-        .trim()
-        .allow('')
-        .optional(),
     status: Joi.string()
         .trim()
         .uppercase()

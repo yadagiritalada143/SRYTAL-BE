@@ -8,7 +8,7 @@ import { courseModuleThumbnailsFolder } from '../../config/awsS3Config';
 
 const addModuleToCourse = async (req: Request, res: Response) => {
     try {
-        const { courseId, moduleName, moduleDescription, acknowledgementText } = req.body;
+        const { courseId, moduleName, moduleDescription } = req.body;
         let uniqueThumbnailKey: string = '';
 
         if (!String(courseId || '').trim()) {
@@ -39,7 +39,7 @@ const addModuleToCourse = async (req: Request, res: Response) => {
                 })
         }
 
-        const responseAfteraddingCourseModule = await addCourseModuleService.addNewCourseModule(courseId, moduleName, moduleDescription, uniqueThumbnailKey, 'ACTIVE', acknowledgementText);
+        const responseAfteraddingCourseModule = await addCourseModuleService.addNewCourseModule(courseId, moduleName, moduleDescription, uniqueThumbnailKey, 'ACTIVE');
 
         if (responseAfteraddingCourseModule) {
             return res.status(201).json({ message: COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE, data: responseAfteraddingCourseModule });

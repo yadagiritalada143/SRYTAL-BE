@@ -83,9 +83,9 @@ describe('updateCourseTaskService', () => {
         expect(result).toEqual({ success: true, responseAfterUpdate: updatedTask });
     });
 
-    it('updates the coding task fields when provided', async () => {
-        findByIdMock.mockResolvedValue({ _id: 't1', thumbnail: null, content: null });
-        const updatedTask = { _id: 't1', taskName: 'Read', status: 'ACTIVE', isCoding: true, question: 'Reverse a string.' };
+    it('updates the acknowledgement text when provided', async () => {
+        findByIdMock.mockResolvedValue({ _id: 't1', type: 'FILE', thumbnail: null, content: null });
+        const updatedTask = { _id: 't1', taskName: 'Read', status: 'ACTIVE', acknowledgementText: 'I have read and understood.' };
         findByIdAndUpdateMock.mockResolvedValue(updatedTask);
 
         const result = await updateCourseTaskService.updateCourseTask(
@@ -97,8 +97,10 @@ describe('updateCourseTaskService', () => {
             undefined,
             undefined,
             undefined,
-            true,
-            'Reverse a string.'
+            undefined,
+            undefined,
+            undefined,
+            '  I have <b>read</b> &amp; understood.  '
         );
 
         expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
@@ -108,13 +110,37 @@ describe('updateCourseTaskService', () => {
                     taskName: 'Read',
                     taskDescription: 'Description',
                     status: 'ACTIVE',
-                    isCoding: true,
-                    question: 'Reverse a string.'
+                    acknowledgementText: 'I have read & understood.'
                 }
             },
             { new: true, runValidators: true }
         );
         expect(result).toEqual({ success: true, responseAfterUpdate: updatedTask });
+    });
+
+    it('rejects the acknowledgement text when the existing task is not a FILE task', async () => {
+        findByIdMock.mockResolvedValue({ _id: 't1', type: 'LINK', thumbnail: null, content: null });
+
+        const result = await updateCourseTaskService.updateCourseTask(
+            't1',
+            'Read',
+            'Description',
+            undefined,
+            'ACTIVE',
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            'I have read and understood.'
+        );
+
+        expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
+        expect(result.success).toBe(false);
+        expect((result.responseAfterUpdate as Error).message).toBe(
+            'COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY'
+        );
     });
 
     it('sets the execution mode for an existing coding task', async () => {

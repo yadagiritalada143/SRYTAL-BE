@@ -28,7 +28,7 @@ const uploadToS3 = async ( file: Express.Multer.File, folder: string): Promise<s
 
 const addTaskToModule = async (req: Request, res: Response) => {
     try {
-        const { moduleId, taskName, taskDescription, link, type } = req.body;
+        const { moduleId, taskName, taskDescription, link, type, acknowledgementText } = req.body;
 
         const status = 'ACTIVE';
 
@@ -54,6 +54,16 @@ const addTaskToModule = async (req: Request, res: Response) => {
             return res.status(400).json({
                 success: false,
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_CODING_TASK_DESCRIPTION_MESSAGE
+            });
+        }
+
+        // Acknowledgement copy is only ever shown to employees for FILE tasks.
+        // Reject it up front when authoring any other task type instead of
+        // silently persisting copy that would never be displayed.
+        if (taskType !== 'FILE' && String(acknowledgementText || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
             });
         }
 
@@ -165,7 +175,8 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 content,
                 contentMimeType,
                 contentFileName,
-                req.user?.userId || ''
+                req.user?.userId || '',
+                acknowledgementText
             );
 
         /**

@@ -48,7 +48,7 @@ const getMyAssignedCourseById = async (
             tasksByModule,
             completedByAssignment.get(String(assignment._id)) || new Map()
         ),
-        assignment.moduleAcknowledgements
+        assignment.taskAcknowledgements
     );
 
     const progress = courseProgress.summariseProgress(modules);

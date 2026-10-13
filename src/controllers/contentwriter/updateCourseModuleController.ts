@@ -9,7 +9,7 @@ import { courseModuleThumbnailsFolder } from '../../config/awsS3Config';
 
 const updateCourseModule = async (req: Request, res: Response) => {
     try {
-        const { id, moduleName, moduleDescription, status, acknowledgementText } = req.body;
+        const { id, moduleName, moduleDescription, status } = req.body;
 
         if (!isValidStatus(status)) {
             return res.status(400).json({
@@ -66,7 +66,6 @@ const updateCourseModule = async (req: Request, res: Response) => {
             moduleDescription,
             thumbnailKey,
             status.toUpperCase(),
-            acknowledgementText,
         );
         res.status(200).json(updateCourseModuleResponse);
     } catch (error: any) {

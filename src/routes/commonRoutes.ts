@@ -30,8 +30,8 @@ import downloadSalarySlipController from '../controllers/common/downloadSalarySl
 import getMyAssignedCoursesController from '../controllers/common/getMyAssignedCoursesController';
 import getMyAssignedCourseByIdController from '../controllers/common/getMyAssignedCourseByIdController';
 import updateMyTaskProgressController from '../controllers/common/updateMyTaskProgressController';
-import updateMyModuleAcknowledgementController from '../controllers/common/updateMyModuleAcknowledgementController';
-import updateMyModuleAcknowledgementSchema from '../middlewares/schemas/updateMyModuleAcknowledgementSchema';
+import updateMyTaskAcknowledgementController from '../controllers/common/updateMyTaskAcknowledgementController';
+import updateMyTaskAcknowledgementSchema from '../middlewares/schemas/updateMyTaskAcknowledgementSchema';
 import expertConsultationController from '../controllers/common/expertConsultationController';
 import addProgrammingLanguageController from '../controllers/common/addProgrammingLanguageController';
 import updateProgrammingLanguageController from '../controllers/common/updateProgrammingLanguageController';
@@ -1200,17 +1200,6 @@ commonRouter.get('/getMyAssignedCourses', validateJWT, getMyAssignedCoursesContr
  *                             type: string
  *                           moduleDescription:
  *                             type: string
- *                           acknowledgementText:
- *                             type: string
- *                             description: Shared acknowledgement text the employee must accept for this module.
- *                           acknowledged:
- *                             type: boolean
- *                             description: Whether the authenticated employee has acknowledged this module.
- *                           acknowledgedAt:
- *                             type: string
- *                             format: date-time
- *                             nullable: true
- *                             description: When the employee acknowledged the module, or null if not yet acknowledged.
  *                           totalTasks:
  *                             type: integer
  *                           completedTasks:
@@ -1231,6 +1220,7 @@ commonRouter.get('/getMyAssignedCourses', validateJWT, getMyAssignedCoursesContr
  *                                   enum:
  *                                     - FILE
  *                                     - LINK
+ *                                   description: Acknowledgement only applies to FILE tasks.
  *                                 link:
  *                                   type: string
  *                                   description: External URL, only present for LINK tasks.
@@ -1240,6 +1230,17 @@ commonRouter.get('/getMyAssignedCourses', validateJWT, getMyAssignedCoursesContr
  *                                 contentFileName:
  *                                   type: string
  *                                   example: intro.mp4
+ *                                 acknowledgementText:
+ *                                   type: string
+ *                                   description: Task acknowledgement copy the employee must accept. Only present on FILE tasks.
+ *                                 acknowledged:
+ *                                   type: boolean
+ *                                   description: Whether the employee has accepted this task's acknowledgement. Only present on FILE tasks.
+ *                                 acknowledgedAt:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   nullable: true
+ *                                   description: When the employee acknowledged the FILE task, or null if not yet acknowledged.
  *                                 isCompleted:
  *                                   type: boolean
  *                                 completedAt:
@@ -1346,14 +1347,15 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
 
 /**
  * @swagger
- * /updateMyModuleAcknowledgement:
+ * /updateMyTaskAcknowledgement:
  *   put:
- *     summary: Acknowledge a module of an assigned course
+ *     summary: Acknowledge a FILE task of an assigned course
  *     description: |
- *       Records the authenticated employee's acknowledgement for one module of one
+ *       Records the authenticated employee's acknowledgement for one task of one
  *       assigned course. The acknowledgement is scoped to the employee, the course
- *       assignment and the module. Once a module is acknowledged the record is
- *       immutable: sending `acknowledged: false` is rejected, and retrying with
+ *       assignment and the task, and only applies to FILE tasks: LINK and CODE
+ *       tasks are rejected. Once a task is acknowledged the record is immutable:
+ *       sending `acknowledged: false` is rejected, and retrying with
  *       `acknowledged: true` never creates a duplicate or resets the original
  *       `acknowledgedAt`.
  *     tags:
@@ -1368,21 +1370,22 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *             type: object
  *             required:
  *               - courseAssignmentId
- *               - moduleId
+ *               - taskId
  *               - acknowledged
  *             properties:
  *               courseAssignmentId:
  *                 type: string
  *                 example: "66d123456789abcdef123456"
- *               moduleId:
+ *               taskId:
  *                 type: string
  *                 example: "66d323456789abcdef123456"
  *               acknowledged:
  *                 type: boolean
  *                 example: true
+ *                 description: Must be `true`. Revocations are not allowed.
  *     responses:
  *       200:
- *         description: Module acknowledged successfully.
+ *         description: Task acknowledged successfully.
  *         content:
  *           application/json:
  *             schema:
@@ -1393,13 +1396,13 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *                   example: true
  *                 message:
  *                   type: string
- *                   example: Module acknowledged successfully !
+ *                   example: Task acknowledged successfully !
  *                 data:
  *                   type: object
  *                   properties:
  *                     courseAssignmentId:
  *                       type: string
- *                     moduleId:
+ *                     taskId:
  *                       type: string
  *                     acknowledged:
  *                       type: boolean
@@ -1408,7 +1411,7 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *                       type: string
  *                       format: date-time
  *       400:
- *         description: The module does not belong to the assigned course.
+ *         description: The task does not belong to the assigned course, is not a FILE task, or a revocation was attempted.
  *       401:
  *         description: Unauthorized. Missing or invalid Authorization header.
  *       404:
@@ -1417,13 +1420,13 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *         description: Server error.
  */
 commonRouter.put(
-    '/updateMyModuleAcknowledgement',
+    '/updateMyTaskAcknowledgement',
     validateJWT,
     validateBody(
-        updateMyModuleAcknowledgementSchema,
-        MY_COURSES_ERROR_MESSAGES.MODULE_ACKNOWLEDGEMENT_MISSING_FIELDS_MESSAGE
+        updateMyTaskAcknowledgementSchema,
+        MY_COURSES_ERROR_MESSAGES.TASK_ACKNOWLEDGEMENT_MISSING_FIELDS_MESSAGE
     ),
-    updateMyModuleAcknowledgementController.updateMyModuleAcknowledgement
+    updateMyTaskAcknowledgementController.updateMyTaskAcknowledgement
 );
 
 /**
@@ -1971,9 +1974,6 @@ commonRouter.post(
  *                 type: 
  *               moduleDescription:
  *                 type: string
- *               acknowledgementText:
- *                 type: string
- *                 description: Optional acknowledgement text shown to employees for this module
  *               coursemodulethumbnail:
  *                 type: string
  *                 format: binary
@@ -2048,6 +2048,10 @@ commonRouter.post(
  *                 type: string
  *                 description: URL for LINK task type.
  *                 example: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+ *               acknowledgementText:
+ *                 type: string
+ *                 description: Acknowledgement copy employees must accept; applies to FILE tasks only.
+ *                 example: Please confirm that you have read the uploaded document.
  *               taskFile:
  *                 type: string
  *                 format: binary
@@ -2392,6 +2396,10 @@ commonRouter.post(
  *                 type: string
  *                 description: External link for LINK task type.
  *                 example: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+ *               acknowledgementText:
+ *                 type: string
+ *                 description: Acknowledgement copy employees must accept; applies to FILE tasks only.
+ *                 example: Please confirm that you have read the uploaded document.
  *               taskFile:
  *                 type: string
  *                 format: binary
@@ -2452,6 +2460,9 @@ commonRouter.post(
  *                     contentFileName:
  *                       type: string
  *                       example: nodejs-tutorial.mp4
+ *                     acknowledgementText:
+ *                       type: string
+ *                       example: Please confirm that you have read the uploaded document.
  *       400:
  *         description: Invalid input, status, type, or thumbnail type.
  *         content:
@@ -2527,9 +2538,6 @@ commonRouter.put(
  *               moduleDescription:
  *                 type: string
  *                 description: Updated module description
- *               acknowledgementText:
- *                 type: string
- *                 description: Updated acknowledgement text shown to employees for this module (optional)
  *               thumbnail:
  *                 type: string
  *                 format: binary

@@ -50,6 +50,13 @@ const addCourseTaskSchema = Joi.object({
             }),
         otherwise: Joi.string().trim().allow('', null).optional()
     }),
+    acknowledgementText: Joi.string()
+        .trim()
+        .allow('')
+        .optional()
+        .messages({
+            'string.base': 'Acknowledgement text must be a string.'
+        }),
     taskFileUploaded: Joi.boolean()
         .when('type', {
             is: 'FILE',

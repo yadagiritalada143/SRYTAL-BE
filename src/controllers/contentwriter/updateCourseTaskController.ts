@@ -23,7 +23,7 @@ const uploadToS3 = async (
 
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
-        const { id, taskName, taskDescription, status, executionMode } = req.body;
+        const { id, taskName, taskDescription, status, executionMode, acknowledgementText } = req.body;
 
         if (!isValidCourseTaskStatus(status)) {
             return res.status(400).json({
@@ -97,9 +97,23 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContentFileName,
             undefined,
             undefined,
-            executionMode
+            executionMode,
+            acknowledgementText
 
         );
+
+        if (
+            updateCourseResponse &&
+            updateCourseResponse.success === false &&
+            String(updateCourseResponse.responseAfterUpdate?.message || '') ===
+                'COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY'
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
+            });
+        }
+
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {
         console.error(`Error in updating course task: ${error}`);

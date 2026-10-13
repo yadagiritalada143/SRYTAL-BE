@@ -5,7 +5,7 @@ import { bucketName } from '../../config/awsS3Config';
 import { stripHtmlTags } from '../../util/stripHtmlTags';
 
 
-const updateCourseModule = async (id: string, moduleName: string, moduleDescription: string, thumbnail?: string, status?: string, acknowledgementText?: string): Promise<IUpdateCourseModuleResponse> => {
+const updateCourseModule = async (id: string, moduleName: string, moduleDescription: string, thumbnail?: string, status?: string): Promise<IUpdateCourseModuleResponse> => {
     try {
 
         const existingCourseModule = await CourseModuleModel.findById(id);
@@ -15,10 +15,6 @@ const updateCourseModule = async (id: string, moduleName: string, moduleDescript
         }
 
         const updateFields: any = { moduleName, moduleDescription: stripHtmlTags(moduleDescription), status };
-
-        if (acknowledgementText !== undefined) {
-            updateFields.acknowledgementText = stripHtmlTags(acknowledgementText);
-        }
 
         if (thumbnail) {
             updateFields.thumbnail = thumbnail;

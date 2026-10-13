@@ -17,6 +17,7 @@ export interface ICourseTask extends Document {
     content?: string;
     contentMimeType?: string;
     contentFileName?: string;
+    acknowledgementText?: string;
     baseBoilerplate?: string;
     starterCode?: ICourseTaskStarterCode[];
 }

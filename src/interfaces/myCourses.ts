@@ -23,6 +23,11 @@ export interface IMyCourseTask {
     // Published questions on the task, and how many the employee has solved.
     questionCount?: number;
     completedQuestionCount?: number;
+    // Acknowledgement only applies to 'FILE' tasks. The text is the task's
+    // shared acknowledgement copy, followed by this employee's state.
+    acknowledgementText?: string;
+    acknowledged?: boolean;
+    acknowledgedAt?: Date | null;
     isCompleted: boolean;
     completedAt?: Date | null;
 }
@@ -32,8 +37,6 @@ export interface IMyCourseModule {
     moduleName: string;
     moduleDescription: string;
     status?: string;
-    acknowledged?: boolean;
-    acknowledgedAt?: Date | null;
     tasks: IMyCourseTask[];
     totalTasks: number;
     completedTasks: number;
@@ -89,16 +92,19 @@ export interface IUpdateMyTaskProgressResponse {
     task?: { taskId: string; isCompleted: boolean; completedAt?: Date | null };
 }
 
-export interface IUpdateMyModuleAcknowledgementResponse {
+export interface IUpdateMyTaskAcknowledgementResponse {
     success: boolean;
     // Set when the assignment could not be found for this employee.
     notFound?: boolean;
-    // Set when the module does not belong to the assigned course.
-    invalidModule?: boolean;
+    // Set when the task does not belong to the assigned course.
+    invalidTask?: boolean;
+    // Set when the task is not a FILE task. Acknowledgement only applies to
+    // file-based tasks.
+    notFileTask?: boolean;
     // Set when the client tries to revoke an acknowledgement with acknowledged: false.
     revocationNotAllowed?: boolean;
     courseAssignmentId?: string;
-    moduleId?: string;
+    taskId?: string;
     acknowledged?: boolean;
     acknowledgedAt?: Date | null;
 }

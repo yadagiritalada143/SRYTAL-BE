@@ -82,31 +82,10 @@ describe('updateCourseModuleController', () => {
 
         await updateCourseModuleController.updateCourseModule(req, res);
 
-        expect(updateCourseModuleMock).toHaveBeenCalledWith('m1', 'Intro', 'First module', undefined, 'ACTIVE', undefined);
+        expect(updateCourseModuleMock).toHaveBeenCalledWith('m1', 'Intro', 'First module', undefined, 'ACTIVE');
         expect(uploadThumbnailToS3Mock).not.toHaveBeenCalled();
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
         expect(mockJson).toHaveBeenCalledWith(updateResponse);
-    });
-
-    it('forwards the acknowledgement text to the service', async () => {
-        isValidStatusMock.mockReturnValue(true);
-        const req = buildReq({
-            body: { acknowledgementText: 'I have read and understood.' }
-        });
-        const updateResponse = { success: true, responseAfterModuleUpdate: { modifiedCount: 1 } };
-        updateCourseModuleMock.mockResolvedValue(updateResponse);
-
-        await updateCourseModuleController.updateCourseModule(req, res);
-
-        expect(updateCourseModuleMock).toHaveBeenCalledWith(
-            'm1',
-            'Intro',
-            'First module',
-            undefined,
-            'ACTIVE',
-            'I have read and understood.'
-        );
-        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
     });
 
     it('uploads a new thumbnail and passes its key to the service', async () => {
@@ -126,7 +105,7 @@ describe('updateCourseModuleController', () => {
             'image/png',
             'LMSData/Courses/CourseModuleThumbnail'
         );
-        expect(updateCourseModuleMock).toHaveBeenCalledWith('m1', 'Intro', 'First module', 'new-module-thumb-key', 'ACTIVE', undefined);
+        expect(updateCourseModuleMock).toHaveBeenCalledWith('m1', 'Intro', 'First module', 'new-module-thumb-key', 'ACTIVE');
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
     });
 
