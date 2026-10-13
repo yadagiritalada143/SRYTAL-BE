@@ -596,6 +596,51 @@ describe('runCourseTaskCodeService', () => {
         expect(result.execution.totalTests).toBe(2);
     });
 
+    it('resolves a programming-language _id to its canonical key and runs the saved cases', async () => {
+        executeMock.mockResolvedValue(executionResult('4'));
+
+        const languageObjectId = '66d323456789abcdef123459';
+        programmingLanguageFindOneMock.mockImplementation((query: any) => {
+            if (query?._id === languageObjectId) {
+                return queryResult({ canonicalKey: 'python' });
+            }
+            return queryResult({ _id: languageObjectId });
+        });
+
+        const result = await runCourseTaskCodeService.runCourseTaskCode(
+            taskId,
+            languageObjectId,
+            'print(4)',
+            userId
+        );
+
+        expect(programmingLanguageFindOneMock).toHaveBeenCalledWith({
+            _id: languageObjectId,
+            isActive: true
+        });
+        expect(programmingLanguageFindOneMock).toHaveBeenCalledWith({
+            canonicalKey: 'python',
+            isActive: true
+        });
+        expect(taskFindByIdMock).toHaveBeenCalled();
+        expect(result.execution.totalTests).toBe(2);
+    });
+
+    it('rejects an inactive programming-language _id', async () => {
+        programmingLanguageFindOneMock.mockReturnValue(queryResult(null));
+
+        await expect(
+            runCourseTaskCodeService.runCourseTaskCode(
+                taskId,
+                '66d323456789abcdef123459',
+                'print(4)',
+                userId
+            )
+        ).rejects.toThrow('INVALID_LANGUAGE');
+
+        expect(taskFindByIdMock).not.toHaveBeenCalled();
+    });
+
     it('rejects a language that is inactive in the database', async () => {
         programmingLanguageFindOneMock.mockReturnValue(queryResult(null));
 

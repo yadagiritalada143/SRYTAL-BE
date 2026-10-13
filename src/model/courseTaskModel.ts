@@ -22,6 +22,9 @@ const CourseTaskSchema = new mongoose.Schema({
     contentFileName: { type: mongoose.Schema.Types.String },
     acknowledgementText: { type: mongoose.Schema.Types.String, trim: true },
     baseBoilerplate: { type: mongoose.Schema.Types.String },
+    // Version of the boilerplate-generation contract that produced `code`.
+    // Older entries without it are still served; new entries always stamp it.
+    boilerplateVersion: { type: mongoose.Schema.Types.Number, default: 0 },
     starterCode: [{
         languageId: {
             type: mongoose.Schema.Types.ObjectId,

@@ -63,6 +63,37 @@ const getExecutionStatus = (
     return executionError ? 'EXECUTION_ERROR' : 'WRONG_OUTPUT';
 };
 
+/**
+ * Resolve a user-supplied language to its canonical runtime key. Accepts both a
+ * name/alias (e.g. 'Python', 'JS', 'c++') and a programming-languages `_id`,
+ * since the language picker and the boilerplate endpoint identify a language
+ * by its Mongo ObjectId while the execution registry keys off the canonical
+ * slug. Returns undefined when the language is unknown or inactive.
+ */
+const resolveCanonicalLanguage = async (
+    language: string
+): Promise<string | undefined> => {
+    const direct = normalizeLanguage(language);
+    if (direct) {
+        return direct;
+    }
+
+    if (Types.ObjectId.isValid(language)) {
+        const record = await ProgrammingLanguages.findOne({
+            _id: language,
+            isActive: true
+        })
+            .select('canonicalKey')
+            .lean();
+
+        return record?.canonicalKey
+            ? normalizeLanguage(record.canonicalKey)
+            : undefined;
+    }
+
+    return undefined;
+};
+
 const loadCompletedTestCases = async (taskId: string) =>
     CodingTaskTestCaseModel.findOne({
         taskId,
@@ -474,7 +505,7 @@ const runCourseTaskCode = async (
      * supported by the static execution registry AND present and active in the
      * programming-languages collection.
      */
-    const canonicalLanguage = normalizeLanguage(language);
+    const canonicalLanguage = await resolveCanonicalLanguage(language);
     const languageEntry = canonicalLanguage
         ? LANGUAGE_REGISTRY[canonicalLanguage]
         : undefined;

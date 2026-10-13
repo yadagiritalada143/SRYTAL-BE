@@ -4,6 +4,7 @@ import mongoose, { Document } from 'mongoose';
 export interface ICourseTaskStarterCode {
     languageId: mongoose.Types.ObjectId | string;
     code: string;
+    boilerplateVersion?: number;
 }
 
 export interface ICourseTask extends Document {
@@ -17,7 +18,6 @@ export interface ICourseTask extends Document {
     content?: string;
     contentMimeType?: string;
     contentFileName?: string;
-    acknowledgementText?: string;
     baseBoilerplate?: string;
     starterCode?: ICourseTaskStarterCode[];
 }
