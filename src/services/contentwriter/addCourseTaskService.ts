@@ -53,7 +53,9 @@ const addCourseTask = async (
             contentMimeType,
             contentFileName,
             ...(cleanAcknowledgementText ? { acknowledgementText: cleanAcknowledgementText } : {}),
-            ...(baseBoilerplate ? { baseBoilerplate } : {})
+            ...(baseBoilerplate ? { baseBoilerplate } : {}),
+            ...(isCodingTask ? { executionMode: 'CALLABLE' } : {}),
+            
         });
 
         const result = await taskToSave.save();

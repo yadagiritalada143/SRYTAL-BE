@@ -51,6 +51,7 @@ import addCourseTaskController from '../controllers/contentwriter/addCourseTaskC
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
 import addCourseController from '../controllers/contentwriter/addCourseController';
 import getAllCoursesController from '../controllers/contentwriter/getAllCoursesController';
+import getAllActiveCoursesController from '../controllers/contentwriter/getAllActiveCoursesController';
 import getCourseByIdController from '../controllers/contentwriter/getCourseByIdController';
 
 const upload = multer({ storage: multer.memoryStorage() });
@@ -1908,6 +1909,68 @@ commonRouter.get('/getAllCourses', validateJWT, getAllCoursesController.getAllCo
  *         description: Server error
  */
 commonRouter.get('/getCourseById/:id', validateJWT, getCourseByIdController.getCourseDetailsById);
+
+/**
+ * @swagger
+ * /getAllActiveCourses:
+ *   get:
+ *     summary: Get all active courses
+ *     description: Get all courses whose status is ACTIVE, with their thumbnail image URLs.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully fetched all active courses.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 totalActiveCourses:
+ *                   type: number
+ *                   example: 5
+ *                 courses:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64f123456789abcdef123456"
+ *                       courseName:
+ *                         type: string
+ *                         example: "Node.js"
+ *                       courseDescription:
+ *                         type: string
+ *                         example: "Complete Node.js Backend Development Course"
+ *                       thumbnail:
+ *                         type: string
+ *                         example: "LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       thumbnailUrl:
+ *                         type: string
+ *                         format: uri
+ *                         example: "https://your-bucket.s3.amazonaws.com/LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       status:
+ *                         type: string
+ *                         example: "ACTIVE"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get('/getAllActiveCourses', validateJWT, getAllActiveCoursesController.getAllActiveCourses);
+
 
 /**
  * @swagger

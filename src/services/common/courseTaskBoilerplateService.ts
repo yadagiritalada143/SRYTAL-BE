@@ -9,6 +9,13 @@ import getUserOpenRouterKeyService from '../useropenrouter/getUserOpenRouterKeyS
 const OPENROUTER_CHAT_COMPLETIONS_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const generationPromises = new Map<string, Promise<string>>();
 
+/**
+ * Version stamped on every cached starter-code entry. Lets the platform tell
+ * apart skeletons produced by the current generation contract from ones written
+ * by an earlier prompt/shape, so stale caches can be migrated without guessing.
+ */
+const BOILERPLATE_VERSION = 1;
+
 const getApiKey = async (userId: string): Promise<string> => {
     const keyRecord = await getUserOpenRouterKeyService.getUserOpenRouterKeyService(userId);
     const apiKey = keyRecord?.openrouterKey?.trim();
@@ -237,6 +244,7 @@ const getOrGenerateCourseTaskBoilerplate = async (
                     starterCode: {
                         languageId: languageObjectId,
                         code,
+                        boilerplateVersion: BOILERPLATE_VERSION
                     }
                 }
             }
@@ -270,4 +278,3 @@ const getOrGenerateCourseTaskBoilerplate = async (
 };
 
 export default { generateBaseBoilerplate, getOrGenerateCourseTaskBoilerplate};
- 

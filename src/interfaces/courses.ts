@@ -26,6 +26,12 @@ export interface IFetchAllCoursesResponse {
     };
 }
 
+export interface IFetchAllActiveCoursesResponse {
+    success?: boolean;
+    courses?: any;
+    totalActiveCourses?: number;
+}
+
 export interface IFetchCourseByIdResponse {
     success: boolean;
     coursedata?: any;
