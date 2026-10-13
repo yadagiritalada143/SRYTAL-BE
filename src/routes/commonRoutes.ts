@@ -14,6 +14,7 @@ import validateAddCourseTask from '../middlewares/validateAddCourseTask';
 import validateBody from '../middlewares/validateBody';
 import addCourseTaskSchenm from '../middlewares/schemas/addCourseTaskSchema';
 import addCourseSchema from '../middlewares/schemas/addCourseSchema';
+import cloneCourseSchema from '../middlewares/schemas/cloneCourseSchema';
 import updateCourseSchema from '../middlewares/schemas/updateCourseSchema';
 import addCourseModuleSchema from '../middlewares/schemas/addCourseModuleSchema';
 import updateCourseModuleSchema from '../middlewares/schemas/updateCourseModuleSchema';
@@ -50,6 +51,7 @@ import submitCodeController from '../controllers/common/submitCodeController';
 import addCourseTaskController from '../controllers/contentwriter/addCourseTaskController';
 import addCourseModuleController from '../controllers/contentwriter/addCourseModuleController';
 import addCourseController from '../controllers/contentwriter/addCourseController';
+import cloneCourseController from '../controllers/contentwriter/cloneCourseController';
 import getAllCoursesController from '../controllers/contentwriter/getAllCoursesController';
 import getAllActiveCoursesController from '../controllers/contentwriter/getAllActiveCoursesController';
 import getCourseByIdController from '../controllers/contentwriter/getCourseByIdController';
@@ -2012,6 +2014,124 @@ commonRouter.post(
     upload.single('coursethumbnail'),
     validateBody(addCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE),
     addCourseController.addNewCourse
+);
+
+/**
+ * @swagger
+ * /clonecourse:
+ *   post:
+ *     summary: Clone selected modules and tasks from an archived course
+ *     description: |
+ *       Creates a new ACTIVE course containing only the selected modules and
+ *       tasks of an ARCHIVED source course. Source records are never modified.
+ *       Employee assignments, learner progress, submissions and completion
+ *       records are not copied. The cloned course can subsequently be managed
+ *       through the existing course/module/task APIs.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseId
+ *               - courseName
+ *               - modules
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *                 description: ID of the archived source course.
+ *                 example: 65f2a7c8e4b123456789abcd
+ *               courseName:
+ *                 type: string
+ *                 description: Name for the new cloned course.
+ *                 example: JavaScript Advanced
+ *               modules:
+ *                 type: array
+ *                 minItems: 1
+ *                 description: Modules selected for cloning.
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - moduleId
+ *                   properties:
+ *                     moduleId:
+ *                       type: string
+ *                       description: ID of the module to clone.
+ *                       example: 65f2a7c8e4b123456789abce
+ *                     taskIds:
+ *                       type: array
+ *                       description: IDs of the tasks to clone from this module.
+ *                       items:
+ *                         type: string
+ *                       example:
+ *                         - 65f2a7c8e4b123456789abcf
+ *     responses:
+ *       201:
+ *         description: Course cloned successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Course cloned Successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     courseId:
+ *                       type: string
+ *                       example: 65f2a7c8e4b123456789abd0
+ *                     courseName:
+ *                       type: string
+ *                       example: JavaScript Advanced
+ *                     status:
+ *                       type: string
+ *                       example: ACTIVE
+ *                     modules:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           moduleId:
+ *                             type: string
+ *                           moduleName:
+ *                             type: string
+ *                           tasks:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 taskId:
+ *                                   type: string
+ *                                 taskName:
+ *                                   type: string
+ *                                 type:
+ *                                   type: string
+ *                                 status:
+ *                                   type: string
+ *       400:
+ *         description: Source course is not archived or the selected modules/tasks are invalid.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Source course not found.
+ *       500:
+ *         description: Server error while cloning the course.
+ */
+commonRouter.post(
+    '/clonecourse',
+    validateJWT,
+    validateBody(cloneCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE),
+    cloneCourseController.cloneCourse
 );
 
 /**
