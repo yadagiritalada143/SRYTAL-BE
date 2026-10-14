@@ -30,12 +30,12 @@ const addCourseTaskSchema = Joi.object({
     type: Joi.string()
         .trim()
         .uppercase()
-        .valid('LINK', 'FILE', 'CODE')
+        .valid('LINK', 'FILE', 'CODE', 'QUIZ')
         .required()
         .messages({
             'any.required': 'Task type is required.',
             'string.empty': 'Task type is required.',
-            'any.only': 'Task type must be LINK, FILE, or CODE.'
+            'any.only': 'Task type must be LINK, FILE, CODE, or QUIZ.'
         }),
     link: Joi.when('type', {
         is: 'LINK',
@@ -48,7 +48,14 @@ const addCourseTaskSchema = Joi.object({
                 'string.empty': 'A valid HTTP or HTTPS link is required for LINK tasks.',
                 'string.uri': 'A valid HTTP or HTTPS link is required for LINK tasks.'
             }),
-        otherwise: Joi.string().trim().allow('', null).optional()
+        // A QUIZ task holds only its questions, so it must not carry a link.
+        otherwise: Joi.when('type', {
+            is: 'QUIZ',
+            then: Joi.valid('', null).default('').messages({
+                'any.only': 'Links are not allowed for QUIZ tasks.'
+            }),
+            otherwise: Joi.string().trim().allow('', null).optional()
+        })
     }),
     acknowledgementText: Joi.string()
         .trim()
@@ -64,7 +71,14 @@ const addCourseTaskSchema = Joi.object({
                 'any.only': 'A file is required for FILE tasks.',
                 'any.required': 'A file is required for FILE tasks.'
             }),
-            otherwise: Joi.optional()
+            // A QUIZ task must not carry an uploaded content file.
+            otherwise: Joi.when('type', {
+                is: 'QUIZ',
+                then: Joi.valid(false).optional().messages({
+                    'any.only': 'Files are not allowed for QUIZ tasks.'
+                }),
+                otherwise: Joi.optional()
+            })
         })
         .strip(),
     hasThumbnail: Joi.boolean().required().strip(),

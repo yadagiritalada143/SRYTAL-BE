@@ -21,5 +21,6 @@ export const COURSE_TASK_ERRORS_MESSAGES = {
     COURSE_TASK_NAME_REQUIRED_MESSAGE: 'Please provide the task name !',
     COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE: 'Acknowledgement is applicable only for file type tasks !',
     COURSE_TASK_VALIDATION_ERROR_MESSAGE: 'Invalid course task request.',
+    COURSE_TASK_QUIZ_TASK_MESSAGE: 'Please provide the Quiz task description !'
     
 };

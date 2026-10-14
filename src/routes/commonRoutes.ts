@@ -12,7 +12,6 @@ import getProfileImageController from '../controllers/common/getProfileImageCont
 import validateJWT from '../middlewares/validateJWT';
 import validateAddCourseTask from '../middlewares/validateAddCourseTask';
 import validateBody from '../middlewares/validateBody';
-import addCourseTaskSchenm from '../middlewares/schemas/addCourseTaskSchema';
 import addCourseSchema from '../middlewares/schemas/addCourseSchema';
 import cloneCourseSchema from '../middlewares/schemas/cloneCourseSchema';
 import updateCourseSchema from '../middlewares/schemas/updateCourseSchema';
@@ -22,6 +21,8 @@ import updateCourseTaskSchema from '../middlewares/schemas/updateCourseTaskSchem
 import { COURSE_ERROR_MESSAGES } from '../constants/contentwriter/courseMessages';
 import { COURSE_MODULE_ERRORS_MESSAGES } from '../constants/contentwriter/coursemoduleMessages';
 import { COURSE_TASK_ERRORS_MESSAGES } from '../constants/contentwriter/coursetaskMessages';
+import { COURSE_QUIZ_QUESTION_ERROR_MESSAGES } from '../constants/contentwriter/courseQuizQuestionMessages';
+import createQuizQuestionSchema from '../middlewares/schemas/createQuizQuestionSchema';
 import { MY_COURSES_ERROR_MESSAGES } from '../constants/common/myCoursesMessages';
 import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
@@ -55,6 +56,7 @@ import cloneCourseController from '../controllers/contentwriter/cloneCourseContr
 import getAllCoursesController from '../controllers/contentwriter/getAllCoursesController';
 import getAllActiveCoursesController from '../controllers/contentwriter/getAllActiveCoursesController';
 import getCourseByIdController from '../controllers/contentwriter/getCourseByIdController';
+import createQuizQuestionController from '../controllers/contentwriter/createQuizQuestionController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -2225,6 +2227,7 @@ commonRouter.post(
  *                   - LINK
  *                   - FILE
  *                   - CODE
+ *                   - QUIZ
  *                 description: Type of the course task.
  *                 example: LINK
  *               link:
@@ -2304,6 +2307,77 @@ commonRouter.post(
     ]),
     validateAddCourseTask,
     addCourseTaskController.addTaskToModule
+);
+
+/**
+ * @swagger
+ * /createQuizQuestion:
+ *   post:
+ *     summary: Create a quiz question for an existing QUIZ task (Content Writer)
+ *     description: |
+ *       Adds a question to a course task whose type is `QUIZ`. The question is
+ *       stored in the `coursequizquestions` collection. Supported types:
+ *       - `RADIO` / `DROPDOWN`: at least four options, exactly one correct.
+ *       - `CHECKBOX`: at least four options, at least one correct.
+ *       - `TOGGLE`: exactly two options, exactly one correct.
+ *       - `TEXTAREA`: free text, options are not required.
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - question
+ *               - type
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *                 example: 6ac5fa913be811de4383ef9d
+ *               question:
+ *                 type: string
+ *                 example: Which is the correct answer?
+ *               type:
+ *                 type: string
+ *                 enum: [RADIO, CHECKBOX, TOGGLE, DROPDOWN, TEXTAREA]
+ *                 example: RADIO
+ *               options:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     value:
+ *                       type: string
+ *                       example: Option A
+ *                     isanswer:
+ *                       type: boolean
+ *                       example: false
+ *               status:
+ *                 type: string
+ *                 enum: [SHOW, HIDE]
+ *                 default: SHOW
+ *     responses:
+ *       201:
+ *         description: Question created successfully.
+ *       400:
+ *         description: Invalid payload, invalid option rules, or the task is not a QUIZ task.
+ *       401:
+ *         description: Unauthorized. Missing or invalid token.
+ *       404:
+ *         description: Task not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.post(
+    '/createQuizQuestion',
+    validateJWT,
+    validateBody(createQuizQuestionSchema, COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_VALIDATION_ERROR_MESSAGE),
+    createQuizQuestionController.createQuizQuestion
 );
 
 /**

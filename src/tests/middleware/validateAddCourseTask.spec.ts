@@ -64,6 +64,55 @@ describe('validateAddCourseTask', () => {
         }));
     });
 
+    it('accepts a QUIZ task without a file or link', () => {
+        req.body.type = 'QUIZ';
+        req.body.link = '';
+
+        validateAddCourseTask(req, res, next);
+
+        expect(next).toHaveBeenCalledTimes(1);
+        expect(req.body).toEqual({
+            moduleId: '66d323456789abcdef123456',
+            taskName: 'Read the docs',
+            type: 'QUIZ',
+            link: ''
+        });
+        expect(statusMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects a QUIZ task that carries a link', () => {
+        req.body.type = 'QUIZ';
+        req.body.link = 'https://example.com';
+
+        validateAddCourseTask(req, res, next);
+
+        expect(next).not.toHaveBeenCalled();
+        expect(statusMock).toHaveBeenCalledWith(400);
+        expect(jsonMock).toHaveBeenCalledWith(expect.objectContaining({
+            success: false,
+            errors: expect.arrayContaining(['Links are not allowed for QUIZ tasks.'])
+        }));
+    });
+
+    it('rejects a QUIZ task that carries an uploaded file', () => {
+        req.body.type = 'QUIZ';
+        req.body.link = '';
+        req.files = {
+            taskFile: [{
+                mimetype: 'application/pdf'
+            } as Express.Multer.File]
+        };
+
+        validateAddCourseTask(req, res, next);
+
+        expect(next).not.toHaveBeenCalled();
+        expect(statusMock).toHaveBeenCalledWith(400);
+        expect(jsonMock).toHaveBeenCalledWith(expect.objectContaining({
+            success: false,
+            errors: expect.arrayContaining(['Files are not allowed for QUIZ tasks.'])
+        }));
+    });
+
     it('accepts FILE tasks when taskFile is uploaded', () => {
         req.body.type = 'FILE';
         req.files = {

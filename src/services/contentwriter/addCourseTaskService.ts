@@ -34,7 +34,8 @@ const addCourseTask = async (
                     errorCode === 'OPENROUTER_KEY_NOT_FOUND' ||
                     errorCode === 'OPENROUTER_KEY_INVALID' ||
                     errorCode === 'OPENROUTER_API_KEY_INVALID_FORMAT' ||
-                    errorCode === 'CODING_TASK_DESCRIPTION_REQUIRED'
+                    errorCode === 'CODING_TASK_DESCRIPTION_REQUIRED' ||
+                    errorCode ===  'COURSE_TASK_QUIZ_TASK_MESSAGE'
                 ) {
                     throw error;
                 }
