@@ -26,6 +26,28 @@ export interface ICreateQuizQuestionResponse {
     taskNotFound?: boolean;
     notQuizTask?: boolean;
     duplicateQuestion?: boolean;
+    invalidQuestion?: boolean;
+    invalidQuestionType?: boolean;
+    invalidOptions?: boolean;
+    invalidStatus?: boolean;
+    invalidQuestionId?: boolean;
+    questionNotFound?: boolean;
+    message?: string;
+}
+
+export interface ICourseQuizQuestionResponse {
+    success: boolean;
+    question?: any;
+    duplicateQuestion?: boolean;
+    invalidQuestion?: boolean;
+    invalidQuestionType?: boolean;
+    invalidOptions?: boolean;
+    invalidStatus?: boolean;
+    invalidQuestionId?: boolean;
+    questionNotFound?: boolean;
+    taskNotFound?: boolean;
+    notQuizTask?: boolean;
+    message?: string;
 }
 
 export interface IFetchAllQuizQuestionsResponse {
