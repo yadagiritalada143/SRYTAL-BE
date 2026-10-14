@@ -16,6 +16,40 @@ export const ALLOWED_COURSE_TASK_FILE_EXTENSIONS = [
     '.webp',
 ];
 
+/**
+ * Executable / script extensions that must never be accepted, even though they
+ * are already absent from the allow-list. Kept explicit so the intent is clear
+ * and so a future allow-list edit can not accidentally re-enable them.
+ */
+export const DISALLOWED_COURSE_TASK_FILE_EXTENSIONS = [
+    '.exe',
+    '.bat',
+    '.cmd',
+    '.com',
+    '.cpl',
+    '.scr',
+    '.msi',
+    '.msp',
+    '.dll',
+    '.sys',
+    '.sh',
+    '.ps1',
+    '.psm1',
+    '.jar',
+    '.app',
+    '.deb',
+    '.rpm',
+    '.apk',
+    '.bin',
+    '.vbs',
+    '.wsf',
+    '.hta',
+    '.lnk',
+    '.reg',
+    '.pif',
+    '.gadget',
+];
+
 export const ALLOWED_COURSE_TASK_FILE_MIME_TYPES = [
     'application/pdf',
     'application/msword',
@@ -53,6 +87,10 @@ export const isAllowedCourseTaskFile = (
     }
 
     const extension = path.extname(file.originalname).toLowerCase();
+    if (DISALLOWED_COURSE_TASK_FILE_EXTENSIONS.includes(extension)) {
+        return false;
+    }
+
     if (!ALLOWED_COURSE_TASK_FILE_EXTENSIONS.includes(extension)) {
         return false;
     }
@@ -64,4 +102,4 @@ export const isAllowedCourseTaskFile = (
     );
 };
 
-export default { isAllowedCourseTaskFile, ALLOWED_COURSE_TASK_FILE_EXTENSIONS, ALLOWED_COURSE_TASK_FILE_MIME_TYPES };
+export default { isAllowedCourseTaskFile, ALLOWED_COURSE_TASK_FILE_EXTENSIONS, ALLOWED_COURSE_TASK_FILE_MIME_TYPES, DISALLOWED_COURSE_TASK_FILE_EXTENSIONS };
