@@ -57,6 +57,7 @@ import getAllCoursesController from '../controllers/contentwriter/getAllCoursesC
 import getAllActiveCoursesController from '../controllers/contentwriter/getAllActiveCoursesController';
 import getCourseByIdController from '../controllers/contentwriter/getCourseByIdController';
 import createQuizQuestionController from '../controllers/contentwriter/createQuizQuestionController';
+import getAllQuizQuestionsController from '../controllers/contentwriter/getAllQuizQuestionsController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -2379,6 +2380,77 @@ commonRouter.post(
     validateBody(createQuizQuestionSchema, COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_VALIDATION_ERROR_MESSAGE),
     createQuizQuestionController.createQuizQuestion
 );
+
+/**
+ * @swagger
+ * /getAllQuizQuestions/{taskId}:
+ *   get:
+ *     summary: Get all quiz questions of a task (Content Writer)
+ *     description: |
+ *       Returns every non-deleted question belonging to a task whose type is
+ *       `QUIZ`, ordered by creation. Content Writers see both `SHOW` and `HIDE`
+ *       questions. Each question includes its options.
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the QUIZ task whose questions to fetch
+ *     responses:
+ *       200:
+ *         description: Questions fetched successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Quiz questions fetched successfully !
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       taskId:
+ *                         type: string
+ *                       question:
+ *                         type: string
+ *                       type:
+ *                         type: string
+ *                         enum: [RADIO, CHECKBOX, TOGGLE, DROPDOWN, TEXTAREA]
+ *                       options:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             value:
+ *                               type: string
+ *                             isanswer:
+ *                               type: boolean
+ *                       status:
+ *                         type: string
+ *                         enum: [SHOW, HIDE]
+ *       400:
+ *         description: Invalid taskId, or the task is not a QUIZ task.
+ *       401:
+ *         description: Unauthorized. Missing or invalid token.
+ *       404:
+ *         description: Task not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.get('/getAllQuizQuestions/:taskId', validateJWT, getAllQuizQuestionsController.getAllQuizQuestions);
 
 /**
  * @swagger

@@ -27,3 +27,10 @@ export interface ICreateQuizQuestionResponse {
     notQuizTask?: boolean;
     duplicateQuestion?: boolean;
 }
+
+export interface IFetchAllQuizQuestionsResponse {
+    success: boolean;
+    questions?: any[];
+    taskNotFound?: boolean;
+    notQuizTask?: boolean;
+}
