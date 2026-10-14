@@ -34,3 +34,9 @@ export interface IFetchAllQuizQuestionsResponse {
     taskNotFound?: boolean;
     notQuizTask?: boolean;
 }
+
+export interface IFetchQuizQuestionByIdResponse {
+    success: boolean;
+    question?: any;
+    questionNotFound?: boolean;
+}

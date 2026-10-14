@@ -58,6 +58,7 @@ import getAllActiveCoursesController from '../controllers/contentwriter/getAllAc
 import getCourseByIdController from '../controllers/contentwriter/getCourseByIdController';
 import createQuizQuestionController from '../controllers/contentwriter/createQuizQuestionController';
 import getAllQuizQuestionsController from '../controllers/contentwriter/getAllQuizQuestionsController';
+import getQuizQuestionByIdController from '../controllers/contentwriter/getQuizQuestionByIdController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -2450,7 +2451,45 @@ commonRouter.post(
  *       500:
  *         description: Internal server error.
  */
-commonRouter.get('/getAllQuizQuestions/:taskId', validateJWT, getAllQuizQuestionsController.getAllQuizQuestions);
+commonRouter.get(
+    '/getAllQuizQuestions/:taskId',
+    validateJWT,
+    getAllQuizQuestionsController.getAllQuizQuestions
+);
+
+/**
+ * @swagger
+ * /getQuizQuestion/{id}:
+ *   get:
+ *     summary: Get a single quiz question by its ID (Content Writer)
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Question ID
+ *     responses:
+ *       200:
+ *         description: Question fetched successfully.
+ *       400:
+ *         description: Invalid question ID.
+ *       401:
+ *         description: Unauthorized.
+ *       404:
+ *         description: Question not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.get(
+    '/getQuizQuestion/:id',
+    validateJWT,
+    getQuizQuestionByIdController.getQuizQuestionById
+);
 
 /**
  * @swagger

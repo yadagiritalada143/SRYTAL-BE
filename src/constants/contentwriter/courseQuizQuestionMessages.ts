@@ -3,6 +3,7 @@ export const MAX_QUIZ_QUESTIONS_PER_TASK = 100;
 export const COURSE_QUIZ_QUESTION_SUCCESS_MESSAGES = {
     COURSE_QUIZ_QUESTION_ADD_SUCCESS_MESSAGE: 'Quiz question created successfully !',
     COURSE_QUIZ_QUESTION_FETCH_SUCCESS_MESSAGE: 'Quiz questions fetched successfully !',
+    COURSE_QUIZ_QUESTION_FETCH_SINGLE_SUCCESS_MESSAGE: 'Quiz question fetched successfully !',
 };
 
 export const COURSE_QUIZ_QUESTION_ERROR_MESSAGES = {
@@ -21,4 +22,6 @@ export const COURSE_QUIZ_QUESTION_ERROR_MESSAGES = {
     COURSE_QUIZ_QUESTION_DUPLICATE_MESSAGE: 'This question is already part of the quiz !',
     COURSE_QUIZ_QUESTION_ADD_ERROR_MESSAGE: 'Error occurred while creating the quiz question !',
     COURSE_QUIZ_QUESTION_FETCH_ERROR_MESSAGE: 'Error occurred while fetching the quiz questions !',
+    COURSE_QUIZ_QUESTION_FETCH_SINGLE_ERROR_MESSAGE: 'Error occurred while fetching the quiz question !',
+    COURSE_QUIZ_QUESTION_QUESTION_NOT_FOUND_MESSAGE: 'Quiz question not found !',
 };
