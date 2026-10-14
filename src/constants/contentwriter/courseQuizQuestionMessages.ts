@@ -6,6 +6,7 @@ export const COURSE_QUIZ_QUESTION_SUCCESS_MESSAGES = {
     COURSE_QUIZ_QUESTION_FETCH_SINGLE_SUCCESS_MESSAGE: 'Quiz question fetched successfully !',
     COURSE_QUIZ_QUESTION_UPDATE_SUCCESS_MESSAGE: 'Quiz question updated successfully !',
     COURSE_QUIZ_QUESTION_STATUS_UPDATE_SUCCESS_MESSAGE: 'Quiz question status updated successfully !',
+    COURSE_QUIZ_QUESTION_DELETE_SUCCESS_MESSAGE: 'Quiz question deleted successfully !',
     COURSE_QUIZ_QUESTION_SHOW_HIDE_SUCCESS_MESSAGE: 'Quiz question visibility updated successfully !',
 };
 
