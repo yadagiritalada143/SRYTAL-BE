@@ -63,9 +63,7 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_QUIZ_TASK_MESSAGE
             });
         }
-        // Acknowledgement copy is only ever shown to employees for FILE tasks.
-        // Reject it up front when authoring any other task type instead of
-        // silently persisting copy that would never be displayed.
+
         if (taskType !== 'FILE' && String(acknowledgementText || '').trim()) {
             return res.status(400).json({
                 success: false,
@@ -165,11 +163,6 @@ const addTaskToModule = async (req: Request, res: Response) => {
             );
         }
 
-        /**
-         * ---------------------------------------------------------
-         * Add course task
-         * ---------------------------------------------------------
-         */
         const responseAfteraddingCourseTask =
             await addNewCourseTaskService.addCourseTask(
                 moduleId,
@@ -185,11 +178,6 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 acknowledgementText
             );
 
-        /**
-         * ---------------------------------------------------------
-         * Response
-         * ---------------------------------------------------------
-         */
         const serviceReturnedFailure =
             responseAfteraddingCourseTask &&
             'success' in responseAfteraddingCourseTask &&

@@ -2,16 +2,9 @@ import { Request, Response } from 'express';
 import createQuizQuestionService from '../../services/contentwriter/createQuizQuestionService';
 import { COURSE_QUIZ_QUESTION_SUCCESS_MESSAGES, COURSE_QUIZ_QUESTION_ERROR_MESSAGES} from '../../constants/contentwriter/courseQuizQuestionMessages';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
-import { ICourseQuizQuestionOption, CourseQuizQuestionType, CourseQuizQuestionStatus } from '../../interfaces/courseQuizQuestion';
+import { ICourseQuizQuestionOption } from '../../interfaces/courseQuizQuestion';
+import {CourseQuizQuestionType, CourseQuizQuestionStatus} from '../../types/courseQuizQuestiontype'
 
-/**
- * Enforces the per-type option rules:
- *  - RADIO / DROPDOWN : at least four options, exactly one correct.
- *  - CHECKBOX         : at least four options, at least one correct.
- *  - TOGGLE           : exactly two options, exactly one correct.
- *  - TEXTAREA         : free text, options are not required.
- * Returns an error key (mapped to a message by the caller) or null when valid.
- */
 const validateOptions = (
     type: string,
     options: ICourseQuizQuestionOption[] | undefined

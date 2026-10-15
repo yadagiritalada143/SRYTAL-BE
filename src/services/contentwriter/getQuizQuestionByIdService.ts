@@ -1,10 +1,6 @@
 import CourseQuizQuestionModel from '../../model/courseQuizQuestionModel';
 import { IFetchQuizQuestionByIdResponse } from '../../interfaces/courseQuizQuestion';
 
-/**
- * Fetches a single non-deleted quiz question by its ID. Content Writers must
- * be able to retrieve the question and its options.
- */
 const getQuizQuestionById = async (questionId: string): Promise<IFetchQuizQuestionByIdResponse> => {
     try {
         const question = await CourseQuizQuestionModel.findOne({

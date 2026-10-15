@@ -1,11 +1,5 @@
 import { IRunCourseTaskCodeTestResult } from '../interfaces/runCourseTaskCode';
 
-/**
- * Reduce execution results to the only fields that may leave the backend for
- * AI review. Hidden test cases keep just their id/name/status/pass flag so
- * their input, expected output, actual output and diagnostics are never sent to
- * the provider.
- */
 export const sanitizeTestResultsForReview = (
     results: IRunCourseTaskCodeTestResult[]
 ): Record<string, unknown>[] =>

@@ -4,46 +4,11 @@ import { ITaskProgress } from '../interfaces/taskProgress';
 
 const TaskProgressSchema = new mongoose.Schema(
     {
-        courseAssignmentId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'CourseAssignment',
-            required: true,
-            index: true,
-        },
-
-        moduleId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'CourseModule',
-            required: true,
-            index: true,
-        },
-
-        taskId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'CourseTask',
-            required: true,
-            index: true,
-        },
-
-        isCompleted: {
-            type: Boolean,
-            default: false,
-            required: true,
-        },
-
-        completedAt: {
-            type: Date,
-            default: null,
-        },
-
-        // Quiz attempt history for this task, scoped to the single (employee,
-        // task) progress row. Every explicit quiz start/reattempt appends a new
-        // entry; the subdocument _id is the attemptId handed to the employee so
-        // a later validate/submit can pinpoint the exact attempt. Lives here to
-        // reuse the task-progress collection instead of adding a parallel one.
-        // validateQuiz stores its score on the attempt (validatedAt..passed) so
-        // submitQuiz can finalize the same result; submittedAt marks the attempt
-        // as finalized and makes it immutable to further validation.
+        courseAssignmentId: { type: mongoose.Schema.Types.ObjectId,  ref: 'CourseAssignment', required: true, index: true },
+        moduleId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseModule', required: true, index: true },
+        taskId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseTask', required: true, index: true },
+        isCompleted: { type: Boolean, default: false, required: true },
+        completedAt: { type: Date, default: null },
         quizAttempts: {
             type: [
                 {

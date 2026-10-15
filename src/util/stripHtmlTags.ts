@@ -1,8 +1,3 @@
-/**
- * Removes HTML markup from a string so descriptions are stored as plain text.
- * Entities are decoded first, then tags are stripped and whitespace collapsed.
- * Non-string input is returned unchanged.
- */
 export const stripHtmlTags = (value?: string): string => {
     if (typeof value !== 'string') {
         return value as any;

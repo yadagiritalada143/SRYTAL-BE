@@ -7,7 +7,6 @@ const addNewCourseModule = async (courseId: string, moduleName: string, moduleDe
         const CoursesModuleToSave: any = new CourseModuleModel({ courseId, moduleName, moduleDescription: stripHtmlTags(moduleDescription), thumbnail, status });
         const result = await CoursesModuleToSave.save();
 
-        // Touch the parent course so its updatedAt reflects this activity.
         await CourseModel.findByIdAndUpdate(courseId, { $currentDate: { updatedAt: true } });
 
         return result;

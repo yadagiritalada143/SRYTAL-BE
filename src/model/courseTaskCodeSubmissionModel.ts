@@ -3,36 +3,14 @@ import { ICourseTaskCodeSubmission } from '../interfaces/courseTaskCodeSubmissio
 
 const CourseTaskCodeSubmissionSchema = new mongoose.Schema(
     {
-        userId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'userModel',
-            required: true,
-            index: true
-        },
-        codingTaskId: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'CourseTaskModel',
-            required: true,
-            index: true
-        },
+        userId: { type: mongoose.Schema.Types.ObjectId, ref: 'userModel', required: true, index: true },
+        codingTaskId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseTaskModel', required: true, index: true },
         language: { type: String, required: true },
         sourceCode: { type: String, required: true },
         testResults: [{
             testCaseId: { type: String, required: true },
             name: { type: String, required: true },
-            status: {
-                type: String,
-                enum: [
-                    'PASSED',
-                    'WRONG_OUTPUT',
-                    'REQUEST_ERROR',
-                    'COMPILE_ERROR',
-                    'RUNTIME_ERROR',
-                    'TIMEOUT',
-                    'EXECUTION_ERROR'
-                ],
-                required: true
-            },
+            status: { type: String, enum: [ 'PASSED', 'WRONG_OUTPUT', 'REQUEST_ERROR', 'COMPILE_ERROR', 'RUNTIME_ERROR', 'TIMEOUT', 'EXECUTION_ERROR' ], required: true },
             passed: { type: Boolean, required: true },
             isHidden: { type: Boolean, default: false },
             expectedOutput: { type: String, default: '' },
@@ -53,9 +31,6 @@ const CourseTaskCodeSubmissionSchema = new mongoose.Schema(
 
 CourseTaskCodeSubmissionSchema.index({ userId: 1, codingTaskId: 1, submittedAt: -1 });
 
-const CourseTaskCodeSubmissionModel = mongoose.model<ICourseTaskCodeSubmission>(
-    'CourseTaskCodeSubmissionModel',
-    CourseTaskCodeSubmissionSchema
-);
+const CourseTaskCodeSubmissionModel = mongoose.model<ICourseTaskCodeSubmission>('CourseTaskCodeSubmissionModel', CourseTaskCodeSubmissionSchema);
 
 export default CourseTaskCodeSubmissionModel;

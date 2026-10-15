@@ -2,38 +2,12 @@ import mongoose from 'mongoose';
 import CourseModel from '../../model/coursesModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseTaskModel from '../../model/courseTaskModel';
-import {
-    COURSE_CLONE_ERROR_CODES,
-    COURSE_ERROR_MESSAGES
-} from '../../constants/contentwriter/courseMessages';
-import {
-    ICloneCourseData,
-    ICloneCourseInput,
-    ICloneCourseResponse,
-    IClonedCourseModule
-} from '../../interfaces/cloneCourse';
-
-/** Records created outside a transaction so they can be removed if a later step fails. */
-interface ICloneTracker {
-    courseId?: any;
-    moduleIds: any[];
-    taskIds: any[];
-}
-
-interface IResolvedModuleSelection {
-    sourceModule: any;
-    sourceTasks: any[];
-}
+import { COURSE_CLONE_ERROR_CODES, COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessages';
+import { ICloneCourseData, ICloneCourseInput, ICloneCourseResponse, IClonedCourseModule, IResolvedModuleSelection, ICloneTracker } from '../../interfaces/cloneCourse';
 
 const ACTIVE_STATUS = 'ACTIVE';
 const ARCHIVE_STATUS = 'ARCHIVE';
 
-/**
- * Produces a name that does not clash with a name already in use. The original
- * name is kept when free; otherwise a `(Copy)`, `(Copy 2)` … suffix is added.
- * `usedNames` is mutated so names generated earlier in the same run are taken
- * into account as well.
- */
 const buildUniqueName = (baseName: string, usedNames: Set<string>): string => {
     const base = String(baseName ?? '').trim() || 'Untitled';
     let candidate = base;
@@ -62,11 +36,6 @@ const isTransactionUnsupportedError = (error: any): boolean => {
     );
 };
 
-/**
- * Creates the cloned course, modules and tasks. When `session` is supplied the
- * writes participate in the surrounding transaction, otherwise `tracker` is
- * populated so the caller can roll the records back manually.
- */
 const performClone = async (
     courseName: string,
     sourceCourse: any,
@@ -157,7 +126,6 @@ const performClone = async (
     };
 };
 
-/** Best-effort removal of records created during a non-transactional attempt. */
 const rollbackCreatedRecords = async (tracker: ICloneTracker): Promise<void> => {
     try {
         if (tracker.taskIds.length) {
@@ -180,12 +148,6 @@ const failure = (code: string, message: string): ICloneCourseResponse => ({
     message
 });
 
-/**
- * Clones the selected modules and tasks of an archived source course into a new
- * active course. Prefers a MongoDB transaction; if the deployment does not
- * support transactions it falls back to a non-transactional run with manual
- * rollback so partial clones are never left behind.
- */
 const cloneCourse = async (
     input: ICloneCourseInput
 ): Promise<ICloneCourseResponse> => {

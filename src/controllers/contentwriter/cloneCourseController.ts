@@ -1,10 +1,6 @@
 import { Request, Response } from 'express';
 import cloneCourseService from '../../services/contentwriter/cloneCourseService';
-import {
-    COURSE_CLONE_ERROR_CODES,
-    COURSE_ERROR_MESSAGES,
-    COURSE_SUCCESS_MESSAGES
-} from '../../constants/contentwriter/courseMessages';
+import { COURSE_CLONE_ERROR_CODES, COURSE_ERROR_MESSAGES, COURSE_SUCCESS_MESSAGES } from '../../constants/contentwriter/courseMessages';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
 
 const errorCodeToStatus = (code?: string): number => {
