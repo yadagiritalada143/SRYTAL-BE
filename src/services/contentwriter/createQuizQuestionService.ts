@@ -2,24 +2,13 @@ import CourseTaskModel from '../../model/courseTaskModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseModel from '../../model/coursesModel';
 import CourseQuizQuestionModel from '../../model/courseQuizQuestionModel';
-import {
-    ICourseQuizQuestionOption,
-    ICreateQuizQuestionResponse,
-    CourseQuizQuestionType,
-    CourseQuizQuestionStatus,
-} from '../../interfaces/courseQuizQuestion';
+import { ICourseQuizQuestionOption, ICreateQuizQuestionResponse } from '../../interfaces/courseQuizQuestion';
+import { CourseQuizQuestionType, CourseQuizQuestionStatus} from '../../types/courseQuizQuestiontype';
 
-/** Escapes regex metacharacters so a question is matched as literal text. */
 const escapeRegExp = (value: string): string => {
     return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 };
 
-/**
- * Creates a quiz question against an existing QUIZ task and stores it in the
- * `coursequizquestions` collection. The task must exist and be of type QUIZ;
- * per-type option rules are validated by the controller before this runs.
- * Question text is unique per task (case-insensitive, ignoring deleted ones).
- */
 const createQuizQuestion = async (
     taskId: string,
     question: string,
@@ -42,8 +31,6 @@ const createQuizQuestion = async (
 
         const trimmedQuestion = String(question || '').trim();
 
-        // Reject a question whose text already exists in this task (any status,
-        // excluding soft-deleted rows). Matching is case-insensitive.
         const existingQuestion = await CourseQuizQuestionModel.findOne({
             taskId,
             isDeleted: false,

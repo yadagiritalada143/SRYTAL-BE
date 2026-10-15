@@ -6,10 +6,6 @@ import { ICourseQuizQuestionResponse } from '../../interfaces/courseQuizQuestion
 
 const isValidObjectId = (value: string): boolean => /^[0-9a-fA-F]{24}$/.test(String(value || ''));
 
-/**
- * Shows or hides a quiz question without deleting it. The question must exist
- * and belong to a QUIZ task the Content Writer can manage.
- */
 const updateQuizQuestionStatus = async (
     questionId: string,
     status: string

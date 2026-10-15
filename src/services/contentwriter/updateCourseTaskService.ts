@@ -21,9 +21,6 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
         };
         if (acknowledgementText !== undefined) {
             const cleanAcknowledgementText = stripHtmlTags(acknowledgementText);
-            // Acknowledgement copy only applies to FILE tasks: flag non-empty
-            // copy on any other task type as a validation error instead of
-            // silently persisting copy that would never be displayed.
             if (
                 cleanAcknowledgementText &&
                 String(existingTask.type || '').toUpperCase() !== 'FILE'

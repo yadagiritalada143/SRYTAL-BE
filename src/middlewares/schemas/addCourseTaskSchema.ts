@@ -1,20 +1,12 @@
 import Joi from 'joi';
 
 const addCourseTaskSchema = Joi.object({
-    moduleId: Joi.string()
-        .hex()
-        .length(24)
-        .required()
-        .messages({
+    moduleId: Joi.string().hex().length(24).required().messages({
             'any.required': 'Module ID is required.',
             'string.hex': 'Module ID must be a valid ID.',
             'string.length': 'Module ID must be a valid ID.'
         }),
-    taskName: Joi.string()
-        .trim()
-        .min(1)
-        .required()
-        .messages({
+    taskName: Joi.string().trim().min(1).required().messages({
             'any.required': 'Task name is required.',
             'string.empty': 'Task name is required.',
             'string.min': 'Task name is required.'
@@ -27,23 +19,14 @@ const addCourseTaskSchema = Joi.object({
                 'string.min': 'Task description is required for coding tasks.'
             }),
         }),
-    type: Joi.string()
-        .trim()
-        .uppercase()
-        .valid('LINK', 'FILE', 'CODE', 'QUIZ')
-        .required()
-        .messages({
+    type: Joi.string().trim().uppercase().valid('LINK', 'FILE', 'CODE', 'QUIZ').required().messages({
             'any.required': 'Task type is required.',
             'string.empty': 'Task type is required.',
             'any.only': 'Task type must be LINK, FILE, CODE, or QUIZ.'
         }),
     link: Joi.when('type', {
         is: 'LINK',
-        then: Joi.string()
-            .trim()
-            .uri({ scheme: ['http', 'https'] })
-            .required()
-            .messages({
+        then: Joi.string().trim().uri({ scheme: ['http', 'https'] }).required().messages({
                 'any.required': 'A valid HTTP or HTTPS link is required for LINK tasks.',
                 'string.empty': 'A valid HTTP or HTTPS link is required for LINK tasks.',
                 'string.uri': 'A valid HTTP or HTTPS link is required for LINK tasks.'
@@ -57,11 +40,7 @@ const addCourseTaskSchema = Joi.object({
             otherwise: Joi.string().trim().allow('', null).optional()
         })
     }),
-    acknowledgementText: Joi.string()
-        .trim()
-        .allow('')
-        .optional()
-        .messages({
+    acknowledgementText: Joi.string().trim().allow('').optional().messages({
             'string.base': 'Acknowledgement text must be a string.'
         }),
     taskFileUploaded: Joi.boolean()
@@ -77,7 +56,6 @@ const addCourseTaskSchema = Joi.object({
                 then: Joi.valid(false).optional().messages({
                     'any.only': 'Files are not allowed for QUIZ tasks.'
                 }),
-                otherwise: Joi.optional()
             })
         })
         .strip(),

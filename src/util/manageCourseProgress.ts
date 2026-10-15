@@ -4,13 +4,6 @@ import TaskProgressModel from '../model/taskProgressModel';
 import { COURSE_ASSIGNMENT_STATUS } from '../types/courseAssignmentStatusValues';
 import { IMyCourseModule, IMyCourseProgress, IMyCourseTask } from '../interfaces/myCourses';
 
-/**
- * Shared progress helpers for the employee-facing course endpoints. The course
- * tree (course -> modules -> tasks) and the per-employee completion records
- * (task-progress) live in separate collections, so both are fetched flat and
- * stitched together in JS — the same approach getEmployeeDashboardService uses.
- */
-
 /** Only published content is ever shown to an employee. */
 const ACTIVE_STATUS = 'ACTIVE';
 
@@ -19,10 +12,6 @@ const isActive = (status?: string) => (status || ACTIVE_STATUS).toUpperCase() ==
 export const percentOf = (completedTasks: number, totalTasks: number): number =>
     totalTasks === 0 ? 0 : Math.round((completedTasks / totalTasks) * 100);
 
-/**
- * The assignment status is derived from completion rather than set by hand, so
- * it can never drift from the task-progress rows.
- */
 export const deriveAssignmentStatus = (completedTasks: number, totalTasks: number): string => {
     if (totalTasks > 0 && completedTasks >= totalTasks) {
         return COURSE_ASSIGNMENT_STATUS.COMPLETED;
@@ -32,8 +21,6 @@ export const deriveAssignmentStatus = (completedTasks: number, totalTasks: numbe
     }
     return COURSE_ASSIGNMENT_STATUS.ASSIGNED;
 };
-
-/** Active modules of the given courses, keyed by course id. */
 const getActiveModulesByCourse = async (courseIds: string[]) => {
     const modules = await CourseModuleModel.find({ courseId: { $in: courseIds } })
         .sort({ createdAt: 1 })
@@ -48,7 +35,6 @@ const getActiveModulesByCourse = async (courseIds: string[]) => {
     return modulesByCourse;
 };
 
-/** Active tasks of the given modules, keyed by module id. */
 const getActiveTasksByModule = async (moduleIds: string[]) => {
     const tasks = await CourseTaskModel.find({ moduleId: { $in: moduleIds } })
         .sort({ createdAt: 1 })
@@ -63,10 +49,6 @@ const getActiveTasksByModule = async (moduleIds: string[]) => {
     return tasksByModule;
 };
 
-/**
- * Completed task ids per course assignment. Only `isCompleted` rows are kept —
- * a row that exists but is false counts the same as no row at all.
- */
 const getCompletedTaskIds = async (courseAssignmentIds: string[]) => {
     const progressRows = await TaskProgressModel.find({
         courseAssignmentId: { $in: courseAssignmentIds },
@@ -95,23 +77,15 @@ const toMyCourseTask = (task: any, completedTasks: Map<string, Date | null>): IM
         status: task.status,
         type: task.type,
         isCoding: String(task.type || '').toUpperCase() === 'CODE',
-        // 'FILE' content is an S3 key, which is useless (and private) to the
-        // client — those tasks are streamed through the content proxy instead.
         link: task.type === 'LINK' ? task.content : undefined,
         contentMimeType: task.contentMimeType,
         contentFileName: task.contentFileName,
-        // Acknowledgement copy only exists on FILE tasks.
         acknowledgementText: isFileTask ? task.acknowledgementText || '' : undefined,
         isCompleted,
         completedAt: isCompleted ? completedTasks.get(String(task._id)) : null
     };
 };
 
-/**
- * Builds the module -> task tree for one course together with the employee's
- * completion state. Pass `withTasks: false` when only the counts are needed
- * (the list endpoint), to keep the payload small.
- */
 export const buildCourseModules = (
     modules: any[],
     tasksByModule: Map<string, any[]>,
@@ -133,13 +107,6 @@ export const buildCourseModules = (
         };
     });
 
-/**
- * Merges the per-employee acknowledgement state stored on a course assignment
- * into a built module -> task tree. Acknowledgement only applies to FILE tasks:
- * LINK and CODE tasks are returned untouched, while FILE tasks without a
- * matching record are marked as not acknowledged. Never writes acknowledgement
- * records — read only.
- */
 export const withAcknowledgementState = (
     modules: IMyCourseModule[],
     taskAcknowledgements: any[]
