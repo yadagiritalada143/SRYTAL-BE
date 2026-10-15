@@ -12,8 +12,15 @@ const coursetaskMessages_1 = require("../../constants/contentwriter/coursetaskMe
 const addTaskToModule = async (req, res) => {
     var _a, _b;
     try {
-        const { moduleId, taskName, taskDescription, link } = req.body;
+        const { moduleId, taskName, taskDescription, link, isCoding, question } = req.body;
         const status = 'ACTIVE';
+        // Coding tasks are flagged via isCoding (string from multipart form or boolean).
+        const isCodingTask = isCoding === true || isCoding === 'true' || isCoding === 1 || isCoding === '1';
+        if (isCodingTask) {
+            if (!question) {
+                return res.status(400).json({ success: false, message: coursetaskMessages_1.COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_QUESTION_MESSAGE });
+            }
+        }
         //get uploaded files 
         //  taskFile       -> PDF, Word, Video, etc.
         //  thumbnailFile  -> JPG, PNG, WEBP, etc.
@@ -45,11 +52,11 @@ const addTaskToModule = async (req, res) => {
             thumbnailPath = `${awsS3Config_1.courseTaskThumbnailsFolder}/${uniqueName}`;
             await manageCourseMedia_1.default.uploadThumbnailToS3(uniqueName, buffer, mimetype, awsS3Config_1.courseTaskThumbnailsFolder);
         }
-        if (!content) {
+        if (!isCodingTask && !content) {
             return res
                 .status(400).json({ success: false, message: coursetaskMessages_1.COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_CONTENT_MESSAGE });
         }
-        const responseAfteraddingCourseTask = await addCourseTaskService_1.default.addCourseTask(moduleId, taskName, taskDescription, thumbnailPath, status, type, content, contentMimeType, contentFileName);
+        const responseAfteraddingCourseTask = await addCourseTaskService_1.default.addCourseTask(moduleId, taskName, taskDescription, thumbnailPath, status, type, content, contentMimeType, contentFileName, isCodingTask, isCodingTask ? question : '');
         if (responseAfteraddingCourseTask && responseAfteraddingCourseTask.id) {
             return res.status(201).json({
                 message: coursetaskMessages_1.COURSE_TASK_SUCCESS_MESSAGES.COURSE_TASK_ADD_SUCCESS_MESSAGE,
@@ -57,6 +64,12 @@ const addTaskToModule = async (req, res) => {
                 taskName: responseAfteraddingCourseTask.taskName,
                 taskDescription: responseAfteraddingCourseTask.taskDescription,
                 type: responseAfteraddingCourseTask.type,
+                content: responseAfteraddingCourseTask.content,
+                contentMimeType: responseAfteraddingCourseTask.contentMimeType,
+                contentFileName: responseAfteraddingCourseTask.contentFileName,
+                thumbnailPath: responseAfteraddingCourseTask.thumbnailPath,
+                isCoding: responseAfteraddingCourseTask.isCoding,
+                question: responseAfteraddingCourseTask.question,
             });
         }
         return res

@@ -25,7 +25,7 @@ const getCourseTaskContent = async (req: Request, res: Response) => {
         }
 
         // type === 'FILE' -> stream from S3
-        const responseFromS3: any = await uploadThumbnailToS3.getCourseMediaFromS3(task.content);
+        const responseFromS3 = await uploadThumbnailToS3.getCourseMediaFromS3(task.content);
 
         res.setHeader('Content-Type', task.contentMimeType || responseFromS3.contentType || 'application/octet-stream');
         res.setHeader(

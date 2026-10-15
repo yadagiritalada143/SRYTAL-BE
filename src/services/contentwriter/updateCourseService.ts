@@ -1,6 +1,7 @@
 import CourseModel from '../../model/coursesModel';
 import s3Client from '../../util/s3Client';
 import { bucketName } from '../../config/awsS3Config';
+import { stripHtmlTags } from '../../util/stripHtmlTags';
 
 interface updateCourseResponse {
     success: boolean;
@@ -14,7 +15,7 @@ const updateCourse = async (id: string, courseName: string, courseDescription: s
             return { success: false, responseAfterUpdateCourse: 'Course not found' };
         }
 
-        const updateFields: any = { courseName, courseDescription, status };
+        const updateFields: any = { courseName, courseDescription: stripHtmlTags(courseDescription), status };
         if (thumbnail) {
             updateFields.thumbnail = thumbnail;
 

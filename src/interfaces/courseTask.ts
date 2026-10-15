@@ -1,15 +1,25 @@
 import mongoose, { Document } from 'mongoose';
 
+/** Generated starter code cached on a coding task for one programming language. */
+export interface ICourseTaskStarterCode {
+    languageId: mongoose.Types.ObjectId | string;
+    code: string;
+    boilerplateVersion?: number;
+}
+
 export interface ICourseTask extends Document {
     moduleId: mongoose.Schema.Types.ObjectId;
     taskName: string;
     taskDescription: string;
     thumbnail?: string;
-    type: string;
+    type?: string;
     status?: string;
+    executionMode?: 'CALLABLE' | 'STDIN' | 'UNCONFIGURED';
     content?: string;
     contentMimeType?: string;
     contentFileName?: string;
+    baseBoilerplate?: string;
+    starterCode?: ICourseTaskStarterCode[];
 }
 
 export interface IFetchCourseTaskContentResponse {

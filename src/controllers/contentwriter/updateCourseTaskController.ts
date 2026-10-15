@@ -1,24 +1,46 @@
 import { Request, Response } from 'express';
 import updateCourseTaskService from '../../services/contentwriter/updateCourseTaskService';
 import { COURSE_TASK_ERRORS_MESSAGES } from '../../constants/contentwriter/coursetaskMessages';
-import isValidStatus from '../../util/validateCourseStatusTypesUtil';
+import isValidCourseTaskStatus from '../../util/validateCourseTaskStatusTypesUtil';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
 import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../config/awsS3Config';
+import { isAllowedCourseTaskFile } from '../../util/validateCourseTaskFile';
+
+// Uploads one multer file to the given S3 folder under a unique name and
+// returns the object key.
+const uploadToS3 = async (
+    file: Express.Multer.File,
+    folder: string
+): Promise<string> => {
+    const uniqueName = uuidv4() + path.extname(file.originalname);
+
+    await uploadThumbnailToS3.uploadThumbnailToS3(uniqueName, file.buffer, file.mimetype, folder);
+
+    return `${folder}/${uniqueName}`;
+};
 
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
-        
-        const { id, taskName, taskDescription, status } = req.body;
+        const { id, taskName, taskDescription, status, executionMode, acknowledgementText } = req.body;
 
-        if (!isValidStatus(status)) {
+        if (!isValidCourseTaskStatus(status)) {
             return res.status(400).json({
                 success: false,
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_STATUS_MESSAGE,
             });
         }
-
+        if (
+            executionMode !== undefined &&
+            executionMode !== 'CALLABLE' &&
+            executionMode !== 'STDIN'
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: 'Execution mode must be CALLABLE or STDIN.'
+            });
+        }
         const files = req.files as {[fieldname: string]: Express.Multer.File[]};
 
         const taskFile = files?.taskFile?.[0];
@@ -31,27 +53,16 @@ const updateCourseTask = async (req: Request, res: Response) => {
         let newThumbnail: string | undefined;
 
         if (taskFile) {
-            const {
-                originalname,
-                buffer,
-                mimetype,
-            } = taskFile;
+            if (!isAllowedCourseTaskFile(taskFile)) {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_FILE_TYPE_MESSAGE,
+                });
+            }
 
-            const uniqueName =
-                uuidv4() + path.extname(originalname);
-
-            await uploadThumbnailToS3.uploadThumbnailToS3(
-                uniqueName,
-                buffer,
-                mimetype,
-                courseTaskContentFolder,
-            );
-
-            newContent =
-                `${courseTaskContentFolder}/${uniqueName}`;
-
-            newContentMimeType = mimetype;
-            newContentFileName = originalname;
+            newContent = await uploadToS3(taskFile, courseTaskContentFolder);
+            newContentMimeType = taskFile.mimetype;
+            newContentFileName = taskFile.originalname;
         }
 
         if (thumbnailFile) {
@@ -72,22 +83,8 @@ const updateCourseTask = async (req: Request, res: Response) => {
                 });
             }
 
-            const { originalname, buffer, mimetype } = thumbnailFile;
-
-            const uniqueName =
-                uuidv4() + path.extname(originalname);
-
-            await uploadThumbnailToS3.uploadThumbnailToS3(
-                uniqueName,
-                buffer,
-                mimetype,
-                courseTaskThumbnailsFolder,
-            );
-
-            newThumbnail =
-                `${courseTaskThumbnailsFolder}/${uniqueName}`;
+            newThumbnail = await uploadToS3(thumbnailFile, courseTaskThumbnailsFolder);
         }
-
 
         const updateCourseResponse = await updateCourseTaskService.updateCourseTask(
             id,
@@ -98,7 +95,25 @@ const updateCourseTask = async (req: Request, res: Response) => {
             newContent,
             newContentMimeType,
             newContentFileName,
+            undefined,
+            undefined,
+            executionMode,
+            acknowledgementText
+
         );
+
+        if (
+            updateCourseResponse &&
+            updateCourseResponse.success === false &&
+            String(updateCourseResponse.responseAfterUpdate?.message || '') ===
+                'COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY'
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
+            });
+        }
+
         res.status(200).json(updateCourseResponse);
     } catch (error: any) {
         console.error(`Error in updating course task: ${error}`);

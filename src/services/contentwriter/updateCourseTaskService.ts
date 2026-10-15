@@ -1,32 +1,52 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 import { IUpdateCourseTaskResponse } from '../../interfaces/courseTask';
+import { stripHtmlTags } from '../../util/stripHtmlTags';
 
-const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string): Promise<IUpdateCourseTaskResponse> => {
+const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string, executionMode?: 'CALLABLE' | 'STDIN', acknowledgementText?: string) : Promise<IUpdateCourseTaskResponse> => {
     try {
-        // const result = await CourseTaskModel.updateMany({ _id: id }, { taskName,  taskDescription, thumbnail, status });
-        // if (!result) {
-        //     return { success: false };
-        // }
-
-        // return { success: true, responseAfterUpdate: result };
-
         const existingTask = await CourseTaskModel.findById(id);
 
-        if(!existingTask) {
+        if (!existingTask) {
             return {
                 success: false,
             };
         }
 
-         const oldThumbnail = existingTask.thumbnail;
-         const oldContent = existingTask.content;
+        const cleanTaskDescription = stripHtmlTags(taskDescription);
 
-         const updateData: any = {
+        const updateData: any = {
             taskName,
-            taskDescription,
+            taskDescription: cleanTaskDescription,
             status,
-            
         };
+        if (acknowledgementText !== undefined) {
+            const cleanAcknowledgementText = stripHtmlTags(acknowledgementText);
+            // Acknowledgement copy only applies to FILE tasks: flag non-empty
+            // copy on any other task type as a validation error instead of
+            // silently persisting copy that would never be displayed.
+            if (
+                cleanAcknowledgementText &&
+                String(existingTask.type || '').toUpperCase() !== 'FILE'
+            ) {
+                return {
+                    success: false,
+                    responseAfterUpdate: new Error('COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY')
+                };
+            }
+            updateData.acknowledgementText = cleanAcknowledgementText;
+        }
+        if (executionMode) {
+            if (String(existingTask.type || '').toUpperCase() !== 'CODE') {
+                throw new Error('EXECUTION_MODE_REQUIRES_CODING_TASK');
+            }
+            updateData.executionMode = executionMode;
+        }
+        const codingQuestionChanged =
+            String(existingTask.type || '').toUpperCase() === 'CODE' &&
+            existingTask.taskDescription !== cleanTaskDescription;
+        if (codingQuestionChanged) {
+            updateData.starterCode = [];
+        }
 
         if (newThumbnail) {
             updateData.thumbnail = newThumbnail;
@@ -47,6 +67,9 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
                 id,
                 {
                     $set: updateData,
+                    ...(codingQuestionChanged
+                        ? { $unset: { baseBoilerplate: 1 } }
+                        : {})
                 },
                 {
                     new: true,

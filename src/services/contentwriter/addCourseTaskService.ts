@@ -1,6 +1,8 @@
 import CourseTaskModel from '../../model/courseTaskModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseModel from '../../model/coursesModel';
+import courseTaskBoilerplateService from '../common/courseTaskBoilerplateService';
+import { stripHtmlTags } from '../../util/stripHtmlTags';
 
 const addCourseTask = async (
     moduleId: string,
@@ -12,36 +14,71 @@ const addCourseTask = async (
     content: string,
     contentMimeType: string,
     contentFileName: string,
+    userId: string,
+    acknowledgementText?: string,
 ) => {
-    try {
+    const isCodingTask = String(type || '').toUpperCase() === 'CODE';
+    const cleanTaskDescription = stripHtmlTags(taskDescription);
+    const cleanAcknowledgementText = stripHtmlTags(acknowledgementText ?? '');
 
-        let thumbnailPath = '';
-        const CoursesTaskToSave: any = new CourseTaskModel({
+    try {
+        let baseBoilerplate: string | undefined;
+        if (isCodingTask) {
+            try {
+                baseBoilerplate = await courseTaskBoilerplateService.generateBaseBoilerplate(cleanTaskDescription, userId);
+            } catch (error: any) {
+                const errorCode = String(error?.message || '');
+                console.error(`Error generating coding task boilerplate: ${errorCode}`);
+                if (
+                    errorCode === 'USER_OPENROUTER_KEY_NOT_FOUND' ||
+                    errorCode === 'OPENROUTER_KEY_NOT_FOUND' ||
+                    errorCode === 'OPENROUTER_KEY_INVALID' ||
+                    errorCode === 'OPENROUTER_API_KEY_INVALID_FORMAT' ||
+                    errorCode === 'CODING_TASK_DESCRIPTION_REQUIRED' ||
+                    errorCode ===  'COURSE_TASK_QUIZ_TASK_MESSAGE'
+                ) {
+                    throw error;
+                }
+                throw new Error('COURSE_TASK_BOILERPLATE_GENERATION_FAILED');
+            }
+        }
+
+        const taskToSave = new CourseTaskModel({
             moduleId,
             taskName,
-            taskDescription,
+            taskDescription: cleanTaskDescription,
             thumbnail,
             status,
             type,
             content,
             contentMimeType,
             contentFileName,
+            ...(cleanAcknowledgementText ? { acknowledgementText: cleanAcknowledgementText } : {}),
+            ...(baseBoilerplate ? { baseBoilerplate } : {}),
+            ...(isCodingTask ? { executionMode: 'CALLABLE' } : {}),
+            
         });
-        
-        const result = await CoursesTaskToSave.save();
 
-        // Propagate activity up: touch the parent course's updatedAt.
+        const result = await taskToSave.save();
+
         const module = await CourseModuleModel.findById(moduleId).lean();
-        if (module?.courseId) {
-            await CourseModel.findByIdAndUpdate(module.courseId, { $currentDate: { updatedAt: true } });
-        }
 
-        return result;
+        if (module?.courseId) {
+            await CourseModel.findByIdAndUpdate(
+                module.courseId,
+                {
+                    $currentDate: {
+                        updatedAt: true
+                    }
+                }
+            );
+        }
+     return result;
+     
     } catch (error: any) {
-        console.error('Error in adding course task:', error);
-        return { success: false };
+        console.error(`Error in adding course task: ${error}`);
+        throw error;
     }
 };
 
 export default { addCourseTask };
-

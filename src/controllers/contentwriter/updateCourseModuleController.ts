@@ -18,9 +18,31 @@ const updateCourseModule = async (req: Request, res: Response) => {
             });
         }
 
+        if (!String(moduleName || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_NAME_REQUIRED_MESSAGE,
+            });
+        }
+
         let thumbnailKey: string | undefined = undefined;
         if(req.file) {
             const { originalname, buffer, mimetype } = req.file;
+
+            const allowedThumbnailExtensions = ['.png', '.jpg', '.jpeg', '.svg'];
+            const allowedThumbnailMimeTypes = ['image/png', 'image/jpeg', 'image/svg+xml'];
+            const thumbnailExtension = path.extname(originalname).toLowerCase();
+
+            if (
+                !allowedThumbnailExtensions.includes(thumbnailExtension) ||
+                !allowedThumbnailMimeTypes.includes(String(mimetype).toLowerCase())
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_INVALID_THUMBNAIL_TYPE_MESSAGE,
+                });
+            }
+
             const uniqueName = uuidv4() + path.extname(originalname);
             const uploadResponse: any = await uploadThumbnailToS3.uploadThumbnailToS3(
                 uniqueName,

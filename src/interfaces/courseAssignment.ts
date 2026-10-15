@@ -9,6 +9,31 @@ export interface ICourseAssignment  extends Document {
     assignedAt: Date;
     dueDate: Date;
     completedAt?: Date | null;
+    taskAcknowledgements?: {
+        taskId: mongoose.Schema.Types.ObjectId;
+        acknowledged: boolean;
+        acknowledgedAt?: Date | null;
+    }[];
+    lastReminderSentAt?: Date | null;
+    reminderScheduleStartDate?: Date | null;
     createdAt: Date;
     updatedAt: Date;
 };
+
+export interface IAssignedCourseForEmployee {
+    courseAssignmentId: string;
+    courseId: string;
+    courseName: string;
+    description: string;
+    status: string;
+    assignedDate: Date;
+    dueDate: Date;
+    assignedBy: string;
+}
+
+export interface IFetchAssignedCoursesForEmployeeResponse {
+    success: boolean;
+    message: string;
+    data: IAssignedCourseForEmployee[];
+}
+

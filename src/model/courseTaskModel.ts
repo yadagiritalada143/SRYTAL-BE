@@ -7,21 +7,40 @@ const CourseTaskSchema = new mongoose.Schema({
     taskName: { type: mongoose.Schema.Types.String, required: true, unique: true },
     taskDescription: { type: mongoose.Schema.Types.String },
     thumbnail: { type: mongoose.Schema.Types.String },
-    status: { type: mongoose.Schema.Types.String },
-    type: { type: mongoose.Schema.Types.String },
+    status: { type: mongoose.Schema.Types.String, enum: ['ACTIVE', 'ARCHIVE'], default: 'ACTIVE' },
+    type: { type: mongoose.Schema.Types.String, enum: ['CODE', 'QUIZ', 'LINK', 'FILE'] },
+    executionMode: {
+        type: mongoose.Schema.Types.String,
+        enum: ['CALLABLE', 'STDIN', 'UNCONFIGURED'],
+        default: 'UNCONFIGURED'
+    },
     // Reference to the task content. For type 'LINK' this is the external URL
     // (YouTube, blog, etc). For type 'FILE' this is the S3 object key of the
     // uploaded file (pdf/word/any). Served back via /getCourseTaskContent/:id.
     content: { type: mongoose.Schema.Types.String },
     contentMimeType: { type: mongoose.Schema.Types.String },
     contentFileName: { type: mongoose.Schema.Types.String },
+    acknowledgementText: { type: mongoose.Schema.Types.String, trim: true },
+    baseBoilerplate: { type: mongoose.Schema.Types.String },
+    // Version of the boilerplate-generation contract that produced `code`.
+    // Older entries without it are still served; new entries always stamp it.
+    boilerplateVersion: { type: mongoose.Schema.Types.Number, default: 0 },
+    starterCode: [{
+        languageId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ProgrammingLanguagesSchema',
+            required: true
+        },
+        code: { type: mongoose.Schema.Types.String, required: true },
+    }],
 },
     {
         collection: 'coursetask',
         timestamps: true,
         toObject: { virtuals: true },
         toJSON: { virtuals: true }
-    });
+    }
+);
 
 CourseTaskSchema.plugin(uniqueValidator);
 

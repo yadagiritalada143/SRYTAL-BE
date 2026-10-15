@@ -39,10 +39,13 @@ const getAdminCourseAssignmentDetails = async (
         courseModules.map((module: any) => String(module._id))
     );
 
-    const modules = courseProgress.buildCourseModules(
-        courseModules,
-        tasksByModule,
-        completedByAssignment.get(String(assignment._id)) || new Map()
+    const modules = courseProgress.withAcknowledgementState(
+        courseProgress.buildCourseModules(
+            courseModules,
+            tasksByModule,
+            completedByAssignment.get(String(assignment._id)) || new Map()
+        ),
+        assignment.taskAcknowledgements
     );
     const progress = courseProgress.summariseProgress(modules);
     const status = courseProgress.deriveAssignmentStatus(progress.completedTasks, progress.totalTasks);

@@ -59,6 +59,7 @@ import getAllCourseAssignmentsController from '../controllers/admin/getAllCourse
 import updateCourseAssignmentDueDateController from '../controllers/admin/updateCourseAssignmentDueDateController';
 import getCourseAssignmentDetailsController from '../controllers/admin/getCourseAssignmentDetailsController';
 import deleteCourseAssignmentController from '../controllers/admin/deleteCourseAssignmentController';
+import fetchAssignedCoursesForEmployeeController from '../controllers/admin/fetchAssignedCoursesForEmployeeController';
 import authorizeAdmin from '../middlewares/authorizeAdmin';
 
 const adminRouter: Router = express.Router();
@@ -4090,6 +4091,107 @@ adminRouter.put('/courses/assignments/:courseAssignmentId/duedate', validateJWT,
  */
 
 adminRouter.delete('/deletecourseassignment/:courseAssignmentId', validateJWT, deleteCourseAssignmentController.deleteCourseAssignment);
+
+/**
+ * @swagger
+ * /admin/courses/assigned/{userId}:
+ *   get:
+ *     summary: Get all courses assigned to an employee
+ *     description: Returns every course assigned to the specified employee, including course details, assignment status, and assigned-by information.
+ *     tags:
+ *       - Course Assignment
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         description: MongoDB ObjectId of the employee
+ *         schema:
+ *           type: string
+ *           example: "64f123456789abcdef123456"
+ *     responses:
+ *       200:
+ *         description: Assigned courses fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Assigned courses fetched successfully !
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       courseAssignmentId:
+ *                         type: string
+ *                         example: "66d123456789abcdef123456"
+ *                       courseId:
+ *                         type: string
+ *                         example: "66c123456789abcdef123456"
+ *                       courseName:
+ *                         type: string
+ *                         example: "Node.js Backend Development"
+ *                       description:
+ *                         type: string
+ *                         example: "Learn Node.js backend development"
+ *                       status:
+ *                         type: string
+ *                         enum:
+ *                           - Assigned
+ *                           - In Progress
+ *                           - Completed
+ *                         example: Assigned
+ *                       assignedDate:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2026-09-01T00:00:00.000Z"
+ *                       dueDate:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2026-09-30T00:00:00.000Z"
+ *                       assignedBy:
+ *                         type: string
+ *                         example: "66b123456789abcdef111111"
+ *       401:
+ *         description: Unauthorized - JWT token is missing or invalid
+ *       403:
+ *         description: Forbidden - Admin role required
+ *       404:
+ *         description: Employee not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Employee not found !
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Error occurred while fetching assigned courses for the employee !
+ */
+
+adminRouter.get('/courses/assigned/:userId', validateJWT, authorizeAdmin, fetchAssignedCoursesForEmployeeController.fetchAssignedCoursesForEmployee);
 
 
 export default adminRouter;

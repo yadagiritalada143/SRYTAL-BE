@@ -2,6 +2,7 @@ import CourseModuleModel from '../../model/coursemoduleModel';
 import { IUpdateCourseModuleResponse } from '../../interfaces/coursemodule';
 import s3Client from '../../util/s3Client';
 import { bucketName } from '../../config/awsS3Config';
+import { stripHtmlTags } from '../../util/stripHtmlTags';
 
 
 const updateCourseModule = async (id: string, moduleName: string, moduleDescription: string, thumbnail?: string, status?: string): Promise<IUpdateCourseModuleResponse> => {
@@ -13,7 +14,7 @@ const updateCourseModule = async (id: string, moduleName: string, moduleDescript
             return { success: false, responseAfterModuleUpdate: 'Course module not found' };
         }
 
-        const updateFields: any = { moduleName, moduleDescription, status };
+        const updateFields: any = { moduleName, moduleDescription: stripHtmlTags(moduleDescription), status };
 
         if (thumbnail) {
             updateFields.thumbnail = thumbnail;

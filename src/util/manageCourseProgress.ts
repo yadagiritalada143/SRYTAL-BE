@@ -86,6 +86,7 @@ const getCompletedTaskIds = async (courseAssignmentIds: string[]) => {
 
 const toMyCourseTask = (task: any, completedTasks: Map<string, Date | null>): IMyCourseTask => {
     const isCompleted = completedTasks.has(String(task._id));
+    const isFileTask = String(task.type || '').toUpperCase() === 'FILE';
 
     return {
         _id: String(task._id),
@@ -93,11 +94,14 @@ const toMyCourseTask = (task: any, completedTasks: Map<string, Date | null>): IM
         taskDescription: task.taskDescription,
         status: task.status,
         type: task.type,
+        isCoding: String(task.type || '').toUpperCase() === 'CODE',
         // 'FILE' content is an S3 key, which is useless (and private) to the
         // client — those tasks are streamed through the content proxy instead.
         link: task.type === 'LINK' ? task.content : undefined,
         contentMimeType: task.contentMimeType,
         contentFileName: task.contentFileName,
+        // Acknowledgement copy only exists on FILE tasks.
+        acknowledgementText: isFileTask ? task.acknowledgementText || '' : undefined,
         isCompleted,
         completedAt: isCompleted ? completedTasks.get(String(task._id)) : null
     };
@@ -129,6 +133,43 @@ export const buildCourseModules = (
         };
     });
 
+/**
+ * Merges the per-employee acknowledgement state stored on a course assignment
+ * into a built module -> task tree. Acknowledgement only applies to FILE tasks:
+ * LINK and CODE tasks are returned untouched, while FILE tasks without a
+ * matching record are marked as not acknowledged. Never writes acknowledgement
+ * records — read only.
+ */
+export const withAcknowledgementState = (
+    modules: IMyCourseModule[],
+    taskAcknowledgements: any[]
+): IMyCourseModule[] => {
+    const acknowledgedByTask = new Map<string, Date | null>();
+    (taskAcknowledgements || []).forEach((record: any) => {
+        if (record && record.taskId) {
+            acknowledgedByTask.set(String(record.taskId), record.acknowledgedAt || null);
+        }
+    });
+
+    return modules.map((module) => {
+        const tasks = (module.tasks || []).map((task) => {
+            const isFileTask = String(task.type || '').toUpperCase() === 'FILE';
+            if (!isFileTask) {
+                return task;
+            }
+
+            const acknowledged = acknowledgedByTask.has(String(task._id));
+            return {
+                ...task,
+                acknowledged,
+                acknowledgedAt: acknowledged ? acknowledgedByTask.get(String(task._id)) || null : null
+            };
+        });
+
+        return { ...module, tasks };
+    });
+};
+
 export const summariseProgress = (modules: IMyCourseModule[]): IMyCourseProgress => {
     const totalTasks = modules.reduce((sum, module) => sum + module.totalTasks, 0);
     const completedTasks = modules.reduce((sum, module) => sum + module.completedTasks, 0);
@@ -141,6 +182,7 @@ export default {
     getActiveTasksByModule,
     getCompletedTaskIds,
     buildCourseModules,
+    withAcknowledgementState,
     summariseProgress,
     deriveAssignmentStatus,
     percentOf

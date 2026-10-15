@@ -7,6 +7,8 @@ export const  COURSE_ASSIGNMENT_ERRORS_MESSAGES = {
     COURSE_ASSIGNMENT_DETAILS_FETCH_ERROR_MESSAGE: 'Error occurred while fetching course assignment details !',
     COURSE_ASSIGNMENT_DELETE_ERROR_MESSAGE: 'Error occurred while deleting course assignment !',
     COURSE_ASSIGNMENT_ID_INVALID_MESSAGE: 'Invalid course assignment ID !',
+    ASSIGNED_COURSES_FETCH_ERROR_MESSAGE: 'Error occurred while fetching assigned courses for the employee !',
+    ASSIGNED_COURSES_EMPLOYEE_NOT_FOUND_MESSAGE: 'Employee not found !',
 }
 
 export const COURSE_ASSIGNMENT_SUCCESS_MESSAGES = {
@@ -14,4 +16,6 @@ export const COURSE_ASSIGNMENT_SUCCESS_MESSAGES = {
     COURSE_ASSIGNMENT_FETCH_SUCCESS_MESSAGE: 'Course Assignments fetched successfully !',
     COURSE_ASSIGNMENT_DETAILS_FETCH_SUCCESS_MESSAGE: 'Course assignment details fetched successfully !',
     COURSE_ASSIGNMENT_DELETE_SUCCESS_MESSAGE: 'Course Assignment deleted successfully !',
+    ASSIGNED_COURSES_FETCH_SUCCESS_MESSAGE: 'Assigned courses fetched successfully !',
+    ASSIGNED_COURSES_NO_COURSES_MESSAGE: 'No courses assigned to this employee',
 }

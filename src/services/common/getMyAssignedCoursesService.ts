@@ -17,8 +17,14 @@ const getMyAssignedCourses = async (employeeId: string): Promise<IFetchMyAssigne
         .sort({ assignedAt: -1 })
         .lean();
 
-    // An assignment whose course was deleted has nothing to show.
-    const validAssignments = assignments.filter((assignment: any) => assignment.courseId);
+    // An assignment whose course was deleted has nothing to show, and archived
+    // courses must not be visible to employees. A missing status is treated as
+    // active, matching the rest of the progress helpers.
+    const validAssignments = assignments.filter(
+        (assignment: any) =>
+            assignment.courseId &&
+            String(assignment.courseId.status || '').toUpperCase() !== 'ARCHIVE'
+    );
 
     if (validAssignments.length === 0) {
         return { success: true, courses: [] };

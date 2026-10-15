@@ -1,9 +1,10 @@
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseModel from '../../model/coursesModel';
+import { stripHtmlTags } from '../../util/stripHtmlTags';
 
 const addNewCourseModule = async (courseId: string, moduleName: string, moduleDescription: string, thumbnail: string, status: string) => {
     try {
-        const CoursesModuleToSave: any = new CourseModuleModel({ courseId, moduleName, moduleDescription, thumbnail, status });
+        const CoursesModuleToSave: any = new CourseModuleModel({ courseId, moduleName, moduleDescription: stripHtmlTags(moduleDescription), thumbnail, status });
         const result = await CoursesModuleToSave.save();
 
         // Touch the parent course so its updatedAt reflects this activity.
