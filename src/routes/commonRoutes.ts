@@ -62,6 +62,7 @@ import getAllQuizQuestionsController from '../controllers/contentwriter/getAllQu
 import getQuizQuestionByIdController from '../controllers/contentwriter/getQuizQuestionByIdController';
 import updateQuizQuestionController from '../controllers/contentwriter/updateQuizQuestionController';
 import updateQuizQuestionStatusController from '../controllers/contentwriter/updateQuizQuestionStatusController';
+import deleteQuizQuestionController from '../controllers/contentwriter/deleteQuizQuestionController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -2563,6 +2564,38 @@ commonRouter.put('/updateQuizQuestion/:questionId',validateJWT, validateBody(upd
  *         description: Internal server error
  */
 commonRouter.patch('/updateQuizQuestionStatus/:questionId', validateJWT, updateQuizQuestionStatusController.updateQuizQuestionStatus);
+
+/**
+ * @swagger
+ * /deleteQuizQuestion/{questionId}:
+ *   delete:
+ *     summary: Soft delete a quiz question (Content Writer)
+ *     description: >
+ *       Flags the question as deleted (isDeleted = true). The record is kept and
+ *       excluded from all list, read and quiz-taking queries.
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: questionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Question deleted successfully.
+ *       400:
+ *         description: Invalid question ID.
+ *       401:
+ *         description: Unauthorized.
+ *       404:
+ *         description: Question or task not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.delete('/deleteQuizQuestion/:questionId', validateJWT, deleteQuizQuestionController.deleteQuizQuestion);
 
 /**
  * @swagger

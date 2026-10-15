@@ -6,8 +6,6 @@ import {
 } from '../../constants/contentwriter/courseQuizQuestionMessages';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
 
-const isValidObjectId = (value: unknown): boolean => /^[0-9a-fA-F]{24}$/.test(String(value || ''));
-
 const getQuizQuestionById = async (req: Request, res: Response) => {
     try {
         const { id } = req.params;
