@@ -35,6 +35,21 @@ const TaskProgressSchema = new mongoose.Schema(
             type: Date,
             default: null,
         },
+
+        // Quiz attempt history for this task, scoped to the single (employee,
+        // task) progress row. Every explicit quiz start/reattempt appends a new
+        // entry; the subdocument _id is the attemptId handed to the employee so
+        // a later validate/submit can pinpoint the exact attempt. Lives here to
+        // reuse the task-progress collection instead of adding a parallel one.
+        quizAttempts: {
+            type: [
+                {
+                    attemptNumber: { type: Number, required: true },
+                    startedAt: { type: Date, default: Date.now },
+                },
+            ],
+            default: [],
+        },
     },
     {
         collection: 'task-progress',
