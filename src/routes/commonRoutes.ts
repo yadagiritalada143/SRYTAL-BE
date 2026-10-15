@@ -23,6 +23,7 @@ import { COURSE_MODULE_ERRORS_MESSAGES } from '../constants/contentwriter/course
 import { COURSE_TASK_ERRORS_MESSAGES } from '../constants/contentwriter/coursetaskMessages';
 import { COURSE_QUIZ_QUESTION_ERROR_MESSAGES } from '../constants/contentwriter/courseQuizQuestionMessages';
 import createQuizQuestionSchema from '../middlewares/schemas/createQuizQuestionSchema';
+import updateQuizQuestionSchema from '../middlewares/schemas/updateQuizQuestionSchema';
 import { MY_COURSES_ERROR_MESSAGES } from '../constants/common/myCoursesMessages';
 import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
@@ -59,6 +60,8 @@ import getCourseByIdController from '../controllers/contentwriter/getCourseByIdC
 import createQuizQuestionController from '../controllers/contentwriter/createQuizQuestionController';
 import getAllQuizQuestionsController from '../controllers/contentwriter/getAllQuizQuestionsController';
 import getQuizQuestionByIdController from '../controllers/contentwriter/getQuizQuestionByIdController';
+import updateQuizQuestionController from '../controllers/contentwriter/updateQuizQuestionController';
+import updateQuizQuestionStatusController from '../controllers/contentwriter/updateQuizQuestionStatusController';
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -2485,11 +2488,81 @@ commonRouter.get(
  *       500:
  *         description: Internal server error.
  */
-commonRouter.get(
-    '/getQuizQuestion/:id',
-    validateJWT,
-    getQuizQuestionByIdController.getQuizQuestionById
-);
+commonRouter.get('/getQuizQuestion/:id', validateJWT, getQuizQuestionByIdController.getQuizQuestionById);
+
+/**
+ * @swagger
+ * /updateQuizQuestion/{questionId}:
+ *   put:
+ *     summary: Update a quiz question (Content Writer)
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: questionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Updated successfully
+ *       400:
+ *         description: Validation error/invalid ID
+ *       404:
+ *         description: Question not found
+ *       409:
+ *         description: Duplicate question
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.put('/updateQuizQuestion/:questionId',validateJWT, validateBody(updateQuizQuestionSchema, COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_VALIDATION_ERROR_MESSAGE), updateQuizQuestionController.updateQuizQuestion);
+
+/**
+ * @swagger
+ * /updateQuizQuestionStatus/{questionId}:
+ *   patch:
+ *     summary: Update quiz question status (SHOW/HIDE)
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: questionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [SHOW, HIDE]
+ *     responses:
+ *       200:
+ *         description: Updated successfully
+ *       400:
+ *         description: Invalid status/ID
+ *       404:
+ *         description: Question not found
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.patch('/updateQuizQuestionStatus/:questionId', validateJWT, updateQuizQuestionStatusController.updateQuizQuestionStatus);
 
 /**
  * @swagger
