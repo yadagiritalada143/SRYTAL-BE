@@ -61,6 +61,7 @@ import createQuizQuestionController from '../controllers/contentwriter/createQui
 import getAllQuizQuestionsController from '../controllers/contentwriter/getAllQuizQuestionsController';
 import getQuizQuestionByIdController from '../controllers/contentwriter/getQuizQuestionByIdController';
 import getQuizByIdController from '../controllers/common/getQuizByIdController';
+import validateQuizController from '../controllers/common/validateQuizController';
 import updateQuizQuestionController from '../controllers/contentwriter/updateQuizQuestionController';
 import updateQuizQuestionStatusController from '../controllers/contentwriter/updateQuizQuestionStatusController';
 import deleteQuizQuestionController from '../controllers/contentwriter/deleteQuizQuestionController';
@@ -2552,6 +2553,106 @@ commonRouter.get('/getQuizQuestion/:id', validateJWT, getQuizQuestionByIdControl
  *         description: Internal server error
  */
 commonRouter.get('/getQuizById/:taskId', validateJWT, getQuizByIdController.getQuizById);
+
+/**
+ * @swagger
+ * /validateQuiz:
+ *   post:
+ *     summary: Validate quiz answers against the stored answer key (Employee)
+ *     description: |
+ *       Scores the employee's submitted answers for a quiz attempt on the
+ *       server. RADIO, DROPDOWN and TOGGLE compare against the single correct
+ *       option; CHECKBOX requires an exact set match; TEXTAREA is returned for
+ *       review but unscored. An omitted answer for a scored question counts as
+ *       incorrect. The score is stored on the attempt so a later submitQuiz
+ *       finalizes the same result; the attempt can be revalidated until it is
+ *       finalized. This endpoint never marks the task completed and never
+ *       unlocks the next task.
+ *     tags:
+ *       - Common-Quiz
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - attemptId
+ *               - answers
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               attemptId:
+ *                 type: string
+ *               answers:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - questionId
+ *                   properties:
+ *                     questionId:
+ *                       type: string
+ *                     selectedOptionIds:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     textAnswer:
+ *                       type: string
+ *     responses:
+ *       200:
+ *         description: Quiz validated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Quiz validated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                     attemptId:
+ *                       type: string
+ *                     totalScoredQuestions:
+ *                       type: integer
+ *                     correctAnswers:
+ *                       type: integer
+ *                     incorrectAnswers:
+ *                       type: integer
+ *                     percentage:
+ *                       type: number
+ *                       nullable: true
+ *                     passingPercentage:
+ *                       type: number
+ *                     passed:
+ *                       type: boolean
+ *                       nullable: true
+ *                     review:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *       400:
+ *         description: Invalid ids, invalid answers payload, or not a QUIZ task
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Task not found / course assignment not found / attempt not found
+ *       409:
+ *         description: Attempt already finalized
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.post('/validateQuiz', validateJWT, validateQuizController.validateQuiz);
 
 /**
  * @swagger

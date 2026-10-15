@@ -188,7 +188,9 @@ describe('getQuizByIdService', () => {
         expect(result.questions).toBeDefined();
         expect(result.questions!.length).toBe(2);
 
-        const radioQ = result.questions![0];
+        // Question order is shuffled per fetch, so locate by type rather than
+        // by index.
+        const radioQ = result.questions!.find(question => question.type === 'RADIO')!;
         expect(radioQ.questionId).toBeDefined();
         expect(radioQ.type).toBe('RADIO');
         expect(Array.isArray(radioQ.options)).toBe(true);
@@ -198,7 +200,7 @@ describe('getQuizByIdService', () => {
             expect((opt as any).isanswer).toBeUndefined();
         });
 
-        const textQ = result.questions![1];
+        const textQ = result.questions!.find(question => question.type === 'TEXTAREA')!;
         expect(textQ.type).toBe('TEXTAREA');
         expect(textQ.options).toBeUndefined();
     });

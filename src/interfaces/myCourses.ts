@@ -151,3 +151,74 @@ export interface IFetchQuizByIdResponse {
     questions?: IQuizQuestion[];
 }
 
+/**
+ * One submitted answer in a validateQuiz payload. Option-based questions carry
+ * `selectedOptionIds` (stable ids as handed out by getQuizById); TEXTAREA
+ * questions carry `textAnswer`.
+ */
+export interface IQuizAnswerSubmission {
+    questionId: string;
+    selectedOptionIds?: string[];
+    textAnswer?: string;
+}
+
+/**
+ * Per-question review entry returned by validateQuiz. Once the employee has
+ * submitted answers for checking, the answer key is revealed in this response
+ * (correctOptionIds/correctValues) — never in getQuizById.
+ */
+export interface IQuizReviewQuestion {
+    questionId: string;
+    question: string;
+    type: string;
+    // true/false for scored questions; null/absent for TEXTAREA (unscored).
+    isCorrect?: boolean | null;
+    // Answer key for option-based questions, revealed post-submission.
+    correctOptionIds?: string[];
+    correctOptionValues?: string[];
+    // What the employee selected (empty array when unanswered).
+    selectedOptionIds?: string[];
+    selectedOptionValues?: string[];
+    // Free-text response for TEXTAREA questions (unscored in this version).
+    textAnswer?: string;
+}
+
+export interface IValidateQuizResponse {
+    success: boolean;
+    // Set when the taskId is not a valid ObjectId.
+    invalidTaskId?: boolean;
+    // Set when the attemptId is not a valid ObjectId.
+    invalidAttemptId?: boolean;
+    // Set when the answers payload is malformed: unknown/duplicate question
+    // ids, option ids that do not belong to the question, selections on
+    // TEXTAREA questions, text answers on option questions, or multiple
+    // selections on single-select questions.
+    invalidAnswers?: boolean;
+    // Set when the task does not exist.
+    taskNotFound?: boolean;
+    // Set when the task exists but is not of type QUIZ.
+    notQuizTask?: boolean;
+    // Set when the employee has no course assignment covering this task.
+    notFound?: boolean;
+    // Set when the attemptId does not exist on this employee's progress row
+    // for this task — an attempt can only be validated by the employee who
+    // owns it.
+    attemptNotFound?: boolean;
+    // Set when the attempt has already been finalized through submitQuiz.
+    // Finalized attempts are immutable; a new attempt must be started.
+    attemptAlreadyFinalized?: boolean;
+    taskId?: string;
+    attemptId?: string;
+    // Scored (non-TEXTAREA) questions only — TEXTAREA is excluded from the
+    // denominator. Zero means the quiz had nothing scorable; percentage and
+    // passed are then null rather than NaN.
+    totalScoredQuestions?: number;
+    correctAnswers?: number;
+    incorrectAnswers?: number;
+    percentage?: number | null;
+    passingPercentage?: number;
+    // null when the quiz is unscored (no scored questions).
+    passed?: boolean | null;
+    review?: IQuizReviewQuestion[];
+}
+
