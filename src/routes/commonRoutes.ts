@@ -60,6 +60,7 @@ import getCourseByIdController from '../controllers/contentwriter/getCourseByIdC
 import createQuizQuestionController from '../controllers/contentwriter/createQuizQuestionController';
 import getAllQuizQuestionsController from '../controllers/contentwriter/getAllQuizQuestionsController';
 import getQuizQuestionByIdController from '../controllers/contentwriter/getQuizQuestionByIdController';
+import getQuizByIdController from '../controllers/common/getQuizByIdController';
 import updateQuizQuestionController from '../controllers/contentwriter/updateQuizQuestionController';
 import updateQuizQuestionStatusController from '../controllers/contentwriter/updateQuizQuestionStatusController';
 import deleteQuizQuestionController from '../controllers/contentwriter/deleteQuizQuestionController';
@@ -2490,6 +2491,67 @@ commonRouter.get(
  *         description: Internal server error.
  */
 commonRouter.get('/getQuizQuestion/:id', validateJWT, getQuizQuestionByIdController.getQuizQuestionById);
+
+/**
+ * @swagger
+ * /getQuizById/{taskId}:
+ *   get:
+ *     summary: Get quiz questions for a QUIZ task (Employee)
+ *     description: |
+ *       Returns all published quiz questions for the given QUIZ task, in
+ *       randomized order, with options independently shuffled. The `isanswer`
+ *       flag and any other correct-answer hints are never returned. TEXTAREA
+ *       questions return no options. Each successful fetch mints a new quiz
+ *       attemptId (even when reattempting) that must be used in later submission.
+ *     tags:
+ *       - Common-Quiz
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Quiz fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Quiz fetched successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                     attemptId:
+ *                       type: string
+ *                     taskName:
+ *                       type: string
+ *                     totalQuestions:
+ *                       type: integer
+ *                     questions:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *       400:
+ *         description: Invalid taskId, task not a QUIZ, or task inactive
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Course assignment not found for this employee / task not found
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.get('/getQuizById/:taskId', validateJWT, getQuizByIdController.getQuizById);
 
 /**
  * @swagger

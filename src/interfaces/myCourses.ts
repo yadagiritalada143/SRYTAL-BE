@@ -109,3 +109,45 @@ export interface IUpdateMyTaskAcknowledgementResponse {
     acknowledgedAt?: Date | null;
 }
 
+/**
+ * Employee-facing quiz view models. Options never carry `isanswer` (or any
+ * other correct-answer hint): optionId is a stable identifier derived from the
+ * option's position in the persisted question, so the employee can answer by
+ * id even though the displayed order is shuffled per attempt.
+ */
+export interface IQuizQuestionOption {
+    optionId: string;
+    value: string;
+}
+
+export interface IQuizQuestion {
+    questionId: string;
+    question: string;
+    type: string;
+    // Only present for option-based questions; TEXTAREA questions are free
+    // text and never carry artificial options.
+    options?: IQuizQuestionOption[];
+}
+
+export interface IFetchQuizByIdResponse {
+    success: boolean;
+    // Set when the taskId is not a valid ObjectId.
+    invalidTaskId?: boolean;
+    // Set when the task does not exist.
+    taskNotFound?: boolean;
+    // Set when the task exists but is not of type QUIZ.
+    notQuizTask?: boolean;
+    // Set when the task exists but is not ACTIVE.
+    taskInactive?: boolean;
+    // Set when the employee has no course assignment covering this task (or
+    // the assigned course is archived).
+    notFound?: boolean;
+    taskId?: string;
+    // The identifier of the attempt started by this fetch. Only minted when
+    // the quiz has at least one visible question.
+    attemptId?: string;
+    taskName?: string;
+    totalQuestions?: number;
+    questions?: IQuizQuestion[];
+}
+

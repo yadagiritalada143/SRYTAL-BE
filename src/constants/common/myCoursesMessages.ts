@@ -10,10 +10,16 @@ export const MY_COURSES_ERROR_MESSAGES = {
     TASK_NOT_IN_ASSIGNED_COURSE_MESSAGE: 'This task does not belong to the assigned course !',
     TASK_ACKNOWLEDGEMENT_APPLIES_TO_FILE_MESSAGE: 'Acknowledgement is applicable only for file tasks !',
     TASK_ACKNOWLEDGEMENT_REVOCATION_NOT_ALLOWED_MESSAGE: 'Task acknowledgement cannot be revoked !',
-    TASK_ACKNOWLEDGEMENT_UPDATE_ERROR_MESSAGE: 'An error occurred while saving your acknowledgement, Please try again !'
+    TASK_ACKNOWLEDGEMENT_UPDATE_ERROR_MESSAGE: 'An error occurred while saving your acknowledgement, Please try again !',
+    QUIZ_INVALID_TASK_ID_MESSAGE: 'Invalid task id !',
+    QUIZ_TASK_NOT_FOUND_MESSAGE: 'Quiz task not found !',
+    QUIZ_NOT_QUIZ_TASK_MESSAGE: 'This task is not a quiz !',
+    QUIZ_TASK_NOT_ACTIVE_MESSAGE: 'This quiz is not available !',
+    QUIZ_FETCH_ERROR_MESSAGE: 'An error occurred while fetching the quiz, Please try again !'
 };
 
 export const MY_COURSES_SUCCESS_MESSAGES = {
     TASK_PROGRESS_UPDATE_SUCCESS_MESSAGE: 'Progress updated successfully !',
-    TASK_ACKNOWLEDGEMENT_UPDATE_SUCCESS_MESSAGE: 'Task acknowledged successfully !'
+    TASK_ACKNOWLEDGEMENT_UPDATE_SUCCESS_MESSAGE: 'Task acknowledged successfully !',
+    QUIZ_FETCH_SUCCESS_MESSAGE: 'Quiz fetched successfully !'
 };
