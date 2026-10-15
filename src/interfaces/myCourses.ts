@@ -151,3 +151,124 @@ export interface IFetchQuizByIdResponse {
     questions?: IQuizQuestion[];
 }
 
+/**
+ * One submitted answer in a validateQuiz payload. Option-based questions carry
+ * `selectedOptionIds` (stable ids as handed out by getQuizById); TEXTAREA
+ * questions carry `textAnswer`.
+ */
+export interface IQuizAnswerSubmission {
+    questionId: string;
+    selectedOptionIds?: string[];
+    textAnswer?: string;
+}
+
+/**
+ * Per-question review entry returned by validateQuiz. Once the employee has
+ * submitted answers for checking, the answer key is revealed in this response
+ * (correctOptionIds/correctValues) — never in getQuizById.
+ */
+export interface IQuizReviewQuestion {
+    questionId: string;
+    question: string;
+    type: string;
+    // true/false for scored questions; null/absent for TEXTAREA (unscored).
+    isCorrect?: boolean | null;
+    // Answer key for option-based questions, revealed post-submission.
+    correctOptionIds?: string[];
+    correctOptionValues?: string[];
+    // What the employee selected (empty array when unanswered).
+    selectedOptionIds?: string[];
+    selectedOptionValues?: string[];
+    // Free-text response for TEXTAREA questions (unscored in this version).
+    textAnswer?: string;
+}
+
+export interface IValidateQuizResponse {
+    success: boolean;
+    // Set when the taskId is not a valid ObjectId.
+    invalidTaskId?: boolean;
+    // Set when the attemptId is not a valid ObjectId.
+    invalidAttemptId?: boolean;
+    // Set when the answers payload is malformed: unknown/duplicate question
+    // ids, option ids that do not belong to the question, selections on
+    // TEXTAREA questions, text answers on option questions, or multiple
+    // selections on single-select questions.
+    invalidAnswers?: boolean;
+    // Set when the task does not exist.
+    taskNotFound?: boolean;
+    // Set when the task exists but is not of type QUIZ.
+    notQuizTask?: boolean;
+    // Set when the employee has no course assignment covering this task.
+    notFound?: boolean;
+    // Set when the attemptId does not exist on this employee's progress row
+    // for this task — an attempt can only be validated by the employee who
+    // owns it.
+    attemptNotFound?: boolean;
+    // Set when the attempt has already been finalized through submitQuiz.
+    // Finalized attempts are immutable; a new attempt must be started.
+    attemptAlreadyFinalized?: boolean;
+    taskId?: string;
+    attemptId?: string;
+    // Scored (non-TEXTAREA) questions only — TEXTAREA is excluded from the
+    // denominator. Zero means the quiz had nothing scorable; percentage and
+    // passed are then null rather than NaN.
+    totalScoredQuestions?: number;
+    correctAnswers?: number;
+    incorrectAnswers?: number;
+    percentage?: number | null;
+    passingPercentage?: number;
+    // null when the quiz is unscored (no scored questions).
+    passed?: boolean | null;
+    review?: IQuizReviewQuestion[];
+}
+
+/**
+ * Response for the final submitQuiz step. The score is never taken from the
+ * client — it is read back from the attempt snapshot written by validateQuiz and
+ * re-derived server-side. Correct answers are never returned here.
+ */
+export interface ISubmitQuizResponse {
+    success: boolean;
+    // Set when the taskId is not a valid ObjectId.
+    invalidTaskId?: boolean;
+    // Set when the attemptId is not a valid ObjectId.
+    invalidAttemptId?: boolean;
+    // Set when the task does not exist.
+    taskNotFound?: boolean;
+    // Set when the task exists but is not of type QUIZ.
+    notQuizTask?: boolean;
+    // Set when the task exists but is not ACTIVE.
+    taskInactive?: boolean;
+    // Set when the employee has no course assignment covering this task.
+    notFound?: boolean;
+    // Set when the attemptId does not exist on this employee's progress row.
+    attemptNotFound?: boolean;
+    // Set when the attempt has not been through validateQuiz yet, so there is
+    // no trusted score to finalize.
+    attemptNotValidated?: boolean;
+    // Set when the validated result is below the passing threshold. The attempt
+    // is NOT finalized and the task is NOT completed; a new attempt is required.
+    notPassed?: boolean;
+    // Set on an idempotent repeat of an already-finalized submission. No state
+    // is changed by the repeat.
+    alreadySubmitted?: boolean;
+    taskId?: string;
+    attemptId?: string;
+    attemptNumber?: number;
+    totalScoredQuestions?: number;
+    correctAnswers?: number;
+    incorrectAnswers?: number;
+    // Re-derived from the trusted attempt snapshot; null for unscored quizzes.
+    percentage?: number | null;
+    passingPercentage?: number;
+    passed?: boolean | null;
+    // True when the employee must start a new attempt (failed score).
+    reattemptRequired?: boolean;
+    // Assignment/course state after a successful finalization, echoing the same
+    // shape updateMyTaskProgress returns.
+    courseStatus?: string;
+    progress?: IMyCourseProgress;
+    isCompleted?: boolean;
+    completedAt?: Date | null;
+}
+

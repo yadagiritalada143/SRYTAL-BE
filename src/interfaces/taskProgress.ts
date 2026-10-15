@@ -4,6 +4,15 @@ export interface IQuizAttempt {
     _id: mongoose.Schema.Types.ObjectId;
     attemptNumber: number;
     startedAt?: Date;
+    // Score snapshot written by validateQuiz. A null validatedAt means the
+    // attempt has not been checked yet; submittedAt (set later by submitQuiz)
+    // finalizes the attempt and blocks any further validation.
+    validatedAt?: Date | null;
+    totalScoredQuestions?: number | null;
+    correctAnswers?: number | null;
+    percentage?: number | null;
+    passed?: boolean | null;
+    submittedAt?: Date | null;
 }
 
 export interface ITaskProgress extends Document {
