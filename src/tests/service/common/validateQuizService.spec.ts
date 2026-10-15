@@ -133,7 +133,7 @@ const setupHappyPath = (
     mockAssignmentChain({ _id: ASSIGNMENT_ID });
     mockProgressChain({ quizAttempts: [attempt] });
     mockFindQuestionsChain(questions);
-    taskProgressUpdateOneMock.mockResolvedValue({ matchedCount: 1 });
+    taskProgressUpdateOneMock.mockResolvedValue({ modifiedCount: 1 });
 };
 
 describe('validateQuizService', () => {
@@ -573,7 +573,7 @@ describe('validateQuizService', () => {
     });
 
     describe('persistence and side effects', () => {
-        it('persists the score snapshot on the attempt via the positional operator', async () => {
+        it('persists the score snapshot on the exact attempt via a filtered positional update', async () => {
             const question = radioQuestion();
             const progressId = new Types.ObjectId();
             const attemptId = new Types.ObjectId().toString();
@@ -583,24 +583,25 @@ describe('validateQuizService', () => {
             mockAssignmentChain({ _id: ASSIGNMENT_ID });
             mockProgressChain({ _id: progressId, quizAttempts: [{ _id: attemptId, attemptNumber: 1, submittedAt: null }] });
             mockFindQuestionsChain([question]);
-            taskProgressUpdateOneMock.mockResolvedValue({ matchedCount: 1 });
+            taskProgressUpdateOneMock.mockResolvedValue({ modifiedCount: 1 });
 
             await validateQuizService.validateQuiz(TASK_ID, attemptId, [
                 { questionId: String(question._id), selectedOptionIds: ['opt-0'] }
             ], EMPLOYEE_ID);
 
             expect(taskProgressUpdateOneMock).toHaveBeenCalledTimes(1);
-            const [filter, update] = taskProgressUpdateOneMock.mock.calls[0];
-            expect(filter).toMatchObject({
-                _id: progressId,
-                'quizAttempts._id': attemptId,
-                'quizAttempts.submittedAt': null
+            const [filter, update, options] = taskProgressUpdateOneMock.mock.calls[0];
+            // The row is matched by _id only; the target element is selected by
+            // arrayFilters so multiple attempts on the row cannot confuse it.
+            expect(filter).toEqual({ _id: progressId });
+            expect(options).toEqual({
+                arrayFilters: [{ 'attempt._id': attemptId, 'attempt.submittedAt': null }]
             });
-            expect(Object.keys(update.$set)).toContain('quizAttempts.$.validatedAt');
-            expect(update.$set['quizAttempts.$.totalScoredQuestions']).toBe(1);
-            expect(update.$set['quizAttempts.$.correctAnswers']).toBe(1);
-            expect(update.$set['quizAttempts.$.percentage']).toBe(100);
-            expect(update.$set['quizAttempts.$.passed']).toBe(true);
+            expect(Object.keys(update.$set)).toContain('quizAttempts.$[attempt].validatedAt');
+            expect(update.$set['quizAttempts.$[attempt].totalScoredQuestions']).toBe(1);
+            expect(update.$set['quizAttempts.$[attempt].correctAnswers']).toBe(1);
+            expect(update.$set['quizAttempts.$[attempt].percentage']).toBe(100);
+            expect(update.$set['quizAttempts.$[attempt].passed']).toBe(true);
         });
 
         it('never marks the task completed from validation', async () => {
@@ -640,7 +641,7 @@ describe('validateQuizService', () => {
             const question = radioQuestion();
             const attemptId = new Types.ObjectId().toString();
             setupHappyPath([question], { _id: attemptId, attemptNumber: 1, submittedAt: null });
-            taskProgressUpdateOneMock.mockResolvedValue({ matchedCount: 0 });
+            taskProgressUpdateOneMock.mockResolvedValue({ modifiedCount: 0 });
 
             const result = await validateQuizService.validateQuiz(TASK_ID, attemptId, [
                 { questionId: String(question._id), selectedOptionIds: ['opt-0'] }

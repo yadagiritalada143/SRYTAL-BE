@@ -62,6 +62,7 @@ import getAllQuizQuestionsController from '../controllers/contentwriter/getAllQu
 import getQuizQuestionByIdController from '../controllers/contentwriter/getQuizQuestionByIdController';
 import getQuizByIdController from '../controllers/common/getQuizByIdController';
 import validateQuizController from '../controllers/common/validateQuizController';
+import submitQuizController from '../controllers/common/submitQuizController';
 import updateQuizQuestionController from '../controllers/contentwriter/updateQuizQuestionController';
 import updateQuizQuestionStatusController from '../controllers/contentwriter/updateQuizQuestionStatusController';
 import deleteQuizQuestionController from '../controllers/contentwriter/deleteQuizQuestionController';
@@ -2653,6 +2654,98 @@ commonRouter.get('/getQuizById/:taskId', validateJWT, getQuizByIdController.getQ
  *         description: Internal server error
  */
 commonRouter.post('/validateQuiz', validateJWT, validateQuizController.validateQuiz);
+
+/**
+ * @swagger
+ * /submitQuiz:
+ *   post:
+ *     summary: Finalize a validated quiz attempt (Employee)
+ *     description: |
+ *       Finalizes the employee's validated quiz attempt. The score is never
+ *       accepted from the client: it is read back from the trusted attempt
+ *       snapshot written by validateQuiz and re-derived server-side. A passing
+ *       (or unscored) attempt marks the QUIZ task complete and advances the
+ *       course through the same routine normal task completion uses; the next
+ *       task's progression then follows the existing course progression rules.
+ *       A failed score is not eligible for finalization — the score is returned
+ *       and the employee must start a new attempt. The submission is idempotent:
+ *       repeating a finalized submission changes nothing and returns the stored
+ *       result. Attempt history is preserved.
+ *     tags:
+ *       - Common-Quiz
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - attemptId
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               attemptId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Quiz submitted (or already submitted) successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Quiz submitted successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                     attemptId:
+ *                       type: string
+ *                     attemptNumber:
+ *                       type: integer
+ *                     totalScoredQuestions:
+ *                       type: integer
+ *                     correctAnswers:
+ *                       type: integer
+ *                     incorrectAnswers:
+ *                       type: integer
+ *                     percentage:
+ *                       type: number
+ *                       nullable: true
+ *                     passingPercentage:
+ *                       type: number
+ *                     passed:
+ *                       type: boolean
+ *                       nullable: true
+ *                     alreadySubmitted:
+ *                       type: boolean
+ *                     courseStatus:
+ *                       type: string
+ *                     isCompleted:
+ *                       type: boolean
+ *                     completedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *       400:
+ *         description: Invalid ids, not a QUIZ/active task, attempt not validated, or failed score not eligible for finalization
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Task not found / course assignment not found / attempt not found
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.post('/submitQuiz', validateJWT, submitQuizController.submitQuiz);
 
 /**
  * @swagger

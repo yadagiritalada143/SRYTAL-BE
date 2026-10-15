@@ -222,3 +222,53 @@ export interface IValidateQuizResponse {
     review?: IQuizReviewQuestion[];
 }
 
+/**
+ * Response for the final submitQuiz step. The score is never taken from the
+ * client — it is read back from the attempt snapshot written by validateQuiz and
+ * re-derived server-side. Correct answers are never returned here.
+ */
+export interface ISubmitQuizResponse {
+    success: boolean;
+    // Set when the taskId is not a valid ObjectId.
+    invalidTaskId?: boolean;
+    // Set when the attemptId is not a valid ObjectId.
+    invalidAttemptId?: boolean;
+    // Set when the task does not exist.
+    taskNotFound?: boolean;
+    // Set when the task exists but is not of type QUIZ.
+    notQuizTask?: boolean;
+    // Set when the task exists but is not ACTIVE.
+    taskInactive?: boolean;
+    // Set when the employee has no course assignment covering this task.
+    notFound?: boolean;
+    // Set when the attemptId does not exist on this employee's progress row.
+    attemptNotFound?: boolean;
+    // Set when the attempt has not been through validateQuiz yet, so there is
+    // no trusted score to finalize.
+    attemptNotValidated?: boolean;
+    // Set when the validated result is below the passing threshold. The attempt
+    // is NOT finalized and the task is NOT completed; a new attempt is required.
+    notPassed?: boolean;
+    // Set on an idempotent repeat of an already-finalized submission. No state
+    // is changed by the repeat.
+    alreadySubmitted?: boolean;
+    taskId?: string;
+    attemptId?: string;
+    attemptNumber?: number;
+    totalScoredQuestions?: number;
+    correctAnswers?: number;
+    incorrectAnswers?: number;
+    // Re-derived from the trusted attempt snapshot; null for unscored quizzes.
+    percentage?: number | null;
+    passingPercentage?: number;
+    passed?: boolean | null;
+    // True when the employee must start a new attempt (failed score).
+    reattemptRequired?: boolean;
+    // Assignment/course state after a successful finalization, echoing the same
+    // shape updateMyTaskProgress returns.
+    courseStatus?: string;
+    progress?: IMyCourseProgress;
+    isCompleted?: boolean;
+    completedAt?: Date | null;
+}
+

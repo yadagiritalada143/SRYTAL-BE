@@ -314,30 +314,35 @@ const validateQuiz = async (
         const passed = percentage === null ? null : percentage >= passingPercentage;
 
         // Persist the score snapshot on the attempt so submitQuiz finalizes
-        // exactly this result. The filter also excludes finalized attempts, so
-        // a concurrent submitQuiz can never be overwritten by a late
-        // revalidation. Revalidation before finalization overwrites cleanly.
+        // exactly this result. A filtered positional update (`$[attempt]`) is
+        // used because the target element is identified by two conditions
+        // (its _id and submittedAt still null); the plain `$` operator is
+        // ambiguous with multiple conditions on the same array and can write
+        // to the wrong attempt when the row holds several attempts. Revalidating
+        // before finalization overwrites the snapshot cleanly; the submittedAt
+        // guard rejects already-finalized attempts.
         const now = new Date();
         const updateResult = await TaskProgressModel.updateOne(
-            {
-                _id: progress._id,
-                'quizAttempts._id': attemptId,
-                'quizAttempts.submittedAt': null
-            },
+            { _id: progress._id },
             {
                 $set: {
-                    'quizAttempts.$.validatedAt': now,
-                    'quizAttempts.$.totalScoredQuestions': totalScoredQuestions,
-                    'quizAttempts.$.correctAnswers': correctAnswers,
-                    'quizAttempts.$.percentage': percentage,
-                    'quizAttempts.$.passed': passed
+                    'quizAttempts.$[attempt].validatedAt': now,
+                    'quizAttempts.$[attempt].totalScoredQuestions': totalScoredQuestions,
+                    'quizAttempts.$[attempt].correctAnswers': correctAnswers,
+                    'quizAttempts.$[attempt].percentage': percentage,
+                    'quizAttempts.$[attempt].passed': passed
                 }
+            },
+            {
+                arrayFilters: [
+                    { 'attempt._id': attemptId, 'attempt.submittedAt': null }
+                ]
             }
         );
 
-        // Matched nothing => the attempt was finalized between our read and
-        // this write.
-        if (updateResult.matchedCount === 0) {
+        // Nothing modified => the attempt was finalized between our read and
+        // this write (the array filter no longer matches).
+        if (!updateResult || updateResult.modifiedCount === 0) {
             return { success: false, attemptAlreadyFinalized: true };
         }
 
