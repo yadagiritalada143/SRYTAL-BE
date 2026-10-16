@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import { ICourseReminderEmailDetails } from '../interfaces/courseAssignment';
 
 dotenv.config();
 
@@ -13,13 +14,6 @@ const emailConfiguration: any = {
     pass: process.env.EMAIL_CONFIG_AUTH_PASS,
   }
 };
-
-export interface ICourseReminderEmailDetails {
-    employeeName: string;
-    employeeEmail: string;
-    courseName: string;
-    dueDate: Date | string;
-}
 
 const formatDueDate = (date: Date | string): string => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;

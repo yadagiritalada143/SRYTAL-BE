@@ -1,10 +1,7 @@
 import { Request, Response } from 'express';
 import updateMyTaskProgressService from '../../services/common/updateMyTaskProgressService';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
-import {
-    MY_COURSES_ERROR_MESSAGES,
-    MY_COURSES_SUCCESS_MESSAGES
-} from '../../constants/common/myCoursesMessages';
+import { MY_COURSES_ERROR_MESSAGES, MY_COURSES_SUCCESS_MESSAGES } from '../../constants/common/myCoursesMessages';
 
 const updateMyTaskProgress = async (req: Request, res: Response) => {
     try {

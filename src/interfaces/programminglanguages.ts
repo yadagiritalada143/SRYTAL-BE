@@ -10,3 +10,11 @@ export interface IProgramminglanguages extends Document {
     createdAt?: Date;
     updatedAt?: Date;
 }
+
+export interface IAddProgrammingLanguageFields {
+    canonicalKey?: string;
+    wandboxLabel?: string;
+    isActive?: boolean;
+    isExecutable?: boolean;
+    displayOrder?: number;
+}

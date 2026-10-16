@@ -1,16 +1,10 @@
 import { Request, Response } from 'express';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
-import {
-    CODING_TASK_ERROR_MESSAGES,
-    CODING_TASK_SUCCESS_MESSAGES
-} from '../../constants/common/codingTaskMessages';
+import { CODING_TASK_ERROR_MESSAGES, CODING_TASK_SUCCESS_MESSAGES } from '../../constants/common/codingTaskMessages';
 import generateCourseTaskTestCasesSchema from '../../middlewares/schemas/generateCourseTaskTestCasesSchema';
 import generateCourseTaskTestCasesService from '../../services/common/generateCourseTaskTestCasesService';
 
-const generateCourseTaskTestCases = async (
-    req: Request,
-    res: Response
-): Promise<Response> => {
+const generateCourseTaskTestCases = async (req: Request, res: Response): Promise<Response> => {
     const validation = generateCourseTaskTestCasesSchema.validate(req.body, {
         abortEarly: false,
         stripUnknown: true
@@ -33,12 +27,7 @@ const generateCourseTaskTestCases = async (
     }
 
     try {
-        const result =
-            await generateCourseTaskTestCasesService.generateCourseTaskTestCases(
-                taskId,
-                userId,
-                forceRegenerate
-            );
+        const result = await generateCourseTaskTestCasesService.generateCourseTaskTestCases(taskId, userId, forceRegenerate);
         return res.status(HTTP_STATUS.OK).json({
             success: true,
             message: result.reused

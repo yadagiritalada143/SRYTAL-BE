@@ -2,51 +2,13 @@ import axios, { AxiosError } from 'axios';
 import { createHash } from 'crypto';
 import { getWandboxLabel, normalizeLanguage } from '../../util/languageUtils';
 import { LANGUAGE_REGISTRY } from '../../types/languageExecutionMap';
+import {IWandboxCompiler, IWandboxExecutionResult, IWandboxExecutionContext, IWandboxResponse } from '../../interfaces/wandboxCompiler';
 
 const WANDBOX_COMPILER_LIST_URL = 'https://wandbox.org/api/list.json';
 const WANDBOX_COMPILE_URL = 'https://wandbox.org/api/compile.json';
 const WANDBOX_REQUEST_TIMEOUT_MS = 60000;
 const COMPILER_LIST_CACHE_TTL_MS = 10 * 60 * 1000;
 
-interface IWandboxCompiler {
-    name: string;
-    language: string;
-    version?: string;
-}
-
-export interface IWandboxExecutionResult {
-    success: boolean;
-    actualOutput: string;
-    stderr: string;
-    error: string | null;
-    compileError: string | null;
-    runtimeError: string | null;
-    executionTime: number;
-    serviceError: 'RATE_LIMITED' | 'UNAVAILABLE' | 'REQUEST_ERROR' | null;
-    retryAfterSeconds: number | null;
-}
-
-export interface IWandboxExecutionContext {
-    taskId: string;
-    languageId: string;
-    languageName: string;
-    testCaseId: string;
-    testCaseInput?: string;
-    javaRunnerSource?: string;
-    javaEntryPoint?: string;
-}
-
-interface IWandboxResponse {
-    status?: string | number;
-    exit_code?: string | number | null;
-    program_status?: string | number | null;
-    signal?: string | number | null;
-    program_output?: string | null;
-    program_error?: string | null;
-    compiler_error?: string | null;
-    compiler_output?: string | null;
-    compiler_message?: string | null;
-}
 
 let cachedCompilers: IWandboxCompiler[] = [];
 let compilerListFetchedAt = 0;
@@ -224,12 +186,7 @@ const normalizeWandboxResponse = (
     const processStatus = response.program_status ?? response.exit_code;
     const processStatusMissing =
         processStatus === undefined || processStatus === null;
-    /**
-     * A missing program status is only success when Wandbox also reported a
-     * zero compiler status. A missing exit status combined with a non-zero
-     * compiler status must be treated as a failure, otherwise empty diagnostic
-     * fields would silently turn a failed run into `success: true`.
-     */
+
     const nonZeroExit =
         (!processStatusMissing && String(processStatus) !== '0') ||
         (processStatusMissing && wandboxStatus !== '0');
@@ -284,11 +241,7 @@ const normalizeWandboxResponse = (
     };
 };
 
-const getTransportFailure = (
-    error: unknown,
-    executionTime: number,
-    context?: IWandboxExecutionContext
-): IWandboxExecutionResult => {
+const getTransportFailure = (error: unknown, executionTime: number, context?: IWandboxExecutionContext): IWandboxExecutionResult => {
     if (axios.isAxiosError(error)) {
         const axiosError = error as AxiosError;
         console.error('[Wandbox Axios Error]', {

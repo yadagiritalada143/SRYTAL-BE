@@ -61,8 +61,6 @@ const getQuizById = async (req: Request, res: Response) => {
             });
         }
 
-        // No assignment covering this task for the employee (or the course is
-        // archived) — the same 404 the other assignment-scoped endpoints use.
         if (quizResponse.notFound) {
             return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,

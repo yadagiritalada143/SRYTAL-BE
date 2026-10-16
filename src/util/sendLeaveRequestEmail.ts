@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import { ILeaveRequestEmailDetails } from '../interfaces/leaveRequest';
 
 dotenv.config();
 
@@ -13,19 +14,6 @@ const emailConfiguration: any = {
     pass: process.env.EMAIL_CONFIG_AUTH_PASS,
   }
 };
-
-export interface ILeaveRequestEmailDetails {
-    adminEmails?: string[];
-    employeeName: string;
-    employeeEmail: string;
-    leaveReason: string;
-    date: Date | string;
-    status: string;
-    rejectionReason?: string;
-    leaveType?: string;
-    startDate?: Date | string;
-    endDate?: Date | string;
-}
 
 const formatDate = (date: Date | string): string => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
