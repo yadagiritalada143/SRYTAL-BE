@@ -1,12 +1,5 @@
 import ProgrammingLanguages from '../../model/programmingLanguagesModel';
-
-export interface IAddProgrammingLanguageFields {
-    canonicalKey?: string;
-    wandboxLabel?: string;
-    isActive?: boolean;
-    isExecutable?: boolean;
-    displayOrder?: number;
-}
+import { IAddProgrammingLanguageFields } from '../../interfaces/programminglanguages';
 
 const slugify = (value: string): string =>
     String(value || '')
@@ -17,9 +10,6 @@ const slugify = (value: string): string =>
 
 const addProgrammingLanguage = async (languageName: string, fields: IAddProgrammingLanguageFields = {}) => {
     try {
-        // canonicalKey/wandboxLabel are required by the schema; derive them from
-        // the display name when the caller only sends languageName so a bare
-        // { languageName: 'X' } request keeps working (legacy client behaviour).
         const canonicalKey = (fields.canonicalKey || '').trim() || slugify(languageName);
         const wandboxLabel = (fields.wandboxLabel || '').trim() || String(languageName || '').trim();
         const programmingLanguage = new ProgrammingLanguages({

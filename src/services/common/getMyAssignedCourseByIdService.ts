@@ -5,21 +5,11 @@ import courseProgress from '../../util/manageCourseProgress';
 import { COURSE_ASSIGNMENT_STATUS } from '../../types/courseAssignmentStatusValues';
 import { IFetchMyAssignedCourseByIdResponse } from '../../interfaces/myCourses';
 
-/**
- * One assigned course with its full module -> task tree and the employee's
- * completion state, for the course player. The assignment is looked up by id
- * *and* employeeId, so an employee can never read someone else's assignment.
- */
-const getMyAssignedCourseById = async (
-    courseAssignmentId: string,
-    employeeId: string
-): Promise<IFetchMyAssignedCourseByIdResponse> => {
+const getMyAssignedCourseById = async ( courseAssignmentId: string, employeeId: string): Promise<IFetchMyAssignedCourseByIdResponse> => {
     const assignment: any = await CourseAssignment.findOne({ _id: courseAssignmentId, employeeId })
         .populate({ path: 'courseId', model: CourseModel })
         .lean();
 
-    // Archived courses (and assignments whose course was deleted) are not made
-    // available to employees.
     if (
         !assignment ||
         !assignment.courseId ||
@@ -40,8 +30,6 @@ const getMyAssignedCourseById = async (
         courseModules.map((module: any) => String(module._id))
     );
 
-    // Acknowledgement is stored on the assignment (already scoped to this
-    // employee). The GET is read-only: it never writes an acknowledgement record.
     const modules = courseProgress.withAcknowledgementState(
         courseProgress.buildCourseModules(
             courseModules,

@@ -9,19 +9,13 @@ import UserModel from '../../model/userModel';
 import CourseModel from '../../model/coursesModel';
 import sendCourseCompletionEmail from '../../util/sendCourseCompletionEmail';
 
-/**
- * Marks a single task of an assigned course complete/incomplete for the logged-in
- * employee, then re-derives the assignment status from the resulting counts
- * (Assigned -> In Progress -> Completed) so the two can never disagree.
- */
 const updateMyTaskProgress = async (
     courseAssignmentId: string,
     taskId: string,
     isCompleted: boolean,
     employeeId: string
 ): Promise<IUpdateMyTaskProgressResponse> => {
-    // Scoping by employeeId is what stops one employee writing progress onto
-    // another employee's assignment.
+
     const assignment: any = await CourseAssignment.findOne({ _id: courseAssignmentId, employeeId }).lean();
 
     if (!assignment) {
@@ -34,8 +28,6 @@ const updateMyTaskProgress = async (
         return { success: false, invalidTask: true };
     }
 
-    // The task must live under a module of the assigned course, otherwise an
-    // employee could tick off tasks from a course they were never assigned.
     const parentModule: any = await CourseModuleModel.findById(task.moduleId).lean();
 
     if (!parentModule || String(parentModule.courseId) !== String(assignment.courseId)) {
@@ -109,13 +101,7 @@ const updateMyTaskProgress = async (
     };
 };
 
-
-//  Sends a course-completion notification to the admin who assigned the course
-
-const notifyAdminOnCourseCompletion = async (
-    assignment: any,
-    completedAt: Date
-): Promise<void> => {
+const notifyAdminOnCourseCompletion = async ( assignment: any, completedAt: Date): Promise<void> => {
     try {
         const [employee, course, admin] = await Promise.all([
             UserModel.findById(assignment.employeeId).lean(),

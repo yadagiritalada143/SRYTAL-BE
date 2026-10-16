@@ -1,12 +1,7 @@
 import UserModel from '../../model/userModel';
 import NavItemModel from '../../model/navItemModel';
 import { GetMyNavMenuResponse } from '../../interfaces/navigation';
-import {
-    surfaceForRole,
-    resolveEffectiveKeys,
-    buildMenuTree,
-    collectUrls
-} from '../navigation/navResolver';
+import { surfaceForRole, resolveEffectiveKeys, buildMenuTree, collectUrls } from '../navigation/navResolver';
 
 const getMyNavMenu = async (userId: string, organizationId: string): Promise<GetMyNavMenuResponse> => {
     const user = await UserModel.findById(userId).select('userRole organization').lean();

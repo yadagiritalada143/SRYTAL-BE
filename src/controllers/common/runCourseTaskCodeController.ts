@@ -1,16 +1,10 @@
 import { Request, Response } from 'express';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
-import {
-    CODING_TASK_ERROR_MESSAGES,
-    CODING_TASK_SUCCESS_MESSAGES
-} from '../../constants/common/codingTaskMessages';
+import { CODING_TASK_ERROR_MESSAGES, CODING_TASK_SUCCESS_MESSAGES } from '../../constants/common/codingTaskMessages';
 import runCourseTaskCodeSchema from '../../middlewares/schemas/runCourseTaskCodeSchema';
 import runCourseTaskCodeService from '../../services/common/runCourseTaskCodeService';
 
-const runCourseTaskCode = async (
-    req: Request,
-    res: Response
-): Promise<Response> => {
+const runCourseTaskCode = async ( req: Request, res: Response): Promise<Response> => {
     const validation = runCourseTaskCodeSchema.validate(req.body, {
         abortEarly: false,
         stripUnknown: true
@@ -35,12 +29,7 @@ const runCourseTaskCode = async (
     }
 
     try {
-        const result = await runCourseTaskCodeService.runCourseTaskCode(
-            taskId,
-            languageId,
-            sourceCode,
-            userId
-        );
+        const result = await runCourseTaskCodeService.runCourseTaskCode(taskId, languageId, sourceCode, userId);
         return res.status(HTTP_STATUS.OK).json({
             success: true,
             message: CODING_TASK_SUCCESS_MESSAGES.RUN_CODE_SUCCESS_MESSAGE,

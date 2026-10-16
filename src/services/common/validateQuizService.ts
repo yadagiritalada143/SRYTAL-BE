@@ -5,22 +5,10 @@ import CourseTaskModel from '../../model/courseTaskModel';
 import CourseQuizQuestionModel from '../../model/courseQuizQuestionModel';
 import TaskProgressModel from '../../model/taskProgressModel';
 import quizConfig from '../../config/quizConfig';
-import {
-    IQuizAnswerSubmission,
-    IQuizReviewQuestion,
-    IValidateQuizResponse
-} from '../../interfaces/myCourses';
+import { IQuizAnswerSubmission, IQuizReviewQuestion, IValidateQuizResponse } from '../../interfaces/myCourses';
 
-// Single-select question types: at most one option may be selected and the
-// selection must be the single option flagged as the answer.
 const SINGLE_SELECT_TYPES = ['RADIO', 'DROPDOWN', 'TOGGLE'];
 
-/**
- * Same derivation getQuizById uses when handing options out: prefer a real
- * option `_id` when one exists, otherwise the stable `opt-{index}` position in
- * the persisted array. Submitted ids are resolved back through this map, so
- * shuffled display order is irrelevant.
- */
 const buildOptionIdToIndex = (options: any[]): Map<string, number> => {
     const map = new Map<string, number>();
     (options || []).forEach((option: any, index: number) => {
@@ -38,11 +26,6 @@ const sameIdSet = (a: string[], b: string[]): boolean => {
     return b.every(id => setA.has(id));
 };
 
-/**
- * Scores one option-based question. An unanswered scored question counts as
- * incorrect; CHECKBOX requires exact set equality with the full answer key, so
- * partial matches and incorrect extras both score zero.
- */
 const gradeOptionQuestion = (
     type: string,
     correctIndexes: number[],
@@ -59,8 +42,6 @@ const gradeOptionQuestion = (
         );
     }
 
-    // RADIO / DROPDOWN / TOGGLE: the selection must be exactly the one
-    // correct option (payload validation already caps these at one id).
     return (
         correctIndexes.length === 1 &&
         selectedIndexes.length === 1 &&
@@ -68,16 +49,6 @@ const gradeOptionQuestion = (
     );
 };
 
-/**
- * Validates the employee's quiz answers against the stored answer key and
- * returns the score plus a per-question review. The attempt is located through
- * the employee's own task-progress row, so an attempt can only be validated by
- * the employee who started it. The score is persisted on the attempt itself so
- * submitQuiz can finalize the same result; revalidating before finalization
- * simply overwrites the snapshot. Finalized attempts (submittedAt set) are
- * rejected. Nothing here touches isCompleted — completion stays with submitQuiz
- * / updateMyTaskProgress.
- */
 const validateQuiz = async (
     taskId: string,
     attemptId: string,
@@ -109,8 +80,6 @@ const validateQuiz = async (
             return { success: false, notQuizTask: true };
         }
 
-        // The assignment scoping that proves ownership of the attempt: the
-        // employee must have an assignment for the course that owns the task.
         const parentModule: any = await CourseModuleModel.findById(task.moduleId)
             .select('courseId')
             .lean();
@@ -128,7 +97,6 @@ const validateQuiz = async (
             return { success: false, notFound: true };
         }
 
-        // The attempt must live on THIS employee's progress row for THIS task.
         const progress: any = await TaskProgressModel.findOne({
             courseAssignmentId: assignment._id,
             moduleId: parentModule._id,
@@ -149,9 +117,6 @@ const validateQuiz = async (
             return { success: false, attemptAlreadyFinalized: true };
         }
 
-        // Only published questions form the quiz the employee is answering.
-        // Submitted question ids outside this set (hidden, deleted, or another
-        // task's questions) are rejected below.
         const storedQuestions: any[] = await CourseQuizQuestionModel.find({
             taskId,
             isDeleted: false,
@@ -164,7 +129,6 @@ const validateQuiz = async (
             storedQuestions.map((question: any) => [String(question._id), question])
         );
 
-        // Reject duplicate submissions up front, then resolve each answer.
         const seenQuestionIds = new Set<string>();
         const submittedByQuestionId = new Map<string, IQuizAnswerSubmission>();
 
@@ -192,7 +156,6 @@ const validateQuiz = async (
             const textAnswer = answer.textAnswer;
 
             if (isTextarea) {
-                // TEXTAREA is free text: an option selection on it is malformed.
                 if (
                     (selected !== undefined && !Array.isArray(selected)) ||
                     (Array.isArray(selected) && selected.length > 0) ||
@@ -201,7 +164,6 @@ const validateQuiz = async (
                     return { success: false, invalidAnswers: true };
                 }
             } else {
-                // Option-based questions must not carry a text answer.
                 if (textAnswer !== undefined) {
                     return { success: false, invalidAnswers: true };
                 }
@@ -216,7 +178,6 @@ const validateQuiz = async (
                     return { success: false, invalidAnswers: true };
                 }
 
-                // Every selected id must resolve to an option of THIS question.
                 const optionIdToIndex = buildOptionIdToIndex(question.options);
                 const resolvedIndexes: number[] = [];
 
@@ -245,7 +206,6 @@ const validateQuiz = async (
             submittedByQuestionId.set(questionId, answer);
         }
 
-        // Grade every published question; omitted answers count as incorrect.
         const review: IQuizReviewQuestion[] = [];
         let totalScoredQuestions = 0;
         let correctAnswers = 0;
@@ -305,22 +265,12 @@ const validateQuiz = async (
 
         const passingPercentage = quizConfig.getQuizPassingPercentage();
 
-        // Zero scored questions (e.g. a TEXTAREA-only quiz) is a defined
-        // unscored result — never NaN.
         const percentage =
             totalScoredQuestions > 0
                 ? Math.round((correctAnswers / totalScoredQuestions) * 100)
                 : null;
         const passed = percentage === null ? null : percentage >= passingPercentage;
 
-        // Persist the score snapshot on the attempt so submitQuiz finalizes
-        // exactly this result. A filtered positional update (`$[attempt]`) is
-        // used because the target element is identified by two conditions
-        // (its _id and submittedAt still null); the plain `$` operator is
-        // ambiguous with multiple conditions on the same array and can write
-        // to the wrong attempt when the row holds several attempts. Revalidating
-        // before finalization overwrites the snapshot cleanly; the submittedAt
-        // guard rejects already-finalized attempts.
         const now = new Date();
         const updateResult = await TaskProgressModel.updateOne(
             { _id: progress._id },
@@ -340,8 +290,6 @@ const validateQuiz = async (
             }
         );
 
-        // Nothing modified => the attempt was finalized between our read and
-        // this write (the array filter no longer matches).
         if (!updateResult || updateResult.modifiedCount === 0) {
             return { success: false, attemptAlreadyFinalized: true };
         }

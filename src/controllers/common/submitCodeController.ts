@@ -4,10 +4,7 @@ import { CODING_TASK_ERROR_MESSAGES } from '../../constants/common/codingTaskMes
 import submitCourseTaskCodeSchema from '../../middlewares/schemas/submitCourseTaskCodeSchema';
 import submitCourseTaskCodeService from '../../services/common/submitCourseTaskCodeService';
 
-const submitCode = async (
-    req: Request,
-    res: Response
-): Promise<Response> => {
+const submitCode = async ( req: Request, res: Response): Promise<Response> => {
     const validation = submitCourseTaskCodeSchema.validate(req.body, {
         abortEarly: false,
         stripUnknown: true

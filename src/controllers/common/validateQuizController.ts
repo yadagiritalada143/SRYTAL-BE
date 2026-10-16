@@ -74,8 +74,6 @@ const validateQuiz = async (req: Request, res: Response) => {
             });
         }
 
-        // No assignment covering this task for the employee — same 404 the
-        // other assignment-scoped endpoints use.
         if (validationResult.notFound) {
             return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
@@ -83,8 +81,6 @@ const validateQuiz = async (req: Request, res: Response) => {
             });
         }
 
-        // The attempt does not exist on this employee's progress row for this
-        // task — treat as not found so attempt ids are not enumerable.
         if (validationResult.attemptNotFound) {
             return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,

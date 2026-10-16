@@ -1,8 +1,6 @@
 import axios from 'axios';
-
 import UserModel from '../../model/userModel';
 import UserOpenRouterKey from '../../model/userOpenRouterKeyModel';
-
 const validateAndSaveOpenRouterKeyService = async (
     userId: string,
     openrouterKey: string
@@ -25,9 +23,6 @@ const validateAndSaveOpenRouterKeyService = async (
             throw new Error('USER_NOT_FOUND');
         }
 
-        /**
-         * Validate the OpenRouter key before saving it.
-         */
         const response = await axios.get(
             'https://openrouter.ai/api/v1/key',
             {
@@ -47,11 +42,6 @@ const validateAndSaveOpenRouterKeyService = async (
             );
         }
 
-        /**
-         * Create the key if the user does not have one.
-         *
-         * Otherwise replace the existing key.
-         */
         const savedKey =
             await UserOpenRouterKey.findOneAndUpdate(
                 { userId },
@@ -100,9 +90,6 @@ const validateAndSaveOpenRouterKeyService = async (
             );
         }
 
-        /**
-         * User validation errors.
-         */
         if (
             error.message ===
                 'USER_ID_REQUIRED' ||
@@ -114,9 +101,6 @@ const validateAndSaveOpenRouterKeyService = async (
             throw error;
         }
 
-        /**
-         * OpenRouter rejected the key.
-         */
         if (
             error.response?.status === 401 ||
             error.response?.status === 403
@@ -137,6 +121,4 @@ const validateAndSaveOpenRouterKeyService = async (
     }
 };
 
-export default {
-    validateAndSaveOpenRouterKeyService,
-};
+export default { validateAndSaveOpenRouterKeyService };

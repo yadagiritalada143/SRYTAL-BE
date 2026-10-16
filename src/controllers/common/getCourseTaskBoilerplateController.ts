@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
-import {
-    CODING_TASK_ERROR_MESSAGES,
-    CODING_TASK_SUCCESS_MESSAGES
-} from '../../constants/common/codingTaskMessages';
+import { CODING_TASK_ERROR_MESSAGES, CODING_TASK_SUCCESS_MESSAGES } from '../../constants/common/codingTaskMessages';
 import courseTaskBoilerplateService from '../../services/common/courseTaskBoilerplateService';
 
 const getCourseTaskBoilerplate = async (req: Request, res: Response) => {
@@ -10,12 +7,7 @@ const getCourseTaskBoilerplate = async (req: Request, res: Response) => {
     const userId = req.user?.userId || '';
 
     try {
-        const starterCode =
-            await courseTaskBoilerplateService.getOrGenerateCourseTaskBoilerplate(
-                taskId,
-                languageId,
-                userId
-            );
+        const starterCode = await courseTaskBoilerplateService.getOrGenerateCourseTaskBoilerplate(taskId, languageId, userId);
 
         return res.status(200).json({
             success: true,

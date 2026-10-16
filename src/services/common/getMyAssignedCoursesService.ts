@@ -5,21 +5,12 @@ import courseProgress from '../../util/manageCourseProgress';
 import { COURSE_ASSIGNMENT_STATUS } from '../../types/courseAssignmentStatusValues';
 import { IFetchMyAssignedCoursesResponse, IMyAssignedCourseSummary } from '../../interfaces/myCourses';
 
-/**
- * Every course assigned to the logged-in employee, with the progress needed to
- * render the course list (percent complete, module count, overdue flag).
- * The full module/task tree is intentionally left out — it is fetched per
- * course by getMyAssignedCourseByIdService when a course is opened.
- */
 const getMyAssignedCourses = async (employeeId: string): Promise<IFetchMyAssignedCoursesResponse> => {
     const assignments = await CourseAssignment.find({ employeeId })
         .populate({ path: 'courseId', model: CourseModel })
         .sort({ assignedAt: -1 })
         .lean();
 
-    // An assignment whose course was deleted has nothing to show, and archived
-    // courses must not be visible to employees. A missing status is treated as
-    // active, matching the rest of the progress helpers.
     const validAssignments = assignments.filter(
         (assignment: any) =>
             assignment.courseId &&
@@ -61,8 +52,6 @@ const getMyAssignedCourses = async (employeeId: string): Promise<IFetchMyAssigne
 
             let thumbnailUrl = '';
             if (course.thumbnail) {
-                // A broken/missing S3 object must not take the whole list down;
-                // the client falls back to a generated placeholder.
                 thumbnailUrl = await courseMedia
                     .getCourseMediaSignedUrl(course.thumbnail)
                     .catch(() => '');

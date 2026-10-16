@@ -1,21 +1,15 @@
 import { Types } from 'mongoose';
-
 import CourseAssignment from '../../model/courseAssignmentModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseTaskModel from '../../model/courseTaskModel';
 import CodingTaskTestCaseModel from '../../model/codingTaskTestCaseModel';
 import ProgrammingLanguages from '../../model/programmingLanguagesModel';
-
 import generateCourseTaskTestCasesService from './generateCourseTaskTestCasesService';
 import reviewCourseTaskCodeService from './reviewCourseTaskCodeService';
 import wandboxExecutionService from './wandboxExecutionService';
-
 import { ICodingTaskTestCase } from '../../interfaces/codingTaskTestCase';
 import { ICodingTaskCodeReview } from '../../interfaces/codingTaskCodeReview';
-import {
-    IRunCourseTaskCodeResponse,
-    IRunCourseTaskCodeTestResult
-} from '../../interfaces/runCourseTaskCode';
+import { IRunCourseTaskCodeResponse, IRunCourseTaskCodeTestResult, IJavaMethod } from '../../interfaces/runCourseTaskCode';
 import { normalizeLanguage } from '../../util/languageUtils';
 import { sanitizeTestResultsForReview } from '../../util/codingTaskReview';
 import { LANGUAGE_REGISTRY } from '../../types/languageExecutionMap';
@@ -25,11 +19,6 @@ const TEST_CASE_GENERATION_POLL_INTERVAL_MS = 250;
 
 type ExecutionMode = 'CALLABLE' | 'STDIN' | 'UNCONFIGURED';
 
-/**
- * Compare outputs by normalizing line endings and tolerating a single trailing
- * newline, while preserving meaningful leading/trailing whitespace. A second
- * trailing newline is significant and is NOT ignored.
- */
 const normalizeOutput = (value: unknown): string => {
     if (typeof value !== 'string') {
         return '';
@@ -63,13 +52,6 @@ const getExecutionStatus = (
     return executionError ? 'EXECUTION_ERROR' : 'WRONG_OUTPUT';
 };
 
-/**
- * Resolve a user-supplied language to its canonical runtime key. Accepts both a
- * name/alias (e.g. 'Python', 'JS', 'c++') and a programming-languages `_id`,
- * since the language picker and the boilerplate endpoint identify a language
- * by its Mongo ObjectId while the execution registry keys off the canonical
- * slug. Returns undefined when the language is unknown or inactive.
- */
 const resolveCanonicalLanguage = async (
     language: string
 ): Promise<string | undefined> => {
@@ -125,16 +107,7 @@ const waitForGeneratedTestCases = async (taskId: string) => {
     throw new Error('TEST_CASES_GENERATION_IN_PROGRESS');
 };
 
-/**
- * Locate the entry-point function for a JavaScript solution. When `callableMode`
- * is false the function is treated as callable only when the source does not
- * already read stdin / write stdout itself (legacy callable tasks).
- */
-const getJavaScriptFunctionName = (
-    baseBoilerplate: string,
-    sourceCode: string,
-    callableMode = false
-): string | null => {
+const getJavaScriptFunctionName = (baseBoilerplate: string, sourceCode: string, callableMode = false): string | null => {
     const functionPattern =
         /function\s+([A-Za-z_$][\w$]*)\s*\(|(?:const|let|var)\s+([A-Za-z_$][\w$]*)\s*=\s*(?:async\s*)?(?:function\b|\([^)]*\)\s*=>|[A-Za-z_$][\w$]*\s*=>)/;
     const functionDeclaration =
@@ -165,10 +138,7 @@ const getJavaScriptFunctionName = (
     return includesProgramInput || includesProgramOutput ? null : functionName;
 };
 
-const createJavaScriptFunctionHarness = (
-    sourceCode: string,
-    functionName: string
-): string => [
+const createJavaScriptFunctionHarness = (sourceCode: string, functionName: string): string => [
     sourceCode,
     '',
     'const __taskInputText = require("fs").readFileSync(0, "utf8").replace(/\\r?\\n$/, "");',
@@ -190,12 +160,7 @@ const createJavaScriptFunctionHarness = (
     '});'
 ].join('\n');
 
-const prepareSourceCodeForExecution = (
-    language: string,
-    executionMode: ExecutionMode,
-    baseBoilerplate: string,
-    sourceCode: string
-): string => {
+const prepareSourceCodeForExecution = (language: string, executionMode: ExecutionMode, baseBoilerplate: string, sourceCode: string): string => {
     if (language !== 'javascript') {
         return sourceCode;
     }
@@ -218,18 +183,6 @@ const prepareSourceCodeForExecution = (
 
     return createJavaScriptFunctionHarness(sourceCode, functionName);
 };
-
-interface IJavaParameter {
-    type: string;
-    name: string;
-}
-
-interface IJavaMethod {
-    className: string;
-    name: string;
-    returnType: string;
-    parameters: IJavaParameter[];
-}
 
 const getJavaMethod = (
     starterCode: string,
@@ -439,11 +392,6 @@ interface ITestResultDetails {
     skipped?: boolean;
 }
 
-/**
- * Hidden cases are still executed and compared on the backend, but never echo
- * their name, input, expected output, actual output or raw diagnostics back to
- * the client. Visible cases keep the full API contract.
- */
 const toTestResult = (
     testCase: ICodingTaskTestCase,
     status: IRunCourseTaskCodeTestResult['status'],
@@ -473,15 +421,6 @@ const toTestResult = (
     };
 };
 
-/**
- * Run the latest source code against every saved test case for a CODE task.
- *
- * All stored cases are executed sequentially on the backend and compared with
- * their saved expected output. After execution the same submitted source and
- * the sanitized execution summary are sent for advisory AI review so the user
- * gets fresh feedback on every Run/Re-run. Submission is deliberately NOT
- * performed here; pass/fail and eligibility remain driven solely by execution.
- */
 const runCourseTaskCode = async (
     taskId: string,
     language: string,
@@ -500,11 +439,6 @@ const runCourseTaskCode = async (
         throw new Error('INVALID_SOURCE_CODE');
     }
 
-    /**
-     * Resolve and validate the language BEFORE any task lookup: it must be
-     * supported by the static execution registry AND present and active in the
-     * programming-languages collection.
-     */
     const canonicalLanguage = await resolveCanonicalLanguage(language);
     const languageEntry = canonicalLanguage
         ? LANGUAGE_REGISTRY[canonicalLanguage]
@@ -553,9 +487,6 @@ const runCourseTaskCode = async (
         throw new Error('CALLABLE_EXECUTION_UNSUPPORTED');
     }
 
-    /**
-     * Authorization: the task must belong to a course assigned to the user.
-     */
     const parentModule = await CourseModuleModel.findById(task.moduleId)
         .select('courseId')
         .lean();
@@ -575,11 +506,6 @@ const runCourseTaskCode = async (
         throw new Error('TASK_NOT_ASSIGNED');
     }
 
-    /**
-     * Reuse saved test cases. Only generate when no COMPLETED set exists yet
-     * (or wait for an in-flight generation), never regenerate valid cases on a
-     * normal Run request.
-     */
     let testCaseSet = await CodingTaskTestCaseModel.findOne({ taskId })
         .select('taskId status testCases')
         .lean();
@@ -639,10 +565,6 @@ const runCourseTaskCode = async (
     let infrastructureError: string | null = null;
     let retryAfterSeconds: number | null = null;
 
-    /**
-     * Execute every saved case sequentially through the existing Wandbox
-     * integration.
-     */
     for (const testCase of testCaseSet.testCases as ICodingTaskTestCase[]) {
         if (compilationFailed || infrastructureError) {
             testResults.push(
@@ -742,12 +664,6 @@ const runCourseTaskCode = async (
         !infrastructureError &&
         testResults.every((result) => result.passed);
 
-    /**
-     * Fresh advisory review on every Run/Re-run, bound to this exact source and
-     * these execution results. Hidden cases are sanitized before leaving the
-     * backend. Review is best-effort: a provider failure only yields an
-     * `evaluationError` and never alters the authoritative execution results.
-     */
     let evaluation: ICodingTaskCodeReview | null = null;
     let evaluationError: string | null = null;
 
@@ -824,16 +740,4 @@ const resolveJavaMethod = (
     return javaMethod;
 };
 
-export default {
-    runCourseTaskCode,
-    normalizeOutput,
-    getExecutionStatus,
-    getJavaScriptFunctionName,
-    createJavaScriptFunctionHarness,
-    prepareSourceCodeForExecution,
-    getJavaMethod,
-    parseJavaCaseInput,
-    javaValueExpression,
-    getJavaMethodArguments,
-    createJavaMethodRunner
-};
+export default { runCourseTaskCode,  normalizeOutput, getExecutionStatus, getJavaScriptFunctionName, createJavaScriptFunctionHarness, prepareSourceCodeForExecution, getJavaMethod, parseJavaCaseInput, javaValueExpression, getJavaMethodArguments, createJavaMethodRunner };

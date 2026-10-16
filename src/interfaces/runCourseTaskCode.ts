@@ -44,3 +44,15 @@ export interface IRunCourseTaskCodeResponse {
     evaluationError: string | null;
     canSubmit: boolean;
 }
+
+export interface IJavaParameter {
+    type: string;
+    name: string;
+}
+
+export interface IJavaMethod {
+    className: string;
+    name: string;
+    returnType: string;
+    parameters: IJavaParameter[];
+}

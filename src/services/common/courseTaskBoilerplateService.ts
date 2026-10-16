@@ -9,11 +9,6 @@ import getUserOpenRouterKeyService from '../useropenrouter/getUserOpenRouterKeyS
 const OPENROUTER_CHAT_COMPLETIONS_URL = 'https://openrouter.ai/api/v1/chat/completions';
 const generationPromises = new Map<string, Promise<string>>();
 
-/**
- * Version stamped on every cached starter-code entry. Lets the platform tell
- * apart skeletons produced by the current generation contract from ones written
- * by an earlier prompt/shape, so stale caches can be migrated without guessing.
- */
 const BOILERPLATE_VERSION = 1;
 
 const getApiKey = async (userId: string): Promise<string> => {
@@ -120,12 +115,7 @@ const generateBaseBoilerplate = async (taskDescription: string, userId: string):
     return baseBoilerplate;
 };
 
-const generateLanguageBoilerplate = async (
-    taskDescription: string,
-    baseBoilerplate: string,
-    languageName: string,
-    userId: string
-): Promise<string> => {
+const generateLanguageBoilerplate = async (taskDescription: string, baseBoilerplate: string, languageName: string, userId: string): Promise<string> => {
     if (!taskDescription.trim()) {
         throw new Error('CODING_TASK_DESCRIPTION_REQUIRED');
     }
@@ -156,11 +146,7 @@ const generateLanguageBoilerplate = async (
     return code;
 };
 
-const getOrGenerateCourseTaskBoilerplate = async (
-    taskId: string,
-    languageId: string,
-    userId: string
-): Promise<string> => {
+const getOrGenerateCourseTaskBoilerplate = async (taskId: string, languageId: string, userId: string): Promise<string> => {
     if (!Types.ObjectId.isValid(taskId) || !Types.ObjectId.isValid(languageId)) {
         throw new Error('INVALID_TASK_OR_LANGUAGE_ID');
     }

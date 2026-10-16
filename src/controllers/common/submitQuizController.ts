@@ -79,8 +79,6 @@ const submitQuiz = async (req: Request, res: Response) => {
             });
         }
 
-        // No assignment covering this task for the employee — same 404 the other
-        // assignment-scoped endpoints use.
         if (submission.notFound) {
             return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
@@ -88,8 +86,6 @@ const submitQuiz = async (req: Request, res: Response) => {
             });
         }
 
-        // The attempt does not exist on this employee's progress row — treat as
-        // not found so attempt ids are not enumerable.
         if (submission.attemptNotFound) {
             return res.status(HTTP_STATUS.NOT_FOUND).json({
                 success: false,
@@ -104,8 +100,6 @@ const submitQuiz = async (req: Request, res: Response) => {
             });
         }
 
-        // Failed score: not eligible for finalization. Return the score together
-        // with the reattempt requirement; the task is not completed.
         if (submission.notPassed) {
             return res.status(HTTP_STATUS.BAD_REQUEST).json({
                 success: false,
