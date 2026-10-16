@@ -18,13 +18,8 @@ import updateCourseSchema from '../middlewares/schemas/updateCourseSchema';
 import addCourseModuleSchema from '../middlewares/schemas/addCourseModuleSchema';
 import updateCourseModuleSchema from '../middlewares/schemas/updateCourseModuleSchema';
 import updateCourseTaskSchema from '../middlewares/schemas/updateCourseTaskSchema';
-import { COURSE_ERROR_MESSAGES } from '../constants/contentwriter/courseMessages';
-import { COURSE_MODULE_ERRORS_MESSAGES } from '../constants/contentwriter/coursemoduleMessages';
-import { COURSE_TASK_ERRORS_MESSAGES } from '../constants/contentwriter/coursetaskMessages';
-import { COURSE_QUIZ_QUESTION_ERROR_MESSAGES } from '../constants/contentwriter/courseQuizQuestionMessages';
 import createQuizQuestionSchema from '../middlewares/schemas/createQuizQuestionSchema';
 import updateQuizQuestionSchema from '../middlewares/schemas/updateQuizQuestionSchema';
-import { MY_COURSES_ERROR_MESSAGES } from '../constants/common/myCoursesMessages';
 import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
 import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
@@ -1436,10 +1431,7 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
 commonRouter.put(
     '/updateMyTaskAcknowledgement',
     validateJWT,
-    validateBody(
-        updateMyTaskAcknowledgementSchema,
-        MY_COURSES_ERROR_MESSAGES.TASK_ACKNOWLEDGEMENT_MISSING_FIELDS_MESSAGE
-    ),
+    validateBody(updateMyTaskAcknowledgementSchema),
     updateMyTaskAcknowledgementController.updateMyTaskAcknowledgement
 );
 
@@ -2023,7 +2015,7 @@ commonRouter.post(
     '/addCourse',
     validateJWT,
     upload.single('coursethumbnail'),
-    validateBody(addCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE),
+    validateBody(addCourseSchema),
     addCourseController.addNewCourse
 );
 
@@ -2141,7 +2133,7 @@ commonRouter.post(
 commonRouter.post(
     '/clonecourse',
     validateJWT,
-    validateBody(cloneCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE),
+    validateBody(cloneCourseSchema),
     cloneCourseController.cloneCourse
 );
 
@@ -2186,7 +2178,7 @@ commonRouter.post(
     '/addCourseModule',
     validateJWT,
     upload.single('coursemodulethumbnail'),
-    validateBody(addCourseModuleSchema, COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_VALIDATION_ERROR_MESSAGE),
+    validateBody(addCourseModuleSchema),
     addCourseModuleController.addModuleToCourse
 );
 
@@ -2385,7 +2377,7 @@ commonRouter.post(
 commonRouter.post(
     '/createQuizQuestion',
     validateJWT,
-    validateBody(createQuizQuestionSchema, COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_VALIDATION_ERROR_MESSAGE),
+    validateBody(createQuizQuestionSchema),
     createQuizQuestionController.createQuizQuestion
 );
 
@@ -2780,7 +2772,7 @@ commonRouter.post('/submitQuiz', validateJWT, submitQuizController.submitQuiz);
  *       500:
  *         description: Internal server error
  */
-commonRouter.put('/updateQuizQuestion/:questionId',validateJWT, validateBody(updateQuizQuestionSchema, COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_VALIDATION_ERROR_MESSAGE), updateQuizQuestionController.updateQuizQuestion);
+commonRouter.put('/updateQuizQuestion/:questionId',validateJWT, validateBody(updateQuizQuestionSchema), updateQuizQuestionController.updateQuizQuestion);
 
 /**
  * @swagger
@@ -3016,8 +3008,6 @@ commonRouter.post(
     runCourseTaskCodeController.runCourseTaskCode
 );
 
-
-
 /**
  * @swagger
  * /submitCourseTaskCode:
@@ -3230,7 +3220,7 @@ commonRouter.put(
         { name: 'taskFile', maxCount: 1 },
         { name: 'thumbnailFile', maxCount: 1 }
     ]),
-    validateBody(updateCourseTaskSchema, COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_VALIDATION_ERROR_MESSAGE),
+    validateBody(updateCourseTaskSchema),
     updateCourseTaskController.updateCourseTask
 );
 
@@ -3296,7 +3286,7 @@ commonRouter.put(
     '/updatecoursemodule',
     validateJWT,
     upload.single('thumbnail'),
-    validateBody(updateCourseModuleSchema, COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_VALIDATION_ERROR_MESSAGE),
+    validateBody(updateCourseModuleSchema),
     updateCourseModuleController.updateCourseModule
 );
 
@@ -3362,7 +3352,7 @@ commonRouter.put(
     '/updatecourse',
     validateJWT,
     upload.single('thumbnail'),
-    validateBody(updateCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE),
+    validateBody(updateCourseSchema),
     updateCourseController.updateCourse
 );
 
