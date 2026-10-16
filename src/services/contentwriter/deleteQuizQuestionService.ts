@@ -16,10 +16,7 @@ const deleteQuizQuestion = async (questionId: string): Promise<ICourseQuizQuesti
             return { success: false, invalidQuestionId: true };
         }
 
-        const existing: any = await CourseQuizQuestionModel.findOne({
-            _id: questionId,
-            isDeleted: false,
-        }).lean();
+        const existing: any = await CourseQuizQuestionModel.findOne({_id: questionId, isDeleted: false }).lean();
 
         if (!existing) {
             return { success: false, questionNotFound: true };
@@ -33,11 +30,7 @@ const deleteQuizQuestion = async (questionId: string): Promise<ICourseQuizQuesti
             return { success: false, notQuizTask: true };
         }
 
-        const deleted = await CourseQuizQuestionModel.findByIdAndUpdate(
-            questionId,
-            { isDeleted: true },
-            { new: true }
-        ).lean();
+        const deleted = await CourseQuizQuestionModel.findByIdAndUpdate(questionId, { isDeleted: true }, { new: true }).lean();
 
         if (task.moduleId) {
             const module: any = await CourseModuleModel.findById(task.moduleId).select('courseId').lean();

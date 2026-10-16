@@ -16,11 +16,6 @@ export const ALLOWED_COURSE_TASK_FILE_EXTENSIONS = [
     '.webp',
 ];
 
-/**
- * Executable / script extensions that must never be accepted, even though they
- * are already absent from the allow-list. Kept explicit so the intent is clear
- * and so a future allow-list edit can not accidentally re-enable them.
- */
 export const DISALLOWED_COURSE_TASK_FILE_EXTENSIONS = [
     '.exe',
     '.bat',
@@ -67,18 +62,8 @@ export const ALLOWED_COURSE_TASK_FILE_MIME_TYPES = [
     'image/webp',
 ];
 
-/**
- * `application/octet-stream` is the generic fallback many browsers send for
- * less common document types, so it is accepted as long as the file extension
- * is on the allow-list.
- */
 const GENERIC_MIME_TYPES = ['application/octet-stream'];
 
-/**
- * Returns true only when the uploaded file has both an allowed extension and
- * an accepted (or generic) MIME type. Used to reject prohibited types such as
- * executables and archives before they are persisted to S3.
- */
 export const isAllowedCourseTaskFile = (
     file?: Express.Multer.File
 ): boolean => {

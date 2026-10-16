@@ -1,8 +1,5 @@
 import mongoose, { Document } from 'mongoose';
-
-export type CourseQuizQuestionType = 'RADIO' | 'CHECKBOX' | 'TOGGLE' | 'DROPDOWN' | 'TEXTAREA';
-
-export type CourseQuizQuestionStatus = 'SHOW' | 'HIDE';
+import { CourseQuizQuestionType, CourseQuizQuestionStatus} from '../types/courseQuizQuestiontype'
 
 export interface ICourseQuizQuestionOption {
     value: string;

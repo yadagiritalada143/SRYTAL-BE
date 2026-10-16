@@ -2011,13 +2011,7 @@ commonRouter.get('/getAllActiveCourses', validateJWT, getAllActiveCoursesControl
  *       500:
  *         description: Server error
  */
-commonRouter.post(
-    '/addCourse',
-    validateJWT,
-    upload.single('coursethumbnail'),
-    validateBody(addCourseSchema),
-    addCourseController.addNewCourse
-);
+commonRouter.post('/addCourse', validateJWT, upload.single('coursethumbnail'), validateBody(addCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE), addCourseController.addNewCourse);
 
 /**
  * @swagger
@@ -2174,13 +2168,7 @@ commonRouter.post(
  *       500:
  *         description: Server error
  */
-commonRouter.post(
-    '/addCourseModule',
-    validateJWT,
-    upload.single('coursemodulethumbnail'),
-    validateBody(addCourseModuleSchema),
-    addCourseModuleController.addModuleToCourse
-);
+commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemodulethumbnail'), validateBody(addCourseModuleSchema, COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_VALIDATION_ERROR_MESSAGE), addCourseModuleController.addModuleToCourse);
 
 /**
  * @swagger
@@ -2299,16 +2287,11 @@ commonRouter.post(
  *       500:
  *         description: Internal server error while adding the course task.
  */
-commonRouter.post(
-    '/addcoursetask',
-    validateJWT,
+commonRouter.post('/addcoursetask',validateJWT,
     upload.fields([
         { name: 'taskFile', maxCount: 1 },
         { name: 'thumbnailFile', maxCount: 1 }
-    ]),
-    validateAddCourseTask,
-    addCourseTaskController.addTaskToModule
-);
+    ]), validateAddCourseTask, addCourseTaskController.addTaskToModule);
 
 /**
  * @swagger
@@ -2374,12 +2357,7 @@ commonRouter.post(
  *       500:
  *         description: Internal server error.
  */
-commonRouter.post(
-    '/createQuizQuestion',
-    validateJWT,
-    validateBody(createQuizQuestionSchema),
-    createQuizQuestionController.createQuizQuestion
-);
+commonRouter.post('/createQuizQuestion', validateJWT, validateBody(createQuizQuestionSchema), createQuizQuestionController.createQuizQuestion);
 
 /**
  * @swagger

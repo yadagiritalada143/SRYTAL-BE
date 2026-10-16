@@ -10,10 +10,7 @@ const addCourseSchema = Joi.object({
             'string.min': 'Course name is required.',
             'string.max': 'Course name must be at most 150 characters.'
         }),
-    courseDescription: Joi.string()
-        .trim()
-        .allow('')
-        .optional()
+    courseDescription: Joi.string().trim().allow('').optional()
 }).required();
 
 export default addCourseSchema;

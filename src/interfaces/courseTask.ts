@@ -1,6 +1,5 @@
 import mongoose, { Document } from 'mongoose';
 
-/** Generated starter code cached on a coding task for one programming language. */
 export interface ICourseTaskStarterCode {
     languageId: mongoose.Types.ObjectId | string;
     code: string;

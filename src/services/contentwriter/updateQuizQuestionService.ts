@@ -2,10 +2,8 @@ import CourseQuizQuestionModel from '../../model/courseQuizQuestionModel';
 import CourseTaskModel from '../../model/courseTaskModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseModel from '../../model/coursesModel';
-import {
-    ICourseQuizQuestionResponse,
-    CourseQuizQuestionType,
-} from '../../interfaces/courseQuizQuestion';
+import { ICourseQuizQuestionResponse } from '../../interfaces/courseQuizQuestion';
+import { CourseQuizQuestionType } from '../../types/courseQuizQuestiontype';
 
 const QUESTION_TYPES: CourseQuizQuestionType[] = ['RADIO', 'CHECKBOX', 'TOGGLE', 'DROPDOWN', 'TEXTAREA'];
 
@@ -13,7 +11,6 @@ const isValidObjectId = (value: string): boolean => /^[0-9a-fA-F]{24}$/.test(Str
 
 const escapeRegExp = (value: string): string => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-/** Validates per-type option rules and returns a normalized option list. */
 const normalizeAndValidateOptions = (
     type: CourseQuizQuestionType,
     options: any[] | undefined
@@ -68,11 +65,6 @@ const normalizeAndValidateOptions = (
     return { valid: true, options: normalized };
 };
 
-/**
- * Updates an existing, non-deleted quiz question. Only the supplied fields are
- * changed; the merged result is validated against the per-type rules. The
- * owning task must still exist and be a QUIZ task (taskId is never reassigned).
- */
 const updateQuizQuestion = async (payload: any): Promise<ICourseQuizQuestionResponse> => {
     try {
         const { questionId, question, type, options, status } = payload || {};
@@ -90,8 +82,6 @@ const updateQuizQuestion = async (payload: any): Promise<ICourseQuizQuestionResp
             return { success: false, questionNotFound: true };
         }
 
-        // The question must belong to a QUIZ task that the Content Writer can
-        // manage. taskId is intentionally never reassigned by an update.
         const task: any = await CourseTaskModel.findById(existing.taskId).select('type moduleId').lean();
         if (!task) {
             return { success: false, taskNotFound: true };
@@ -113,8 +103,6 @@ const updateQuizQuestion = async (payload: any): Promise<ICourseQuizQuestionResp
             return { success: false, invalidQuestion: true };
         }
 
-        // When the type stays TEXTAREA options are dropped. When it changes away
-        // from TEXTAREA, options must be supplied by the request.
         const optionsSource =
             options !== undefined ? options : finalType === 'TEXTAREA' ? undefined : existing.options;
         const optionResult = normalizeAndValidateOptions(finalType, optionsSource);
@@ -131,7 +119,6 @@ const updateQuizQuestion = async (payload: any): Promise<ICourseQuizQuestionResp
             finalStatus = normalizedStatus;
         }
 
-        // Enforce case-insensitive uniqueness per task when the text changes.
         if (finalQuestion.toLowerCase() !== String(existing.question || '').toLowerCase()) {
             const duplicate = await CourseQuizQuestionModel.findOne({
                 _id: { $ne: questionId },
@@ -161,7 +148,6 @@ const updateQuizQuestion = async (payload: any): Promise<ICourseQuizQuestionResp
             new: true,
         }).lean();
 
-        // Touch the parent task/module/course so dependent listings refresh.
         if (task.moduleId) {
             const module: any = await CourseModuleModel.findById(task.moduleId).select('courseId').lean();
             if (module?.courseId) {
