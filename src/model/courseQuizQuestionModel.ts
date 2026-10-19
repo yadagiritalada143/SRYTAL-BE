@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 import { ICourseQuizQuestion } from '../interfaces/courseQuizQuestion';
-import { CourseQuizQuestionType, CourseQuizQuestionStatus } from '../types/courseQuizQuestiontype';
+import { COURSE_QUIZ_QUESTION_STATUSES, COURSE_QUIZ_QUESTION_TYPES } from '../types/courseQuizQuestiontype';
 
-const OPTION_TYPES = CourseQuizQuestionType;
-const STATUS_TYPES = CourseQuizQuestionStatus;
+const OPTION_TYPES = COURSE_QUIZ_QUESTION_TYPES;
+const STATUS_TYPES = COURSE_QUIZ_QUESTION_STATUSES;
 
 const CourseQuizQuestionOptionSchema = new mongoose.Schema(
     {

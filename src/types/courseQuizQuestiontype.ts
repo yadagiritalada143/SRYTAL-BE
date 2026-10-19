@@ -1,5 +1,5 @@
 
-export const CourseQuizQuestionType = [
+export const COURSE_QUIZ_QUESTION_TYPES = [
     'RADIO',
     'CHECKBOX',
     'TOGGLE',
@@ -7,7 +7,13 @@ export const CourseQuizQuestionType = [
     'TEXTAREA',
 ] as const;
 
-export const CourseQuizQuestionStatus = [
+export type CourseQuizQuestionType =
+    (typeof COURSE_QUIZ_QUESTION_TYPES)[number];
+
+export const COURSE_QUIZ_QUESTION_STATUSES = [
     'SHOW',
     'HIDE',
 ] as const;
+
+export type CourseQuizQuestionStatus =
+    (typeof COURSE_QUIZ_QUESTION_STATUSES)[number];

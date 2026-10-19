@@ -19,7 +19,7 @@ const validateOptions = (
         if (providedOptions.length !== 2) {
             return 'COURSE_QUIZ_QUESTION_TOGGLE_OPTIONS_MESSAGE';
         }
-    } else if (providedOptions.length < 4) {
+    } else if (providedOptions.length < 2) {
         return 'COURSE_QUIZ_QUESTION_MIN_OPTIONS_MESSAGE';
     }
 
