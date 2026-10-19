@@ -2,11 +2,7 @@ import CourseModel from '../../model/coursesModel';
 import s3Client from '../../util/s3Client';
 import { bucketName } from '../../config/awsS3Config';
 import { stripHtmlTags } from '../../util/stripHtmlTags';
-
-interface updateCourseResponse {
-    success: boolean;
-    responseAfterUpdateCourse?: any;
-}
+import { updateCourseResponse } from '../../interfaces/courses';
 
 const updateCourse = async (id: string, courseName: string, courseDescription: string, thumbnail?: string, status?: string ):Promise<updateCourseResponse> => {
     try{

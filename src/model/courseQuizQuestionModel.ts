@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
-import { ICourseQuizQuestion, CourseQuizQuestionType, CourseQuizQuestionStatus } from '../interfaces/courseQuizQuestion';
+import { ICourseQuizQuestion } from '../interfaces/courseQuizQuestion';
+import { CourseQuizQuestionType, CourseQuizQuestionStatus } from '../types/courseQuizQuestiontype';
 
-const OPTION_TYPES: CourseQuizQuestionType[] = ['RADIO', 'CHECKBOX', 'TOGGLE', 'DROPDOWN', 'TEXTAREA'];
-const STATUS_TYPES: CourseQuizQuestionStatus[] = ['SHOW', 'HIDE'];
+const OPTION_TYPES = CourseQuizQuestionType;
+const STATUS_TYPES = CourseQuizQuestionStatus;
 
 const CourseQuizQuestionOptionSchema = new mongoose.Schema(
     {
