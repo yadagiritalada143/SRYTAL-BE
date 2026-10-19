@@ -49,3 +49,19 @@ export interface updateCourseResponse {
     success: boolean;
     responseAfterUpdateCourse?: any;
 }
+
+export interface ICourseDueDateUpdateEmailDetails {
+    employeeName: string;
+    employeeEmail: string;
+    courseName: string;
+    oldDueDate: Date | string;
+    newDueDate: Date | string;
+    isExtended: boolean;
+}
+
+export interface ICourseReminderEmailDetails {
+    employeeName: string;
+    employeeEmail: string;
+    courseName: string;
+    dueDate: Date | string;
+}
