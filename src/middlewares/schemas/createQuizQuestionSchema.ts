@@ -34,4 +34,11 @@ const createQuizQuestionSchema = Joi.object({
         })
 }).required();
 
-export default createQuizQuestionSchema;
+const updateQuizQuestionSchema = Joi.object({
+    question: Joi.string().trim().min(1).max(5000),
+    type: Joi.string().trim().uppercase().valid('RADIO', 'CHECKBOX', 'TOGGLE', 'DROPDOWN', 'TEXTAREA'),
+    options: Joi.array().items(optionSchema),
+    status: Joi.string().trim().uppercase().valid('SHOW', 'HIDE')
+}).min(1);
+
+export { createQuizQuestionSchema, updateQuizQuestionSchema };
