@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import updateQuizQuestionService from '../../services/contentwriter/updateQuizQuestionService';
-import updateQuizQuestionSchema from '../../middlewares/schemas/updateQuizQuestionSchema';
+import { updateQuizQuestionSchema } from '../../middlewares/schemas/createQuizQuestionSchema';
 import { COURSE_QUIZ_QUESTION_SUCCESS_MESSAGES, COURSE_QUIZ_QUESTION_ERROR_MESSAGES } from '../../constants/contentwriter/courseQuizQuestionMessages';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
 

@@ -44,3 +44,8 @@ export interface IFetchCourseByIdResponse {
         totalArchivedTasks: number;
     };
 }
+
+export interface updateCourseResponse {
+    success: boolean;
+    responseAfterUpdateCourse?: any;
+}

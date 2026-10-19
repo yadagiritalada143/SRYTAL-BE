@@ -12,19 +12,11 @@ import getProfileImageController from '../controllers/common/getProfileImageCont
 import validateJWT from '../middlewares/validateJWT';
 import validateAddCourseTask from '../middlewares/validateAddCourseTask';
 import validateBody from '../middlewares/validateBody';
-import addCourseSchema from '../middlewares/schemas/addCourseSchema';
+import { addCourseSchema, updateCourseSchema } from '../middlewares/schemas/addCourseSchema';
 import cloneCourseSchema from '../middlewares/schemas/cloneCourseSchema';
-import updateCourseSchema from '../middlewares/schemas/updateCourseSchema';
-import addCourseModuleSchema from '../middlewares/schemas/addCourseModuleSchema';
-import updateCourseModuleSchema from '../middlewares/schemas/updateCourseModuleSchema';
+import { addCourseModuleSchema, updateCourseModuleSchema } from '../middlewares/schemas/addCourseModuleSchema';
 import updateCourseTaskSchema from '../middlewares/schemas/updateCourseTaskSchema';
-import { COURSE_ERROR_MESSAGES } from '../constants/contentwriter/courseMessages';
-import { COURSE_MODULE_ERRORS_MESSAGES } from '../constants/contentwriter/coursemoduleMessages';
-import { COURSE_TASK_ERRORS_MESSAGES } from '../constants/contentwriter/coursetaskMessages';
-import { COURSE_QUIZ_QUESTION_ERROR_MESSAGES } from '../constants/contentwriter/courseQuizQuestionMessages';
-import createQuizQuestionSchema from '../middlewares/schemas/createQuizQuestionSchema';
-import updateQuizQuestionSchema from '../middlewares/schemas/updateQuizQuestionSchema';
-import { MY_COURSES_ERROR_MESSAGES } from '../constants/common/myCoursesMessages';
+import { createQuizQuestionSchema, updateQuizQuestionSchema } from '../middlewares/schemas/createQuizQuestionSchema';
 import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
 import employeePackageDetailsByIdController from '../controllers/common/employeePackageDetailsByIdController';
@@ -1268,11 +1260,7 @@ commonRouter.get('/getMyAssignedCourses', validateJWT, getMyAssignedCoursesContr
  *       500:
  *         description: Server error.
  */
-commonRouter.get(
-    '/getMyAssignedCourseById/:courseAssignmentId',
-    validateJWT,
-    getMyAssignedCourseByIdController.getMyAssignedCourseById
-);
+commonRouter.get('/getMyAssignedCourseById/:courseAssignmentId', validateJWT, getMyAssignedCourseByIdController.getMyAssignedCourseById);
 
 /**
  * @swagger
@@ -1433,15 +1421,7 @@ commonRouter.put('/updateMyTaskProgress', validateJWT, updateMyTaskProgressContr
  *       500:
  *         description: Server error.
  */
-commonRouter.put(
-    '/updateMyTaskAcknowledgement',
-    validateJWT,
-    validateBody(
-        updateMyTaskAcknowledgementSchema,
-        MY_COURSES_ERROR_MESSAGES.TASK_ACKNOWLEDGEMENT_MISSING_FIELDS_MESSAGE
-    ),
-    updateMyTaskAcknowledgementController.updateMyTaskAcknowledgement
-);
+commonRouter.put('/updateMyTaskAcknowledgement', validateJWT, validateBody(updateMyTaskAcknowledgementSchema), updateMyTaskAcknowledgementController.updateMyTaskAcknowledgement);
 
 /**
  * @swagger
@@ -1984,7 +1964,6 @@ commonRouter.get('/getCourseById/:id', validateJWT, getCourseByIdController.getC
  */
 commonRouter.get('/getAllActiveCourses', validateJWT, getAllActiveCoursesController.getAllActiveCourses);
 
-
 /**
  * @swagger
  * /addCourse:
@@ -2019,7 +1998,7 @@ commonRouter.get('/getAllActiveCourses', validateJWT, getAllActiveCoursesControl
  *       500:
  *         description: Server error
  */
-commonRouter.post('/addCourse', validateJWT, upload.single('coursethumbnail'), validateBody(addCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE), addCourseController.addNewCourse);
+commonRouter.post('/addCourse', validateJWT, upload.single('coursethumbnail'), validateBody(addCourseSchema), addCourseController.addNewCourse);
 
 /**
  * @swagger
@@ -2132,12 +2111,7 @@ commonRouter.post('/addCourse', validateJWT, upload.single('coursethumbnail'), v
  *       500:
  *         description: Server error while cloning the course.
  */
-commonRouter.post(
-    '/clonecourse',
-    validateJWT,
-    validateBody(cloneCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE),
-    cloneCourseController.cloneCourse
-);
+commonRouter.post('/clonecourse', validateJWT, validateBody(cloneCourseSchema), cloneCourseController.cloneCourse);
 
 /**
  * @swagger
@@ -2176,7 +2150,7 @@ commonRouter.post(
  *       500:
  *         description: Server error
  */
-commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemodulethumbnail'), validateBody(addCourseModuleSchema, COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_VALIDATION_ERROR_MESSAGE), addCourseModuleController.addModuleToCourse);
+commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemodulethumbnail'), validateBody(addCourseModuleSchema), addCourseModuleController.addModuleToCourse);
 
 /**
  * @swagger
@@ -2295,11 +2269,7 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *       500:
  *         description: Internal server error while adding the course task.
  */
-commonRouter.post('/addcoursetask',validateJWT,
-    upload.fields([
-        { name: 'taskFile', maxCount: 1 },
-        { name: 'thumbnailFile', maxCount: 1 }
-    ]), validateAddCourseTask, addCourseTaskController.addTaskToModule);
+commonRouter.post('/addcoursetask',validateJWT, upload.fields([ { name: 'taskFile', maxCount: 1 }, { name: 'thumbnailFile', maxCount: 1 } ]), validateAddCourseTask, addCourseTaskController.addTaskToModule);
 
 /**
  * @swagger
@@ -2365,7 +2335,7 @@ commonRouter.post('/addcoursetask',validateJWT,
  *       500:
  *         description: Internal server error.
  */
-commonRouter.post('/createQuizQuestion', validateJWT, validateBody(createQuizQuestionSchema, COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_VALIDATION_ERROR_MESSAGE), createQuizQuestionController.createQuizQuestion);
+commonRouter.post('/createQuizQuestion', validateJWT, validateBody(createQuizQuestionSchema), createQuizQuestionController.createQuizQuestion);
 
 /**
  * @swagger
@@ -2436,11 +2406,7 @@ commonRouter.post('/createQuizQuestion', validateJWT, validateBody(createQuizQue
  *       500:
  *         description: Internal server error.
  */
-commonRouter.get(
-    '/getAllQuizQuestions/:taskId',
-    validateJWT,
-    getAllQuizQuestionsController.getAllQuizQuestions
-);
+commonRouter.get('/getAllQuizQuestions/:taskId', validateJWT, getAllQuizQuestionsController.getAllQuizQuestions);
 
 /**
  * @swagger
@@ -2758,7 +2724,7 @@ commonRouter.post('/submitQuiz', validateJWT, submitQuizController.submitQuiz);
  *       500:
  *         description: Internal server error
  */
-commonRouter.put('/updateQuizQuestion/:questionId',validateJWT, validateBody(updateQuizQuestionSchema, COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_VALIDATION_ERROR_MESSAGE), updateQuizQuestionController.updateQuizQuestion);
+commonRouter.put('/updateQuizQuestion/:questionId',validateJWT, validateBody(updateQuizQuestionSchema), updateQuizQuestionController.updateQuizQuestion);
 
 /**
  * @swagger
@@ -2901,11 +2867,7 @@ commonRouter.get('/getCourseTaskContent/:id', validateJWTForMedia, getCourseTask
  *       502:
  *         description: Starter code generation failed
  */
-commonRouter.get(
-    '/getCourseTaskBoilerplate/:taskId/:languageId',
-    validateJWT,
-    getCourseTaskBoilerplateController.getCourseTaskBoilerplate
-);
+commonRouter.get('/getCourseTaskBoilerplate/:taskId/:languageId', validateJWT, getCourseTaskBoilerplateController.getCourseTaskBoilerplate);
 
 /**
  * @swagger
@@ -2945,11 +2907,7 @@ commonRouter.get(
  *       502:
  *         description: Test-case generation failed
  */
-commonRouter.post(
-    '/generateCourseTaskTestCases',
-    validateJWT,
-    generateCourseTaskTestCasesController.generateCourseTaskTestCases
-);
+commonRouter.post('/generateCourseTaskTestCases', validateJWT, generateCourseTaskTestCasesController.generateCourseTaskTestCases);
 
 /**
  * @swagger
@@ -2988,13 +2946,7 @@ commonRouter.post(
  *       404:
  *         description: Course task not found or test cases not generated
  */
-commonRouter.post(
-    '/runCourseTaskCode',
-    validateJWT,
-    runCourseTaskCodeController.runCourseTaskCode
-);
-
-
+commonRouter.post('/runCourseTaskCode', validateJWT, runCourseTaskCodeController.runCourseTaskCode);
 
 /**
  * @swagger
@@ -3033,11 +2985,7 @@ commonRouter.post(
  *       404:
  *         description: Coding task not found
  */
-commonRouter.post(
-    '/submitCourseTaskCode',
-    validateJWT,
-    submitCodeController.submitCode
-);
+commonRouter.post('/submitCourseTaskCode', validateJWT, submitCodeController.submitCode);
 
 /**
  * @swagger
@@ -3201,16 +3149,7 @@ commonRouter.post(
  *                   example: Failed to update course task.
  */
 
-commonRouter.put(
-    '/updatecoursetask',
-    validateJWT,
-    upload.fields([
-        { name: 'taskFile', maxCount: 1 },
-        { name: 'thumbnailFile', maxCount: 1 }
-    ]),
-    validateBody(updateCourseTaskSchema, COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_VALIDATION_ERROR_MESSAGE),
-    updateCourseTaskController.updateCourseTask
-);
+commonRouter.put('/updatecoursetask', validateJWT, upload.fields([ { name: 'taskFile', maxCount: 1 }, { name: 'thumbnailFile', maxCount: 1 } ]), validateBody(updateCourseTaskSchema), updateCourseTaskController.updateCourseTask);
 
 /**
  * @swagger
@@ -3270,13 +3209,7 @@ commonRouter.put(
  *       500:
  *         description: Internal server error
  */
-commonRouter.put(
-    '/updatecoursemodule',
-    validateJWT,
-    upload.single('thumbnail'),
-    validateBody(updateCourseModuleSchema, COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_VALIDATION_ERROR_MESSAGE),
-    updateCourseModuleController.updateCourseModule
-);
+commonRouter.put('/updatecoursemodule', validateJWT, upload.single('thumbnail'), validateBody(updateCourseModuleSchema), updateCourseModuleController.updateCourseModule);
 
 /**
  * @swagger
@@ -3336,12 +3269,6 @@ commonRouter.put(
  *       500:
  *         description: Internal server error
  */
-commonRouter.put(
-    '/updatecourse',
-    validateJWT,
-    upload.single('thumbnail'),
-    validateBody(updateCourseSchema, COURSE_ERROR_MESSAGES.COURSE_VALIDATION_ERROR_MESSAGE),
-    updateCourseController.updateCourse
-);
+commonRouter.put('/updatecourse', validateJWT, upload.single('thumbnail'), validateBody(updateCourseSchema), updateCourseController.updateCourse);
 
 export default commonRouter;
