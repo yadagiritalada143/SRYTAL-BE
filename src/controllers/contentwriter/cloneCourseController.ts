@@ -10,6 +10,7 @@ const errorCodeToStatus = (code?: string): number => {
         case COURSE_CLONE_ERROR_CODES.SOURCE_NOT_ARCHIVED:
         case COURSE_CLONE_ERROR_CODES.INVALID_MODULE:
         case COURSE_CLONE_ERROR_CODES.INVALID_TASK:
+        case COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME:
             return HTTP_STATUS.BAD_REQUEST;
         default:
             return HTTP_STATUS.INTERNAL_SERVER_ERROR;

@@ -11,6 +11,7 @@ export const COURSE_ERROR_MESSAGES = {
     COURSE_INVALID_STATUS_MESSAGE: 'Please provide valid status !',
     COURSE_VALIDATION_ERROR_MESSAGE: 'Invalid course details.',
     COURSE_CLONE_ERROR_MESSAGE: 'Error occured while cloning the Course !',
+    COURSE_CLONE_DUPLICATE_NAME_MESSAGE: 'Course name already exists. Please provide a different course name.',
     COURSE_CLONE_SOURCE_NOT_FOUND_MESSAGE: 'Source course not found !',
     COURSE_CLONE_SOURCE_NOT_ARCHIVED_MESSAGE: 'Only an archived course can be cloned !',
     COURSE_CLONE_INVALID_MODULE_MESSAGE: 'One or more selected modules do not belong to the source course !',
@@ -23,5 +24,6 @@ export const COURSE_CLONE_ERROR_CODES = {
     SOURCE_NOT_ARCHIVED: 'SOURCE_COURSE_NOT_ARCHIVED',
     INVALID_MODULE: 'INVALID_MODULE_SELECTION',
     INVALID_TASK: 'INVALID_TASK_SELECTION',
-    CLONE_FAILED: 'COURSE_CLONE_FAILED'
+    CLONE_FAILED: 'COURSE_CLONE_FAILED',
+    DUPLICATE_NAME: 'COURSE_CLONE_DUPLICATE_NAME'
 };

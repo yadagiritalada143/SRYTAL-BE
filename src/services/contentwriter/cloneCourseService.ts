@@ -148,9 +148,7 @@ const failure = (code: string, message: string): ICloneCourseResponse => ({
     message
 });
 
-const cloneCourse = async (
-    input: ICloneCourseInput
-): Promise<ICloneCourseResponse> => {
+const cloneCourse = async (input: ICloneCourseInput): Promise<ICloneCourseResponse> => {
     const { courseId, courseName, modules } = input;
 
     try {
@@ -163,10 +161,22 @@ const cloneCourse = async (
             );
         }
 
-        if (String(sourceCourse.status || '').toUpperCase() !== ARCHIVE_STATUS) {
+        if ((sourceCourse.status || '').toUpperCase() !== ARCHIVE_STATUS) {
             return failure(
                 COURSE_CLONE_ERROR_CODES.SOURCE_NOT_ARCHIVED,
                 COURSE_ERROR_MESSAGES.COURSE_CLONE_SOURCE_NOT_ARCHIVED_MESSAGE
+            );
+        }
+
+        // ── 2. Validate course name is not a duplicate ──────────────────────────
+        const existingCourseWithSameName = await CourseModel.findOne({
+            courseName: courseName,
+            _id: { $ne: courseId }
+        });
+        if (existingCourseWithSameName) {
+            return failure(
+                COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME,
+                COURSE_ERROR_MESSAGES.COURSE_CLONE_DUPLICATE_NAME_MESSAGE
             );
         }
 
