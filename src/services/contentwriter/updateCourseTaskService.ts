@@ -9,6 +9,7 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
         if (!existingTask) {
             return {
                 success: false,
+                responseAfterUpdate: 'COURSE_TASK_NOT_FOUND',
             };
         }
 

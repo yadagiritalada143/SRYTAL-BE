@@ -1,5 +1,6 @@
 export const COURSE_TASK_SUCCESS_MESSAGES = {
     COURSE_TASK_ADD_SUCCESS_MESSAGE: 'New Task added to Module Successfully !',
+    
 }
 
 export const COURSE_TASK_ERRORS_MESSAGES = {
@@ -21,6 +22,8 @@ export const COURSE_TASK_ERRORS_MESSAGES = {
     COURSE_TASK_NAME_REQUIRED_MESSAGE: 'Please provide the task name !',
     COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE: 'Acknowledgement is applicable only for file type tasks !',
     COURSE_TASK_VALIDATION_ERROR_MESSAGE: 'Invalid course task request.',
-    COURSE_TASK_QUIZ_TASK_MESSAGE: 'Please provide the Quiz task description !'
+    COURSE_TASK_QUIZ_TASK_MESSAGE: 'Please provide the Quiz task description !',
+    COURSE_TASK_DUPLICATE_NAME_MESSAGE: 'A task with this name already exists in this module.',
+
     
 };
