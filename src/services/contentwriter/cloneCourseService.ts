@@ -1,14 +1,28 @@
+
 import mongoose from 'mongoose';
 import CourseModel from '../../model/coursesModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseTaskModel from '../../model/courseTaskModel';
-import { COURSE_CLONE_ERROR_CODES, COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessages';
-import { ICloneCourseData, ICloneCourseInput, ICloneCourseResponse, IClonedCourseModule, IResolvedModuleSelection, ICloneTracker } from '../../interfaces/cloneCourse';
+import {
+    COURSE_CLONE_ERROR_CODES,
+    COURSE_ERROR_MESSAGES
+} from '../../constants/contentwriter/courseMessages';
+import {
+    ICloneCourseData,
+    ICloneCourseInput,
+    ICloneCourseResponse,
+    IClonedCourseModule,
+    IResolvedModuleSelection,
+    ICloneTracker
+} from '../../interfaces/cloneCourse';
 
 const ACTIVE_STATUS = 'ACTIVE';
 const ARCHIVE_STATUS = 'ARCHIVE';
 
-const buildUniqueName = (baseName: string, usedNames: Set<string>): string => {
+const buildUniqueName = (
+    baseName: string,
+    usedNames: Set<string>
+): string => {
     const base = String(baseName ?? '').trim() || 'Untitled';
     let candidate = base;
     let counter = 1;
@@ -25,17 +39,50 @@ const buildUniqueName = (baseName: string, usedNames: Set<string>): string => {
 const saveOptions = (session: mongoose.ClientSession | null) =>
     session ? { session } : {};
 
+/**
+ * Detect duplicate-key errors specifically for the courseName field.
+ */
+const isDuplicateCourseNameError = (error: any): boolean => {
+    if (error?.code !== 11000) {
+        return false;
+    }
+
+    return (
+        error?.keyPattern?.courseName === 1 ||
+        error?.keyValue?.courseName !== undefined ||
+        /courseName/i.test(String(error?.message || ''))
+    );
+};
+
+/**
+ * Detect MongoDB deployments that do not support transactions.
+ */
 const isTransactionUnsupportedError = (error: any): boolean => {
     const message = String(error?.message || '');
+
     return (
         error?.code === 20 ||
         error?.codeName === 'IllegalOperation' ||
-        /Transaction numbers are only allowed on a replica set member or mongos/i.test(message) ||
+        /Transaction numbers are only allowed on a replica set member or mongos/i.test(
+            message
+        ) ||
         /replica set/i.test(message) ||
         /does not support transactions/i.test(message)
     );
 };
 
+const failure = (
+    code: string,
+    message: string
+): ICloneCourseResponse => ({
+    success: false,
+    code,
+    message
+});
+
+/**
+ * Create the course, selected modules, and selected tasks.
+ */
 const performClone = async (
     courseName: string,
     sourceCourse: any,
@@ -50,8 +97,13 @@ const performClone = async (
         CourseTaskModel.distinct('taskName', {}, options)
     ]);
 
-    const usedModuleNames = new Set<string>(existingModuleNames as string[]);
-    const usedTaskNames = new Set<string>(existingTaskNames as string[]);
+    const usedModuleNames = new Set<string>(
+        existingModuleNames as string[]
+    );
+
+    const usedTaskNames = new Set<string>(
+        existingTaskNames as string[]
+    );
 
     const newCourse: any = new CourseModel({
         courseName,
@@ -59,19 +111,25 @@ const performClone = async (
         thumbnail: sourceCourse.thumbnail,
         status: ACTIVE_STATUS
     });
+
     await newCourse.save(options);
+
     tracker.courseId = newCourse._id;
 
     const clonedModules: IClonedCourseModule[] = [];
 
     for (const { sourceModule, sourceTasks } of selections) {
         const newModule: any = new CourseModuleModel({
-            moduleName: buildUniqueName(sourceModule.moduleName, usedModuleNames),
+            moduleName: buildUniqueName(
+                sourceModule.moduleName,
+                usedModuleNames
+            ),
             moduleDescription: sourceModule.moduleDescription,
             courseId: newCourse._id,
             thumbnail: sourceModule.thumbnail,
             status: sourceModule.status || ACTIVE_STATUS
         });
+
         await newModule.save(options);
         tracker.moduleIds.push(newModule._id);
 
@@ -80,7 +138,10 @@ const performClone = async (
         for (const sourceTask of sourceTasks) {
             const newTask: any = new CourseTaskModel({
                 moduleId: newModule._id,
-                taskName: buildUniqueName(sourceTask.taskName, usedTaskNames),
+                taskName: buildUniqueName(
+                    sourceTask.taskName,
+                    usedTaskNames
+                ),
                 taskDescription: sourceTask.taskDescription,
                 thumbnail: sourceTask.thumbnail,
                 status: sourceTask.status || ACTIVE_STATUS,
@@ -94,11 +155,12 @@ const performClone = async (
                 boilerplateVersion: sourceTask.boilerplateVersion,
                 starterCode: Array.isArray(sourceTask.starterCode)
                     ? sourceTask.starterCode.map((starter: any) => ({
-                        languageId: starter.languageId,
-                        code: starter.code
-                    }))
+                          languageId: starter.languageId,
+                          code: starter.code
+                      }))
                     : undefined
             });
+
             await newTask.save(options);
             tracker.taskIds.push(newTask._id);
 
@@ -126,86 +188,129 @@ const performClone = async (
     };
 };
 
-const rollbackCreatedRecords = async (tracker: ICloneTracker): Promise<void> => {
+/**
+ * Remove records created by the fallback cloning process if it fails.
+ */
+const rollbackCreatedRecords = async (
+    tracker: ICloneTracker
+): Promise<void> => {
     try {
         if (tracker.taskIds.length) {
-            await CourseTaskModel.deleteMany({ _id: { $in: tracker.taskIds } });
+            await CourseTaskModel.deleteMany({
+                _id: { $in: tracker.taskIds }
+            });
         }
+
         if (tracker.moduleIds.length) {
-            await CourseModuleModel.deleteMany({ _id: { $in: tracker.moduleIds } });
+            await CourseModuleModel.deleteMany({
+                _id: { $in: tracker.moduleIds }
+            });
         }
+
         if (tracker.courseId) {
-            await CourseModel.deleteOne({ _id: tracker.courseId });
+            await CourseModel.deleteOne({
+                _id: tracker.courseId
+            });
         }
     } catch (rollbackError: any) {
-        console.error(`Error rolling back cloned course records: ${rollbackError}`);
+        console.error(
+            'Error rolling back cloned course records:',
+            rollbackError
+        );
     }
 };
 
-const failure = (code: string, message: string): ICloneCourseResponse => ({
-    success: false,
-    code,
-    message
-});
-
-const cloneCourse = async (input: ICloneCourseInput): Promise<ICloneCourseResponse> => {
+const cloneCourse = async (
+    input: ICloneCourseInput
+): Promise<ICloneCourseResponse> => {
     const { courseId, courseName, modules } = input;
 
     try {
-        // ── 1. Validate the source course ──────────────────────────────────
+        // 1. Validate the source course.
         const sourceCourse = await CourseModel.findById(courseId);
+
         if (!sourceCourse) {
             return failure(
                 COURSE_CLONE_ERROR_CODES.SOURCE_NOT_FOUND,
-                COURSE_ERROR_MESSAGES.COURSE_CLONE_SOURCE_NOT_FOUND_MESSAGE
+                COURSE_ERROR_MESSAGES
+                    .COURSE_CLONE_SOURCE_NOT_FOUND_MESSAGE
             );
         }
 
-        if ((sourceCourse.status || '').toUpperCase() !== ARCHIVE_STATUS) {
+        if (
+            (sourceCourse.status || '').toUpperCase() !== ARCHIVE_STATUS
+        ) {
             return failure(
                 COURSE_CLONE_ERROR_CODES.SOURCE_NOT_ARCHIVED,
-                COURSE_ERROR_MESSAGES.COURSE_CLONE_SOURCE_NOT_ARCHIVED_MESSAGE
+                COURSE_ERROR_MESSAGES
+                    .COURSE_CLONE_SOURCE_NOT_ARCHIVED_MESSAGE
             );
         }
 
-        // ── 2. Validate course name is not a duplicate ──────────────────────────
+        // 2. Validate the course name before creating any records.
+        const normalizedCourseName = String(courseName ?? '').trim();
+
         const existingCourseWithSameName = await CourseModel.findOne({
-            courseName: courseName,
+            courseName: normalizedCourseName,
             _id: { $ne: courseId }
         });
+
         if (existingCourseWithSameName) {
             return failure(
                 COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME,
-                COURSE_ERROR_MESSAGES.COURSE_CLONE_DUPLICATE_NAME_MESSAGE
+                COURSE_ERROR_MESSAGES
+                    .COURSE_CLONE_DUPLICATE_NAME_MESSAGE
             );
         }
 
-        // ── 2. Validate the selected modules belong to the source course ───
-        const requestedModuleIds = modules.map((module) => module.moduleId);
-        const uniqueModuleIds = Array.from(new Set(requestedModuleIds));
+        // 3. Validate that selected modules belong to the source course.
+        const requestedModuleIds = modules.map(
+            (module) => module.moduleId
+        );
+
+        const uniqueModuleIds = Array.from(
+            new Set(requestedModuleIds)
+        );
 
         const sourceModules = await CourseModuleModel.find({
             _id: { $in: uniqueModuleIds },
             courseId: sourceCourse._id
         });
+
         const sourceModuleMap = new Map<string, any>(
-            sourceModules.map((module: any) => [String(module._id), module])
+            sourceModules.map((module: any) => [
+                String(module._id),
+                module
+            ])
         );
 
-        if (uniqueModuleIds.some((id) => !sourceModuleMap.has(String(id)))) {
+        if (
+            uniqueModuleIds.some(
+                (id) => !sourceModuleMap.has(String(id))
+            )
+        ) {
             return failure(
                 COURSE_CLONE_ERROR_CODES.INVALID_MODULE,
                 COURSE_ERROR_MESSAGES.COURSE_CLONE_INVALID_MODULE_MESSAGE
             );
         }
 
-        // ── 3. Validate the selected tasks belong to their selected module ─
-        const requestedTaskIds = modules.flatMap((module) => module.taskIds);
+        // 4. Validate that selected tasks belong to their selected modules.
+        const requestedTaskIds = modules.flatMap(
+            (module) => module.taskIds
+        );
+
         const sourceTasks = requestedTaskIds.length
-            ? await CourseTaskModel.find({ _id: { $in: requestedTaskIds } })
+            ? await CourseTaskModel.find({
+                  _id: { $in: requestedTaskIds }
+              })
             : [];
+
         const sourceTaskMap = new Map<string, any>(
-            sourceTasks.map((task: any) => [String(task._id), task])
+            sourceTasks.map((task: any) => [
+                String(task._id),
+                task
+            ])
         );
 
         const selections: IResolvedModuleSelection[] = [];
@@ -215,16 +320,23 @@ const cloneCourse = async (input: ICloneCourseInput): Promise<ICloneCourseRespon
                 String(moduleSelection.moduleId)
             );
 
-            const resolvedTasks = moduleSelection.taskIds.map((taskId) => {
-                const sourceTask = sourceTaskMap.get(String(taskId));
-                if (
-                    !sourceTask ||
-                    String(sourceTask.moduleId) !== String(sourceModule!._id)
-                ) {
-                    return null;
+            const resolvedTasks = moduleSelection.taskIds.map(
+                (taskId) => {
+                    const sourceTask = sourceTaskMap.get(
+                        String(taskId)
+                    );
+
+                    if (
+                        !sourceTask ||
+                        String(sourceTask.moduleId) !==
+                            String(sourceModule._id)
+                    ) {
+                        return null;
+                    }
+
+                    return sourceTask;
                 }
-                return sourceTask;
-            });
+            );
 
             if (resolvedTasks.some((task) => task === null)) {
                 return failure(
@@ -239,34 +351,62 @@ const cloneCourse = async (input: ICloneCourseInput): Promise<ICloneCourseRespon
             });
         }
 
-        // ── 4. Clone inside a transaction when the deployment supports it ──
+        // 5. Try cloning inside a transaction.
         let session: mongoose.ClientSession | null = null;
 
         try {
             session = await mongoose.startSession();
             session.startTransaction();
 
+            const tracker: ICloneTracker = {
+                moduleIds: [],
+                taskIds: []
+            };
+
             const data = await performClone(
-                courseName,
+                normalizedCourseName,
                 sourceCourse,
                 selections,
                 session,
-                { moduleIds: [], taskIds: [] }
+                tracker
             );
 
             await session.commitTransaction();
-            return { success: true, data };
+
+            return {
+                success: true,
+                data
+            };
         } catch (transactionError: any) {
             if (session) {
                 try {
-                    await session.abortTransaction();
+                    if (session.inTransaction()) {
+                        await session.abortTransaction();
+                    }
                 } catch (abortError: any) {
-                    console.error(`Error aborting clone transaction: ${abortError}`);
+                    console.error(
+                        'Error aborting clone transaction:',
+                        abortError
+                    );
                 }
             }
 
+            // Return HTTP 400 through the controller for duplicate names.
+            if (isDuplicateCourseNameError(transactionError)) {
+                return failure(
+                    COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME,
+                    COURSE_ERROR_MESSAGES
+                        .COURSE_CLONE_DUPLICATE_NAME_MESSAGE
+                );
+            }
+
+            // Only use the fallback when transactions are unsupported.
             if (!isTransactionUnsupportedError(transactionError)) {
-                console.error(`Error cloning course: ${transactionError}`);
+                console.error(
+                    'Error cloning course:',
+                    transactionError
+                );
+
                 return failure(
                     COURSE_CLONE_ERROR_CODES.CLONE_FAILED,
                     COURSE_ERROR_MESSAGES.COURSE_CLONE_ERROR_MESSAGE
@@ -277,33 +417,64 @@ const cloneCourse = async (input: ICloneCourseInput): Promise<ICloneCourseRespon
                 try {
                     await session.endSession();
                 } catch (endError: any) {
-                    console.error(`Error ending clone session: ${endError}`);
+                    console.error(
+                        'Error ending clone session:',
+                        endError
+                    );
                 }
             }
         }
 
-        // ── 5. Fallback without transactions, rolling back on failure ──────
-        const tracker: ICloneTracker = { moduleIds: [], taskIds: [] };
+        // 6. Fallback cloning without transactions.
+        const tracker: ICloneTracker = {
+            moduleIds: [],
+            taskIds: []
+        };
 
         try {
             const data = await performClone(
-                courseName,
+                normalizedCourseName,
                 sourceCourse,
                 selections,
                 null,
                 tracker
             );
-            return { success: true, data };
+
+            return {
+                success: true,
+                data
+            };
         } catch (cloneError: any) {
-            console.error(`Error cloning course: ${cloneError}`);
+            console.error('Error cloning course:', cloneError);
+
             await rollbackCreatedRecords(tracker);
+
+            // Handle duplicate course names in the fallback path too.
+            if (isDuplicateCourseNameError(cloneError)) {
+                return failure(
+                    COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME,
+                    COURSE_ERROR_MESSAGES
+                        .COURSE_CLONE_DUPLICATE_NAME_MESSAGE
+                );
+            }
+
             return failure(
                 COURSE_CLONE_ERROR_CODES.CLONE_FAILED,
-                COURSE_ERROR_MESSAGES.COURSE_CLONE_ERROR_MESSAGE
+                COURSE_ERROR_MESSAGES.COURSE_CLONE_DUPLICATE_NAME_MESSAGE
             );
         }
     } catch (error: any) {
-        console.error(`Error in cloning course: ${error}`);
+        // Handle duplicate-key errors that occur outside the inner try blocks.
+        if (isDuplicateCourseNameError(error)) {
+            return failure(
+                COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME,
+                COURSE_ERROR_MESSAGES
+                    .COURSE_CLONE_DUPLICATE_NAME_MESSAGE
+            );
+        }
+
+        console.error('Error in cloning course:', error);
+
         return failure(
             COURSE_CLONE_ERROR_CODES.CLONE_FAILED,
             COURSE_ERROR_MESSAGES.COURSE_CLONE_ERROR_MESSAGE

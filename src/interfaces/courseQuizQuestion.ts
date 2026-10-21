@@ -1,5 +1,5 @@
 import mongoose, { Document } from 'mongoose';
-import { CourseQuizQuestionType, CourseQuizQuestionStatus} from '../types/courseQuizQuestiontype'
+import { CourseQuizQuestionType, CourseQuizQuestionStatus } from '../types/courseQuizQuestiontype'
 
 export interface ICourseQuizQuestionOption {
     value: string;

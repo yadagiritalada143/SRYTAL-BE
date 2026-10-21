@@ -3,7 +3,8 @@ import createQuizQuestionService from '../../services/contentwriter/createQuizQu
 import { COURSE_QUIZ_QUESTION_SUCCESS_MESSAGES, COURSE_QUIZ_QUESTION_ERROR_MESSAGES} from '../../constants/contentwriter/courseQuizQuestionMessages';
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
 import { ICourseQuizQuestionOption } from '../../interfaces/courseQuizQuestion';
-import {CourseQuizQuestionType, CourseQuizQuestionStatus} from '../../types/courseQuizQuestiontype'
+import {CourseQuizQuestionType, CourseQuizQuestionStatus} from '../../types/courseQuizQuestiontype';
+import { QUIZ_OPTIONS } from '../../constants/common/quizQuestion';
 
 const validateOptions = (
     type: string,
@@ -16,10 +17,10 @@ const validateOptions = (
     const providedOptions = Array.isArray(options) ? options : [];
 
     if (type === 'TOGGLE') {
-        if (providedOptions.length !== 2) {
+        if (providedOptions.length !== QUIZ_OPTIONS) {
             return 'COURSE_QUIZ_QUESTION_TOGGLE_OPTIONS_MESSAGE';
         }
-    } else if (providedOptions.length < 4) {
+    } else if (providedOptions.length < QUIZ_OPTIONS) {
         return 'COURSE_QUIZ_QUESTION_MIN_OPTIONS_MESSAGE';
     }
 

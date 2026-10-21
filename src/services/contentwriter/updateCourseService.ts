@@ -11,6 +11,11 @@ const updateCourse = async (id: string, courseName: string, courseDescription: s
             return { success: false, responseAfterUpdateCourse: 'Course not found' };
         }
 
+        const courseWithSameName = await CourseModel.findOne({ courseName, _id: { $ne: id } });
+        if (courseWithSameName) {
+            return { success: false, responseAfterUpdateCourse: 'COURSE_DUPLICATE_NAME' };
+        }
+
         const updateFields: any = { courseName, courseDescription: stripHtmlTags(courseDescription), status };
         if (thumbnail) {
             updateFields.thumbnail = thumbnail;

@@ -19,7 +19,7 @@ export const COURSE_QUIZ_QUESTION_ERROR_MESSAGES = {
     COURSE_QUIZ_QUESTION_MISSING_TEXT_MESSAGE: 'Please provide the question text !',
     COURSE_QUIZ_QUESTION_INVALID_TYPE_MESSAGE: 'Invalid question type. Allowed values are RADIO, CHECKBOX, TOGGLE, DROPDOWN, TEXTAREA !',
     COURSE_QUIZ_QUESTION_INVALID_STATUS_MESSAGE: 'Invalid question status. Allowed values are SHOW and HIDE !',
-    COURSE_QUIZ_QUESTION_MIN_OPTIONS_MESSAGE: 'Please provide at least four options !',
+    COURSE_QUIZ_QUESTION_MIN_OPTIONS_MESSAGE: 'Please provide at least two options !',
     COURSE_QUIZ_QUESTION_TOGGLE_OPTIONS_MESSAGE: 'A toggle question must have exactly two options !',
     COURSE_QUIZ_QUESTION_SINGLE_ANSWER_MESSAGE: 'Exactly one option must be marked as the correct answer !',
     COURSE_QUIZ_QUESTION_MIN_ANSWER_MESSAGE: 'At least one option must be marked as the correct answer !',
