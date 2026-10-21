@@ -12,6 +12,14 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
             };
         }
 
+        const taskWithSameName = await CourseTaskModel.findOne({ taskName, _id: { $ne: id } });
+        if (taskWithSameName) {
+            return {
+                success: false,
+                responseAfterUpdate: 'COURSE_TASK_DUPLICATE_NAME'
+            };
+        }
+
         const cleanTaskDescription = stripHtmlTags(taskDescription);
 
         const updateData: any = {

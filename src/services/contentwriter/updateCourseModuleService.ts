@@ -14,6 +14,11 @@ const updateCourseModule = async (id: string, moduleName: string, moduleDescript
             return { success: false, responseAfterModuleUpdate: 'Course module not found' };
         }
 
+        const courseModuleWithSameName = await CourseModuleModel.findOne({ moduleName, _id: { $ne: id } });
+        if (courseModuleWithSameName) {
+            return { success: false, responseAfterModuleUpdate: 'COURSE_MODULE_DUPLICATE_NAME' };
+        }
+
         const updateFields: any = { moduleName, moduleDescription: stripHtmlTags(moduleDescription), status };
 
         if (thumbnail) {
