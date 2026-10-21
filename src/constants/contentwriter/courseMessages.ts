@@ -1,7 +1,9 @@
 export const COURSE_SUCCESS_MESSAGES = {
     COURSE_ADD_SUCCESS_MESSAGE: 'New Course added Successfully !',
     ACTIVE_COURSES_FETCH_SUCCESS_MESSAGE: 'fetching active courses Successfully !',
-    COURSE_CLONE_SUCCESS_MESSAGE: 'Course cloned Successfully !'
+    COURSE_CLONE_SUCCESS_MESSAGE: 'Course cloned Successfully !',
+    COURSE_UPDATE_SUCCESS_MESSAGE: 'Course Updated Successfully !'
+
 };
 
 export const COURSE_ERROR_MESSAGES = {

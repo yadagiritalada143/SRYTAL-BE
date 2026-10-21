@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import updateCourseService from '../../services/contentwriter/updateCourseService'
-import { COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessages';
+import { COURSE_ERROR_MESSAGES, COURSE_SUCCESS_MESSAGES } from '../../constants/contentwriter/courseMessages';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
@@ -68,7 +68,7 @@ const updateCourse = async (req: Request, res: Response) => {
 
         return res.status(200).json({
             success: true,
-            message: 'Course updated successfully !',
+            message: COURSE_SUCCESS_MESSAGES.COURSE_UPDATE_SUCCESS_MESSAGE,
             data: updateCourseResponse.responseAfterUpdateCourse
         });
     } catch (error: any) {
