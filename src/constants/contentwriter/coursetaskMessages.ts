@@ -1,5 +1,6 @@
 export const COURSE_TASK_SUCCESS_MESSAGES = {
     COURSE_TASK_ADD_SUCCESS_MESSAGE: 'New Task added to Module Successfully !',
+    
 }
 
 export const COURSE_TASK_ERRORS_MESSAGES = {

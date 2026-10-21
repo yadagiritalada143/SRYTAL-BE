@@ -102,15 +102,31 @@ const updateCourseTask = async (req: Request, res: Response) => {
 
         );
 
-        if (
-            updateCourseResponse &&
-            updateCourseResponse.success === false &&
-            String(updateCourseResponse.responseAfterUpdate?.message || '') ===
-                'COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY'
-        ) {
-            return res.status(400).json({
+        if (updateCourseResponse && updateCourseResponse.success === false) {
+            if (
+                String(updateCourseResponse.responseAfterUpdate?.message || '') ===
+                    'COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY'
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
+                });
+            }
+            if (updateCourseResponse.responseAfterUpdate === 'COURSE_TASK_DUPLICATE_NAME') {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_DUPLICATE_NAME_MESSAGE,
+                });
+            }
+            if (updateCourseResponse.responseAfterUpdate === 'COURSE_TASK_NOT_FOUND') {
+                return res.status(404).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_NOT_FOUND_MESSAGE,
+                });
+            }
+            return res.status(500).json({
                 success: false,
-                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_UPDATE_ERROR_MESSAGE,
             });
         }
 
