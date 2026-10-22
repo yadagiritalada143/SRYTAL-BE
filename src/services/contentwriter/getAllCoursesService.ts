@@ -1,15 +1,18 @@
 import CourseModel from '../../model/coursesModel';
 import { IFetchAllCoursesResponse } from '../../interfaces/courses';
 import courseMedia from '../../util/manageCourseMedia';
+import { COURSE_MODULE_CREATION_ORDER, COURSE_TASK_CREATION_ORDER } from '../../constants/courseOrdering';
 
 const AllCourses = async () => {
     try {
         const courses = await CourseModel.find()
             .populate({
                 path: 'modules',
+                options: { sort: COURSE_MODULE_CREATION_ORDER },
                 populate: {
                     path: 'tasks',
-                    model: 'CourseTaskModel'
+                    model: 'CourseTaskModel',
+                    options: { sort: COURSE_TASK_CREATION_ORDER }
                 }
             });
 
