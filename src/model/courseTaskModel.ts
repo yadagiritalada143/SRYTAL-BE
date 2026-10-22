@@ -35,6 +35,8 @@ const CourseTaskSchema = new mongoose.Schema({
 
 CourseTaskSchema.plugin(uniqueValidator);
 
+CourseTaskSchema.index({ moduleId: 1, createdAt: 1, _id: 1 });
+
 const CourseTaskModel = mongoose.model<ICourseTask>('CourseTaskModel', CourseTaskSchema);
 
 export default CourseTaskModel;

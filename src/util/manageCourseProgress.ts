@@ -3,6 +3,7 @@ import CourseTaskModel from '../model/courseTaskModel';
 import TaskProgressModel from '../model/taskProgressModel';
 import { COURSE_ASSIGNMENT_STATUS } from '../types/courseAssignmentStatusValues';
 import { IMyCourseModule, IMyCourseProgress, IMyCourseTask } from '../interfaces/myCourses';
+import { COURSE_MODULE_CREATION_ORDER, COURSE_TASK_CREATION_ORDER } from '../constants/courseOrdering';
 
 /** Only published content is ever shown to an employee. */
 const ACTIVE_STATUS = 'ACTIVE';
@@ -23,7 +24,7 @@ export const deriveAssignmentStatus = (completedTasks: number, totalTasks: numbe
 };
 const getActiveModulesByCourse = async (courseIds: string[]) => {
     const modules = await CourseModuleModel.find({ courseId: { $in: courseIds } })
-        .sort({ createdAt: 1 })
+        .sort(COURSE_MODULE_CREATION_ORDER)
         .lean();
 
     const modulesByCourse = new Map<string, any[]>();
@@ -37,7 +38,7 @@ const getActiveModulesByCourse = async (courseIds: string[]) => {
 
 const getActiveTasksByModule = async (moduleIds: string[]) => {
     const tasks = await CourseTaskModel.find({ moduleId: { $in: moduleIds } })
-        .sort({ createdAt: 1 })
+        .sort(COURSE_TASK_CREATION_ORDER)
         .lean();
 
     const tasksByModule = new Map<string, any[]>();

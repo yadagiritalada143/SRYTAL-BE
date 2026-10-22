@@ -24,6 +24,8 @@ CourseModuleSchema.virtual('tasks', {
 
 CourseModuleSchema.plugin(uniqueValidator);
 
+CourseModuleSchema.index({ courseId: 1, createdAt: 1, _id: 1 });
+
 const CourseModuleModel = mongoose.model<ICourseModule>('CourseModule', CourseModuleSchema);
 
 export default CourseModuleModel;
