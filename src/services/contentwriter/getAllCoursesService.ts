@@ -1,5 +1,4 @@
 import CourseModel from '../../model/coursesModel';
-import { IFetchAllCoursesResponse } from '../../interfaces/courses';
 import courseMedia from '../../util/manageCourseMedia';
 import { COURSE_MODULE_CREATION_ORDER, COURSE_TASK_CREATION_ORDER } from '../../constants/courseOrdering';
 
