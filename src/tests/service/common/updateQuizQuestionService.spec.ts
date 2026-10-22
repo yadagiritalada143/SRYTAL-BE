@@ -3,6 +3,7 @@ import CourseTaskModel from '../../../model/courseTaskModel';
 import CourseModuleModel from '../../../model/coursemoduleModel';
 import CourseModel from '../../../model/coursesModel';
 import CourseQuizQuestionModel from '../../../model/courseQuizQuestionModel';
+import { COURSE_QUIZ_QUESTION_ERROR_MESSAGES } from '../../../constants/contentwriter/courseQuizQuestionMessages';
 
 jest.mock('../../../model/courseTaskModel', () => ({
     __esModule: true,
@@ -45,6 +46,11 @@ const fourOptions = [
     { value: 'B' },
     { value: 'C' },
     { value: 'D' }
+];
+
+const twoOptions = [
+    { value: 'A', isanswer: true },
+    { value: 'B' }
 ];
 
 describe('updateQuizQuestionService', () => {
@@ -159,6 +165,88 @@ describe('updateQuizQuestionService', () => {
 
         expect(result.success).toBe(false);
         expect(result.invalidOptions).toBe(true);
+    });
+
+    it('accepts a RADIO update with exactly two options', async () => {
+        mockFindOne(findOneMock, { _id: validId, taskId: 't1', question: 'Old?', type: 'RADIO', options: twoOptions });
+        mockLeanChain(taskFindByIdMock, { type: 'QUIZ', moduleId: 'm1' });
+        mockLeanChain(moduleFindByIdMock, { courseId: 'c1' });
+        findByIdAndUpdateMock.mockReturnValue({ lean: jest.fn().mockResolvedValue({ _id: validId }) });
+
+        const result = await updateQuizQuestionService.updateQuizQuestion({
+            questionId: validId,
+            options: twoOptions
+        });
+
+        expect(result.success).toBe(true);
+        expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
+            validId,
+            {
+                question: 'Old?',
+                type: 'RADIO',
+                status: undefined,
+                options: [{ value: 'A', isanswer: true }, { value: 'B' }]
+            },
+            { new: true }
+        );
+    });
+
+    it('rejects an update with fewer than two options', async () => {
+        mockFindOne(findOneMock, { _id: validId, taskId: 't1', question: 'Old?', type: 'RADIO', options: fourOptions });
+        mockLeanChain(taskFindByIdMock, { type: 'QUIZ', moduleId: 'm1' });
+
+        const result = await updateQuizQuestionService.updateQuizQuestion({
+            questionId: validId,
+            options: [{ value: 'A', isanswer: true }]
+        });
+
+        expect(result.success).toBe(false);
+        expect(result.invalidOptions).toBe(true);
+        expect(result.message).toBe(COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_MIN_OPTIONS_MESSAGE);
+        expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
+    });
+
+    it('rejects a TOGGLE update that does not have exactly two options', async () => {
+        mockFindOne(findOneMock, { _id: validId, taskId: 't1', question: 'Old?', type: 'TOGGLE', options: twoOptions });
+        mockLeanChain(taskFindByIdMock, { type: 'QUIZ', moduleId: 'm1' });
+
+        const result = await updateQuizQuestionService.updateQuizQuestion({
+            questionId: validId,
+            options: [
+                { value: 'A', isanswer: true },
+                { value: 'B' },
+                { value: 'C' }
+            ]
+        });
+
+        expect(result.success).toBe(false);
+        expect(result.invalidOptions).toBe(true);
+        expect(result.message).toBe(COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_TOGGLE_OPTIONS_MESSAGE);
+        expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
+    });
+
+    it('accepts a TOGGLE update with exactly two options', async () => {
+        mockFindOne(findOneMock, { _id: validId, taskId: 't1', question: 'Old?', type: 'TOGGLE', options: twoOptions });
+        mockLeanChain(taskFindByIdMock, { type: 'QUIZ', moduleId: 'm1' });
+        mockLeanChain(moduleFindByIdMock, { courseId: 'c1' });
+        findByIdAndUpdateMock.mockReturnValue({ lean: jest.fn().mockResolvedValue({ _id: validId }) });
+
+        const result = await updateQuizQuestionService.updateQuizQuestion({
+            questionId: validId,
+            options: twoOptions
+        });
+
+        expect(result.success).toBe(true);
+        expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
+            validId,
+            {
+                question: 'Old?',
+                type: 'TOGGLE',
+                status: undefined,
+                options: [{ value: 'A', isanswer: true }, { value: 'B' }]
+            },
+            { new: true }
+        );
     });
 
     it('rejects changing the question text to a duplicate in the same task', async () => {

@@ -2279,10 +2279,11 @@ commonRouter.post('/addcoursetask',validateJWT, upload.fields([ { name: 'taskFil
  *     description: |
  *       Adds a question to a course task whose type is `QUIZ`. The question is
  *       stored in the `coursequizquestions` collection. Supported types:
- *       - `RADIO` / `DROPDOWN`: at least four options, exactly one correct.
- *       - `CHECKBOX`: at least four options, at least one correct.
+ *       - `RADIO` / `DROPDOWN`: at least two options, exactly one correct.
+ *       - `CHECKBOX`: at least two options, at least one correct.
  *       - `TOGGLE`: exactly two options, exactly one correct.
  *       - `TEXTAREA`: free text, options are not required.
+ *       The maximum number of options is unbounded.
  *     tags:
  *       - QUIZ
  *     security:
@@ -2696,6 +2697,14 @@ commonRouter.post('/submitQuiz', validateJWT, submitQuizController.submitQuiz);
  * /updateQuizQuestion/{questionId}:
  *   put:
  *     summary: Update a quiz question (Content Writer)
+ *     description: |
+ *       Updates a question of a QUIZ task. Any field that is not sent stays as it is.
+ *       Option rules:
+ *       - `RADIO` / `DROPDOWN`: at least two options, exactly one correct.
+ *       - `CHECKBOX`: at least two options, at least one correct.
+ *       - `TOGGLE`: exactly two options, exactly one correct.
+ *       - `TEXTAREA`: free text, any supplied options are discarded.
+ *       The maximum number of options is unbounded.
  *     tags:
  *       - QUIZ
  *     security:

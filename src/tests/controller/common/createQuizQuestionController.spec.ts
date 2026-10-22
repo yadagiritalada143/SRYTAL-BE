@@ -67,11 +67,11 @@ describe('createQuizQuestionController', () => {
         expect(createQuizQuestionMock).toHaveBeenCalledWith('t1', 'Q?', 'TEXTAREA', undefined, 'SHOW');
     });
 
-    it('rejects a RADIO question with fewer than four options', async () => {
+    it('rejects a RADIO question with fewer than two options', async () => {
         await createQuizQuestionController.createQuizQuestion(
             buildReq({
                 taskId: 't1', question: 'Q?', type: 'RADIO',
-                options: [{ value: 'A', isanswer: true }, { value: 'B' }, { value: 'C' }]
+                options: [{ value: 'A', isanswer: true }]
             }),
             res
         );
@@ -82,6 +82,19 @@ describe('createQuizQuestionController', () => {
             success: false,
             message: COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_MIN_OPTIONS_MESSAGE
         });
+    });
+
+    it('accepts a RADIO question with exactly two options', async () => {
+        const options = [{ value: 'A', isanswer: true }, { value: 'B' }];
+        createQuizQuestionMock.mockResolvedValue({ success: true, question: { _id: 'q1' } });
+
+        await createQuizQuestionController.createQuizQuestion(
+            buildReq({ taskId: 't1', question: 'Q?', type: 'RADIO', options }),
+            res
+        );
+
+        expect(createQuizQuestionMock).toHaveBeenCalledWith('t1', 'Q?', 'RADIO', options, 'SHOW');
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.CREATED);
     });
 
     it('rejects a RADIO question without exactly one correct answer', async () => {

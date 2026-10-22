@@ -4,6 +4,8 @@ import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseModel from '../../model/coursesModel';
 import { ICourseQuizQuestionResponse } from '../../interfaces/courseQuizQuestion';
 import { CourseQuizQuestionType } from '../../types/courseQuizQuestiontype';
+import { MAX_QUIZ_OPTIONS, MIN_QUIZ_OPTIONS, TOGGLE_QUIZ_OPTIONS } from '../../constants/common/quizQuestion';
+import { COURSE_QUIZ_QUESTION_ERROR_MESSAGES } from '../../constants/contentwriter/courseQuizQuestionMessages';
 
 const QUESTION_TYPES: CourseQuizQuestionType[] = ['RADIO', 'CHECKBOX', 'TOGGLE', 'DROPDOWN', 'TEXTAREA'];
 
@@ -40,16 +42,16 @@ const normalizeAndValidateOptions = (
 
     const answerCount = normalized.filter((opt) => opt.isanswer === true).length;
 
-    if (type === 'RADIO' || type === 'DROPDOWN' || type === 'CHECKBOX') {
-        if (normalized.length < 4) {
-            return { valid: false, message: 'At least 4 options are required !' };
+    if (type === 'TOGGLE') {
+        if (normalized.length !== TOGGLE_QUIZ_OPTIONS) {
+            return { valid: false, message: COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_TOGGLE_OPTIONS_MESSAGE };
         }
+    } else if (normalized.length < MIN_QUIZ_OPTIONS) {
+        return { valid: false, message: COURSE_QUIZ_QUESTION_ERROR_MESSAGES.COURSE_QUIZ_QUESTION_MIN_OPTIONS_MESSAGE };
     }
 
-    if (type === 'TOGGLE') {
-        if (normalized.length !== 2) {
-            return { valid: false, message: 'Exactly 2 options are required !' };
-        }
+    if (MAX_QUIZ_OPTIONS > 0 && normalized.length > MAX_QUIZ_OPTIONS) {
+        return { valid: false, message: `At most ${MAX_QUIZ_OPTIONS} options are allowed !` };
     }
 
     if (type === 'RADIO' || type === 'DROPDOWN' || type === 'TOGGLE') {

@@ -4,7 +4,7 @@ import { COURSE_QUIZ_QUESTION_SUCCESS_MESSAGES, COURSE_QUIZ_QUESTION_ERROR_MESSA
 import { HTTP_STATUS } from '../../constants/commonErrorMessages';
 import { ICourseQuizQuestionOption } from '../../interfaces/courseQuizQuestion';
 import {CourseQuizQuestionType, CourseQuizQuestionStatus} from '../../types/courseQuizQuestiontype';
-import { QUIZ_OPTIONS } from '../../constants/common/quizQuestion';
+import { MAX_QUIZ_OPTIONS, MIN_QUIZ_OPTIONS, TOGGLE_QUIZ_OPTIONS } from '../../constants/common/quizQuestion';
 
 const validateOptions = (
     type: string,
@@ -17,11 +17,15 @@ const validateOptions = (
     const providedOptions = Array.isArray(options) ? options : [];
 
     if (type === 'TOGGLE') {
-        if (providedOptions.length !== QUIZ_OPTIONS) {
+        if (providedOptions.length !== TOGGLE_QUIZ_OPTIONS) {
             return 'COURSE_QUIZ_QUESTION_TOGGLE_OPTIONS_MESSAGE';
         }
-    } else if (providedOptions.length < QUIZ_OPTIONS) {
+    } else if (providedOptions.length < MIN_QUIZ_OPTIONS) {
         return 'COURSE_QUIZ_QUESTION_MIN_OPTIONS_MESSAGE';
+    }
+
+    if (MAX_QUIZ_OPTIONS > 0 && providedOptions.length > MAX_QUIZ_OPTIONS) {
+        return 'COURSE_QUIZ_QUESTION_MAX_OPTIONS_MESSAGE';
     }
 
     const correctCount = providedOptions.filter((option) => option?.isanswer === true).length;
