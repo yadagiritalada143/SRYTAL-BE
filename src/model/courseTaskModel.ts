@@ -24,6 +24,7 @@ const CourseTaskSchema = new mongoose.Schema({
         },
         code: { type: mongoose.Schema.Types.String, required: true },
     }],
+    orderIdx: { type: mongoose.Schema.Types.Number,  required: true, min: 1 }
 },
     {
         collection: 'coursetask',

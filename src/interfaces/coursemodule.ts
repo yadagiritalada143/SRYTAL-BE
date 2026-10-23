@@ -20,3 +20,26 @@ export interface IAddCourseModuleResponse {
     message?: string;
     data?: any;
 }
+
+export interface IReorderCourseModuleItem {
+    moduleId: string;
+    orderIdx: number;
+}
+
+export type ReorderCourseModulesErrorCode =
+    | 'INVALID_COURSE_ID'
+    | 'COURSE_NOT_FOUND'
+    | 'INVALID_MODULES'
+    | 'INVALID_MODULE_ID'
+    | 'MODULE_NOT_FOUND'
+    | 'MODULE_NOT_IN_COURSE'
+    | 'DUPLICATE_MODULE_ID'
+    | 'INVALID_ORDER_IDX'
+    | 'DUPLICATE_ORDER_IDX'
+    | 'REORDER_FAILED';
+
+export interface IReorderCourseModulesResponse {
+    success: boolean;
+    errorCode?: ReorderCourseModulesErrorCode;
+    data?: any;
+}

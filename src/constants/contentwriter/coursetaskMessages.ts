@@ -24,6 +24,8 @@ export const COURSE_TASK_ERRORS_MESSAGES = {
     COURSE_TASK_VALIDATION_ERROR_MESSAGE: 'Invalid course task request.',
     COURSE_TASK_QUIZ_TASK_MESSAGE: 'Please provide the Quiz task description !',
     COURSE_TASK_DUPLICATE_NAME_MESSAGE: 'A task with this name already exists in this module.',
-
+    COURSE_TASK_INVALID_ORDER_IDX_MESSAGE: 'orderIdx is required and must be a positive integer.',
+    COURSE_TASK_DUPLICATE_ORDER_IDX_MESSAGE: 'orderIdx already exists. Please use a different orderIdx.'
+    
     
 };

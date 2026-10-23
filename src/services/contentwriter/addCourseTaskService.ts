@@ -3,6 +3,7 @@ import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseModel from '../../model/coursesModel';
 import courseTaskBoilerplateService from '../common/courseTaskBoilerplateService';
 import { stripHtmlTags } from '../../util/stripHtmlTags';
+import { IAddCourseTaskResponse } from '../../interfaces/courseTask';
 
 const addCourseTask = async (
     moduleId: string,
@@ -15,13 +16,30 @@ const addCourseTask = async (
     contentMimeType: string,
     contentFileName: string,
     userId: string,
-    acknowledgementText?: string,
-) => {
+    orderIdx: number,
+    acknowledgementText?: string
+): Promise<IAddCourseTaskResponse> => {
     const isCodingTask = String(type || '').toUpperCase() === 'CODE';
     const cleanTaskDescription = stripHtmlTags(taskDescription);
     const cleanAcknowledgementText = stripHtmlTags(acknowledgementText ?? '');
 
     try {
+
+        const existingTask = await CourseTaskModel.findOne({
+            moduleId,
+            orderIdx
+        })
+            .select('_id')
+            .lean();
+
+        if (existingTask) {
+            return {
+                success: false,
+                message: 'DUPLICATE_ORDER_IDX'
+            };
+        }
+
+
         let baseBoilerplate: string | undefined;
         if (isCodingTask) {
             try {
@@ -53,6 +71,7 @@ const addCourseTask = async (
             content,
             contentMimeType,
             contentFileName,
+            orderIdx,
             ...(cleanAcknowledgementText ? { acknowledgementText: cleanAcknowledgementText } : {}),
             ...(baseBoilerplate ? { baseBoilerplate } : {}),
             ...(isCodingTask ? { executionMode: 'CALLABLE' } : {}),
@@ -73,7 +92,10 @@ const addCourseTask = async (
                 }
             );
         }
-     return result;
+    return {
+            success: true,
+            data: result
+        };
      
     } catch (error: any) {
         console.error(`Error in adding course task: ${error}`);
