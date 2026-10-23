@@ -15,6 +15,7 @@ import validateBody from '../middlewares/validateBody';
 import { addCourseSchema, updateCourseSchema } from '../middlewares/schemas/addCourseSchema';
 import cloneCourseSchema from '../middlewares/schemas/cloneCourseSchema';
 import { addCourseModuleSchema, updateCourseModuleSchema } from '../middlewares/schemas/addCourseModuleSchema';
+import reorderCourseModulesSchema from '../middlewares/schemas/reorderCourseModulesSchema';
 import updateCourseTaskSchema from '../middlewares/schemas/updateCourseTaskSchema';
 import { createQuizQuestionSchema, updateQuizQuestionSchema } from '../middlewares/schemas/createQuizQuestionSchema';
 import multer from 'multer';
@@ -35,6 +36,7 @@ import getProgrammingLanguageByIdController from '../controllers/common/getProgr
 import deleteProgrammingLanguageController from '../controllers/common/deleteProgrammingLanguageController';
 import updateCourseController from '../controllers/contentwriter/updateCourseController';
 import updateCourseModuleController from '../controllers/contentwriter/updateCourseModuleController';
+import reorderCourseModulesController from '../controllers/contentwriter/reorderCourseModulesController';
 import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
 import validateJWTForMedia from '../middlewares/validateJWTForMedia';
 import getCourseTaskContentController from '../controllers/contentwriter/getCourseTaskContentController';
@@ -3222,6 +3224,59 @@ commonRouter.put('/updatecoursetask', validateJWT, upload.fields([ { name: 'task
  *         description: Internal server error
  */
 commonRouter.put('/updatecoursemodule', validateJWT, upload.single('thumbnail'), validateBody(updateCourseModuleSchema), updateCourseModuleController.updateCourseModule);
+
+/**
+ * @swagger
+ * /reordermodules:
+ *   put:
+ *     summary: Reorder modules within a course
+ *     description: Updates the orderIdx of the provided modules. All modules must belong to the specified course and orderIdx values must be unique.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseId
+ *               - modules
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *                 example: 64f1c2d3a1b2c3d4e5f60718
+ *               modules:
+ *                 type: array
+ *                 minItems: 1
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - moduleId
+ *                     - orderIdx
+ *                   properties:
+ *                     moduleId:
+ *                       type: string
+ *                       example: 64f1c2d3a1b2c3d4e5f60719
+ *                     orderIdx:
+ *                       type: integer
+ *                       minimum: 1
+ *                       example: 1
+ *     responses:
+ *       200:
+ *         description: Modules reordered successfully.
+ *       400:
+ *         description: Invalid input, duplicate order indexes, or modules that do not belong to the course.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Course or module not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.put('/reordermodules', validateJWT, validateBody(reorderCourseModulesSchema), reorderCourseModulesController.reorderCourseModules);
 
 /**
  * @swagger
