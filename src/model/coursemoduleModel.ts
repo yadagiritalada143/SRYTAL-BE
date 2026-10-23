@@ -8,6 +8,7 @@ const CourseModuleSchema = new mongoose.Schema({
     courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseModel' },
     thumbnail: { type: mongoose.Schema.Types.String },
     status: { type: mongoose.Schema.Types.String },
+    orderIdx: { type: mongoose.Schema.Types.Number,  required: true, min: 1 }
 },
     {
         collection: 'coursemodule',

@@ -2136,12 +2136,18 @@ commonRouter.post('/clonecourse', validateJWT, validateBody(cloneCourseSchema), 
  *                 type: 
  *               moduleDescription:
  *                 type: string
+ *               orderIdx:
+ *                 type: integer
+ *                 minimum: 0
+ *                 description: Mandatory ordering index of the module within the course.
+ *                 example: 0
  *               coursemodulethumbnail:
  *                 type: string
  *                 format: binary
  *             required:
  *               - moduleName
  *               - courseId
+ *               - orderIdx
  *     responses:
  *       201:
  *         description: Successfully added the course module.
@@ -3172,6 +3178,7 @@ commonRouter.put('/updatecoursetask', validateJWT, upload.fields([ { name: 'task
  *               - moduleName
  *               - moduleDescription
  *               - status
+ *               - orderIdx
  *             properties:
  *               id:
  *                 type: string
@@ -3185,6 +3192,11 @@ commonRouter.put('/updatecoursetask', validateJWT, upload.fields([ { name: 'task
  *               moduleDescription:
  *                 type: string
  *                 description: Updated module description
+ *               orderIdx:
+ *                 type: integer
+ *                 minimum: 0
+ *                 description: Mandatory ordering index of the module within the course
+ *                 example: 0
  *               thumbnail:
  *                 type: string
  *                 format: binary
