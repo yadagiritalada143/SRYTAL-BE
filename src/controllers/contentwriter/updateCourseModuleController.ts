@@ -8,7 +8,7 @@ import { courseModuleThumbnailsFolder } from '../../config/awsS3Config';
 
 const updateCourseModule = async (req: Request, res: Response) => {
     try {
-        const { id, moduleName, moduleDescription, status } = req.body;
+        const { id, moduleName, moduleDescription, status, orderIdx } = req.body;
 
         if (!status) {
             return res.status(400).json({
@@ -65,7 +65,16 @@ const updateCourseModule = async (req: Request, res: Response) => {
             moduleDescription,
             thumbnailKey,
             status.toUpperCase(),
+            orderIdx
         );
+
+        if (!updateCourseModuleResponse.success && updateCourseModuleResponse.message === 'DUPLICATE_ORDER_IDX') {
+            return res.status(400).json({
+                success: false,
+                message:
+                    COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_DUPLICATE_ORDER_IDX_MESSAGE
+            });
+        }
 
         if (!updateCourseModuleResponse.success) {
             if (updateCourseModuleResponse.responseAfterModuleUpdate === 'COURSE_MODULE_DUPLICATE_NAME') {

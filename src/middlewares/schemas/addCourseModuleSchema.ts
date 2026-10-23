@@ -12,7 +12,17 @@ const addCourseModuleSchema = Joi.object({
             'string.min': 'Module Name is required !',
             'string.max': 'Module Name must be at most 150 characters.'
         }),
-    moduleDescription: Joi.string().trim().allow('').optional()
+    moduleDescription: Joi.string().trim().allow('').optional(),
+   orderIdx: Joi.number()
+    .integer()
+    .min(0)
+    .required()
+    .messages({
+        'any.required': 'orderIdx is required !',
+        'number.base': 'orderIdx must be a number !',
+        'number.integer': 'orderIdx must be an integer !',
+        'number.min': 'orderIdx must be greater than or equal to 0 !'
+    })
 }).required();
 
 const updateCourseModuleSchema = Joi.object({
@@ -32,7 +42,17 @@ const updateCourseModuleSchema = Joi.object({
             'any.required': 'Please provide valid status !',
             'any.only': 'Please provide valid status !',
             'string.empty': 'Please provide valid status !'
-        })
+        }),
+    orderIdx: Joi.number()
+    .integer()
+    .min(0)
+    .required()
+    .messages({
+        'any.required': 'orderIdx is required !',
+        'number.base': 'orderIdx must be a number !',
+        'number.integer': 'orderIdx must be an integer !',
+        'number.min': 'orderIdx must be greater than or equal to 0 !'
+    })
 }).required();
 
 export { addCourseModuleSchema, updateCourseModuleSchema };
