@@ -28,7 +28,23 @@ const uploadToS3 = async ( file: Express.Multer.File, folder: string): Promise<s
 
 const addTaskToModule = async (req: Request, res: Response) => {
     try {
-        const { moduleId, taskName, taskDescription, link, type, acknowledgementText } = req.body;
+        const { moduleId, taskName, taskDescription, link, type, acknowledgementText, orderIdx } = req.body;
+
+        if (
+            orderIdx === undefined ||
+            orderIdx === null ||
+            orderIdx === '' ||
+            !Number.isInteger(Number(orderIdx)) ||
+            Number(orderIdx) < 1
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_ORDER_IDX_MESSAGE
+            });
+        }
+
+        const parsedOrderIdx = Number(orderIdx);
 
         const status = 'ACTIVE';
 
@@ -57,7 +73,7 @@ const addTaskToModule = async (req: Request, res: Response) => {
             });
         }
 
-                if (taskType === 'QUIZ' && !String(taskDescription || '').trim()) {
+        if (taskType === 'QUIZ' && !String(taskDescription || '').trim()) {
             return res.status(400).json({
                 success: false,
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_QUIZ_TASK_MESSAGE
@@ -163,6 +179,7 @@ const addTaskToModule = async (req: Request, res: Response) => {
             );
         }
 
+        
         const responseAfteraddingCourseTask =
             await addNewCourseTaskService.addCourseTask(
                 moduleId,
@@ -175,24 +192,38 @@ const addTaskToModule = async (req: Request, res: Response) => {
                 contentMimeType,
                 contentFileName,
                 req.user?.userId || '',
+                parsedOrderIdx,
                 acknowledgementText
+                
             );
 
-        const serviceReturnedFailure =
+        if (
             responseAfteraddingCourseTask &&
             'success' in responseAfteraddingCourseTask &&
-            responseAfteraddingCourseTask.success === false;
+            responseAfteraddingCourseTask.success === false
+        ) {
+            if (
+                responseAfteraddingCourseTask.message === 'DUPLICATE_ORDER_IDX'
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_DUPLICATE_ORDER_IDX_MESSAGE
+                });
+            }
 
-        if (responseAfteraddingCourseTask && !serviceReturnedFailure) {
-            return res.status(201).json({
-                message: COURSE_TASK_SUCCESS_MESSAGES.COURSE_TASK_ADD_SUCCESS_MESSAGE,
-                data: responseAfteraddingCourseTask
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ADD_ERROR_MESSAGE
             });
-        } else {
-            return res.status(400).json({ message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ADD_ERROR_MESSAGE });
         }
 
-        
+        return res.status(201).json({
+            success: true,
+            message:
+                COURSE_TASK_SUCCESS_MESSAGES.COURSE_TASK_ADD_SUCCESS_MESSAGE,
+            data: responseAfteraddingCourseTask
+        });
+
     } catch (error: any) {
         console.error( `Error in adding Task to Module: ${error}`);
         if (

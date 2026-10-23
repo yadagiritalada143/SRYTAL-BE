@@ -6,6 +6,12 @@ const addCourseTaskSchema = Joi.object({
             'string.hex': 'Module ID must be a valid ID.',
             'string.length': 'Module ID must be a valid ID.'
         }),
+    orderIdx: Joi.number().integer().min(1).required().messages({
+        'any.required': 'orderIdx is required and must be a positive integer.',
+        'number.base': 'orderIdx is required and must be a positive integer.',
+        'number.integer': 'orderIdx is required and must be a positive integer.',
+        'number.min': 'orderIdx is required and must be a positive integer.'
+    }),
     taskName: Joi.string().trim().min(1).required().messages({
             'any.required': 'Task name is required.',
             'string.empty': 'Task name is required.',
@@ -19,6 +25,7 @@ const addCourseTaskSchema = Joi.object({
                 'string.min': 'Task description is required for coding tasks.'
             }),
         }),
+         
     type: Joi.string().trim().uppercase().valid('LINK', 'FILE', 'CODE', 'QUIZ').required().messages({
             'any.required': 'Task type is required.',
             'string.empty': 'Task type is required.',

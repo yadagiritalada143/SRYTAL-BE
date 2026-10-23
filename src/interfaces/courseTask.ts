@@ -30,3 +30,9 @@ export interface IUpdateCourseTaskResponse {
     success: boolean;
     responseAfterUpdate?: any;
 }
+
+export interface IAddCourseTaskResponse {
+    success: boolean;
+    message?: string;
+    data?: any;
+}

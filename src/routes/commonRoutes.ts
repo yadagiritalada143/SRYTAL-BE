@@ -2187,6 +2187,7 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *               - taskName
  *               - taskDescription
  *               - type
+ *               - orderIdx
  *             properties:
  *               moduleId:
  *                 type: string
@@ -2221,6 +2222,11 @@ commonRouter.post('/addCourseModule', validateJWT, upload.single('coursemoduleth
  *                 type: string
  *                 format: binary
  *                 description: File for FILE task type.
+ *               orderIdx:
+ *                 type: integer
+ *                 minimum: 0
+ *                 description: Required task position. Must be a non-negative integer and unique within the selected module.
+ *                 example: 0
  *               thumbnailFile:
  *                 type: string
  *                 format: binary

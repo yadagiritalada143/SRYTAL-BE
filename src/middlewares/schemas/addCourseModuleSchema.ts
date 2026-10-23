@@ -14,15 +14,19 @@ const addCourseModuleSchema = Joi.object({
         }),
     moduleDescription: Joi.string().trim().allow('').optional(),
    orderIdx: Joi.number()
-    .integer()
-    .min(0)
-    .required()
-    .messages({
-        'any.required': 'orderIdx is required !',
-        'number.base': 'orderIdx must be a number !',
-        'number.integer': 'orderIdx must be an integer !',
-        'number.min': 'orderIdx must be greater than or equal to 0 !'
-    })
+       .integer()
+       .min(0)
+       .required()
+       .messages({
+           'any.required':
+               'orderIdx is required and must be a positive integer.',
+           'number.base':
+               'orderIdx is required and must be a positive integer.',
+           'number.integer':
+               'orderIdx is required and must be a positive integer.',
+           'number.min':
+               'orderIdx is required and must be a positive integer.',
+       }),
 }).required();
 
 const updateCourseModuleSchema = Joi.object({
@@ -43,16 +47,12 @@ const updateCourseModuleSchema = Joi.object({
             'any.only': 'Please provide valid status !',
             'string.empty': 'Please provide valid status !'
         }),
-    orderIdx: Joi.number()
-    .integer()
-    .min(0)
-    .required()
-    .messages({
-        'any.required': 'orderIdx is required !',
-        'number.base': 'orderIdx must be a number !',
-        'number.integer': 'orderIdx must be an integer !',
-        'number.min': 'orderIdx must be greater than or equal to 0 !'
-    })
+    orderIdx: Joi.number().integer().min(1).required().messages({
+            'any.required': 'orderIdx is required and must be a non-negative integer.',
+            'number.base': 'orderIdx must be a number.',
+            'number.integer': 'orderIdx must be an integer.',
+            'number.min': 'orderIdx must be greater than or equal to 0.'
+        }),
 }).required();
 
 export { addCourseModuleSchema, updateCourseModuleSchema };
