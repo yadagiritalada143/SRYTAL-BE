@@ -83,7 +83,8 @@ describe('cloneCourseController', () => {
     it.each([
         COURSE_CLONE_ERROR_CODES.SOURCE_NOT_ARCHIVED,
         COURSE_CLONE_ERROR_CODES.INVALID_MODULE,
-        COURSE_CLONE_ERROR_CODES.INVALID_TASK
+        COURSE_CLONE_ERROR_CODES.INVALID_TASK,
+        COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME
     ])('returns 400 for the %s validation failure', async (code) => {
         cloneCourseMock.mockResolvedValue({
             success: false,

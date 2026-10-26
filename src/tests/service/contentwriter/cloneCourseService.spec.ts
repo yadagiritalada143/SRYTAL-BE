@@ -10,6 +10,7 @@ jest.mock('../../../model/coursesModel', () => ({
     __esModule: true,
     default: Object.assign(jest.fn(), {
         findById: jest.fn(),
+        findOne: jest.fn(),
         findByIdAndUpdate: jest.fn(),
         deleteOne: jest.fn()
     })
@@ -19,6 +20,7 @@ jest.mock('../../../model/coursemoduleModel', () => ({
     __esModule: true,
     default: Object.assign(jest.fn(), {
         find: jest.fn(),
+        findOne: jest.fn(),
         distinct: jest.fn(),
         deleteMany: jest.fn()
     })
@@ -40,11 +42,13 @@ jest.mock('mongoose', () => ({
 
 const CourseModelMock = CourseModel as unknown as jest.Mock & {
     findById: jest.Mock;
+    findOne: jest.Mock;
     findByIdAndUpdate: jest.Mock;
     deleteOne: jest.Mock;
 };
 const CourseModuleModelMock = CourseModuleModel as unknown as jest.Mock & {
     find: jest.Mock;
+    findOne: jest.Mock;
     distinct: jest.Mock;
     deleteMany: jest.Mock;
 };
@@ -65,6 +69,7 @@ const makeSession = () => ({
     startTransaction: jest.fn(),
     commitTransaction: jest.fn().mockResolvedValue(undefined),
     abortTransaction: jest.fn().mockResolvedValue(undefined),
+    inTransaction: jest.fn().mockReturnValue(true),
     endSession: jest.fn().mockResolvedValue(undefined)
 });
 
@@ -116,8 +121,10 @@ describe('cloneCourseService', () => {
         startSessionMock.mockResolvedValue(session);
 
         CourseModelMock.findById.mockResolvedValue(sourceArchivedCourse);
+        CourseModelMock.findOne.mockResolvedValue(null);
         CourseModelMock.findByIdAndUpdate.mockResolvedValue({});
         CourseModuleModelMock.find.mockResolvedValue(singleSourceModule);
+        CourseModuleModelMock.findOne.mockResolvedValue(null);
         CourseTaskModelMock.find.mockResolvedValue(singleSourceTask);
         CourseModuleModelMock.distinct.mockResolvedValue([]);
         CourseTaskModelMock.distinct.mockResolvedValue([]);
@@ -286,6 +293,80 @@ describe('cloneCourseService', () => {
         expect(CourseModelMock).not.toHaveBeenCalled();
     });
 
+    it('rejects a duplicate course name before starting a transaction', async () => {
+        CourseModelMock.findOne.mockResolvedValue({
+            _id: 'existing-course',
+            courseName: 'JavaScript Advanced'
+        });
+
+        const result = await cloneCourseService.cloneCourse({
+            courseId: 'src-course',
+            courseName: 'JavaScript Advanced',
+            modules: singleModuleSelection
+        });
+
+        expect(CourseModelMock.findOne).toHaveBeenCalledWith({
+            courseName: 'JavaScript Advanced'
+        });
+        expect(result.success).toBe(false);
+        expect(result.code).toBe(COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME);
+        expect(startSessionMock).not.toHaveBeenCalled();
+        expect(CourseModelMock).not.toHaveBeenCalled();
+    });
+
+    it('maps a unique-validation error raised while saving to a duplicate name failure', async () => {
+        const uniqueError: any = new Error('Validation failed');
+        uniqueError.name = 'ValidationError';
+        uniqueError.errors = {
+            courseName: {
+                kind: 'unique',
+                message:
+                    'Error, expected `courseName` to be unique. Value: `JavaScript Advanced`'
+            }
+        };
+
+        CourseModelMock.mockImplementationOnce((data: any) => ({
+            ...makeDoc('new-course', data),
+            save: jest.fn().mockRejectedValue(uniqueError)
+        }));
+
+        const result = await cloneCourseService.cloneCourse({
+            courseId: 'src-course',
+            courseName: 'JavaScript Advanced',
+            modules: singleModuleSelection
+        });
+
+        expect(result.success).toBe(false);
+        expect(result.code).toBe(COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME);
+        expect(session.abortTransaction).toHaveBeenCalledTimes(1);
+        expect(session.commitTransaction).not.toHaveBeenCalled();
+    });
+
+    it('maps a raw duplicate-key error raised while saving to a duplicate name failure', async () => {
+        const duplicateKeyError: any = new Error(
+            'E11000 duplicate key error collection: courses.courses index: courseName_1'
+        );
+        duplicateKeyError.code = 11000;
+        duplicateKeyError.keyPattern = { courseName: 1 };
+        duplicateKeyError.keyValue = { courseName: 'JavaScript Advanced' };
+
+        CourseModelMock.mockImplementationOnce((data: any) => ({
+            ...makeDoc('new-course', data),
+            save: jest.fn().mockRejectedValue(duplicateKeyError)
+        }));
+
+        const result = await cloneCourseService.cloneCourse({
+            courseId: 'src-course',
+            courseName: 'JavaScript Advanced',
+            modules: singleModuleSelection
+        });
+
+        expect(result.success).toBe(false);
+        expect(result.code).toBe(COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME);
+        expect(session.abortTransaction).toHaveBeenCalledTimes(1);
+        expect(session.commitTransaction).not.toHaveBeenCalled();
+    });
+
     it('rejects a module that does not belong to the source course', async () => {
         CourseModuleModelMock.find.mockResolvedValue([]);
 
@@ -391,7 +472,8 @@ describe('cloneCourseService', () => {
             'Follow-up Module',
             'Added after cloning',
             '',
-            'ACTIVE'
+            'ACTIVE',
+            1
         );
 
         expect(CourseModuleModelMock).toHaveBeenCalledWith(
