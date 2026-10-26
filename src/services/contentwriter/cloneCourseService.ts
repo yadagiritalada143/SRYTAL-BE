@@ -1,27 +1,14 @@
-
 import mongoose from 'mongoose';
 import CourseModel from '../../model/coursesModel';
 import CourseModuleModel from '../../model/coursemoduleModel';
 import CourseTaskModel from '../../model/courseTaskModel';
-import {
-    COURSE_CLONE_ERROR_CODES,
-    COURSE_ERROR_MESSAGES
-} from '../../constants/contentwriter/courseMessages';
-import {
-    ICloneCourseData,
-    ICloneCourseInput,
-    ICloneCourseResponse,
-    IClonedCourseModule,
-    IResolvedModuleSelection,
-} from '../../interfaces/cloneCourse';
+import { COURSE_CLONE_ERROR_CODES, COURSE_ERROR_MESSAGES } from '../../constants/contentwriter/courseMessages';
+import { ICloneCourseData, ICloneCourseInput, ICloneCourseResponse, IClonedCourseModule, ICloneTracker, IResolvedModuleSelection } from '../../interfaces/cloneCourse';
 
 const ACTIVE_STATUS = 'ACTIVE';
 const ARCHIVE_STATUS = 'ARCHIVE';
 
-const buildUniqueName = (
-    baseName: string,
-    usedNames: Set<string>
-): string => {
+const buildUniqueName = (baseName: string, usedNames: Set<string>): string => {
     const base = String(baseName ?? '').trim() || 'Untitled';
     let candidate = base;
     let counter = 1;
@@ -35,57 +22,53 @@ const buildUniqueName = (
     return candidate;
 };
 
-const saveOptions = (session: mongoose.ClientSession | null) =>
-    session ? { session } : {};
-
-/**
- * Detect duplicate-key errors specifically for the courseName field.
- */
 const isDuplicateCourseNameError = (error: any): boolean => {
-    if (error?.code !== 11000) {
+    if (!error) {
         return false;
     }
 
+    if (error.code === 11000) {
+        return (
+            error?.keyPattern?.courseName === 1 ||
+            error?.keyValue?.courseName !== undefined ||
+            /courseName/i.test(String(error?.message || ''))
+        );
+    }
+
+    const courseNameValidationError = error?.errors?.courseName;
+
+    if (courseNameValidationError) {
+        const kind =
+            courseNameValidationError.kind ??
+            courseNameValidationError.properties?.kind;
+
+        const message =
+            courseNameValidationError.message ??
+            courseNameValidationError.properties?.message;
+
+        return (
+            kind === 'unique' ||
+            /unique|already exists|duplicate/i.test(String(message || ''))
+        );
+    }
+
     return (
-        error?.keyPattern?.courseName === 1 ||
-        error?.keyValue?.courseName !== undefined ||
-        /courseName/i.test(String(error?.message || ''))
+        /courseName/i.test(String(error?.message || '')) &&
+        /unique|already exists|duplicate/i.test(String(error?.message || ''))
     );
 };
 
-
-const failure = (
-    code: string,
-    message: string
-): ICloneCourseResponse => ({
+const failure = ( code: string, message: string): ICloneCourseResponse => ({
     success: false,
     code,
     message
 });
 
-/**
- * Create the course, selected modules, and selected tasks.
- */
-const performClone = async (
-    courseName: string,
-    sourceCourse: any,
-    selections: IResolvedModuleSelection[],
-    session: mongoose.ClientSession | null,
-): Promise<ICloneCourseData> => {
-     const options = saveOptions(session);
+const performClone = async (courseName: string, sourceCourse: any, selections: IResolvedModuleSelection[], session: mongoose.ClientSession, tracker: ICloneTracker, existingModuleNames: string[], existingTaskNames: string[]): Promise<ICloneCourseData> => {
+    const options = { session };
 
-    const [existingModuleNames, existingTaskNames] = await Promise.all([
-        CourseModuleModel.distinct('moduleName', {}, options),
-        CourseTaskModel.distinct('taskName', {}, options)
-    ]);
-
-    const usedModuleNames = new Set<string>(
-        existingModuleNames as string[]
-    );
-
-    const usedTaskNames = new Set<string>(
-        existingTaskNames as string[]
-    );
+    const usedModuleNames = new Set<string>(existingModuleNames);
+    const usedTaskNames = new Set<string>(existingTaskNames);
 
     const newCourse: any = new CourseModel({
         courseName,
@@ -94,12 +77,15 @@ const performClone = async (
         status: ACTIVE_STATUS
     });
 
-     await newCourse.save(options);
-
+    await newCourse.save(options);
+    tracker.courseId = newCourse._id;
 
     const clonedModules: IClonedCourseModule[] = [];
 
-    for (const { sourceModule, sourceTasks } of selections) {
+    for (const [
+        moduleIndex,
+        { sourceModule, sourceTasks }
+    ] of selections.entries()) {
         const newModule: any = new CourseModuleModel({
             moduleName: buildUniqueName(
                 sourceModule.moduleName,
@@ -108,14 +94,16 @@ const performClone = async (
             moduleDescription: sourceModule.moduleDescription,
             courseId: newCourse._id,
             thumbnail: sourceModule.thumbnail,
-            status: sourceModule.status || ACTIVE_STATUS
+            status: sourceModule.status || ACTIVE_STATUS,
+            orderIdx: sourceModule.orderIdx ?? moduleIndex + 1
         });
 
-         await newModule.save(options);
+        await newModule.save(options);
+        tracker.moduleIds.push(newModule._id);
 
         const clonedTasks = [];
 
-        for (const sourceTask of sourceTasks) {
+        for (const [taskIndex, sourceTask] of sourceTasks.entries()) {
             const newTask: any = new CourseTaskModel({
                 moduleId: newModule._id,
                 taskName: buildUniqueName(
@@ -133,6 +121,7 @@ const performClone = async (
                 acknowledgementText: sourceTask.acknowledgementText,
                 baseBoilerplate: sourceTask.baseBoilerplate,
                 boilerplateVersion: sourceTask.boilerplateVersion,
+                orderIdx: sourceTask.orderIdx ?? taskIndex + 1,
                 starterCode: Array.isArray(sourceTask.starterCode)
                     ? sourceTask.starterCode.map((starter: any) => ({
                           languageId: starter.languageId,
@@ -142,6 +131,7 @@ const performClone = async (
             });
 
             await newTask.save(options);
+            tracker.taskIds.push(newTask._id);
 
             clonedTasks.push({
                 taskId: String(newTask._id),
@@ -167,10 +157,10 @@ const performClone = async (
     };
 };
 
-const cloneCourse = async (
-    input: ICloneCourseInput
-): Promise<ICloneCourseResponse> => {
+const cloneCourse = async (input: ICloneCourseInput): Promise<ICloneCourseResponse> => {
     const { courseId, courseName, modules } = input;
+
+    let session: mongoose.ClientSession | null = null;
 
     try {
         // 1. Validate the source course.
@@ -179,8 +169,7 @@ const cloneCourse = async (
         if (!sourceCourse) {
             return failure(
                 COURSE_CLONE_ERROR_CODES.SOURCE_NOT_FOUND,
-                COURSE_ERROR_MESSAGES
-                    .COURSE_CLONE_SOURCE_NOT_FOUND_MESSAGE
+                COURSE_ERROR_MESSAGES.COURSE_CLONE_SOURCE_NOT_FOUND_MESSAGE
             );
         }
 
@@ -189,24 +178,25 @@ const cloneCourse = async (
         ) {
             return failure(
                 COURSE_CLONE_ERROR_CODES.SOURCE_NOT_ARCHIVED,
-                COURSE_ERROR_MESSAGES
-                    .COURSE_CLONE_SOURCE_NOT_ARCHIVED_MESSAGE
+                COURSE_ERROR_MESSAGES.COURSE_CLONE_SOURCE_NOT_ARCHIVED_MESSAGE
             );
         }
 
         // 2. Validate the course name before creating any records.
         const normalizedCourseName = String(courseName ?? '').trim();
 
-const existingCourseWithSameName = await CourseModel.findOne({ courseName: normalizedCourseName})
+        const existingCourseWithSameName = await CourseModel.findOne({
+            courseName: normalizedCourseName
+        });
 
-if (existingCourseWithSameName) {
-    return failure(
-        COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME,
-        COURSE_ERROR_MESSAGES.COURSE_CLONE_DUPLICATE_NAME_MESSAGE
-    );
-}
+        if (existingCourseWithSameName) {
+            return failure(
+                COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME,
+                COURSE_ERROR_MESSAGES.COURSE_CLONE_DUPLICATE_NAME_MESSAGE
+            );
+        }
 
-        // 3. Validate that selected modules belong to the source course.
+        // 3. Validate selected modules belong to the source course.
         const requestedModuleIds = modules.map(
             (module) => module.moduleId
         );
@@ -238,7 +228,7 @@ if (existingCourseWithSameName) {
             );
         }
 
-        // 4. Validate that selected tasks belong to their selected modules.
+        // 4. Validate selected tasks belong to their selected modules.
         const requestedTaskIds = modules.flatMap(
             (module) => module.taskIds
         );
@@ -293,86 +283,75 @@ if (existingCourseWithSameName) {
                 sourceTasks: resolvedTasks as any[]
             });
         }
+        
+        const [existingModuleNames, existingTaskNames] =
+            await Promise.all([
+                CourseModuleModel.distinct('moduleName', {}),
+                CourseTaskModel.distinct('taskName', {})
+            ]);
 
-       // 5. Clone course, modules, and tasks inside a transaction.
-let session: mongoose.ClientSession | null = null;
+        // 6. Start a transaction for all clone writes.
+        session = await mongoose.startSession();
+        session.startTransaction();
 
-try {
-    session = await mongoose.startSession();
-    session.startTransaction();
+        const tracker: ICloneTracker = {
+            moduleIds: [],
+            taskIds: []
+        };
 
-
-
-    const data = await performClone(
-        normalizedCourseName,
-        sourceCourse,
-        selections,
-        session,
-    );
-
-    await session.commitTransaction();
-
-    return {
-        success: true,
-        data
-    };
-} catch (transactionError: any) {
-    if (session?.inTransaction()) {
-        try {
-            await session.abortTransaction();
-        } catch (abortError: any) {
-            console.error(
-                'Error aborting clone transaction:',
-                abortError
-            );
-        }
-    }
-
-    if (isDuplicateCourseNameError(transactionError)) {
-        return failure(
-            COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME,
-            COURSE_ERROR_MESSAGES.COURSE_DUPLICATE_NAME_MESSAGE
+        const data = await performClone(
+            normalizedCourseName,
+            sourceCourse,
+            selections,
+            session,
+            tracker,
+            existingModuleNames as string[],
+            existingTaskNames as string[]
         );
-    }
 
-    console.error(
-        'Error cloning course:',
-        transactionError
-    );
+        await session.commitTransaction();
 
-    return failure(
-        COURSE_CLONE_ERROR_CODES.CLONE_FAILED,
-        COURSE_ERROR_MESSAGES.COURSE_CLONE_ERROR_MESSAGE
-    );
-} finally {
-    if (session) {
-        try {
-            await session.endSession();
-        } catch (endError: any) {
-            console.error(
-                'Error ending clone session:',
-                endError
-            );
-        }
-    }
-}
-
+        return {
+            success: true,
+            data
+        };
     } catch (error: any) {
-        // Handle duplicate-key errors that occur outside the inner try blocks.
+        // Abort only if a transaction is still active.
+        if (session?.inTransaction()) {
+            try {
+                await session.abortTransaction();
+            } catch (abortError: any) {
+                console.error(
+                    'Error aborting clone transaction:',
+                    abortError
+                );
+            }
+        }
+
         if (isDuplicateCourseNameError(error)) {
             return failure(
                 COURSE_CLONE_ERROR_CODES.DUPLICATE_NAME,
-                COURSE_ERROR_MESSAGES
-                    .COURSE_CLONE_DUPLICATE_NAME_MESSAGE
+                COURSE_ERROR_MESSAGES.COURSE_CLONE_DUPLICATE_NAME_MESSAGE
             );
         }
 
-        console.error('Error in cloning course:', error);
+        console.error('Error cloning course:', error);
 
         return failure(
             COURSE_CLONE_ERROR_CODES.CLONE_FAILED,
             COURSE_ERROR_MESSAGES.COURSE_CLONE_ERROR_MESSAGE
         );
+    } finally {
+        if (session) {
+            try {
+                await session.endSession();
+            } catch (endError: any) {
+                console.error(
+                    'Error ending clone session:',
+                    endError
+                );
+            }
+        }
     }
 };
 
