@@ -101,11 +101,69 @@ describe('updateCourseTaskController', () => {
             undefined,
             undefined,
             undefined,
+            undefined,
             undefined
         );
         expect(uploadThumbnailToS3Mock).not.toHaveBeenCalled();
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
         expect(mockJson).toHaveBeenCalledWith(updateResponse);
+    });
+
+    it('forwards orderIdx to the service', async () => {
+        isValidStatusMock.mockReturnValue(true);
+        const req = buildReq({ body: { orderIdx: 3 } });
+        const updateResponse = { success: true, responseAfterUpdate: { modifiedCount: 1 } };
+        updateCourseTaskMock.mockResolvedValue(updateResponse);
+
+        await updateCourseTaskController.updateCourseTask(req, res);
+
+        expect(updateCourseTaskMock).toHaveBeenCalledWith(
+            't1',
+            'Read',
+            'Read the docs',
+            undefined,
+            'ACTIVE',
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            3
+        );
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
+    });
+
+    it('returns 400 when orderIdx is invalid', async () => {
+        isValidStatusMock.mockReturnValue(true);
+        const req = buildReq({ body: { orderIdx: 0 } });
+
+        await updateCourseTaskController.updateCourseTask(req, res);
+
+        expect(updateCourseTaskMock).not.toHaveBeenCalled();
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+        expect(mockJson).toHaveBeenCalledWith({
+            success: false,
+            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_ORDER_IDX_MESSAGE
+        });
+    });
+
+    it('returns 400 when the service reports a duplicate orderIdx', async () => {
+        isValidStatusMock.mockReturnValue(true);
+        const req = buildReq({ body: { orderIdx: 2 } });
+        updateCourseTaskMock.mockResolvedValue({
+            success: false,
+            responseAfterUpdate: 'COURSE_TASK_DUPLICATE_ORDER_IDX'
+        });
+
+        await updateCourseTaskController.updateCourseTask(req, res);
+
+        expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.BAD_REQUEST);
+        expect(mockJson).toHaveBeenCalledWith({
+            success: false,
+            message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_DUPLICATE_ORDER_IDX_MESSAGE
+        });
     });
 
     it('uploads the new content when a task file is provided', async () => {
@@ -137,6 +195,7 @@ describe('updateCourseTaskController', () => {
             undefined,
             undefined,
             undefined,
+            undefined,
             undefined
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
@@ -164,7 +223,8 @@ describe('updateCourseTaskController', () => {
             undefined,
             undefined,
             undefined,
-            'I have read and understood.'
+            'I have read and understood.',
+            undefined
         );
         expect(mockStatus).toHaveBeenCalledWith(HTTP_STATUS.OK);
     });
@@ -228,6 +288,7 @@ describe('updateCourseTaskController', () => {
             'Read the docs',
             expect.stringContaining('LMSData/Courses/CourseTaskThumbnails/'),
             'ACTIVE',
+            undefined,
             undefined,
             undefined,
             undefined,

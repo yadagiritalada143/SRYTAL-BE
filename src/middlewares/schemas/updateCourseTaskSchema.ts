@@ -13,6 +13,11 @@ const updateCourseTaskSchema = Joi.object({
             'string.max': 'Task name must be at most 150 characters.'
         }),
     taskDescription: Joi.string().trim().allow('').optional(),
+    orderIdx: Joi.number().integer().min(1).optional().messages({
+            'number.base': 'orderIdx must be a positive integer.',
+            'number.integer': 'orderIdx must be a positive integer.',
+            'number.min': 'orderIdx must be a positive integer.'
+        }),
     acknowledgementText: Joi.string().trim().allow('').optional().messages({
             'string.base': 'Acknowledgement text must be a string.'
         }),
