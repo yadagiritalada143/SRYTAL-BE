@@ -2,7 +2,7 @@ import CourseTaskModel from '../../model/courseTaskModel';
 import { IUpdateCourseTaskResponse } from '../../interfaces/courseTask';
 import { stripHtmlTags } from '../../util/stripHtmlTags';
 
-const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string, executionMode?: 'CALLABLE' | 'STDIN', acknowledgementText?: string) : Promise<IUpdateCourseTaskResponse> => {
+const updateCourseTask = async (id: string, taskName: string, taskDescription: string, newThumbnail?: string, status?: string, newContent?: string, newContentMimeType?: string, newContentFileName?: string, isCoding?: boolean, question?: string, executionMode?: 'CALLABLE' | 'STDIN', acknowledgementText?: string, orderIdx?: number) : Promise<IUpdateCourseTaskResponse> => {
     try {
         const existingTask = await CourseTaskModel.findById(id);
 
@@ -11,6 +11,30 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
                 success: false,
                 responseAfterUpdate: 'COURSE_TASK_NOT_FOUND',
             };
+        }
+
+        if (orderIdx !== undefined) {
+            if (!Number.isInteger(orderIdx) || orderIdx < 1) {
+                return {
+                    success: false,
+                    responseAfterUpdate: 'COURSE_TASK_INVALID_ORDER_IDX'
+                };
+            }
+
+            const taskWithSameOrderIdx = await CourseTaskModel.findOne({
+                moduleId: existingTask.moduleId,
+                orderIdx,
+                _id: { $ne: id }
+            })
+                .select('_id')
+                .lean();
+
+            if (taskWithSameOrderIdx) {
+                return {
+                    success: false,
+                    responseAfterUpdate: 'COURSE_TASK_DUPLICATE_ORDER_IDX'
+                };
+            }
         }
 
         const taskWithSameName = await CourseTaskModel.findOne({ taskName, _id: { $ne: id } });
@@ -28,6 +52,9 @@ const updateCourseTask = async (id: string, taskName: string, taskDescription: s
             taskDescription: cleanTaskDescription,
             status,
         };
+        if (orderIdx !== undefined) {
+            updateData.orderIdx = orderIdx;
+        }
         if (acknowledgementText !== undefined) {
             const cleanAcknowledgementText = stripHtmlTags(acknowledgementText);
             if (

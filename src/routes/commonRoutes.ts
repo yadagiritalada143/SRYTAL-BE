@@ -3008,7 +3008,7 @@ commonRouter.post('/submitCourseTaskCode', validateJWT, submitCodeController.sub
  *     summary: Update a course task
  *     description: |
  *       Update an existing course task as a Content Writer.
- *       The task name, description, status, and task type can be updated.
+ *       The task name, description, status, order index, and task type can be updated.
  *       A new task file or thumbnail can optionally be uploaded.
  *       For LINK tasks, provide the link.
  *       For FILE tasks, provide the taskFile.
@@ -3054,6 +3054,11 @@ commonRouter.post('/submitCourseTaskCode', validateJWT, submitCodeController.sub
  *                   - ARCHIVE
  *                 description: Updated status of the course task.
  *                 example: ACTIVE
+ *               orderIdx:
+ *                 type: integer
+ *                 minimum: 1
+ *                 description: Updated position of the task within its module. Must be unique per module.
+ *                 example: 2
  *               type:
  *                 type: string
  *                 enum:
@@ -3114,6 +3119,9 @@ commonRouter.post('/submitCourseTaskCode', validateJWT, submitCodeController.sub
  *                     status:
  *                       type: string
  *                       example: ACTIVE
+ *                     orderIdx:
+ *                       type: integer
+ *                       example: 2
  *                     type:
  *                       type: string
  *                       enum:

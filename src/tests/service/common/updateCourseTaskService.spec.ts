@@ -3,16 +3,27 @@ import CourseTaskModel from '../../../model/courseTaskModel';
 
 jest.mock('../../../model/courseTaskModel', () => ({
     __esModule: true,
-    default: { findById: jest.fn(), findByIdAndUpdate: jest.fn() }
+    default: { findById: jest.fn(), findOne: jest.fn(), findByIdAndUpdate: jest.fn() }
 }));
 
 const findByIdMock = (CourseTaskModel as unknown as { findById: jest.Mock }).findById;
+const findOneMock = (CourseTaskModel as unknown as { findOne: jest.Mock }).findOne;
 const findByIdAndUpdateMock = (CourseTaskModel as unknown as { findByIdAndUpdate: jest.Mock }).findByIdAndUpdate;
+
+const buildFindOneResult = (value: any) => {
+    const promise: any = Promise.resolve(value);
+    promise.select = jest.fn().mockReturnValue({
+        lean: jest.fn().mockResolvedValue(value)
+    });
+    return promise;
+};
 
 describe('updateCourseTaskService', () => {
     beforeEach(() => {
         findByIdMock.mockReset();
+        findOneMock.mockReset();
         findByIdAndUpdateMock.mockReset();
+        findOneMock.mockImplementation(() => buildFindOneResult(null));
         jest.spyOn(console, 'error').mockImplementation(() => {});
     });
 
@@ -27,7 +38,7 @@ describe('updateCourseTaskService', () => {
 
         expect(findByIdMock).toHaveBeenCalledWith('t1');
         expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
-        expect(result).toEqual({ success: false });
+        expect(result).toEqual({ success: false, responseAfterUpdate: 'COURSE_TASK_NOT_FOUND' });
     });
 
     it('updates the task with a new thumbnail and content', async () => {
@@ -216,5 +227,99 @@ describe('updateCourseTaskService', () => {
         const result = await updateCourseTaskService.updateCourseTask('t1', 'Read', 'Description');
 
         expect(result).toEqual({ success: false, responseAfterUpdate: expect.any(Error) });
+    });
+
+    it('updates the orderIdx when it is unique within the module', async () => {
+        findByIdMock.mockResolvedValue({ _id: 't1', moduleId: 'm1', thumbnail: null, content: null });
+        const updatedTask = { _id: 't1', taskName: 'Read', orderIdx: 3 };
+        findByIdAndUpdateMock.mockResolvedValue(updatedTask);
+
+        const result = await updateCourseTaskService.updateCourseTask(
+            't1',
+            'Read',
+            'Description',
+            undefined,
+            'ACTIVE',
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            3
+        );
+
+        expect(findOneMock).toHaveBeenCalledWith({
+            moduleId: 'm1',
+            orderIdx: 3,
+            _id: { $ne: 't1' }
+        });
+        expect(findByIdAndUpdateMock).toHaveBeenCalledWith(
+            't1',
+            {
+                $set: {
+                    taskName: 'Read',
+                    taskDescription: 'Description',
+                    status: 'ACTIVE',
+                    orderIdx: 3
+                }
+            },
+            { new: true, runValidators: true }
+        );
+        expect(result).toEqual({ success: true, responseAfterUpdate: updatedTask });
+    });
+
+    it('rejects a duplicate orderIdx within the same module', async () => {
+        findByIdMock.mockResolvedValue({ _id: 't1', moduleId: 'm1', thumbnail: null, content: null });
+        findOneMock.mockImplementationOnce(() => buildFindOneResult({ _id: 't2' }));
+
+        const result = await updateCourseTaskService.updateCourseTask(
+            't1',
+            'Read',
+            'Description',
+            undefined,
+            'ACTIVE',
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            2
+        );
+
+        expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
+        expect(result).toEqual({
+            success: false,
+            responseAfterUpdate: 'COURSE_TASK_DUPLICATE_ORDER_IDX'
+        });
+    });
+
+    it('rejects an invalid orderIdx', async () => {
+        findByIdMock.mockResolvedValue({ _id: 't1', moduleId: 'm1', thumbnail: null, content: null });
+
+        const result = await updateCourseTaskService.updateCourseTask(
+            't1',
+            'Read',
+            'Description',
+            undefined,
+            'ACTIVE',
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            0
+        );
+
+        expect(findByIdAndUpdateMock).not.toHaveBeenCalled();
+        expect(result).toEqual({
+            success: false,
+            responseAfterUpdate: 'COURSE_TASK_INVALID_ORDER_IDX'
+        });
     });
 });

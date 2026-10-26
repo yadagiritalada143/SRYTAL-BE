@@ -23,7 +23,7 @@ const uploadToS3 = async (
 
 const updateCourseTask = async (req: Request, res: Response) => {
     try {
-        const { id, taskName, taskDescription, status, executionMode, acknowledgementText } = req.body;
+        const { id, taskName, taskDescription, status, executionMode, acknowledgementText, orderIdx } = req.body;
 
         if (!isValidCourseTaskStatus(status)) {
             return res.status(400).json({
@@ -31,6 +31,19 @@ const updateCourseTask = async (req: Request, res: Response) => {
                 message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_STATUS_MESSAGE,
             });
         }
+        if (
+            orderIdx !== undefined &&
+            (orderIdx === null ||
+                orderIdx === '' ||
+                !Number.isInteger(Number(orderIdx)) ||
+                Number(orderIdx) < 1)
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_ORDER_IDX_MESSAGE,
+            });
+        }
+        const parsedOrderIdx = orderIdx === undefined ? undefined : Number(orderIdx);
         if (
             executionMode !== undefined &&
             executionMode !== 'CALLABLE' &&
@@ -98,7 +111,8 @@ const updateCourseTask = async (req: Request, res: Response) => {
             undefined,
             undefined,
             executionMode,
-            acknowledgementText
+            acknowledgementText,
+            parsedOrderIdx
 
         );
 
@@ -116,6 +130,18 @@ const updateCourseTask = async (req: Request, res: Response) => {
                 return res.status(400).json({
                     success: false,
                     message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_DUPLICATE_NAME_MESSAGE,
+                });
+            }
+            if (updateCourseResponse.responseAfterUpdate === 'COURSE_TASK_DUPLICATE_ORDER_IDX') {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_DUPLICATE_ORDER_IDX_MESSAGE,
+                });
+            }
+            if (updateCourseResponse.responseAfterUpdate === 'COURSE_TASK_INVALID_ORDER_IDX') {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_ORDER_IDX_MESSAGE,
                 });
             }
             if (updateCourseResponse.responseAfterUpdate === 'COURSE_TASK_NOT_FOUND') {
