@@ -1,5 +1,6 @@
 export const COURSE_TASK_SUCCESS_MESSAGES = {
     COURSE_TASK_ADD_SUCCESS_MESSAGE: 'New Task added to Module Successfully !',
+    COURSE_TASK_REORDER_SUCCESS_MESSAGE: 'Course tasks reordered successfully !',
     
 }
 
@@ -25,7 +26,15 @@ export const COURSE_TASK_ERRORS_MESSAGES = {
     COURSE_TASK_QUIZ_TASK_MESSAGE: 'Please provide the Quiz task description !',
     COURSE_TASK_DUPLICATE_NAME_MESSAGE: 'A task with this name already exists in this module.',
     COURSE_TASK_INVALID_ORDER_IDX_MESSAGE: 'orderIdx is required and must be a positive integer.',
-    COURSE_TASK_DUPLICATE_ORDER_IDX_MESSAGE: 'orderIdx already exists. Please use a different orderIdx.'
+    COURSE_TASK_DUPLICATE_ORDER_IDX_MESSAGE: 'orderIdx already exists. Please use a different orderIdx.',
+    COURSE_TASK_REORDER_ERROR_MESSAGE: 'Error occured while reordering the course tasks !',
+    COURSE_TASK_INVALID_MODULE_ID_MESSAGE: 'Module ID must be a valid ID !',
+    COURSE_TASK_MODULE_NOT_FOUND_MESSAGE: 'Module not found !',
+    COURSE_TASK_TASKS_REQUIRED_MESSAGE: 'Tasks array is required and must not be empty !',
+    COURSE_TASK_INVALID_TASK_ID_MESSAGE: 'One or more task IDs are invalid !',
+    COURSE_TASK_TASK_NOT_FOUND_MESSAGE: 'One or more course tasks were not found !',
+    COURSE_TASK_NOT_IN_MODULE_MESSAGE: 'One or more tasks do not belong to the specified module !',
+    COURSE_TASK_DUPLICATE_TASK_ID_MESSAGE: 'Duplicate task IDs are not allowed !'
     
     
 };
