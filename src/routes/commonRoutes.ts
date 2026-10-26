@@ -17,6 +17,7 @@ import cloneCourseSchema from '../middlewares/schemas/cloneCourseSchema';
 import { addCourseModuleSchema, updateCourseModuleSchema } from '../middlewares/schemas/addCourseModuleSchema';
 import reorderCourseModulesSchema from '../middlewares/schemas/reorderCourseModulesSchema';
 import updateCourseTaskSchema from '../middlewares/schemas/updateCourseTaskSchema';
+import reorderCourseTasksSchema from '../middlewares/schemas/reorderCourseTasksSchema';
 import { createQuizQuestionSchema, updateQuizQuestionSchema } from '../middlewares/schemas/createQuizQuestionSchema';
 import multer from 'multer';
 import forgotPasswordController from '../controllers/common/forgotPasswordController';
@@ -38,6 +39,7 @@ import updateCourseController from '../controllers/contentwriter/updateCourseCon
 import updateCourseModuleController from '../controllers/contentwriter/updateCourseModuleController';
 import reorderCourseModulesController from '../controllers/contentwriter/reorderCourseModulesController';
 import updateCourseTaskController from '../controllers/contentwriter/updateCourseTaskController';
+import reorderCourseTasksController from '../controllers/contentwriter/reorderCourseTasksController';
 import validateJWTForMedia from '../middlewares/validateJWTForMedia';
 import getCourseTaskContentController from '../controllers/contentwriter/getCourseTaskContentController';
 import getCourseTaskBoilerplateController from '../controllers/common/getCourseTaskBoilerplateController';
@@ -3172,6 +3174,59 @@ commonRouter.post('/submitCourseTaskCode', validateJWT, submitCodeController.sub
  */
 
 commonRouter.put('/updatecoursetask', validateJWT, upload.fields([ { name: 'taskFile', maxCount: 1 }, { name: 'thumbnailFile', maxCount: 1 } ]), validateBody(updateCourseTaskSchema), updateCourseTaskController.updateCourseTask);
+
+/**
+ * @swagger
+ * /reordertasks:
+ *   put:
+ *     summary: Reorder tasks within a course module
+ *     description: Updates the orderIdx of the provided tasks. All tasks must belong to the specified module and orderIdx values must be unique.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - moduleId
+ *               - tasks
+ *             properties:
+ *               moduleId:
+ *                 type: string
+ *                 example: 64f1c2d3a1b2c3d4e5f60718
+ *               tasks:
+ *                 type: array
+ *                 minItems: 1
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - taskId
+ *                     - orderIdx
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                       example: 64f1c2d3a1b2c3d4e5f60719
+ *                     orderIdx:
+ *                       type: integer
+ *                       minimum: 1
+ *                       example: 1
+ *     responses:
+ *       200:
+ *         description: Tasks reordered successfully.
+ *       400:
+ *         description: Invalid input, duplicate order indexes, or tasks that do not belong to the module.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Module or task not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.put('/reordertasks', validateJWT, validateBody(reorderCourseTasksSchema), reorderCourseTasksController.reorderCourseTasks);
 
 /**
  * @swagger
