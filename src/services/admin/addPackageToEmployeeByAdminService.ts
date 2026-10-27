@@ -1,18 +1,30 @@
 import EmployeePackageModel from '../../model/employeePackageModel';
+import { ITimesheet } from '../../interfaces/employeepackages';
+
 
 const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
     const currentDay = new Date();
-    const lastDayOfMonth = getLastDateOfMonth(currentDay);
-    let timesheet = [];
-    const startDay = currentDay.getDate();
-    const endDay = lastDayOfMonth.getDate();
-    const year = currentDay.getFullYear();
-    const month = currentDay.getMonth();
+    const lastDayToGenerate = new Date(
+        currentDay.getFullYear(),
+        currentDay.getMonth() + 2,
+        0
+    );
+    const timesheet: ITimesheet[] = [];
 
-    for (let day = startDay; day <= endDay; day++) {
-        const currentDate = new Date(year, month, day);
+
+    for (
+        let date = new Date(
+            currentDay.getFullYear(),
+            currentDay.getMonth(),
+            currentDay.getDate()
+        );
+        date <= lastDayToGenerate;
+        date.setDate(date.getDate() + 1)
+    ) {
+        const currentDate = new Date(date);
         const dayOfWeek = currentDate.getDay();
-        let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
+
 
         timesheet.push({
             date: currentDate,
@@ -26,6 +38,7 @@ const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
         });
     }
 
+
     if (data.packages && Array.isArray(data.packages)) {
         data.packages.forEach((pkg: any) => {
             if (pkg.tasks && Array.isArray(pkg.tasks)) {
@@ -36,8 +49,10 @@ const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
         });
     }
 
+
     const { employeeId, packageId } = data;
     const existingPackage = await EmployeePackageModel.findOne({ employeeId, packageId });
+
 
     if (existingPackage) {
         return await EmployeePackageModel.findOneAndUpdate(
@@ -50,8 +65,6 @@ const addPackagetoEmployeeByAdmin = async (data: any): Promise<any> => {
     }
 }
 
-function getLastDateOfMonth(date: Date): Date {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
-}
 
 export default { addPackagetoEmployeeByAdmin }
+
