@@ -5,17 +5,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const emailConfiguration_1 = require("../util/emailConfiguration");
 dotenv_1.default.config();
-const emailConfiguration = {
-    service: process.env.EMAIL_CONFIG_SERVICE,
-    host: process.env.EMAIL_CONFIG_HOST,
-    port: Number(process.env.EMAIL_CONFIG_PORT),
-    secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
-    auth: {
-        user: process.env.EMAIL_CONFIG_AUTH_USER,
-        pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-    }
-};
 const formatDate = (date) => {
     const dateObj = typeof date === 'string' ? new Date(date) : date;
     if (isNaN(dateObj.getTime()))
@@ -28,7 +19,7 @@ const formatDate = (date) => {
 };
 const sendCourseDueDateUpdateEmail = async (details) => {
     try {
-        const transporter = nodemailer_1.default.createTransport(emailConfiguration);
+        const transporter = nodemailer_1.default.createTransport(emailConfiguration_1.emailConfiguration);
         const changeLabel = details.isExtended ? 'extended' : 'reduced';
         const changeColor = details.isExtended ? ' rgb(121, 181, 245);' : ' rgb(121, 181, 245);';
         const mailBody = `

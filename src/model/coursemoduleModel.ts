@@ -8,6 +8,7 @@ const CourseModuleSchema = new mongoose.Schema({
     courseId: { type: mongoose.Schema.Types.ObjectId, ref: 'CourseModel' },
     thumbnail: { type: mongoose.Schema.Types.String },
     status: { type: mongoose.Schema.Types.String },
+    orderIdx: { type: mongoose.Schema.Types.Number,  required: true, min: 1 }
 },
     {
         collection: 'coursemodule',
@@ -23,6 +24,8 @@ CourseModuleSchema.virtual('tasks', {
 });
 
 CourseModuleSchema.plugin(uniqueValidator);
+
+CourseModuleSchema.index({ courseId: 1, createdAt: 1, _id: 1 });
 
 const CourseModuleModel = mongoose.model<ICourseModule>('CourseModule', CourseModuleSchema);
 

@@ -6,16 +6,12 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const employeePackageModel_1 = __importDefault(require("../../model/employeePackageModel"));
 const addPackagetoEmployeeByAdmin = async (data) => {
     const currentDay = new Date();
-    const lastDayOfMonth = getLastDateOfMonth(currentDay);
-    let timesheet = [];
-    const startDay = currentDay.getDate();
-    const endDay = lastDayOfMonth.getDate();
-    const year = currentDay.getFullYear();
-    const month = currentDay.getMonth();
-    for (let day = startDay; day <= endDay; day++) {
-        const currentDate = new Date(year, month, day);
+    const lastDayToGenerate = new Date(currentDay.getFullYear(), currentDay.getMonth() + 2, 0);
+    const timesheet = [];
+    for (let date = new Date(currentDay.getFullYear(), currentDay.getMonth(), currentDay.getDate()); date <= lastDayToGenerate; date.setDate(date.getDate() + 1)) {
+        const currentDate = new Date(date);
         const dayOfWeek = currentDate.getDay();
-        let isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+        const isWeekend = dayOfWeek === 0 || dayOfWeek === 6;
         timesheet.push({
             date: currentDate,
             isHoliday: false,
@@ -46,7 +42,4 @@ const addPackagetoEmployeeByAdmin = async (data) => {
         return await packagetoEmployeTData.save();
     }
 };
-function getLastDateOfMonth(date) {
-    return new Date(date.getFullYear(), date.getMonth() + 1, 0);
-}
 exports.default = { addPackagetoEmployeeByAdmin };

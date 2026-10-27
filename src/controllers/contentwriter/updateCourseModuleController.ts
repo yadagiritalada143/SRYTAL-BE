@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import updateCourseModuleService from '../../services/contentwriter/updateCourseModuleService';
-import { COURSE_MODULE_ERRORS_MESSAGES } from '../../constants/contentwriter/coursemoduleMessages';
-import isValidStatus from '../../util/validateCourseStatusTypesUtil';
+import { COURSE_MODULE_ERRORS_MESSAGES, COURSE_MODULE_SUCCESS_MESSAGES } from '../../constants/contentwriter/coursemoduleMessages';
 import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
@@ -9,18 +8,40 @@ import { courseModuleThumbnailsFolder } from '../../config/awsS3Config';
 
 const updateCourseModule = async (req: Request, res: Response) => {
     try {
-        const { id, moduleName, moduleDescription, status } = req.body;
+        const { id, moduleName, moduleDescription, status, orderIdx } = req.body;
 
-        if (!isValidStatus(status)) {
+        if (!status) {
             return res.status(400).json({
                 success: false,
                 message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_INVALID_STATUS_MESSAGE,
             });
         }
 
+        if (!String(moduleName || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_NAME_REQUIRED_MESSAGE,
+            });
+        }
+
         let thumbnailKey: string | undefined = undefined;
         if(req.file) {
             const { originalname, buffer, mimetype } = req.file;
+
+            const allowedThumbnailExtensions = ['.png', '.jpg', '.jpeg', '.svg'];
+            const allowedThumbnailMimeTypes = ['image/png', 'image/jpeg', 'image/svg+xml'];
+            const thumbnailExtension = path.extname(originalname).toLowerCase();
+
+            if (
+                !allowedThumbnailExtensions.includes(thumbnailExtension) ||
+                !allowedThumbnailMimeTypes.includes(String(mimetype).toLowerCase())
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_INVALID_THUMBNAIL_TYPE_MESSAGE,
+                });
+            }
+
             const uniqueName = uuidv4() + path.extname(originalname);
             const uploadResponse: any = await uploadThumbnailToS3.uploadThumbnailToS3(
                 uniqueName,
@@ -44,8 +65,41 @@ const updateCourseModule = async (req: Request, res: Response) => {
             moduleDescription,
             thumbnailKey,
             status.toUpperCase(),
+            orderIdx
         );
-        res.status(200).json(updateCourseModuleResponse);
+
+        if (!updateCourseModuleResponse.success && updateCourseModuleResponse.message === 'DUPLICATE_ORDER_IDX') {
+            return res.status(400).json({
+                success: false,
+                message:
+                    COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_DUPLICATE_ORDER_IDX_MESSAGE
+            });
+        }
+
+        if (!updateCourseModuleResponse.success) {
+            if (updateCourseModuleResponse.responseAfterModuleUpdate === 'COURSE_MODULE_DUPLICATE_NAME') {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_DUPLICATE_NAME_MESSAGE,
+                });
+            }
+            if (updateCourseModuleResponse.responseAfterModuleUpdate === 'Course module not found') {
+                return res.status(404).json({
+                    success: false,
+                    message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_UPDATE_ERROR_MESSAGE,
+                });
+            }
+            return res.status(500).json({
+                success: false,
+                message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_UPDATE_ERROR_MESSAGE
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_UPDATE_SUCCESS_MESSAGE,
+            data: updateCourseModuleResponse.responseAfterModuleUpdate
+        });
     } catch (error: any) {
         console.error(`Error in updating module: ${error}`);
         res.status(500).json({

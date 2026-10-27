@@ -15,6 +15,15 @@ const getMyNavMenuController_1 = __importDefault(require("../controllers/common/
 const uploadProfileImageController_1 = __importDefault(require("../controllers/common/uploadProfileImageController"));
 const getProfileImageController_1 = __importDefault(require("../controllers/common/getProfileImageController"));
 const validateJWT_1 = __importDefault(require("../middlewares/validateJWT"));
+const validateAddCourseTask_1 = __importDefault(require("../middlewares/validateAddCourseTask"));
+const validateBody_1 = __importDefault(require("../middlewares/validateBody"));
+const addCourseSchema_1 = require("../middlewares/schemas/addCourseSchema");
+const cloneCourseSchema_1 = __importDefault(require("../middlewares/schemas/cloneCourseSchema"));
+const addCourseModuleSchema_1 = require("../middlewares/schemas/addCourseModuleSchema");
+const reorderCourseModulesSchema_1 = __importDefault(require("../middlewares/schemas/reorderCourseModulesSchema"));
+const updateCourseTaskSchema_1 = __importDefault(require("../middlewares/schemas/updateCourseTaskSchema"));
+const reorderCourseTasksSchema_1 = __importDefault(require("../middlewares/schemas/reorderCourseTasksSchema"));
+const createQuizQuestionSchema_1 = require("../middlewares/schemas/createQuizQuestionSchema");
 const multer_1 = __importDefault(require("multer"));
 const forgotPasswordController_1 = __importDefault(require("../controllers/common/forgotPasswordController"));
 const employeePackageDetailsByIdController_1 = __importDefault(require("../controllers/common/employeePackageDetailsByIdController"));
@@ -23,8 +32,43 @@ const downloadSalarySlipController_1 = __importDefault(require("../controllers/c
 const getMyAssignedCoursesController_1 = __importDefault(require("../controllers/common/getMyAssignedCoursesController"));
 const getMyAssignedCourseByIdController_1 = __importDefault(require("../controllers/common/getMyAssignedCourseByIdController"));
 const updateMyTaskProgressController_1 = __importDefault(require("../controllers/common/updateMyTaskProgressController"));
+const updateMyTaskAcknowledgementController_1 = __importDefault(require("../controllers/common/updateMyTaskAcknowledgementController"));
+const updateMyTaskAcknowledgementSchema_1 = __importDefault(require("../middlewares/schemas/updateMyTaskAcknowledgementSchema"));
 const expertConsultationController_1 = __importDefault(require("../controllers/common/expertConsultationController"));
+const addProgrammingLanguageController_1 = __importDefault(require("../controllers/common/addProgrammingLanguageController"));
+const updateProgrammingLanguageController_1 = __importDefault(require("../controllers/common/updateProgrammingLanguageController"));
+const getAllProgrammingLanguagesController_1 = __importDefault(require("../controllers/common/getAllProgrammingLanguagesController"));
+const getProgrammingLanguageByIdController_1 = __importDefault(require("../controllers/common/getProgrammingLanguageByIdController"));
+const deleteProgrammingLanguageController_1 = __importDefault(require("../controllers/common/deleteProgrammingLanguageController"));
+const updateCourseController_1 = __importDefault(require("../controllers/contentwriter/updateCourseController"));
+const updateCourseModuleController_1 = __importDefault(require("../controllers/contentwriter/updateCourseModuleController"));
+const reorderCourseModulesController_1 = __importDefault(require("../controllers/contentwriter/reorderCourseModulesController"));
+const updateCourseTaskController_1 = __importDefault(require("../controllers/contentwriter/updateCourseTaskController"));
+const reorderCourseTasksController_1 = __importDefault(require("../controllers/contentwriter/reorderCourseTasksController"));
+const validateJWTForMedia_1 = __importDefault(require("../middlewares/validateJWTForMedia"));
+const getCourseTaskContentController_1 = __importDefault(require("../controllers/contentwriter/getCourseTaskContentController"));
+const getCourseTaskBoilerplateController_1 = __importDefault(require("../controllers/common/getCourseTaskBoilerplateController"));
+const generateCourseTaskTestCasesController_1 = __importDefault(require("../controllers/common/generateCourseTaskTestCasesController"));
+const runCourseTaskCodeController_1 = __importDefault(require("../controllers/common/runCourseTaskCodeController"));
+const submitCodeController_1 = __importDefault(require("../controllers/common/submitCodeController"));
+const addCourseTaskController_1 = __importDefault(require("../controllers/contentwriter/addCourseTaskController"));
+const addCourseModuleController_1 = __importDefault(require("../controllers/contentwriter/addCourseModuleController"));
+const addCourseController_1 = __importDefault(require("../controllers/contentwriter/addCourseController"));
+const cloneCourseController_1 = __importDefault(require("../controllers/contentwriter/cloneCourseController"));
+const getAllCoursesController_1 = __importDefault(require("../controllers/contentwriter/getAllCoursesController"));
+const getAllActiveCoursesController_1 = __importDefault(require("../controllers/contentwriter/getAllActiveCoursesController"));
+const getCourseByIdController_1 = __importDefault(require("../controllers/contentwriter/getCourseByIdController"));
+const createQuizQuestionController_1 = __importDefault(require("../controllers/contentwriter/createQuizQuestionController"));
+const getAllQuizQuestionsController_1 = __importDefault(require("../controllers/contentwriter/getAllQuizQuestionsController"));
+const getQuizQuestionByIdController_1 = __importDefault(require("../controllers/contentwriter/getQuizQuestionByIdController"));
+const getQuizByIdController_1 = __importDefault(require("../controllers/common/getQuizByIdController"));
+const validateQuizController_1 = __importDefault(require("../controllers/common/validateQuizController"));
+const submitQuizController_1 = __importDefault(require("../controllers/common/submitQuizController"));
+const updateQuizQuestionController_1 = __importDefault(require("../controllers/contentwriter/updateQuizQuestionController"));
+const updateQuizQuestionStatusController_1 = __importDefault(require("../controllers/contentwriter/updateQuizQuestionStatusController"));
+const deleteQuizQuestionController_1 = __importDefault(require("../controllers/contentwriter/deleteQuizQuestionController"));
 const upload = (0, multer_1.default)({ storage: multer_1.default.memoryStorage() });
+upload.fields([{ name: 'taskFile', maxCount: 1, }, { name: 'thumbnailFile', maxCount: 1, }]);
 const commonRouter = express_1.default.Router();
 commonRouter.get('/', (req, res) => {
     res.status(200).json({ message: 'Successfully server up and running !' });
@@ -1170,6 +1214,7 @@ commonRouter.get('/getMyAssignedCourses', validateJWT_1.default, getMyAssignedCo
  *                                   enum:
  *                                     - FILE
  *                                     - LINK
+ *                                   description: Acknowledgement only applies to FILE tasks.
  *                                 link:
  *                                   type: string
  *                                   description: External URL, only present for LINK tasks.
@@ -1179,6 +1224,17 @@ commonRouter.get('/getMyAssignedCourses', validateJWT_1.default, getMyAssignedCo
  *                                 contentFileName:
  *                                   type: string
  *                                   example: intro.mp4
+ *                                 acknowledgementText:
+ *                                   type: string
+ *                                   description: Task acknowledgement copy the employee must accept. Only present on FILE tasks.
+ *                                 acknowledged:
+ *                                   type: boolean
+ *                                   description: Whether the employee has accepted this task's acknowledgement. Only present on FILE tasks.
+ *                                 acknowledgedAt:
+ *                                   type: string
+ *                                   format: date-time
+ *                                   nullable: true
+ *                                   description: When the employee acknowledged the FILE task, or null if not yet acknowledged.
  *                                 isCompleted:
  *                                   type: boolean
  *                                 completedAt:
@@ -1279,6 +1335,81 @@ commonRouter.get('/getMyAssignedCourseById/:courseAssignmentId', validateJWT_1.d
 commonRouter.put('/updateMyTaskProgress', validateJWT_1.default, updateMyTaskProgressController_1.default.updateMyTaskProgress);
 /**
  * @swagger
+ * /updateMyTaskAcknowledgement:
+ *   put:
+ *     summary: Acknowledge a FILE task of an assigned course
+ *     description: |
+ *       Records the authenticated employee's acknowledgement for one task of one
+ *       assigned course. The acknowledgement is scoped to the employee, the course
+ *       assignment and the task, and only applies to FILE tasks: LINK and CODE
+ *       tasks are rejected. Once a task is acknowledged the record is immutable:
+ *       sending `acknowledged: false` is rejected, and retrying with
+ *       `acknowledged: true` never creates a duplicate or resets the original
+ *       `acknowledgedAt`.
+ *     tags:
+ *       - My Courses
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseAssignmentId
+ *               - taskId
+ *               - acknowledged
+ *             properties:
+ *               courseAssignmentId:
+ *                 type: string
+ *                 example: "66d123456789abcdef123456"
+ *               taskId:
+ *                 type: string
+ *                 example: "66d323456789abcdef123456"
+ *               acknowledged:
+ *                 type: boolean
+ *                 example: true
+ *                 description: Must be `true`. Revocations are not allowed.
+ *     responses:
+ *       200:
+ *         description: Task acknowledged successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Task acknowledged successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     courseAssignmentId:
+ *                       type: string
+ *                     taskId:
+ *                       type: string
+ *                     acknowledged:
+ *                       type: boolean
+ *                       example: true
+ *                     acknowledgedAt:
+ *                       type: string
+ *                       format: date-time
+ *       400:
+ *         description: The task does not belong to the assigned course, is not a FILE task, or a revocation was attempted.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Course assignment not found for this employee.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.put('/updateMyTaskAcknowledgement', validateJWT_1.default, (0, validateBody_1.default)(updateMyTaskAcknowledgementSchema_1.default), updateMyTaskAcknowledgementController_1.default.updateMyTaskAcknowledgement);
+/**
+ * @swagger
  * /expertconsultation:
  *   post:
  *     summary: Submit an expert consultation request
@@ -1348,4 +1479,1880 @@ commonRouter.put('/updateMyTaskProgress', validateJWT_1.default, updateMyTaskPro
  *                   example: Failed to submit expert consultation request
  */
 commonRouter.post('/expertconsultation', expertConsultationController_1.default.createExpertConsultation);
+/**
+ * @swagger
+ * /addprogramminglanguage:
+ *   post:
+ *     summary: Add a new programming language
+ *     description: This API allows an authenticated user to create a new programming language in the system.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - languageName
+ *             properties:
+ *               languageName:
+ *                 type: string
+ *                 example: JavaScript
+ *     responses:
+ *       200:
+ *         description: Programming language added successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language added successfully !!
+ *       500:
+ *         description: Error while adding programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while adding programming language !!
+ */
+commonRouter.post('/addprogramminglanguage', validateJWT_1.default, addProgrammingLanguageController_1.default.addProgrammingLanguage);
+/**
+ * @swagger
+ * /updateprogramminglanguage:
+ *   put:
+ *     summary: Update a programming language
+ *     description: This API allows an authenticated user to update an existing programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - languageName
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the programming language
+ *                 example: "65f1a2b3c4d5e6f7890abcd1"
+ *               languageName:
+ *                 type: string
+ *                 example: JavaScript
+ *     responses:
+ *       200:
+ *         description: Programming language updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language updated successfully !!
+ *       500:
+ *         description: Error while updating programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while updating programming language !!
+ */
+commonRouter.put('/updateprogramminglanguage', validateJWT_1.default, updateProgrammingLanguageController_1.default.updateProgrammingLanguage);
+/**
+ * @swagger
+ * /getallprogramminglanguages:
+ *   get:
+ *     summary: Get all programming languages
+ *     description: This API fetches all programming languages available in the system.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Programming languages fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Fetched all programming languages successfully !!
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "65f1a2b3c4d5e6f7890abcd1"
+ *                       languageName:
+ *                         type: string
+ *                         example: JavaScript
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       500:
+ *         description: Error while fetching programming languages
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while fetching all programming languages !!
+ */
+commonRouter.get('/getallprogramminglanguages', validateJWT_1.default, getAllProgrammingLanguagesController_1.default.getAllProgrammingLanguages);
+/**
+ * @swagger
+ * /getprogramminglanguagebyid/{id}:
+ *   get:
+ *     summary: Get a programming language by ID
+ *     description: This API fetches a single programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the programming language to fetch
+ *         example: "65f1a2b3c4d5e6f7890abcd1"
+ *     responses:
+ *       200:
+ *         description: Programming language fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Fetched programming language successfully !!
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "65f1a2b3c4d5e6f7890abcd1"
+ *                     languageName:
+ *                       type: string
+ *                       example: JavaScript
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *       404:
+ *         description: Programming language not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Programming language not found !!
+ *       500:
+ *         description: Error while fetching programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while fetching programming language !!
+ */
+commonRouter.get('/getprogramminglanguagebyid/:id', validateJWT_1.default, getProgrammingLanguageByIdController_1.default.getProgrammingLanguageById);
+/**
+ * @swagger
+ * /deleteprogramminglanguage/{id}:
+ *   delete:
+ *     summary: Delete a programming language by ID
+ *     description: This API deletes a single programming language using its ID.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the programming language to delete
+ *         example: "65f1a2b3c4d5e6f7890abcd1"
+ *     responses:
+ *       200:
+ *         description: Programming language deleted successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Programming language deleted successfully !!
+ *       404:
+ *         description: Programming language not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Programming language not found !!
+ *       500:
+ *         description: Error while deleting programming language
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while deleting programming language !!
+ */
+commonRouter.delete('/deleteprogramminglanguage/:id', validateJWT_1.default, deleteProgrammingLanguageController_1.default.deleteProgrammingLanguage);
+/**
+ * @swagger
+ * /getAllCourses:
+ *   get:
+ *     summary: Get all courses
+ *     description: Get all courses with their thumbnail image URLs, plus aggregate totals of courses, modules, and tasks.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully fetched all courses.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64f123456789abcdef123456"
+ *                       courseName:
+ *                         type: string
+ *                         example: "Node.js"
+ *                       courseDescription:
+ *                         type: string
+ *                         example: "Complete Node.js Backend Development Course"
+ *                       thumbnail:
+ *                         type: string
+ *                         example: "LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       thumbnailUrl:
+ *                         type: string
+ *                         format: uri
+ *                         example: "https://your-bucket.s3.amazonaws.com/LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       status:
+ *                         type: string
+ *                         example: "ACTIVE"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get('/getAllCourses', validateJWT_1.default, getAllCoursesController_1.default.getAllCourses);
+/**
+ * @swagger
+ * /getCourseById/{id}:
+ *   get:
+ *     summary: Get course by ID
+ *     description: Retrieve details of a single course, including its modules, by course ID.
+ *     tags:
+ *       - Content-Writer
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the course to retrieve
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the course.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 courseName:
+ *                   type: string
+ *                 courseDescription:
+ *                   type: string
+ *                 modules:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       moduleName:
+ *                         type: string
+ *                       moduleDescription:
+ *                         type: string
+ *                       courseId:
+ *                         type: string
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.get('/getCourseById/:id', validateJWT_1.default, getCourseByIdController_1.default.getCourseDetailsById);
+/**
+ * @swagger
+ * /getAllActiveCourses:
+ *   get:
+ *     summary: Get all active courses
+ *     description: Get all courses whose status is ACTIVE, with their thumbnail image URLs.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully fetched all active courses.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 totalActiveCourses:
+ *                   type: number
+ *                   example: 5
+ *                 courses:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                         example: "64f123456789abcdef123456"
+ *                       courseName:
+ *                         type: string
+ *                         example: "Node.js"
+ *                       courseDescription:
+ *                         type: string
+ *                         example: "Complete Node.js Backend Development Course"
+ *                       thumbnail:
+ *                         type: string
+ *                         example: "LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       thumbnailUrl:
+ *                         type: string
+ *                         format: uri
+ *                         example: "https://your-bucket.s3.amazonaws.com/LMSData/Courses/CourseThumbnails/836c5b10-8152-482e-beb3-632abf62464d.png"
+ *                       status:
+ *                         type: string
+ *                         example: "ACTIVE"
+ *                       createdAt:
+ *                         type: string
+ *                         format: date-time
+ *                       updatedAt:
+ *                         type: string
+ *                         format: date-time
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error.
+ */
+commonRouter.get('/getAllActiveCourses', validateJWT_1.default, getAllActiveCoursesController_1.default.getAllActiveCourses);
+/**
+ * @swagger
+ * /addCourse:
+ *   post:
+ *     summary: Add a new course
+ *     description: Add a new course to the platform. This action requires authentication.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []  # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               courseName:
+ *                 type: string
+ *               courseDescription:
+ *                 type: string
+ *               coursethumbnail:
+ *                 type: string
+ *                 format: binary
+ *             required:
+ *               - courseName
+ *     responses:
+ *       201:
+ *         description: Successfully added the new course.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.post('/addCourse', validateJWT_1.default, upload.single('coursethumbnail'), (0, validateBody_1.default)(addCourseSchema_1.addCourseSchema), addCourseController_1.default.addNewCourse);
+/**
+ * @swagger
+ * /clonecourse:
+ *   post:
+ *     summary: Clone selected modules and tasks from an archived course
+ *     description: |
+ *       Creates a new ACTIVE course containing only the selected modules and
+ *       tasks of an ARCHIVED source course. Source records are never modified.
+ *       Employee assignments, learner progress, submissions and completion
+ *       records are not copied. The cloned course can subsequently be managed
+ *       through the existing course/module/task APIs.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseId
+ *               - courseName
+ *               - modules
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *                 description: ID of the archived source course.
+ *                 example: 65f2a7c8e4b123456789abcd
+ *               courseName:
+ *                 type: string
+ *                 description: Name for the new cloned course.
+ *                 example: JavaScript Advanced
+ *               modules:
+ *                 type: array
+ *                 minItems: 1
+ *                 description: Modules selected for cloning.
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - moduleId
+ *                   properties:
+ *                     moduleId:
+ *                       type: string
+ *                       description: ID of the module to clone.
+ *                       example: 65f2a7c8e4b123456789abce
+ *                     taskIds:
+ *                       type: array
+ *                       description: IDs of the tasks to clone from this module.
+ *                       items:
+ *                         type: string
+ *                       example:
+ *                         - 65f2a7c8e4b123456789abcf
+ *     responses:
+ *       201:
+ *         description: Course cloned successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Course cloned Successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     courseId:
+ *                       type: string
+ *                       example: 65f2a7c8e4b123456789abd0
+ *                     courseName:
+ *                       type: string
+ *                       example: JavaScript Advanced
+ *                     status:
+ *                       type: string
+ *                       example: ACTIVE
+ *                     modules:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           moduleId:
+ *                             type: string
+ *                           moduleName:
+ *                             type: string
+ *                           tasks:
+ *                             type: array
+ *                             items:
+ *                               type: object
+ *                               properties:
+ *                                 taskId:
+ *                                   type: string
+ *                                 taskName:
+ *                                   type: string
+ *                                 type:
+ *                                   type: string
+ *                                 status:
+ *                                   type: string
+ *       400:
+ *         description: Source course is not archived or the selected modules/tasks are invalid.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Source course not found.
+ *       500:
+ *         description: Server error while cloning the course.
+ */
+commonRouter.post('/clonecourse', validateJWT_1.default, (0, validateBody_1.default)(cloneCourseSchema_1.default), cloneCourseController_1.default.cloneCourse);
+/**
+ * @swagger
+ * /addCourseModule:
+ *   post:
+ *     summary: Add a course module
+ *     description: Add a new module to a course. This action requires authentication.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *               moduleName:
+ *                 type:
+ *               moduleDescription:
+ *                 type: string
+ *               orderIdx:
+ *                 type: integer
+ *                 minimum: 0
+ *                 description: Mandatory ordering index of the module within the course.
+ *                 example: 0
+ *               coursemodulethumbnail:
+ *                 type: string
+ *                 format: binary
+ *             required:
+ *               - moduleName
+ *               - courseId
+ *               - orderIdx
+ *     responses:
+ *       201:
+ *         description: Successfully added the course module.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.post('/addCourseModule', validateJWT_1.default, upload.single('coursemodulethumbnail'), (0, validateBody_1.default)(addCourseModuleSchema_1.addCourseModuleSchema), addCourseModuleController_1.default.addModuleToCourse);
+/**
+ * @swagger
+ * /addcoursetask:
+ *   post:
+ *     summary: Add a new task to a course module
+ *     description: |
+ *       Creates a new task under a course module.
+ *       Supported task types are LINK, FILE, and CODE.
+ *       For LINK tasks, the link must be provided.
+ *       For FILE tasks, a taskFile must be uploaded.
+ *       For CODE tasks, taskDescription is the coding question and the authenticated writer must have a valid OpenRouter API key.
+ *       A thumbnailFile can optionally be uploaded for any task type.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - moduleId
+ *               - taskName
+ *               - taskDescription
+ *               - type
+ *               - orderIdx
+ *             properties:
+ *               moduleId:
+ *                 type: string
+ *                 description: ID of the course module to which the task will be added.
+ *                 example: 65f2a7c8e4b123456789abcd
+ *               taskName:
+ *                 type: string
+ *                 description: Name of the course task.
+ *                 example: Introduction to JavaScript
+ *               taskDescription:
+ *                 type: string
+ *                 description: Task description; provide the coding question for CODE tasks.
+ *                 example: Learn the basics of JavaScript programming.
+ *               type:
+ *                 type: string
+ *                 enum:
+ *                   - LINK
+ *                   - FILE
+ *                   - CODE
+ *                   - QUIZ
+ *                 description: Type of the course task.
+ *                 example: LINK
+ *               link:
+ *                 type: string
+ *                 description: URL for LINK task type.
+ *                 example: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+ *               acknowledgementText:
+ *                 type: string
+ *                 description: Acknowledgement copy employees must accept; applies to FILE tasks only.
+ *                 example: Please confirm that you have read the uploaded document.
+ *               taskFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: File for FILE task type.
+ *               orderIdx:
+ *                 type: integer
+ *                 minimum: 0
+ *                 description: Required task position. Must be a non-negative integer and unique within the selected module.
+ *                 example: 0
+ *               thumbnailFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: Optional thumbnail image for the task.
+ *     responses:
+ *       201:
+ *         description: Course task added successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Course task added successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     success:
+ *                       type: boolean
+ *                       example: true
+ *       400:
+ *         description: Invalid task fields or missing content/upload, coding question, or valid OpenRouter API key.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid course task request.
+ *                 errors:
+ *                   type: array
+ *                   items:
+ *                     type: string
+ *                   example:
+ *                     - A valid HTTP or HTTPS link is required for LINK tasks.
+ *       502:
+ *         description: OpenRouter failed to generate the coding task boilerplate.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to add course task
+ *       500:
+ *         description: Internal server error while adding the course task.
+ */
+commonRouter.post('/addcoursetask', validateJWT_1.default, upload.fields([{ name: 'taskFile', maxCount: 1 }, { name: 'thumbnailFile', maxCount: 1 }]), validateAddCourseTask_1.default, addCourseTaskController_1.default.addTaskToModule);
+/**
+ * @swagger
+ * /createQuizQuestion:
+ *   post:
+ *     summary: Create a quiz question for an existing QUIZ task (Content Writer)
+ *     description: |
+ *       Adds a question to a course task whose type is `QUIZ`. The question is
+ *       stored in the `coursequizquestions` collection. Supported types:
+ *       - `RADIO` / `DROPDOWN`: at least four options, exactly one correct.
+ *       - `CHECKBOX`: at least four options, at least one correct.
+ *       - `TOGGLE`: exactly two options, exactly one correct.
+ *       - `TEXTAREA`: free text, options are not required.
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - question
+ *               - type
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *                 example: 6ac5fa913be811de4383ef9d
+ *               question:
+ *                 type: string
+ *                 example: Which is the correct answer?
+ *               type:
+ *                 type: string
+ *                 enum: [RADIO, CHECKBOX, TOGGLE, DROPDOWN, TEXTAREA]
+ *                 example: RADIO
+ *               options:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     value:
+ *                       type: string
+ *                       example: Option A
+ *                     isanswer:
+ *                       type: boolean
+ *                       example: false
+ *               status:
+ *                 type: string
+ *                 enum: [SHOW, HIDE]
+ *                 default: SHOW
+ *     responses:
+ *       201:
+ *         description: Question created successfully.
+ *       400:
+ *         description: Invalid payload, invalid option rules, or the task is not a QUIZ task.
+ *       401:
+ *         description: Unauthorized. Missing or invalid token.
+ *       404:
+ *         description: Task not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.post('/createQuizQuestion', validateJWT_1.default, (0, validateBody_1.default)(createQuizQuestionSchema_1.createQuizQuestionSchema), createQuizQuestionController_1.default.createQuizQuestion);
+/**
+ * @swagger
+ * /getAllQuizQuestions/{taskId}:
+ *   get:
+ *     summary: Get all quiz questions of a task (Content Writer)
+ *     description: |
+ *       Returns every non-deleted question belonging to a task whose type is
+ *       `QUIZ`, ordered by creation. Content Writers see both `SHOW` and `HIDE`
+ *       questions. Each question includes its options.
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the QUIZ task whose questions to fetch
+ *     responses:
+ *       200:
+ *         description: Questions fetched successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Quiz questions fetched successfully !
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       _id:
+ *                         type: string
+ *                       taskId:
+ *                         type: string
+ *                       question:
+ *                         type: string
+ *                       type:
+ *                         type: string
+ *                         enum: [RADIO, CHECKBOX, TOGGLE, DROPDOWN, TEXTAREA]
+ *                       options:
+ *                         type: array
+ *                         items:
+ *                           type: object
+ *                           properties:
+ *                             value:
+ *                               type: string
+ *                             isanswer:
+ *                               type: boolean
+ *                       status:
+ *                         type: string
+ *                         enum: [SHOW, HIDE]
+ *       400:
+ *         description: Invalid taskId, or the task is not a QUIZ task.
+ *       401:
+ *         description: Unauthorized. Missing or invalid token.
+ *       404:
+ *         description: Task not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.get('/getAllQuizQuestions/:taskId', validateJWT_1.default, getAllQuizQuestionsController_1.default.getAllQuizQuestions);
+/**
+ * @swagger
+ * /getQuizQuestion/{id}:
+ *   get:
+ *     summary: Get a single quiz question by its ID (Content Writer)
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Question ID
+ *     responses:
+ *       200:
+ *         description: Question fetched successfully.
+ *       400:
+ *         description: Invalid question ID.
+ *       401:
+ *         description: Unauthorized.
+ *       404:
+ *         description: Question not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.get('/getQuizQuestion/:id', validateJWT_1.default, getQuizQuestionByIdController_1.default.getQuizQuestionById);
+/**
+ * @swagger
+ * /getQuizById/{taskId}:
+ *   get:
+ *     summary: Get quiz questions for a QUIZ task (Employee)
+ *     description: |
+ *       Returns all published quiz questions for the given QUIZ task, in
+ *       randomized order, with options independently shuffled. The `isanswer`
+ *       flag and any other correct-answer hints are never returned. TEXTAREA
+ *       questions return no options. Each successful fetch mints a new quiz
+ *       attemptId (even when reattempting) that must be used in later submission.
+ *     tags:
+ *       - Common-Quiz
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Quiz fetched successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Quiz fetched successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                     attemptId:
+ *                       type: string
+ *                     taskName:
+ *                       type: string
+ *                     totalQuestions:
+ *                       type: integer
+ *                     questions:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *       400:
+ *         description: Invalid taskId, task not a QUIZ, or task inactive
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Course assignment not found for this employee / task not found
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.get('/getQuizById/:taskId', validateJWT_1.default, getQuizByIdController_1.default.getQuizById);
+/**
+ * @swagger
+ * /validateQuiz:
+ *   post:
+ *     summary: Validate quiz answers against the stored answer key (Employee)
+ *     description: |
+ *       Scores the employee's submitted answers for a quiz attempt on the
+ *       server. RADIO, DROPDOWN and TOGGLE compare against the single correct
+ *       option; CHECKBOX requires an exact set match; TEXTAREA is returned for
+ *       review but unscored. An omitted answer for a scored question counts as
+ *       incorrect. The score is stored on the attempt so a later submitQuiz
+ *       finalizes the same result; the attempt can be revalidated until it is
+ *       finalized. This endpoint never marks the task completed and never
+ *       unlocks the next task.
+ *     tags:
+ *       - Common-Quiz
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - attemptId
+ *               - answers
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               attemptId:
+ *                 type: string
+ *               answers:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - questionId
+ *                   properties:
+ *                     questionId:
+ *                       type: string
+ *                     selectedOptionIds:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                     textAnswer:
+ *                       type: string
+ *     responses:
+ *       200:
+ *         description: Quiz validated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Quiz validated successfully
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                     attemptId:
+ *                       type: string
+ *                     totalScoredQuestions:
+ *                       type: integer
+ *                     correctAnswers:
+ *                       type: integer
+ *                     incorrectAnswers:
+ *                       type: integer
+ *                     percentage:
+ *                       type: number
+ *                       nullable: true
+ *                     passingPercentage:
+ *                       type: number
+ *                     passed:
+ *                       type: boolean
+ *                       nullable: true
+ *                     review:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *       400:
+ *         description: Invalid ids, invalid answers payload, or not a QUIZ task
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Task not found / course assignment not found / attempt not found
+ *       409:
+ *         description: Attempt already finalized
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.post('/validateQuiz', validateJWT_1.default, validateQuizController_1.default.validateQuiz);
+/**
+ * @swagger
+ * /submitQuiz:
+ *   post:
+ *     summary: Finalize a validated quiz attempt (Employee)
+ *     description: |
+ *       Finalizes the employee's validated quiz attempt. The score is never
+ *       accepted from the client: it is read back from the trusted attempt
+ *       snapshot written by validateQuiz and re-derived server-side. A passing
+ *       (or unscored) attempt marks the QUIZ task complete and advances the
+ *       course through the same routine normal task completion uses; the next
+ *       task's progression then follows the existing course progression rules.
+ *       A failed score is not eligible for finalization — the score is returned
+ *       and the employee must start a new attempt. The submission is idempotent:
+ *       repeating a finalized submission changes nothing and returns the stored
+ *       result. Attempt history is preserved.
+ *     tags:
+ *       - Common-Quiz
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - attemptId
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               attemptId:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Quiz submitted (or already submitted) successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: Quiz submitted successfully !
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                     attemptId:
+ *                       type: string
+ *                     attemptNumber:
+ *                       type: integer
+ *                     totalScoredQuestions:
+ *                       type: integer
+ *                     correctAnswers:
+ *                       type: integer
+ *                     incorrectAnswers:
+ *                       type: integer
+ *                     percentage:
+ *                       type: number
+ *                       nullable: true
+ *                     passingPercentage:
+ *                       type: number
+ *                     passed:
+ *                       type: boolean
+ *                       nullable: true
+ *                     alreadySubmitted:
+ *                       type: boolean
+ *                     courseStatus:
+ *                       type: string
+ *                     isCompleted:
+ *                       type: boolean
+ *                     completedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       nullable: true
+ *       400:
+ *         description: Invalid ids, not a QUIZ/active task, attempt not validated, or failed score not eligible for finalization
+ *       401:
+ *         description: Unauthorized
+ *       404:
+ *         description: Task not found / course assignment not found / attempt not found
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.post('/submitQuiz', validateJWT_1.default, submitQuizController_1.default.submitQuiz);
+/**
+ * @swagger
+ * /updateQuizQuestion/{questionId}:
+ *   put:
+ *     summary: Update a quiz question (Content Writer)
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: questionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *     responses:
+ *       200:
+ *         description: Updated successfully
+ *       400:
+ *         description: Validation error/invalid ID
+ *       404:
+ *         description: Question not found
+ *       409:
+ *         description: Duplicate question
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.put('/updateQuizQuestion/:questionId', validateJWT_1.default, (0, validateBody_1.default)(createQuizQuestionSchema_1.updateQuizQuestionSchema), updateQuizQuestionController_1.default.updateQuizQuestion);
+/**
+ * @swagger
+ * /updateQuizQuestionStatus/{questionId}:
+ *   patch:
+ *     summary: Update quiz question status (SHOW/HIDE)
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: questionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - status
+ *             properties:
+ *               status:
+ *                 type: string
+ *                 enum: [SHOW, HIDE]
+ *     responses:
+ *       200:
+ *         description: Updated successfully
+ *       400:
+ *         description: Invalid status/ID
+ *       404:
+ *         description: Question not found
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.patch('/updateQuizQuestionStatus/:questionId', validateJWT_1.default, updateQuizQuestionStatusController_1.default.updateQuizQuestionStatus);
+/**
+ * @swagger
+ * /deleteQuizQuestion/{questionId}:
+ *   delete:
+ *     summary: Soft delete a quiz question (Content Writer)
+ *     description: >
+ *       Flags the question as deleted (isDeleted = true). The record is kept and
+ *       excluded from all list, read and quiz-taking queries.
+ *     tags:
+ *       - QUIZ
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: questionId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Question deleted successfully.
+ *       400:
+ *         description: Invalid question ID.
+ *       401:
+ *         description: Unauthorized.
+ *       404:
+ *         description: Question or task not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.delete('/deleteQuizQuestion/:questionId', validateJWT_1.default, deleteQuizQuestionController_1.default.deleteQuizQuestion);
+/**
+ * @swagger
+ * /getCourseTaskContent/{id}:
+ *   get:
+ *     summary: Get a task's content (for viewing in a new tab)
+ *     description: |
+ *       Serves the content of a course task. For tasks of type `LINK` this
+ *       redirects (302) to the stored external URL; for type `FILE` it streams
+ *       the file from S3 inline so the browser renders or downloads it.
+ *       The JWT may be supplied via the `auth_token` header or query parameter
+ *       (so the URL can be opened directly in a new browser tab).
+ *     tags:
+ *       - Content-Writer
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the task whose content to serve
+ *       - in: query
+ *         name: auth_token
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: JWT token (alternative to the auth_token header)
+ *     responses:
+ *       200:
+ *         description: File content streamed inline.
+ *       302:
+ *         description: Redirect to the external link.
+ *       401:
+ *         description: Unauthorized. Missing or invalid token.
+ *       404:
+ *         description: Task or content not found.
+ *       500:
+ *         description: Server error
+ */
+commonRouter.get('/getCourseTaskContent/:id', validateJWTForMedia_1.default, getCourseTaskContentController_1.default.getCourseTaskContent);
+/**
+ * @swagger
+ * /getCourseTaskBoilerplate/{taskId}/{languageId}:
+ *   get:
+ *     summary: Get language-specific starter code for an assigned coding task
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: taskId
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: languageId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Starter code for the selected language
+ *       403:
+ *         description: The task is not part of the authenticated user's assigned courses
+ *       404:
+ *         description: Task or programming language not found
+ *       502:
+ *         description: Starter code generation failed
+ */
+commonRouter.get('/getCourseTaskBoilerplate/:taskId/:languageId', validateJWT_1.default, getCourseTaskBoilerplateController_1.default.getCourseTaskBoilerplate);
+/**
+ * @swagger
+ * /generateCourseTaskTestCases:
+ *   post:
+ *     summary: Generate or reuse test cases for a coding course task
+ *     description: Generates test cases from the coding task description using the authenticated user's saved OpenRouter key. Existing cases are reused unless forceRegenerate is true.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               forceRegenerate:
+ *                 type: boolean
+ *                 default: false
+ *     responses:
+ *       200:
+ *         description: Test cases generated or reused
+ *       400:
+ *         description: Invalid input, task type, or OpenRouter key
+ *       403:
+ *         description: Task is not part of the user's assigned courses
+ *       404:
+ *         description: Course task not found
+ *       409:
+ *         description: Test cases are currently being generated
+ *       502:
+ *         description: Test-case generation failed
+ */
+commonRouter.post('/generateCourseTaskTestCases', validateJWT_1.default, generateCourseTaskTestCasesController_1.default.generateCourseTaskTestCases);
+/**
+ * @swagger
+ * /runCourseTaskCode:
+ *   post:
+ *     summary: Run code against all saved test cases and get AI feedback
+ *     description: Executes the latest source code against every saved test case for a CODE task sequentially on the backend and compares each actual output with its saved expected output, returning per-case and aggregate results. Every Run/Re-run also returns fresh advisory AI evaluation feedback for the submitted source and these execution results. Hidden test-case inputs and expected outputs are never sent to the AI provider or returned to the client. Test cases are generated on first use and reused afterwards.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - taskId
+ *               - languageId
+ *               - sourceCode
+ *             properties:
+ *               taskId:
+ *                 type: string
+ *               languageId:
+ *                 type: string
+ *               sourceCode:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Code executed and compared against every saved test case
+ *       400:
+ *         description: Invalid input, task type, or language
+ *       403:
+ *         description: Task is not part of the user's assigned courses
+ *       404:
+ *         description: Course task not found or test cases not generated
+ */
+commonRouter.post('/runCourseTaskCode', validateJWT_1.default, runCourseTaskCodeController_1.default.runCourseTaskCode);
+/**
+ * @swagger
+ * /submitCourseTaskCode:
+ *   post:
+ *     summary: Submit a coding-task solution
+ *     description: Re-executes the submitted source against the task's saved mandatory test cases and stores a submission only when compilation and every test pass. Any canSubmit value sent by the client is ignored.
+ *     tags:
+ *       - Common
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - codingTaskId
+ *               - language
+ *               - sourceCode
+ *             properties:
+ *               codingTaskId:
+ *                 type: string
+ *               language:
+ *                 type: string
+ *               sourceCode:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Submission saved, or rejected because test cases failed
+ *       400:
+ *         description: Invalid submission request
+ *       403:
+ *         description: Coding task is not assigned to the current user
+ *       404:
+ *         description: Coding task not found
+ */
+commonRouter.post('/submitCourseTaskCode', validateJWT_1.default, submitCodeController_1.default.submitCode);
+/**
+ * @swagger
+ * /updatecoursetask:
+ *   put:
+ *     summary: Update a course task
+ *     description: |
+ *       Update an existing course task as a Content Writer.
+ *       The task name, description, status, order index, and task type can be updated.
+ *       A new task file or thumbnail can optionally be uploaded.
+ *       For LINK tasks, provide the link.
+ *       For FILE tasks, provide the taskFile.
+ *       For CODE tasks, no file or link is required.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - moduleId
+ *               - taskName
+ *               - taskDescription
+ *               - status
+ *               - type
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course task to update.
+ *                 example: 64f123456789abcdef123456
+ *               moduleId:
+ *                 type: string
+ *                 description: ID of the course module associated with the task.
+ *                 example: 64f123456789abcdef654321
+ *               taskName:
+ *                 type: string
+ *                 description: Updated name of the course task.
+ *                 example: Node.js Introduction
+ *               taskDescription:
+ *                 type: string
+ *                 description: Updated description of the course task.
+ *                 example: Learn the fundamentals of Node.js
+ *               status:
+ *                 type: string
+ *                 enum:
+ *                   - ACTIVE
+ *                   - ARCHIVE
+ *                 description: Updated status of the course task.
+ *                 example: ACTIVE
+ *               orderIdx:
+ *                 type: integer
+ *                 minimum: 1
+ *                 description: Updated position of the task within its module. Must be unique per module.
+ *                 example: 2
+ *               type:
+ *                 type: string
+ *                 enum:
+ *                   - LINK
+ *                   - FILE
+ *                   - CODE
+ *                 description: Type of the course task.
+ *                 example: CODE
+ *               link:
+ *                 type: string
+ *                 description: External link for LINK task type.
+ *                 example: https://developer.mozilla.org/en-US/docs/Web/JavaScript
+ *               acknowledgementText:
+ *                 type: string
+ *                 description: Acknowledgement copy employees must accept; applies to FILE tasks only.
+ *                 example: Please confirm that you have read the uploaded document.
+ *               taskFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: |
+ *                   Optional task content file.
+ *                   Required when the task type is FILE and new file content is being uploaded.
+ *               thumbnailFile:
+ *                 type: string
+ *                 format: binary
+ *                 description: |
+ *                   Optional task thumbnail image.
+ *                   Supported formats are JPG, JPEG, PNG, and WEBP.
+ *     responses:
+ *       200:
+ *         description: Course task updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 responseAfterUpdate:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 64f123456789abcdef123456
+ *                     moduleId:
+ *                       type: string
+ *                       example: 64f123456789abcdef654321
+ *                     taskName:
+ *                       type: string
+ *                       example: Node.js Introduction
+ *                     taskDescription:
+ *                       type: string
+ *                       example: Learn the fundamentals of Node.js
+ *                     thumbnail:
+ *                       type: string
+ *                       example: LMSData/Courses/CourseTaskThumbnails/abc123.png
+ *                     status:
+ *                       type: string
+ *                       example: ACTIVE
+ *                     orderIdx:
+ *                       type: integer
+ *                       example: 2
+ *                     type:
+ *                       type: string
+ *                       enum:
+ *                         - LINK
+ *                         - FILE
+ *                         - CODE
+ *                       example: FILE
+ *                     content:
+ *                       type: string
+ *                       example: LMSData/Courses/CourseTaskContent/video123.mp4
+ *                     contentMimeType:
+ *                       type: string
+ *                       example: video/mp4
+ *                     contentFileName:
+ *                       type: string
+ *                       example: nodejs-tutorial.mp4
+ *                     acknowledgementText:
+ *                       type: string
+ *                       example: Please confirm that you have read the uploaded document.
+ *       400:
+ *         description: Invalid input, status, type, or thumbnail type.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Invalid course task details.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: Failed to update course task.
+ */
+commonRouter.put('/updatecoursetask', validateJWT_1.default, upload.fields([{ name: 'taskFile', maxCount: 1 }, { name: 'thumbnailFile', maxCount: 1 }]), (0, validateBody_1.default)(updateCourseTaskSchema_1.default), updateCourseTaskController_1.default.updateCourseTask);
+/**
+ * @swagger
+ * /reordertasks:
+ *   put:
+ *     summary: Reorder tasks within a course module
+ *     description: Updates the orderIdx of the provided tasks. All tasks must belong to the specified module and orderIdx values must be unique.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - moduleId
+ *               - tasks
+ *             properties:
+ *               moduleId:
+ *                 type: string
+ *                 example: 64f1c2d3a1b2c3d4e5f60718
+ *               tasks:
+ *                 type: array
+ *                 minItems: 1
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - taskId
+ *                     - orderIdx
+ *                   properties:
+ *                     taskId:
+ *                       type: string
+ *                       example: 64f1c2d3a1b2c3d4e5f60719
+ *                     orderIdx:
+ *                       type: integer
+ *                       minimum: 1
+ *                       example: 1
+ *     responses:
+ *       200:
+ *         description: Tasks reordered successfully.
+ *       400:
+ *         description: Invalid input, duplicate order indexes, or tasks that do not belong to the module.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Module or task not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.put('/reordertasks', validateJWT_1.default, (0, validateBody_1.default)(reorderCourseTasksSchema_1.default), reorderCourseTasksController_1.default.reorderCourseTasks);
+/**
+ * @swagger
+ * /updatecoursemodule:
+ *   put:
+ *     summary: Update a course module by content writer
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - courseId
+ *               - moduleName
+ *               - moduleDescription
+ *               - status
+ *               - orderIdx
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course module
+ *               courseId:
+ *                 type: string
+ *                 description: ID of the course
+ *               moduleName:
+ *                 type: string
+ *                 description: Updated module name
+ *               moduleDescription:
+ *                 type: string
+ *                 description: Updated module description
+ *               orderIdx:
+ *                 type: integer
+ *                 minimum: 0
+ *                 description: Mandatory ordering index of the module within the course
+ *                 example: 0
+ *               thumbnail:
+ *                 type: string
+ *                 format: binary
+ *                 description: Updated module thumbnail image (optional)
+ *               status:
+ *                 type: string
+ *                 description: Updated status of the module ("ACTIVE" or "ARCHIVE")
+ *     responses:
+ *       200:
+ *         description: Module updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Invalid input or status provided
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.put('/updatecoursemodule', validateJWT_1.default, upload.single('thumbnail'), (0, validateBody_1.default)(addCourseModuleSchema_1.updateCourseModuleSchema), updateCourseModuleController_1.default.updateCourseModule);
+/**
+ * @swagger
+ * /reordermodules:
+ *   put:
+ *     summary: Reorder modules within a course
+ *     description: Updates the orderIdx of the provided modules. All modules must belong to the specified course and orderIdx values must be unique.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - courseId
+ *               - modules
+ *             properties:
+ *               courseId:
+ *                 type: string
+ *                 example: 64f1c2d3a1b2c3d4e5f60718
+ *               modules:
+ *                 type: array
+ *                 minItems: 1
+ *                 items:
+ *                   type: object
+ *                   required:
+ *                     - moduleId
+ *                     - orderIdx
+ *                   properties:
+ *                     moduleId:
+ *                       type: string
+ *                       example: 64f1c2d3a1b2c3d4e5f60719
+ *                     orderIdx:
+ *                       type: integer
+ *                       minimum: 1
+ *                       example: 1
+ *     responses:
+ *       200:
+ *         description: Modules reordered successfully.
+ *       400:
+ *         description: Invalid input, duplicate order indexes, or modules that do not belong to the course.
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       404:
+ *         description: Course or module not found.
+ *       500:
+ *         description: Internal server error.
+ */
+commonRouter.put('/reordermodules', validateJWT_1.default, (0, validateBody_1.default)(reorderCourseModulesSchema_1.default), reorderCourseModulesController_1.default.reorderCourseModules);
+/**
+ * @swagger
+ * /updatecourse:
+ *   put:
+ *     summary: Update course details (name, description, and status)
+ *     description: Allows a content writer to update a course by providing its ID along with new values for name, description, and status.
+ *     tags:
+ *       - Content-Writer
+ *     security:
+ *       - BearerAuth: [] # JWT Bearer token required
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - courseName
+ *               - courseDescription
+ *               - status
+ *             properties:
+ *               id:
+ *                 type: string
+ *                 description: ID of the course
+ *               courseName:
+ *                 type: string
+ *                 description: Updated course name
+ *               courseDescription:
+ *                 type: string
+ *                 description: Updated course description
+ *               thumbnail:
+ *                 type: string
+ *                 format: binary
+ *                 description: Updated course thumbnail image (optional)
+ *               status:
+ *                 type: string
+ *                 enum:
+ *                   - ACTIVE
+ *                   - ARCHIVE
+ *                 description: Updated status of the course ("ACTIVE" or "ARCHIVE")
+ *     responses:
+ *       200:
+ *         description: Course updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *       400:
+ *         description: Invalid input or status provided
+ *       401:
+ *         description: Unauthorized. Missing or invalid Authorization header.
+ *       500:
+ *         description: Internal server error
+ */
+commonRouter.put('/updatecourse', validateJWT_1.default, upload.single('thumbnail'), (0, validateBody_1.default)(addCourseSchema_1.updateCourseSchema), updateCourseController_1.default.updateCourse);
 exports.default = commonRouter;

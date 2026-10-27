@@ -5,90 +5,256 @@ import addNewCourseTaskService from '../../services/contentwriter/addCourseTaskS
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
 import { courseTaskContentFolder, courseTaskThumbnailsFolder } from '../../config/awsS3Config';
 import { COURSE_TASK_SUCCESS_MESSAGES, COURSE_TASK_ERRORS_MESSAGES } from '../../constants/contentwriter/coursetaskMessages';
+import { isAllowedCourseTaskFile } from '../../util/validateCourseTaskFile';
+
+
+/**
+ * Upload file to S3 and return the stored object key.
+ *
+ * Existing S3 functionality is kept unchanged.
+ */
+const uploadToS3 = async ( file: Express.Multer.File, folder: string): Promise<string> => {
+    const uniqueName = uuidv4() + path.extname(file.originalname);
+
+    await uploadThumbnailToS3.uploadThumbnailToS3(
+        uniqueName,
+        file.buffer,
+        file.mimetype,
+        folder
+    );
+
+    return `${folder}/${uniqueName}`;
+};
 
 const addTaskToModule = async (req: Request, res: Response) => {
     try {
-        const { moduleId, taskName, taskDescription, link } = req.body;
+        const { moduleId, taskName, taskDescription, link, type, acknowledgementText, orderIdx } = req.body;
+
+        if (
+            orderIdx === undefined ||
+            orderIdx === null ||
+            orderIdx === '' ||
+            !Number.isInteger(Number(orderIdx)) ||
+            Number(orderIdx) < 1
+        ) {
+            return res.status(400).json({
+                success: false,
+                message:
+                    COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_ORDER_IDX_MESSAGE
+            });
+        }
+
+        const parsedOrderIdx = Number(orderIdx);
+
         const status = 'ACTIVE';
-        //get uploaded files 
-        //  taskFile       -> PDF, Word, Video, etc.
-        //  thumbnailFile  -> JPG, PNG, WEBP, etc.
-        const files = req.files as {[fieldname: string]: Express.Multer.File[]};
+
+        const taskType = String(type || '').toUpperCase();
+
+        if (!taskType ) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_TYPE_MESSAGE
+            });
+        }
+
+        if (taskType === 'CODE') {
+            if (!String(taskName || '').trim()) {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_NAME_REQUIRED_MESSAGE
+                });
+            }
+        }
+
+        if (taskType === 'CODE' && !String(taskDescription || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_CODING_TASK_DESCRIPTION_MESSAGE
+            });
+        }
+
+        if (taskType === 'QUIZ' && !String(taskDescription || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_QUIZ_TASK_MESSAGE
+            });
+        }
+
+        if (taskType !== 'FILE' && String(acknowledgementText || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ACKNOWLEDGEMENT_FOR_FILE_ONLY_MESSAGE
+            });
+        }
+
+        /**
+         * ---------------------------------------------------------
+         * Uploaded files
+         * ---------------------------------------------------------
+         *
+         * taskFile      -> only required for FILE
+         * thumbnailFile -> optional for every task type
+         */
+        const files = req.files as {
+            [fieldname: string]: Express.Multer.File[];
+        };
 
         const taskFile = files?.taskFile?.[0];
         const thumbnailFile = files?.thumbnailFile?.[0];
 
-        // A task's content is flexible: either an uploaded file (pdf/word/any)
-        // or an external link (YouTube, blog, etc).
-        let type = 'LINK';
-        let content = link || '';
+        /**
+         * ---------------------------------------------------------
+         * Task content
+         * ---------------------------------------------------------
+         */
+        let content = '';
         let contentMimeType = '';
         let contentFileName = '';
 
-        // Thumbnail path
+        /**
+         * ---------------------------------------------------------
+         * LINK
+         * ---------------------------------------------------------
+         *
+         * Store the supplied link as content.
+         */
+        if (taskType === 'LINK') {
+            content = String(link || '').trim();
 
+            if (!content) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_CONTENT_MESSAGE
+                });
+            }
+        }
+
+        /**
+         * ---------------------------------------------------------
+         * FILE
+         * ---------------------------------------------------------
+         *
+         * Existing S3 upload functionality.
+         */
+        if (taskType === 'FILE') {
+            if (!taskFile) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_CONTENT_MESSAGE
+                });
+            }
+
+            if (!isAllowedCourseTaskFile(taskFile)) {
+                return res.status(400).json({
+                    success: false,
+                    message:
+                        COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_INVALID_FILE_TYPE_MESSAGE
+                });
+            }
+
+            content = await uploadToS3(
+                taskFile,
+                courseTaskContentFolder
+            );
+
+            contentMimeType = taskFile.mimetype;
+            contentFileName = taskFile.originalname;
+        }
+
+        /**
+         * ---------------------------------------------------------
+         * Thumbnail
+         * ---------------------------------------------------------
+         *
+         * Existing S3 thumbnail upload remains unchanged.
+         */
         let thumbnailPath = '';
 
-        // When a file is uploaded, push it to S3 and store the object key.
-        if (taskFile) {
-            const { originalname, buffer, mimetype } = taskFile;
-            const uniqueName = uuidv4() + path.extname(originalname);
-            const s3Key = `${courseTaskContentFolder}/${uniqueName}`;
-
-            await uploadThumbnailToS3.uploadThumbnailToS3(uniqueName, buffer, mimetype, courseTaskContentFolder);
-
-            type = 'FILE';
-            content = s3Key;
-            contentMimeType = mimetype;
-            contentFileName = originalname;
-        }
-
         if (thumbnailFile) {
-            const { originalname, buffer, mimetype } = thumbnailFile;
-
-            const uniqueName = uuidv4() + path.extname(originalname);
-
-            thumbnailPath = `${courseTaskThumbnailsFolder}/${uniqueName}`;
-
-            await uploadThumbnailToS3.uploadThumbnailToS3(uniqueName, buffer, mimetype, courseTaskThumbnailsFolder);
+            thumbnailPath = await uploadToS3(
+                thumbnailFile,
+                courseTaskThumbnailsFolder
+            );
         }
 
+        
+        const responseAfteraddingCourseTask =
+            await addNewCourseTaskService.addCourseTask(
+                moduleId,
+                taskName,
+                taskDescription,
+                thumbnailPath,
+                status,
+                taskType,
+                content,
+                contentMimeType,
+                contentFileName,
+                req.user?.userId || '',
+                parsedOrderIdx,
+                acknowledgementText
+                
+            );
 
-        if (!content) {
-            return res
-            .status(400).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_MISSING_CONTENT_MESSAGE });
-        }
+        if (
+            responseAfteraddingCourseTask &&
+            'success' in responseAfteraddingCourseTask &&
+            responseAfteraddingCourseTask.success === false
+        ) {
+            if (
+                responseAfteraddingCourseTask.message === 'DUPLICATE_ORDER_IDX'
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_DUPLICATE_ORDER_IDX_MESSAGE
+                });
+            }
 
-        const responseAfteraddingCourseTask: any = await addNewCourseTaskService.addCourseTask(
-            moduleId,
-            taskName,
-            taskDescription,
-            thumbnailPath,
-            status,
-            type,
-            content,
-            contentMimeType,
-            contentFileName,
-        );
-
-        if (responseAfteraddingCourseTask && responseAfteraddingCourseTask.id) {
-            return res.status(201).json({
-                message: COURSE_TASK_SUCCESS_MESSAGES.COURSE_TASK_ADD_SUCCESS_MESSAGE,
-                taskId: responseAfteraddingCourseTask.id,
-                taskName: responseAfteraddingCourseTask.taskName,
-                taskDescription: responseAfteraddingCourseTask.taskDescription,
-                type: responseAfteraddingCourseTask.type,
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ADD_ERROR_MESSAGE
             });
         }
 
-        return res
-            .status(400)
-            .json({ message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ADD_ERROR_MESSAGE });
+        return res.status(201).json({
+            success: true,
+            message:
+                COURSE_TASK_SUCCESS_MESSAGES.COURSE_TASK_ADD_SUCCESS_MESSAGE,
+            data: responseAfteraddingCourseTask
+        });
+
     } catch (error: any) {
-        console.error(`Error in adding Task to Module: ${error}`);
-        return res
-            .status(500)
-            .json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ADD_ERROR_MESSAGE });
+        console.error( `Error in adding Task to Module: ${error}`);
+        if (
+            error?.message === 'USER_OPENROUTER_KEY_NOT_FOUND' ||
+            error?.message === 'OPENROUTER_KEY_NOT_FOUND'
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_OPENROUTER_KEY_MISSING_MESSAGE
+            });
+        }
+        if (error?.message === 'OPENROUTER_KEY_INVALID' || error?.message === 'OPENROUTER_API_KEY_INVALID_FORMAT') {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_OPENROUTER_KEY_INVALID_MESSAGE
+            });
+        }
+
+        if (error?.message === 'CODING_TASK_DESCRIPTION_REQUIRED') {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_CODING_TASK_DESCRIPTION_MESSAGE
+            });
+        }
+        if (error?.message === 'COURSE_TASK_BOILERPLATE_GENERATION_FAILED') {
+            return res.status(502).json({
+                success: false,
+                message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_BOILERPLATE_GENERATION_ERROR_MESSAGE
+            });
+        }
+        return res.status(500).json({ success: false, message: COURSE_TASK_ERRORS_MESSAGES.COURSE_TASK_ADD_ERROR_MESSAGE });
     }
 };
 

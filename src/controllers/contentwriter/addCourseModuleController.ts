@@ -6,10 +6,25 @@ import { v4 as uuidv4 } from 'uuid';
 import uploadThumbnailToS3 from '../../util/manageCourseMedia';
 import { courseModuleThumbnailsFolder } from '../../config/awsS3Config';
 
+
 const addModuleToCourse = async (req: Request, res: Response) => {
     try {
-        const { courseId, moduleName, moduleDescription } = req.body;
+        const { courseId, moduleName, moduleDescription, orderIdx } = req.body;
         let uniqueThumbnailKey: string = '';
+
+        if (!String(courseId || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_COURSE_ID_REQUIRED_MESSAGE
+            });
+        }
+
+        if (!String(moduleName || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_NAME_REQUIRED_MESSAGE
+            });
+        }
 
         // Code to upload the thumbnail to AWS S3 //
         if (req.file) {
@@ -25,10 +40,19 @@ const addModuleToCourse = async (req: Request, res: Response) => {
                 })
         }
 
-        const responseAfteraddingCourseModule = await addCourseModuleService.addNewCourseModule(courseId, moduleName, moduleDescription, uniqueThumbnailKey, 'ACTIVE');
+        const responseAfteraddingCourseModule = await addCourseModuleService.addNewCourseModule(courseId, moduleName, moduleDescription, uniqueThumbnailKey, 'ACTIVE', orderIdx);
+
+        if (
+            !responseAfteraddingCourseModule.success && responseAfteraddingCourseModule.message === 'DUPLICATE_ORDER_IDX'
+        ) {
+            return res.status(400).json({
+                success: false,
+                message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_DUPLICATE_ORDER_IDX_MESSAGE
+            });
+        }
 
         if (responseAfteraddingCourseModule) {
-            return res.status(201).json({ message: COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE })
+            return res.status(201).json({ message: COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE, data: responseAfteraddingCourseModule });
 
         } else {
           return res.status(500).json({ message: COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_ADD_ERROR_MESSAGE });

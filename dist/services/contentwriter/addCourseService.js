@@ -4,9 +4,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const coursesModel_1 = __importDefault(require("../../model/coursesModel"));
+const stripHtmlTags_1 = require("../../util/stripHtmlTags");
 const addCourse = async (courseName, courseDescription, thumbnail, status) => {
     try {
-        const CourseToSave = new coursesModel_1.default({ courseName, courseDescription, thumbnail, status, });
+        const CourseToSave = new coursesModel_1.default({ courseName, courseDescription: (0, stripHtmlTags_1.stripHtmlTags)(courseDescription), thumbnail, status, });
         const result = await CourseToSave.save();
         return result;
     }

@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { ISalarySlipEmailDetails } from '../interfaces/salarySlip';
+import { emailConfiguration } from '../util/emailConfiguration';
 
 console.warn('[SalarySlipEmail] Module loaded');
 
@@ -16,17 +17,6 @@ const formatPayDate = (dateString: string): string => {
 };
 
 dotenv.config();
-
-const emailConfiguration: any = {
-  service: process.env.EMAIL_CONFIG_SERVICE,
-  host: process.env.EMAIL_CONFIG_HOST,
-  port: Number(process.env.EMAIL_CONFIG_PORT),
-  secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
-  auth: {
-    user: process.env.EMAIL_CONFIG_AUTH_USER,
-    pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-  }
-};
 
 // Log email configuration status for debugging
 console.warn('[SalarySlipEmail] Email Configuration Check:');

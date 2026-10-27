@@ -23,6 +23,8 @@ const updateCourseAssignmentDueDate = async (
         const oldDueDate = assignment.dueDate;
 
         assignment.dueDate = dueDate;
+        assignment.reminderScheduleStartDate = new Date();
+        assignment.lastReminderSentAt = null;
         const result = await assignment.save();
 
         // Dispatch the due date update notification email. Failures here must never

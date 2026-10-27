@@ -29,6 +29,12 @@ const updateMyTaskProgress = async (req, res) => {
                 message: myCoursesMessages_1.MY_COURSES_ERROR_MESSAGES.TASK_NOT_IN_COURSE_MESSAGE
             });
         }
+        if (progressResponse.isCodingTask) {
+            return res.status(commonErrorMessages_1.HTTP_STATUS.BAD_REQUEST).json({
+                success: false,
+                message: myCoursesMessages_1.MY_COURSES_ERROR_MESSAGES.CODING_TASK_PROGRESS_SERVER_DRIVEN_MESSAGE
+            });
+        }
         return res.status(commonErrorMessages_1.HTTP_STATUS.OK).json(Object.assign(Object.assign({}, progressResponse), { message: myCoursesMessages_1.MY_COURSES_SUCCESS_MESSAGES.TASK_PROGRESS_UPDATE_SUCCESS_MESSAGE }));
     }
     catch (error) {

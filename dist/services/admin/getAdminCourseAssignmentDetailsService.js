@@ -33,7 +33,7 @@ const getAdminCourseAssignmentDetails = async (courseAssignmentId) => {
     ]);
     const courseModules = modulesByCourse.get(String(course._id)) || [];
     const tasksByModule = await manageCourseProgress_1.default.getActiveTasksByModule(courseModules.map((module) => String(module._id)));
-    const modules = manageCourseProgress_1.default.buildCourseModules(courseModules, tasksByModule, completedByAssignment.get(String(assignment._id)) || new Map());
+    const modules = manageCourseProgress_1.default.withAcknowledgementState(manageCourseProgress_1.default.buildCourseModules(courseModules, tasksByModule, completedByAssignment.get(String(assignment._id)) || new Map()), assignment.taskAcknowledgements);
     const progress = manageCourseProgress_1.default.summariseProgress(modules);
     const status = manageCourseProgress_1.default.deriveAssignmentStatus(progress.completedTasks, progress.totalTasks);
     let thumbnailUrl = '';

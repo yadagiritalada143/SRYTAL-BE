@@ -5,20 +5,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const emailConfiguration_1 = require("../util/emailConfiguration");
 dotenv_1.default.config();
-const emailConfiguration = {
-    service: process.env.EMAIL_CONFIG_SERVICE,
-    host: process.env.EMAIL_CONFIG_HOST,
-    port: Number(process.env.EMAIL_CONFIG_PORT),
-    secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
-    auth: {
-        user: process.env.EMAIL_CONFIG_AUTH_USER,
-        pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-    }
-};
 const sendResetPasswordMail = async (firstName, lastName, userName, tempPassword) => {
     try {
-        const transporter = nodemailer_1.default.createTransport(emailConfiguration);
+        const transporter = nodemailer_1.default.createTransport(emailConfiguration_1.emailConfiguration);
         const mailBody = `     
 <html>
   <body style="font-family: serif; background-color: #f4f4f9; padding: 20px;">

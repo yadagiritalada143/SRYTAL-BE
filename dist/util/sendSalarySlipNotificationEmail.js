@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const nodemailer_1 = __importDefault(require("nodemailer"));
 const dotenv_1 = __importDefault(require("dotenv"));
+const emailConfiguration_1 = require("../util/emailConfiguration");
 console.warn('[SalarySlipEmail] Module loaded');
 const formatPayDate = (dateString) => {
     const monthsShort = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -19,16 +20,6 @@ const formatPayDate = (dateString) => {
     return `${year}-${monthsShort[monthIndex]}-${day}`;
 };
 dotenv_1.default.config();
-const emailConfiguration = {
-    service: process.env.EMAIL_CONFIG_SERVICE,
-    host: process.env.EMAIL_CONFIG_HOST,
-    port: Number(process.env.EMAIL_CONFIG_PORT),
-    secure: Boolean(process.env.EMAIL_CONFIG_SECURE),
-    auth: {
-        user: process.env.EMAIL_CONFIG_AUTH_USER,
-        pass: process.env.EMAIL_CONFIG_AUTH_PASS,
-    }
-};
 // Log email configuration status for debugging
 console.warn('[SalarySlipEmail] Email Configuration Check:');
 console.warn('[SalarySlipEmail] EMAIL_CONFIG_SERVICE:', process.env.EMAIL_CONFIG_SERVICE || 'NOT SET');
@@ -50,7 +41,7 @@ const sendSalarySlipNotificationEmail = async (details) => {
     }
     try {
         console.warn('[SalarySlipEmail] Creating nodemailer transporter...');
-        const transporter = nodemailer_1.default.createTransport(emailConfiguration);
+        const transporter = nodemailer_1.default.createTransport(emailConfiguration_1.emailConfiguration);
         console.warn('[SalarySlipEmail] Transporter created successfully');
         const mailBody = `
 <html>

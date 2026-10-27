@@ -11,8 +11,20 @@ const manageCourseMedia_1 = __importDefault(require("../../util/manageCourseMedi
 const awsS3Config_1 = require("../../config/awsS3Config");
 const addModuleToCourse = async (req, res) => {
     try {
-        const { courseId, moduleName, moduleDescription } = req.body;
+        const { courseId, moduleName, moduleDescription, orderIdx } = req.body;
         let uniqueThumbnailKey = '';
+        if (!String(courseId || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: coursemoduleMessages_1.COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_COURSE_ID_REQUIRED_MESSAGE
+            });
+        }
+        if (!String(moduleName || '').trim()) {
+            return res.status(400).json({
+                success: false,
+                message: coursemoduleMessages_1.COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_NAME_REQUIRED_MESSAGE
+            });
+        }
         // Code to upload the thumbnail to AWS S3 //
         if (req.file) {
             const { originalname, buffer, mimetype } = req.file;
@@ -26,9 +38,15 @@ const addModuleToCourse = async (req, res) => {
                 res.status(500).json({ success: false, message: 'Error updating the thumbnail' });
             });
         }
-        const responseAfteraddingCourseModule = await addCourseModuleService_1.default.addNewCourseModule(courseId, moduleName, moduleDescription, uniqueThumbnailKey, 'ACTIVE');
+        const responseAfteraddingCourseModule = await addCourseModuleService_1.default.addNewCourseModule(courseId, moduleName, moduleDescription, uniqueThumbnailKey, 'ACTIVE', orderIdx);
+        if (!responseAfteraddingCourseModule.success && responseAfteraddingCourseModule.message === 'DUPLICATE_ORDER_IDX') {
+            return res.status(400).json({
+                success: false,
+                message: coursemoduleMessages_1.COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_DUPLICATE_ORDER_IDX_MESSAGE
+            });
+        }
         if (responseAfteraddingCourseModule) {
-            return res.status(201).json({ message: coursemoduleMessages_1.COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE });
+            return res.status(201).json({ message: coursemoduleMessages_1.COURSE_MODULE_SUCCESS_MESSAGES.COURSE_MODULE_ADD_SUCCESS_MESSAGE, data: responseAfteraddingCourseModule });
         }
         else {
             return res.status(500).json({ message: coursemoduleMessages_1.COURSE_MODULE_ERRORS_MESSAGES.COURSE_MODULE_ADD_ERROR_MESSAGE });

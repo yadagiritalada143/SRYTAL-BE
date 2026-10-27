@@ -6,13 +6,29 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const coursemoduleModel_1 = __importDefault(require("../../model/coursemoduleModel"));
 const s3Client_1 = __importDefault(require("../../util/s3Client"));
 const awsS3Config_1 = require("../../config/awsS3Config");
-const updateCourseModule = async (id, moduleName, moduleDescription, thumbnail, status) => {
+const stripHtmlTags_1 = require("../../util/stripHtmlTags");
+const updateCourseModule = async (id, moduleName, moduleDescription, thumbnail, status, orderIdx) => {
     try {
         const existingCourseModule = await coursemoduleModel_1.default.findById(id);
         if (!existingCourseModule) {
             return { success: false, responseAfterModuleUpdate: 'Course module not found' };
         }
-        const updateFields = { moduleName, moduleDescription, status };
+        const existingModuleWithOrderIdx = await coursemoduleModel_1.default.findOne({
+            courseId: existingCourseModule.courseId,
+            orderIdx,
+            _id: { $ne: id }
+        });
+        if (existingModuleWithOrderIdx) {
+            return {
+                success: false,
+                message: 'DUPLICATE_ORDER_IDX'
+            };
+        }
+        const courseModuleWithSameName = await coursemoduleModel_1.default.findOne({ moduleName, _id: { $ne: id } });
+        if (courseModuleWithSameName) {
+            return { success: false, responseAfterModuleUpdate: 'COURSE_MODULE_DUPLICATE_NAME' };
+        }
+        const updateFields = { moduleName, moduleDescription: (0, stripHtmlTags_1.stripHtmlTags)(moduleDescription), status, orderIdx };
         if (thumbnail) {
             updateFields.thumbnail = thumbnail;
             if (existingCourseModule.thumbnail) {

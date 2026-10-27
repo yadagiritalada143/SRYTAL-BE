@@ -10,14 +10,24 @@ const CourseTaskSchema = new mongoose_1.default.Schema({
     taskName: { type: mongoose_1.default.Schema.Types.String, required: true, unique: true },
     taskDescription: { type: mongoose_1.default.Schema.Types.String },
     thumbnail: { type: mongoose_1.default.Schema.Types.String },
-    status: { type: mongoose_1.default.Schema.Types.String },
-    type: { type: mongoose_1.default.Schema.Types.String },
-    // Reference to the task content. For type 'LINK' this is the external URL
-    // (YouTube, blog, etc). For type 'FILE' this is the S3 object key of the
-    // uploaded file (pdf/word/any). Served back via /getCourseTaskContent/:id.
+    status: { type: mongoose_1.default.Schema.Types.String, enum: ['ACTIVE', 'ARCHIVE'], default: 'ACTIVE' },
+    type: { type: mongoose_1.default.Schema.Types.String, enum: ['CODE', 'QUIZ', 'LINK', 'FILE'] },
+    executionMode: { type: mongoose_1.default.Schema.Types.String, enum: ['CALLABLE', 'STDIN', 'UNCONFIGURED'], default: 'UNCONFIGURED' },
     content: { type: mongoose_1.default.Schema.Types.String },
     contentMimeType: { type: mongoose_1.default.Schema.Types.String },
     contentFileName: { type: mongoose_1.default.Schema.Types.String },
+    acknowledgementText: { type: mongoose_1.default.Schema.Types.String, trim: true },
+    baseBoilerplate: { type: mongoose_1.default.Schema.Types.String },
+    boilerplateVersion: { type: mongoose_1.default.Schema.Types.Number, default: 0 },
+    starterCode: [{
+            languageId: {
+                type: mongoose_1.default.Schema.Types.ObjectId,
+                ref: 'ProgrammingLanguagesSchema',
+                required: true
+            },
+            code: { type: mongoose_1.default.Schema.Types.String, required: true },
+        }],
+    orderIdx: { type: mongoose_1.default.Schema.Types.Number, required: true, min: 1 }
 }, {
     collection: 'coursetask',
     timestamps: true,
@@ -25,5 +35,6 @@ const CourseTaskSchema = new mongoose_1.default.Schema({
     toJSON: { virtuals: true }
 });
 CourseTaskSchema.plugin(mongoose_unique_validator_1.default);
+CourseTaskSchema.index({ moduleId: 1, createdAt: 1, _id: 1 });
 const CourseTaskModel = mongoose_1.default.model('CourseTaskModel', CourseTaskSchema);
 exports.default = CourseTaskModel;

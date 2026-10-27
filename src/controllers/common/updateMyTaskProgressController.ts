@@ -38,6 +38,13 @@ const updateMyTaskProgress = async (req: Request, res: Response) => {
             });
         }
 
+        if (progressResponse.isCodingTask) {
+            return res.status(HTTP_STATUS.BAD_REQUEST).json({
+                success: false,
+                message: MY_COURSES_ERROR_MESSAGES.CODING_TASK_PROGRESS_SERVER_DRIVEN_MESSAGE
+            });
+        }
+
         return res.status(HTTP_STATUS.OK).json({
             ...progressResponse,
             message: MY_COURSES_SUCCESS_MESSAGES.TASK_PROGRESS_UPDATE_SUCCESS_MESSAGE

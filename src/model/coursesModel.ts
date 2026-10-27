@@ -1,4 +1,4 @@
-import mongoose, { Schema } from 'mongoose';
+import mongoose from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 import { ICourses } from '../interfaces/courses';
 
@@ -7,7 +7,7 @@ const CoursesSchema = new mongoose.Schema({
     courseName: { type: mongoose.Schema.Types.String, unique: true },
     courseDescription: { type: mongoose.Schema.Types.String },
     thumbnail: { type: mongoose.Schema.Types.String },
-    status: { type: mongoose.Schema.Types.String },
+    status: { type: mongoose.Schema.Types.String, enum: ["ACTIVE", "ARCHIVE"] },
 },
     {
         collection: 'courses',

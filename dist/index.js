@@ -18,7 +18,6 @@ const superadminRoutes_1 = __importDefault(require("./routes/superadminRoutes"))
 const recruiterRoutes_1 = __importDefault(require("./routes/recruiterRoutes"));
 const timesheetcronjob_1 = __importDefault(require("./jobs/timesheetcronjob"));
 const courseReminderCronJob_1 = __importDefault(require("./jobs/courseReminderCronJob"));
-const contentwriterRoutes_1 = __importDefault(require("./routes/contentwriterRoutes"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
 dotenv_1.default.config();
 const app = (0, express_1.default)();
@@ -41,7 +40,6 @@ app.use('/', commonRoutes_1.default);
 app.use('/admin', adminRoutes_1.default);
 app.use('/superadmin', superadminRoutes_1.default);
 app.use('/recruiter', recruiterRoutes_1.default);
-app.use('/contentwriter', contentwriterRoutes_1.default);
 app.use('/user', userRoutes_1.default);
 const startServer = async () => {
     try {

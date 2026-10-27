@@ -18,7 +18,13 @@ const getMyAssignedCourseById = async (
         .populate({ path: 'courseId', model: CourseModel })
         .lean();
 
-    if (!assignment || !assignment.courseId) {
+    // Archived courses (and assignments whose course was deleted) are not made
+    // available to employees.
+    if (
+        !assignment ||
+        !assignment.courseId ||
+        String(assignment.courseId.status || '').toUpperCase() === 'ARCHIVE'
+    ) {
         return { success: false };
     }
 
@@ -34,11 +40,17 @@ const getMyAssignedCourseById = async (
         courseModules.map((module: any) => String(module._id))
     );
 
-    const modules = courseProgress.buildCourseModules(
-        courseModules,
-        tasksByModule,
-        completedByAssignment.get(String(assignment._id)) || new Map()
+    // Acknowledgement is stored on the assignment (already scoped to this
+    // employee). The GET is read-only: it never writes an acknowledgement record.
+    const modules = courseProgress.withAcknowledgementState(
+        courseProgress.buildCourseModules(
+            courseModules,
+            tasksByModule,
+            completedByAssignment.get(String(assignment._id)) || new Map()
+        ),
+        assignment.taskAcknowledgements
     );
+
     const progress = courseProgress.summariseProgress(modules);
     const status = courseProgress.deriveAssignmentStatus(progress.completedTasks, progress.totalTasks);
 

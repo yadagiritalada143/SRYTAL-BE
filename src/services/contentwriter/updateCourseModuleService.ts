@@ -2,9 +2,10 @@ import CourseModuleModel from '../../model/coursemoduleModel';
 import { IUpdateCourseModuleResponse } from '../../interfaces/coursemodule';
 import s3Client from '../../util/s3Client';
 import { bucketName } from '../../config/awsS3Config';
+import { stripHtmlTags } from '../../util/stripHtmlTags';
 
 
-const updateCourseModule = async (id: string, moduleName: string, moduleDescription: string, thumbnail?: string, status?: string): Promise<IUpdateCourseModuleResponse> => {
+const updateCourseModule = async (id: string, moduleName: string, moduleDescription: string, thumbnail?: string, status?: string, orderIdx?: number): Promise<IUpdateCourseModuleResponse> => {
     try {
 
         const existingCourseModule = await CourseModuleModel.findById(id);
@@ -13,7 +14,25 @@ const updateCourseModule = async (id: string, moduleName: string, moduleDescript
             return { success: false, responseAfterModuleUpdate: 'Course module not found' };
         }
 
-        const updateFields: any = { moduleName, moduleDescription, status };
+         const existingModuleWithOrderIdx = await CourseModuleModel.findOne({
+            courseId: existingCourseModule.courseId,
+            orderIdx,
+            _id: { $ne: id }
+        });
+
+        if (existingModuleWithOrderIdx) {
+            return {
+                success: false,
+                message: 'DUPLICATE_ORDER_IDX'
+            };
+        }
+
+        const courseModuleWithSameName = await CourseModuleModel.findOne({ moduleName, _id: { $ne: id } });
+        if (courseModuleWithSameName) {
+            return { success: false, responseAfterModuleUpdate: 'COURSE_MODULE_DUPLICATE_NAME' };
+        }
+
+        const updateFields: any = { moduleName, moduleDescription: stripHtmlTags(moduleDescription), status, orderIdx };
 
         if (thumbnail) {
             updateFields.thumbnail = thumbnail;

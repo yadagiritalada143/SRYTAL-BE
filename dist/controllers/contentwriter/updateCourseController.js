@@ -5,7 +5,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const updateCourseService_1 = __importDefault(require("../../services/contentwriter/updateCourseService"));
 const courseMessages_1 = require("../../constants/contentwriter/courseMessages");
-const validateCourseStatusTypesUtil_1 = __importDefault(require("../../util/validateCourseStatusTypesUtil"));
 const path_1 = __importDefault(require("path"));
 const uuid_1 = require("uuid");
 const manageCourseMedia_1 = __importDefault(require("../../util/manageCourseMedia"));
@@ -13,7 +12,7 @@ const awsS3Config_1 = require("../../config/awsS3Config");
 const updateCourse = async (req, res) => {
     try {
         const { id, courseName, courseDescription, status } = req.body;
-        if (!(0, validateCourseStatusTypesUtil_1.default)(status)) {
+        if (!status) {
             return res.status(400).json({
                 success: false,
                 message: courseMessages_1.COURSE_ERROR_MESSAGES.COURSE_INVALID_STATUS_MESSAGE,
@@ -35,7 +34,29 @@ const updateCourse = async (req, res) => {
             thumbnailKey = uploadResponse.key;
         }
         const updateCourseResponse = await updateCourseService_1.default.updateCourse(id, courseName, courseDescription, thumbnailKey, status.toUpperCase());
-        res.status(200).json(updateCourseResponse);
+        if (!updateCourseResponse.success) {
+            if (updateCourseResponse.responseAfterUpdateCourse === 'COURSE_DUPLICATE_NAME') {
+                return res.status(400).json({
+                    success: false,
+                    message: courseMessages_1.COURSE_ERROR_MESSAGES.COURSE_DUPLICATE_NAME_MESSAGE,
+                });
+            }
+            if (updateCourseResponse.responseAfterUpdateCourse === 'Course not found') {
+                return res.status(404).json({
+                    success: false,
+                    message: courseMessages_1.COURSE_ERROR_MESSAGES.COURSE_UPDATE_ERROR_MESSAGE,
+                });
+            }
+            return res.status(500).json({
+                success: false,
+                message: courseMessages_1.COURSE_ERROR_MESSAGES.COURSE_UPDATE_ERROR_MESSAGE
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: courseMessages_1.COURSE_SUCCESS_MESSAGES.COURSE_UPDATE_SUCCESS_MESSAGE,
+            data: updateCourseResponse.responseAfterUpdateCourse
+        });
     }
     catch (error) {
         console.error(`Error in updating course: ${error}`);

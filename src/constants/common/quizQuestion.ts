@@ -1,0 +1,3 @@
+export const DEFAULT_QUIZ_PASSING_PERCENTAGE = 60;
+
+export const QUIZ_OPTIONS = 2;

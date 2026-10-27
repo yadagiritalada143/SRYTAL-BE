@@ -10,7 +10,7 @@ const CoursesSchema = new mongoose_1.default.Schema({
     courseName: { type: mongoose_1.default.Schema.Types.String, unique: true },
     courseDescription: { type: mongoose_1.default.Schema.Types.String },
     thumbnail: { type: mongoose_1.default.Schema.Types.String },
-    status: { type: mongoose_1.default.Schema.Types.String },
+    status: { type: mongoose_1.default.Schema.Types.String, enum: ["ACTIVE", "ARCHIVE"] },
 }, {
     collection: 'courses',
     timestamps: true,

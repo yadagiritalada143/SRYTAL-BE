@@ -1,11 +1,8 @@
 import CourseModel from '../../model/coursesModel';
 import s3Client from '../../util/s3Client';
 import { bucketName } from '../../config/awsS3Config';
-
-interface updateCourseResponse {
-    success: boolean;
-    responseAfterUpdateCourse?: any;
-}
+import { stripHtmlTags } from '../../util/stripHtmlTags';
+import { updateCourseResponse } from '../../interfaces/courses';
 
 const updateCourse = async (id: string, courseName: string, courseDescription: string, thumbnail?: string, status?: string ):Promise<updateCourseResponse> => {
     try{
@@ -14,7 +11,12 @@ const updateCourse = async (id: string, courseName: string, courseDescription: s
             return { success: false, responseAfterUpdateCourse: 'Course not found' };
         }
 
-        const updateFields: any = { courseName, courseDescription, status };
+        const courseWithSameName = await CourseModel.findOne({ courseName, _id: { $ne: id } });
+        if (courseWithSameName) {
+            return { success: false, responseAfterUpdateCourse: 'COURSE_DUPLICATE_NAME' };
+        }
+
+        const updateFields: any = { courseName, courseDescription: stripHtmlTags(courseDescription), status };
         if (thumbnail) {
             updateFields.thumbnail = thumbnail;
 
