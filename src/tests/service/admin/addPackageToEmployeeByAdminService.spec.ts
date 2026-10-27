@@ -24,10 +24,12 @@ describe('addPackagetoEmployeeByAdminService', () => {
     });
 
     afterEach(() => {
+        jest.useRealTimers();
         jest.restoreAllMocks();
     });
 
     it('creates a new employee package with a generated timesheet when none exists', async () => {
+        jest.useFakeTimers().setSystemTime(new Date(2026, 9, 26, 12));
         const data = {
             employeeId: 'e1',
             packageId: 'p1',
@@ -46,7 +48,7 @@ describe('addPackagetoEmployeeByAdminService', () => {
 
         const timesheet = (data as any).packages[0].tasks[0].timesheet as any[];
         expect(Array.isArray(timesheet)).toBe(true);
-        expect(timesheet.length).toBeGreaterThanOrEqual(1);
+        expect(timesheet).toHaveLength(36);
         expect(timesheet[0]).toMatchObject({
             status: 'NOT SUBMITTED',
             hours: 0,
@@ -55,6 +57,12 @@ describe('addPackagetoEmployeeByAdminService', () => {
             isVacation: false
         });
         expect(typeof timesheet[0].isWeekOff).toBe('boolean');
+        const firstNextMonthSunday = timesheet.find(
+            entry =>
+                entry.date.toDateString() ===
+                new Date(2026, 10, 1).toDateString()
+        );
+        expect(firstNextMonthSunday).toMatchObject({ isWeekOff: true });
     });
 
     it('updates the existing employee package when one already exists', async () => {
